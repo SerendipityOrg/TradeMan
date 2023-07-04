@@ -1,10 +1,10 @@
-from broker import Broker
-from instrument import Instrument
+# from broker import Broker
+
 import json
 from order_manager import OrderManager
 from monitor import OrderMonitor
 
-import PreMarket as pm
+# import PreMarket as pm
 from kiteconnect import KiteConnect
 
 def main():
@@ -16,16 +16,18 @@ def main():
     brokers = [Broker(name, data) for name, data in brokers_data.items()]
 
     # 9.05AM Tasks
-    pm.setExpiryDate()
-    pm.setInstruMood()
-    pm.updateATR5d()
+    # pm.setExpiryDate()
+    # pm.setInstruMood()
+    # pm.updateATR5d()
 
-    # 10:15AM Tasks
-    pm.updateIB()
+    # # 10:15AM Tasks
+    # pm.updateIB()
     with open ("mpwizard.json") as f:
         levels_data = json.load(f)
     print("Levels data: ", levels_data)
 
+    with open(r"/Users/amolkittur/Documents/TradeMan/Utils/instruments.csv") as f:
+        Instrument = f.readlines()
     # Create a list of Instrument objects
     instruments = [Instrument(data) for data in levels_data["indices"]]
 
