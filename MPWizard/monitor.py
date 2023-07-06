@@ -1,14 +1,15 @@
 from kiteconnect import KiteConnect
 import time
 import json
+from telegram_bot import discord_bot
 
 class OrderMonitor:
-    def __init__(self, brokers_file, instruments, telegram_bot):
+    def __init__(self, brokers_file, instruments):
         # Read brokers from file
         with open(brokers_file, 'r') as file:
             self.brokers = json.load(file)
         self.instruments = instruments
-        self.telegram_bot = telegram_bot
+
 
     def monitor_instruments(self):
             # Retrieve Zerodha account details for fetching live data
@@ -59,7 +60,7 @@ class OrderMonitor:
 
                             # Send alert message to Telegram group
                             message = f"{cross_type}{level_name}: {ltp} for {name}! Trade? Reply 'call' or 'put' or 'pass'"
-                            self.telegram_bot.send_message(message=f"{message}")
+                            discord_bot(message=f"{message}")
                             print(message)
 
                     # Update the previous LTP for the next iteration
