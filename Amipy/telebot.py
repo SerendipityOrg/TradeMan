@@ -6,7 +6,7 @@ from Utilities.siricalculation import get_option_tokens
 token = '807232387:AAF5OgaGJuUPV8xwDUxYFRHaOWJSU5pIAic'
 
 # Load credentials from siri.json
-with open("Amipy/Utilities/Siri.json") as json_file:
+with open(r"/Users/traderscafe/Documents/TradeMan/Amipy/Utilities/Siri.json") as json_file:
     credentials = json.load(json_file)
 
 def start(update: Update, context: CallbackContext) -> None:
