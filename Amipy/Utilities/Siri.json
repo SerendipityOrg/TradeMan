@@ -1,0 +1,41 @@
+{
+    "aliceblue": {
+        "brijesh": {
+            "qty": 0,
+            "username": "929016",
+            "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
+            "session_id": "nzvyYjpaiDKuCi8kDm4LVtvsPYythAUep11z9I30un5NSIgoYVpKLhU0QuLHCkjT4yuzrrVCFUeJgpI5pgNX9g6BYlM5UmGxv6z6ciDLW1bDGESPBPz7K0TgSGebQUVIZ2a1B5jH7LMvNGE8uFHRshm97ikzmCRziddbAsc3dVll7b7eUGtADVENNuNdS4SCt8nzaZAi8YFEhQxTjTvAjZTqtRJnDt4FKufpUmOaRX4hD7sy17VvXdBJiy2nuEC7"
+        },
+        "venkatesh": {
+            "qty": 0,
+            "username": "924446",
+            "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
+            "session_id": "9vUHS4Yz2tOi3uIXJNBh6PNtKE7G2RLeU6jPyNcMdAQuR8CXmBdSycnhvMM42AhcrkSNgpjmlbC9oLOWJXCZXXUgi6Dbx1bCW6sxOxMSMnZs7cei9njJVBgGe9FoKcOya5liV39maQQuqN8M7xRmGlxjjLYCIelcv6l0JFlZCVjUpbdxfSXLIEe8so43Xl93aYbCxaUMMZa5tu9xFyXXDGQd4soBl9jrCr10PpEEAYruvEa9AtCajoxUs57akZvg"
+        },
+        "sridhar": {
+            "qty": 0,
+            "username": "935347",
+            "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
+            "session_id": "CLmqaQ80pdSKkMDbHqSZdyNQ2IzRBTbD7pD0p9iTjF8b76tlBXW0Z9Cgs2THKrJO01nLeOssqhbtJmpEpLNqDmjQgI9GmJMXLT2fv5eK6Yl0Rj0norJ6O6LGtjLAdUWudxpIz9A9lPtpfORaIn5BnKlulvRdW3u4FpZHLFcoVqmKuV8iGDGOhGttDuRD3i53mZzHDx8s3stG2f8or5vUDjlukCbz2mrejT5i0XKX3sNaxvkbMNMp8bXuElqaTdyO"
+        },
+        "vinay": {
+            "qty": 0,
+            "username": "935325",
+            "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
+            "session_id": "AnzSoaWH7ZqSrmjkH5CNORBZiZJv5M8DMxVpgoSCPVbOMik8Bo7R7iLGiutivYDKncWTbtr65m6i7FOr8eQ9IRHRmE7cj1TQhFdNSNPJKrQtTM8qtMCXAaYi8eQZ5BBdQmBVJt0lC8FVZyubclz5Fqzz98Z1c4cdUqgxkFWGxfAvqmXIt3hnnS0J5tpfuzfCZo6U93W3BRPy77WkiDkhxk2b69Tkc5YYMdj8CGkxJNxWSAVmazZLoggXxn4a435u"
+        },
+        "vinod": {
+            "qty": 0,
+            "username": "110958",
+            "api_key": "E08VqCkbrXqaWUnrQapGxA4VfDQVWJfZ9Jxs4nXcnbSoVME1NfnfjvLcWoLpxAE4lUzs5mzTohMThKD6K6GIc9Md3PHuja8IxRuF3Xr15ubIvEkzv4q7PsBxZX05niOA",
+            "session_id": "51bLjKKgfBcOOuNrBeijcq3Xy2JsDY9UQyjmGYEWrPvjiQjqeOL1Dd6U53NY3W0tIXb1gRSYj2aPaILQBISRDnrG0U0S10ie9a7psTgAPkHjhc3VWPCCyHITq1agbcUFRxdqkEUQm9llSvZq4N711iCWcKOk4jUxs4baZRV0rZdFGDYBaqHQsP0fMig4ArHOu3q8WEHXPyf0B4obUlYgxO69sWZeB7dWAGrU0696F1Idv4YUNOqD5j0FHp0BWnDf"
+        }
+    },
+    "zerodha": {
+        "omkar": {
+            "qty": 0,
+            "api_key": "6b0dp5ussukmo67h",
+            "access_token": "CbAzIkAuJXC0xjTXy07mJuImHeWuEFQW"
+        }
+    }
+}
