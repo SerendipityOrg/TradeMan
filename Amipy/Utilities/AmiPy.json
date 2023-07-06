@@ -1,0 +1,49 @@
+{
+    "aliceblue": {
+        "brijesh": {
+            "qty": 150,
+            "username": "929016",
+            "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
+            "session_id": "nzvyYjpaiDKuCi8kDm4LVtvsPYythAUep11z9I30un5NSIgoYVpKLhU0QuLHCkjT4yuzrrVCFUeJgpI5pgNX9g6BYlM5UmGxv6z6ciDLW1bDGESPBPz7K0TgSGebQUVIZ2a1B5jH7LMvNGE8uFHRshm97ikzmCRziddbAsc3dVll7b7eUGtADVENNuNdS4SCt8nzaZAi8YFEhQxTjTvAjZTqtRJnDt4FKufpUmOaRX4hD7sy17VvXdBJiy2nuEC7"
+        }
+    },
+    "zerodha": {
+        "omkar": {
+            "qty": 650,
+            "api_key": "6b0dp5ussukmo67h",
+            "access_token": "CbAzIkAuJXC0xjTXy07mJuImHeWuEFQW",
+            "orders": {
+                "ShortSignal": [
+                    {
+                        "trade_type": "HedgeOrder",
+                        "avg_prc": 0.85,
+                        "timestamp": "2023-07-06 09:32:47.034096",
+                        "strike_price": 19400,
+                        "tradingsymbol": "NIFTY2370619900CE"
+                    },
+                    {
+                        "trade_type": "HedgeOrder",
+                        "avg_prc": 1.85,
+                        "timestamp": "2023-07-06 09:32:47.328818",
+                        "strike_price": 19400,
+                        "tradingsymbol": "NIFTY2370618900PE"
+                    },
+                    {
+                        "trade_type": "ShortSignal",
+                        "avg_prc": 41.792,
+                        "timestamp": "2023-07-06 09:32:47.509952",
+                        "strike_price": 19400,
+                        "tradingsymbol": "NIFTY2370619400CE"
+                    },
+                    {
+                        "trade_type": "ShortSignal",
+                        "avg_prc": 47.452,
+                        "timestamp": "2023-07-06 09:32:47.668399",
+                        "strike_price": 19400,
+                        "tradingsymbol": "NIFTY2370619400PE"
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -1,9 +1,9 @@
-# from broker import Broker
+from broker import Broker
+from instrument import Instrument
 
-import json
 from order_manager import OrderManager
 from monitor import OrderMonitor
-
+from json_utils import read_json_file, write_json_file
 # import PreMarket as pm
 from kiteconnect import KiteConnect
 
@@ -22,8 +22,7 @@ def main():
 
     # # 10:15AM Tasks
     # pm.updateIB()
-    with open ("mpwizard.json") as f:
-        levels_data = json.load(f)
+    levels_data = read_json_file("MPWizard.json")
     print("Levels data: ", levels_data)
 
     with open(r"/Users/amolkittur/Documents/TradeMan/Utils/instruments.csv") as f:
@@ -32,10 +31,10 @@ def main():
     instruments = [Instrument(data) for data in levels_data["indices"]]
 
     # Initialize the TelegramBot
-    telegram_bot = TelegramBot()
+
 
     # Start monitoring the instruments and managing orders
-    order_monitor =OrderMonitor(brokers_file='brokers.json', instruments=instruments, telegram_bot=telegram_bot)
+    order_monitor =OrderMonitor(brokers_file='brokers.json', instruments=instruments)
     order_monitor.monitor_instruments()
 
     # 03:15PM Tasks

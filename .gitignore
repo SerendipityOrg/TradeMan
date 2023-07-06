@@ -1,0 +1,8 @@
+.env
+.log
+.pyc
+
+
+/__pycache__
+Amipy/LiveCSV/amipy_genSignals.csv
+Amipy/LiveCSV/amipy_supertrend.csv

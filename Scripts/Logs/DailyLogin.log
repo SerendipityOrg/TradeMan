@@ -1,0 +1,155 @@
+Attempt: 1
+Today's date: 2023-06-30 08:55:03.273569
+User is not enable TOTP! Please enable TOTP through mobile or web
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 204, in login_in_aliceblue
+    userSessionID = verifyTotp['userSessionID']
+                    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+Attempt: 2
+Today's date: 2023-06-30 08:55:11.297230
+User is not enable TOTP! Please enable TOTP through mobile or web
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 204, in login_in_aliceblue
+    userSessionID = verifyTotp['userSessionID']
+                    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+Attempt: 3
+Today's date: 2023-06-30 08:55:19.318353
+User is not enable TOTP! Please enable TOTP through mobile or web
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 204, in login_in_aliceblue
+    userSessionID = verifyTotp['userSessionID']
+                    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+Attempt: 4
+Today's date: 2023-06-30 08:55:27.221339
+User is not enable TOTP! Please enable TOTP through mobile or web
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 204, in login_in_aliceblue
+    userSessionID = verifyTotp['userSessionID']
+                    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+Attempt: 5
+Today's date: 2023-06-30 08:55:35.146571
+User is not enable TOTP! Please enable TOTP through mobile or web
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 204, in login_in_aliceblue
+    userSessionID = verifyTotp['userSessionID']
+                    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+The script has some errors. Please Check !!!
+{"ok":true,"result":{"message_id":368,"from":{"id":5994380365,"is_bot":true,"first_name":"trialbot","username":"traderstrialBOT"},"chat":{"id":-367108102,"title":"Traders cafe","type":"group","all_members_are_administrators":true},"date":1688095538,"text":"Can't Login. Please Check !!!"}}Attempt: 1
+Today's date: 2023-07-03 08:55:02.743452
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 206, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+Attempt: 2
+Today's date: 2023-07-03 08:55:10.350077
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 206, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+Attempt: 3
+Today's date: 2023-07-03 08:55:17.945576
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 206, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+Attempt: 4
+Today's date: 2023-07-03 08:55:25.634215
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 206, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+Attempt: 5
+Today's date: 2023-07-03 08:55:33.228842
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 283, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/NiftyStrategy/Brokers/DailyLogin.py", line 206, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+The script has some errors. Please Check !!!
+{"ok":true,"result":{"message_id":372,"from":{"id":5994380365,"is_bot":true,"first_name":"trialbot","username":"traderstrialBOT"},"chat":{"id":-367108102,"title":"Traders cafe","type":"group","all_members_are_administrators":true},"date":1688354734,"text":"Can't Login. Please Check !!!"}}Attempt: 1
+Today's date: 2023-07-04 08:55:02.581790
+Login Successfully
+Session id for BY1424: crOqpn69hK5Rp3Hzh43nSpnsXNcfXaxRqr9XuOVEq6v0chKvv5VOYOczQMrOn0bopYHI7hEqcmpyQb9h3FGKV9mEDdBDMMaWR4qU2KkW9Zq1BPII6EBAfCBKHrvaF8bpFaPdz9aJCARKM4J3A1I7bGSBy3ClQ3lz17kg1sUbDJjPnaMpcdqef8fz5NtKbtRqyQhkmWQEhSFqQvufOKtEaxKKWJZ2pk76DUWnizQA5O5mYNPeP1a4QLFl0EuEhAYB
+Login Successfully
+Session id for 929016: K2X7iRVVxvcLM7jYkQijDEhCBnPX1SIsbNvpam8YDZIp3LM4sRj442jqFAKOvIJNHr1yPtI6yWWK3qykd1gHPKEB207mZIVy3F4jqhLjqhzFVHeEoJRj4DWEjXuEr2BCNoUjOVUG44FjG1XiZzLYXTJRk6IG4pqPgk8J9K4eeEBhWxjCAYBrtsmqEFVZbVFH8BSg3YCm8L8bW8sJP32qDIfM1TQfhihh0M3qGfCf6fQsQMCJgHnSAalfpDj9yoCt
+Login Successfully
+Session id for 110958: SW5DrIbQRKaoYY1o273TQekbCZrlECgcxtcb8av7pOSH1430KPffsACbiXe977dPGIEAMte2TdtTYI8fIMG8U7Dqf8DfBJVqHIWuh0mjoE4foDzJROROxyWdSdgccUbGg0A3Em1RYf4OGJmD2nOdcgLSaGask4BzSm8MWWBY1Xo42czHFic3t7d4mf00RKRhjJvStG2U2XQGMPp9uYR9P8KBMyBcr2irMtBIh2tFGyIzSsh7GBq4gLV6UZF4flJA
+Login Successfully
+Session id for 924446: BJhl6TkkAfX4Wf4dRPSGDYUIRe5HjHfKTt2stvVa6NDGcp9s9OW98XknixOBFtHPJlDFzIRSx2lnazFQjZqZTkLMFB3xvU6EJM12Hp2dG5cNxtEA5Pijc5Qp0ddWXK1IDdL1ZioxI0Pi4HsWbZLUKzXizFv8Hoqo64kBtBkdTtLSOP6r8pLAPnCGynhfukf8yUMLG5dytr97DaR6iEBI1vfPnTVpMO9UmUqiakhD5eCAZpkZcsWcZKdfZSNcANFS
+Login Successfully
+Session id for 935347: k1eybyaBritnEr3uDoX3XjrAE0pfP2gfdsFKunZFAOPClNntc0HPHT5jWAs0MIaZ3ojvSVqBKoF7Jy8iX6Hd6sv1Vz21Ri4Ix3je0eCOqqQhCEzWvfi8x1S8oUo0daK3FihHfTSU82kslFTbI15qGMko4V0WdcikDYXF52nuoWD1gh0ZHkDnfmOMPfs89CSZ5iYsOD09YuRAyal1c7oGD9TxWZoJ4OKmuBW7xToKmVKH726t67Zs9X6IO9KjTzAB
+Login Successfully
+Session id for 935325: G7fRKJmI0mkW6HR4yFoQocRdclq6uZoDYATuxiAYUnyPf6Pk7TdzjkGkXY8qFtQPXFUNzjQdEBrC0ydM18X1HQoUWId8CmzltPFt3N0jzLQ3AA3x1Gr7eDniXQT3V1kpbd731jCiZnfklnlxAT37d0yaQetKgFm5s9Ny2gHgoWPjIEY6cVDAs3iGSrr0gcfQ4NGu8kTLYXo43zSJ0tImhhSPjcFqGrnGH8Fd3gObjKXK6br8vVW4XqE9m0QrKBkc
+kite_access_token for YY0222: IQsggOcjChoJ26Fho4gAC3OkYhskoqXQ
+Program started successfully
+Attempt: 1
+Today's date: 2023-07-05 08:55:03.416842
+Login Successfully
+Session id for BY1424: UCLXdTBX5GqXpI69UVJL9PnMQGsbs7aTypiuz9iSyxNjWFsEqUKefKql2EqHfdHdo64v1sI6uXy8hl6N2HirydSnPhWSpj17vqR3bBnnEWZ9LaD6n0BOkTylnns8jlabA07pMToUY7Tj479atsKHuS1SJCFp9SiDaKuQsrz8MxLIU5kVDKYHWAxeCRfN35sVlDjqMs0RdziRKCRZFRNc9D54rV5kA6DWAEEioP3yQn88QOZgnOAaaa1kFmzblzR8
+Login Successfully
+Session id for 929016: fBIghiyDzJSLkNSgngQMMW9IW2dlkWYceKGKfTcHe0EaqyqEKnHS2FRdB4hVKayRK5amdNhrcODx6vdyBr4GP3Ez4KbhWlVy6V7FUBQiDHDFkoPPdStJdcB8oWMqPMspgyMqRyfvbN1nulqDRPF5fp0Dt3LkHPy4l3yIpZNjsT7L8BeZXy31qbzC4ALMDknxreIT1WmbHHWE4q9hyYbHFzIC44Hze7szLTMaB1HrBlehGoyc3Aydmttc0eoJvLV5
+Login Successfully
+Session id for 110958: XAHNdfiPeSQDv4WyzkFHqGR8S2RQHP9nDMKxGVszztFVupoDEVn4vbqXQJixRtHKv8B1Rqufl0A8zeuhbDSTSEAThXgTtW5YFTgna49iFJIcXhLfV65L5x91rXfnYqMxalOzlDvNy7g8EWjRWJKmYd7mJQXgkkWoAqGZavpgcxIV0E7cBEpGWJvfqXejqnlRnonBn8VNkefPvHhtLaPzGJE6OC5CoRmuVJqTZs9kNKAMR0GJfkjvUNvilT6Gib8r
+Login Successfully
+Session id for 924446: rvKiWQsjEJLSOhetSCezfYoP43yGHYYVfzFud35sUglnJCi54g0BApq1aUydBBhpNULA0jSoj6njWFoQrvmZkKTYsRgJme5lOEWmWLp5ZKvcEHBWeGKdqpE5iq2cHden4gIzy8svkNqrLAKoFyJoizfK2E3WrCbx1g0Di7AQt4otNrTt5OhUvR2XaDxsfyYbB811S1ZJRPTmQAUjxAn7EUzmzC0v2OzrgCnxxAxP7fFqUFpOjjFrpFlpX0Yu1Bez
+Login Successfully
+Session id for 935347: 7oumiW9ReKJ5h7OdTFDqEAh87hiYahB4nIFraTu46jUWmSRfUHU7DrRZ2Ud90yMWUNYOpipXqpRKpsbFPVSOf7H24nF71pIq3qqbH1ZPcLP1gXTc1DpAgC5sXbyAs8T6teFquTCJeuojI9h0HI69trKKLbxdHyo12uPKoiOMQndyCtA9kbOvC54y3tsRRve1MtR1A3mKKpVM5hHCq8k9rg1XsCRRLTOclQNAtzBSaypfb8rjoLBc6QVUqXSC6qHJ
+Login Successfully
+Session id for 935325: 7XrtZzHJUeI6Q86U1Eg6udtUq9VX1cMTWP8Wddffa42VhjFqq9CUinTFV2dNqSdneUeZCVeVYUqz2chyWNojzUp0gN5U1yHcfIoI0pbv9Z8pv5P2Sp8aD1mFjK20gsGS176QfZiqdre5Bm7KvPRXIOoaHJsPMxzNtLRbEnBneTAeTQMtNySYUD93dggphXbJQmBjKN75Y27tjYhchWUyGXfiHSLMPtzC5vlthpAthWgHQLshnzgBoir4XQGK6vXv
+kite_access_token for YY0222: ddm42QXGcmvCDUP9r3Ha1m8JBp12jJCr
+Program started successfully
+Attempt: 1
+Today's date: 2023-07-06 08:55:03.499721
+Login Successfully
+Session id for BY1424: m9nGcJTvBVH0KR4LDQIQsfuYirjd8yCMSN0s5oNxmd9AfdflkENshFx4psaQQASTa5ujR4xu0T6KsLDIdJKa6N2gvzzKSOB9jUis5SBp0QIGxzaIF2XAdggJa4Epim6ozJ3Oqetv5mcs7Tk1jk6soW6qg5mA4VlLutTmsm81pskddiszmYGkIBHaoUYhZMy3Ay35z7zi8r2neZC2a7GiGP5EvNOtSoZCNWMRfTF2cGmgemkR74zjEenWLMnEX66a
+Login Successfully
+Session id for 929016: nzvyYjpaiDKuCi8kDm4LVtvsPYythAUep11z9I30un5NSIgoYVpKLhU0QuLHCkjT4yuzrrVCFUeJgpI5pgNX9g6BYlM5UmGxv6z6ciDLW1bDGESPBPz7K0TgSGebQUVIZ2a1B5jH7LMvNGE8uFHRshm97ikzmCRziddbAsc3dVll7b7eUGtADVENNuNdS4SCt8nzaZAi8YFEhQxTjTvAjZTqtRJnDt4FKufpUmOaRX4hD7sy17VvXdBJiy2nuEC7
+Login Successfully
+Session id for 110958: 51bLjKKgfBcOOuNrBeijcq3Xy2JsDY9UQyjmGYEWrPvjiQjqeOL1Dd6U53NY3W0tIXb1gRSYj2aPaILQBISRDnrG0U0S10ie9a7psTgAPkHjhc3VWPCCyHITq1agbcUFRxdqkEUQm9llSvZq4N711iCWcKOk4jUxs4baZRV0rZdFGDYBaqHQsP0fMig4ArHOu3q8WEHXPyf0B4obUlYgxO69sWZeB7dWAGrU0696F1Idv4YUNOqD5j0FHp0BWnDf
+Login Successfully
+Session id for 924446: 9vUHS4Yz2tOi3uIXJNBh6PNtKE7G2RLeU6jPyNcMdAQuR8CXmBdSycnhvMM42AhcrkSNgpjmlbC9oLOWJXCZXXUgi6Dbx1bCW6sxOxMSMnZs7cei9njJVBgGe9FoKcOya5liV39maQQuqN8M7xRmGlxjjLYCIelcv6l0JFlZCVjUpbdxfSXLIEe8so43Xl93aYbCxaUMMZa5tu9xFyXXDGQd4soBl9jrCr10PpEEAYruvEa9AtCajoxUs57akZvg
+Login Successfully
+Session id for 935347: CLmqaQ80pdSKkMDbHqSZdyNQ2IzRBTbD7pD0p9iTjF8b76tlBXW0Z9Cgs2THKrJO01nLeOssqhbtJmpEpLNqDmjQgI9GmJMXLT2fv5eK6Yl0Rj0norJ6O6LGtjLAdUWudxpIz9A9lPtpfORaIn5BnKlulvRdW3u4FpZHLFcoVqmKuV8iGDGOhGttDuRD3i53mZzHDx8s3stG2f8or5vUDjlukCbz2mrejT5i0XKX3sNaxvkbMNMp8bXuElqaTdyO
+Login Successfully
+Session id for 935325: AnzSoaWH7ZqSrmjkH5CNORBZiZJv5M8DMxVpgoSCPVbOMik8Bo7R7iLGiutivYDKncWTbtr65m6i7FOr8eQ9IRHRmE7cj1TQhFdNSNPJKrQtTM8qtMCXAaYi8eQZ5BBdQmBVJt0lC8FVZyubclz5Fqzz98Z1c4cdUqgxkFWGxfAvqmXIt3hnnS0J5tpfuzfCZo6U93W3BRPy77WkiDkhxk2b69Tkc5YYMdj8CGkxJNxWSAVmazZLoggXxn4a435u
+kite_access_token for YY0222: CbAzIkAuJXC0xjTXy07mJuImHeWuEFQW
+Program started successfully

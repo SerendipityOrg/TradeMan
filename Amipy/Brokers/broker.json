@@ -1,0 +1,166 @@
+{
+    "zerodha": {
+        "omkar": {
+            "username": "YY0222",
+            "password": "K@nnada444",
+            "api_key": "6b0dp5ussukmo67h",
+            "api_secret": "eln2qrqob5neowjuedmbv0f0hzq6lhby",
+            "totp": "3GN2DNUD35FZQDIIWJUK6CSUIWBPXSYJ",
+            "access_token": "CbAzIkAuJXC0xjTXy07mJuImHeWuEFQW",
+            "strategies": [
+                "AmiPy",
+                "Siri"
+            ],
+            "percentage": {
+                "AmiPy": 0.8,
+                "Siri": 0.2
+            },
+            "AmiPy_allocated": 2004284.1600000001,
+            "Siri_allocated": 501071.04000000004
+        },
+        "user2": {
+            "username": "def",
+            "password": "456",
+            "api_key": "zerodha_api_key_2",
+            "api_secret": "zerodha_api_secret_2",
+            "totp": "zerodha_totp_2",
+            "access_token": "zerodha_access_token_2",
+            "strategies": [
+                "Strategy1",
+                "Strategy2"
+            ],
+            "percentage": {
+                "Strategy1": 0.5,
+                "Strategy2": 0.5
+            }
+        },
+        "accounts_to_trade": [
+            "omkar"
+        ]
+    },
+    "aliceblue": {
+        "omkar": {
+            "username": "KH364",
+            "password": "K@nnada333",
+            "twoFA": "1990",
+            "api_secret": "XbUmH3toe7eD2GCXcoKoFiQkBQMtdebs4GeqGVH0phEGVPFD9ZKeiGFSOs79pSi7DO1WffZFobvqopu124rXWoNRRc3Qhba6yz6g",
+            "app_code": "QORxCzYeJAxafrn",
+            "api_key": "ejuSHTAmjA5SQvIRRdjx2rjQN6U0V7j80Ljp64L5tnsMN7PnQ1S5PGrebVo9peb13WLUtblSTbBmexCTFVHKgLu81UE3yrrsvKbkX4AQGbOpd08MPepMq4cMbCiOzKip",
+            "totp_access": "KOYCAJWOEAKDQUYFQQCFOZHXOMQCIOCZ",
+            "session_id": "UVsl4fIVhRATIIKcqukKxrX0vp99kC0UZCzBkyyzgVBaGEkuMaaF30isi5bfn7TCY7hFGLll7HEl4SSHZOg1paOeUFCxUI7jxHpYOCVWiGbnVM6tXjKGOeH9YyFouq3XnFuDkzTt1Sh2rZsKgUCXB4O25FdXu2BmziWe3Ma1p3xU5DzmiDx07HSQx8oHIWcHYPsUnkRdVYhPJUIbe0TsM8SThnpnlj21gNEx5LgfSb9onRRfE10lryKxifGr7Byf",
+            "strategies": []
+        },
+        "vimala": {
+            "username": "BY1424",
+            "password": "K@nnada333",
+            "twoFA": "1963",
+            "api_secret": "a9bkSpfZn6x24iWvh1L8epG464l2OqZJIpc4gzWOOmKSacMCtmZtTn8W328rqd1KVzDBPP3M50Frhy0cCnCk272E1z1CrosIAlTD",
+            "app_code": "mqTi31aA56ylUKh",
+            "api_key": "yn6YMylMSOa7Qmp9OPYhtFWSE4OL7hTMTIptvx1Odl1DkVOxqCFuboLnTCJiEd2IoEQolWY7G1JlABIkPxsvDL81hcAcOa08zszFj7DFgqPkNKGJAll3tP3OZjvmIYH6",
+            "totp_access": "URVGRRGRPHHCNBDFJFRSJRAQEOTOYOII",
+            "session_id": "m9nGcJTvBVH0KR4LDQIQsfuYirjd8yCMSN0s5oNxmd9AfdflkENshFx4psaQQASTa5ujR4xu0T6KsLDIdJKa6N2gvzzKSOB9jUis5SBp0QIGxzaIF2XAdggJa4Epim6ozJ3Oqetv5mcs7Tk1jk6soW6qg5mA4VlLutTmsm81pskddiszmYGkIBHaoUYhZMy3Ay35z7zi8r2neZC2a7GiGP5EvNOtSoZCNWMRfTF2cGmgemkR74zjEenWLMnEX66a",
+            "strategies": [
+                "AmiPy"
+            ],
+            "percentage": {
+                "AmiPy": 0.5
+            },
+            "AmiPy_allocated": -32253.46
+        },
+        "brijesh": {
+            "username": "929016",
+            "password": "K@nnada222",
+            "twoFA": "1979",
+            "api_secret": "dkOINUeJELkqeHSuFWaqUMjNjAHarRQiAHpmiPOednLBCNCJzDlSLIAuJuGRHReOOpTkGGiLXaHHRGuPZEEYfvUYoLsLodjIJIlY",
+            "app_code": "JWbhBFJXIBlHpAd",
+            "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
+            "totp_access": "VFULKSAJCRMTSNRLEQDYVWBBFKHXOJQR",
+            "session_id": "nzvyYjpaiDKuCi8kDm4LVtvsPYythAUep11z9I30un5NSIgoYVpKLhU0QuLHCkjT4yuzrrVCFUeJgpI5pgNX9g6BYlM5UmGxv6z6ciDLW1bDGESPBPz7K0TgSGebQUVIZ2a1B5jH7LMvNGE8uFHRshm97ikzmCRziddbAsc3dVll7b7eUGtADVENNuNdS4SCt8nzaZAi8YFEhQxTjTvAjZTqtRJnDt4FKufpUmOaRX4hD7sy17VvXdBJiy2nuEC7",
+            "strategies": [
+                "AmiPy",
+                "Siri"
+            ],
+            "percentage": {
+                "AmiPy": 0.5,
+                "Siri": 0.5
+            },
+            "AmiPy_allocated": 254933.675,
+            "Siri_allocated": 254933.675
+        },
+        "venkatesh": {
+            "username": "924446",
+            "password": "K@nnada444",
+            "twoFA": "1991",
+            "api_secret": "pyNZQITYOntcNgJfybPnjnzLCSWySWekJyIdWArllibJodoOUAZguBKBlmBZIhclcunfktVvuUpFsSGqoppQjPRiHVFRXMlfJPMx",
+            "app_code": "RPMGgKDNcqpdXtM",
+            "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
+            "totp_access": "JDPHMIKEPJERXYLFKDNFBVLIEKOTIQYX",
+            "session_id": "9vUHS4Yz2tOi3uIXJNBh6PNtKE7G2RLeU6jPyNcMdAQuR8CXmBdSycnhvMM42AhcrkSNgpjmlbC9oLOWJXCZXXUgi6Dbx1bCW6sxOxMSMnZs7cei9njJVBgGe9FoKcOya5liV39maQQuqN8M7xRmGlxjjLYCIelcv6l0JFlZCVjUpbdxfSXLIEe8so43Xl93aYbCxaUMMZa5tu9xFyXXDGQd4soBl9jrCr10PpEEAYruvEa9AtCajoxUs57akZvg",
+            "strategies": [
+                "Siri"
+            ],
+            "percentage": {
+                "Siri": 1.0
+            },
+            "Siri_allocated": 61872.51
+        },
+        "sridhar": {
+            "username": "935347",
+            "password": "K@nnada333",
+            "twoFA": "1990",
+            "api_secret": "zmOAKJMzMpTKtuNNvPeRKHIWVKFFidIjyMcWxQgAgQVofznoPQzfZtzakSYIiWZmhyhtONSfTsUfmHAcRxVayQUymMLkrqfvGRdd",
+            "app_code": "HaRYaumJCQuFiEy",
+            "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
+            "totp_access": "LLVHRECRLXBEXEFDREHVSOFFJFLDISZO",
+            "session_id": "CLmqaQ80pdSKkMDbHqSZdyNQ2IzRBTbD7pD0p9iTjF8b76tlBXW0Z9Cgs2THKrJO01nLeOssqhbtJmpEpLNqDmjQgI9GmJMXLT2fv5eK6Yl0Rj0norJ6O6LGtjLAdUWudxpIz9A9lPtpfORaIn5BnKlulvRdW3u4FpZHLFcoVqmKuV8iGDGOhGttDuRD3i53mZzHDx8s3stG2f8or5vUDjlukCbz2mrejT5i0XKX3sNaxvkbMNMp8bXuElqaTdyO",
+            "strategies": [
+                "Siri"
+            ],
+            "percentage": {
+                "Siri": 1.0
+            },
+            "Siri_allocated": 36901.41
+        },
+        "vinay": {
+            "username": "935325",
+            "password": "K@nnada333",
+            "twoFA": "1987",
+            "api_secret": "GaHGHkoJMHOmclfFtBpsxFfCmftNaUbHhVWPrZZbeYIvarcIaTVhYJVZTRCAEcyCqbOTBdENgzENdtOWgrmJDPoevURyNISZeRaE",
+            "app_code": "kKThxMchucTIuEs",
+            "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
+            "totp_access": "HYUHYOKAUBPEVZNNIHJLICGHSQNBQQDR",
+            "session_id": "AnzSoaWH7ZqSrmjkH5CNORBZiZJv5M8DMxVpgoSCPVbOMik8Bo7R7iLGiutivYDKncWTbtr65m6i7FOr8eQ9IRHRmE7cj1TQhFdNSNPJKrQtTM8qtMCXAaYi8eQZ5BBdQmBVJt0lC8FVZyubclz5Fqzz98Z1c4cdUqgxkFWGxfAvqmXIt3hnnS0J5tpfuzfCZo6U93W3BRPy77WkiDkhxk2b69Tkc5YYMdj8CGkxJNxWSAVmazZLoggXxn4a435u",
+            "strategies": [
+                "Siri"
+            ],
+            "percentage": {
+                "Siri": 1.0
+            },
+            "Siri_allocated": 36812.59
+        },
+        "vinod": {
+            "username": "110958",
+            "password": "Vinod@222",
+            "twoFA": "1991",
+            "api_secret": "MsZG6SUDxamKdFGLYSkMxsT2isfqN8ooD0Vgu4jbqCQZJxJm1FGuavrjjdAc2nNGVOrVGqpRTihrPdQmaijx1iWAmqzRHMEagfRh",
+            "app_code": "skGIWlRuysmi9Lj",
+            "api_key": "E08VqCkbrXqaWUnrQapGxA4VfDQVWJfZ9Jxs4nXcnbSoVME1NfnfjvLcWoLpxAE4lUzs5mzTohMThKD6K6GIc9Md3PHuja8IxRuF3Xr15ubIvEkzv4q7PsBxZX05niOA",
+            "totp_access": "SXHHDMKDCNPQUQPQMJQETIDJKUUYGFAZ",
+            "session_id": "51bLjKKgfBcOOuNrBeijcq3Xy2JsDY9UQyjmGYEWrPvjiQjqeOL1Dd6U53NY3W0tIXb1gRSYj2aPaILQBISRDnrG0U0S10ie9a7psTgAPkHjhc3VWPCCyHITq1agbcUFRxdqkEUQm9llSvZq4N711iCWcKOk4jUxs4baZRV0rZdFGDYBaqHQsP0fMig4ArHOu3q8WEHXPyf0B4obUlYgxO69sWZeB7dWAGrU0696F1Idv4YUNOqD5j0FHp0BWnDf",
+            "strategies": [
+                "Siri"
+            ],
+            "percentage": {
+                "Siri": 1.0
+            },
+            "Siri_allocated": 86915.05
+        },
+        "accounts_to_trade": [
+            "brijesh",
+            "vinod",
+            "venkatesh",
+            "sridhar",
+            "vinay"
+        ]
+    }
+}
