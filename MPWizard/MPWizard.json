@@ -14,12 +14,12 @@
 				"Thu": 25, 
 				"Fri": 15 
             },
-            "ATR5D": 131.40, 
-            "IBValue": 80.50, 
-            "IBLevel": "Medium", 	
+            "ATR5D": 129.40, 
+            "IBValue": 101.50, 
+            "IBLevel": "High", 	
 			"TriggerPoints": {
-				"IBHigh": 19452.50, 
-				"IBLow": 19384.00		
+				"IBHigh": 19523.50, 
+				"IBLow": 19422.00		
 			},
             "TSLStepSize": 0.5, 
             "SignalEntry": {
@@ -46,12 +46,12 @@
 				"Thu": 90,
 				"Fri": 40
             },
-            "ATR5D": 429.80,
-            "IBValue": 178.80,
+            "ATR5D": 436.80,
+            "IBValue": 161.80,
             "IBLevel": "Medium",
 			"TriggerPoints": {
-				"IBHigh": 45220.80,
-				"IBLow": 45062.25				
+				"IBHigh": 45226.80,
+				"IBLow": 45065.25				
 			},
             "TSLStepSize": 0.5,
             "SignalEntry": {
@@ -78,12 +78,12 @@
 				"Thu": 25,
 				"Fri": 15
             },
-            "ATR5D": 194.80,
-            "IBValue": 58.20,
+            "ATR5D": 192.80,
+            "IBValue": 89.20,
             "IBLevel": "Medium",
 			"TriggerPoints": {
 				"IBHigh": 20246.50,
-				"IBLow": 20187.30				
+				"IBLow": 20157.30				
 			},
             "TSLStepSize": 0.5,
             "SignalEntry": {

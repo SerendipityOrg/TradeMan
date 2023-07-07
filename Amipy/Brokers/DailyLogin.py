@@ -96,7 +96,12 @@ def create_strategy_json(broker_name, user, lots, user_details_path):
         if broker_name not in data:
             data[broker_name] = {}
 
-        data[broker_name][user] = {'qty': lot * 50}
+        if strategy == 'Siri':
+            data[broker_name][user]['nf_qty'] = 0
+            data[broker_name][user]['bnf_qty'] = 0
+            data[broker_name][user]['fnf_qty'] = 0
+        else:
+            data[broker_name][user] = {'qty': lot * 50}
 
         if broker_name == 'zerodha':
             data[broker_name][user]['api_key'] = user_details['api_key']
@@ -276,7 +281,7 @@ with open(user_details_path) as f:
     broker = json.load(f)
 
 # Define the strategies and their respective percentages here
-amt_per_lot = {'AmiPy': 80000}
+amt_per_lot = {'AmiPy': 250000}
 
 # Get the accounts to trade for aliceblue
 aliceblue_accounts_to_trade = broker['aliceblue']['accounts_to_trade']

@@ -124,7 +124,7 @@ def trade_callback(update: Update, context: CallbackContext) -> None:
     if index == 'FINNIFTY':
         expiry = '2023-07-11'
     else:
-        expiry = '2023-07-06'
+        expiry = '2023-07-13'
 
     # Get tokens and trading symbols
     tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(index, expiry, strike_price, option_type)
