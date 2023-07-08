@@ -6,7 +6,7 @@
             "api_key": "6b0dp5ussukmo67h",
             "api_secret": "eln2qrqob5neowjuedmbv0f0hzq6lhby",
             "totp": "3GN2DNUD35FZQDIIWJUK6CSUIWBPXSYJ",
-            "access_token": "CbAzIkAuJXC0xjTXy07mJuImHeWuEFQW",
+            "access_token": "rvY4svWGY1CSbI3O1MhapTfpNJLcf2ka",
             "strategies": [
                 "AmiPy",
                 "Siri"
@@ -15,8 +15,8 @@
                 "AmiPy": 0.8,
                 "Siri": 0.2
             },
-            "AmiPy_allocated": 2004284.1600000001,
-            "Siri_allocated": 501071.04000000004
+            "AmiPy_allocated": 1977774.8800000001,
+            "Siri_allocated": 494443.72000000003
         },
         "user2": {
             "username": "def",
@@ -75,7 +75,7 @@
             "app_code": "JWbhBFJXIBlHpAd",
             "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
             "totp_access": "VFULKSAJCRMTSNRLEQDYVWBBFKHXOJQR",
-            "session_id": "nzvyYjpaiDKuCi8kDm4LVtvsPYythAUep11z9I30un5NSIgoYVpKLhU0QuLHCkjT4yuzrrVCFUeJgpI5pgNX9g6BYlM5UmGxv6z6ciDLW1bDGESPBPz7K0TgSGebQUVIZ2a1B5jH7LMvNGE8uFHRshm97ikzmCRziddbAsc3dVll7b7eUGtADVENNuNdS4SCt8nzaZAi8YFEhQxTjTvAjZTqtRJnDt4FKufpUmOaRX4hD7sy17VvXdBJiy2nuEC7",
+            "session_id": "IbjaD81NMFoErdg7IrbytQo1vXMH0d0nZXGhscU6vFOlA0K8jYS6bzy7hNl2SU9dSU92R4R4b1dN3YFINWOjRI6OzGnuh4t1DccFI5TTghXXV5pvhjgInyzmt7JdbDxKIpMPOe2v47LGzVIqdJN8JhsesKmpqa51FoOTT7dJEt5kB3eQW1iTrKQAWZgz6Pp3CmOvQeghT4uCQuu5KSoJGdY8UeASmvQOOhOtgsmsYZvLIF1j1VRo9Cgl7ZTahoro",
             "strategies": [
                 "AmiPy",
                 "Siri"
@@ -84,8 +84,8 @@
                 "AmiPy": 0.5,
                 "Siri": 0.5
             },
-            "AmiPy_allocated": 254933.675,
-            "Siri_allocated": 254933.675
+            "AmiPy_allocated": 253855.67,
+            "Siri_allocated": 253855.67
         },
         "venkatesh": {
             "username": "924446",
@@ -95,14 +95,14 @@
             "app_code": "RPMGgKDNcqpdXtM",
             "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
             "totp_access": "JDPHMIKEPJERXYLFKDNFBVLIEKOTIQYX",
-            "session_id": "9vUHS4Yz2tOi3uIXJNBh6PNtKE7G2RLeU6jPyNcMdAQuR8CXmBdSycnhvMM42AhcrkSNgpjmlbC9oLOWJXCZXXUgi6Dbx1bCW6sxOxMSMnZs7cei9njJVBgGe9FoKcOya5liV39maQQuqN8M7xRmGlxjjLYCIelcv6l0JFlZCVjUpbdxfSXLIEe8so43Xl93aYbCxaUMMZa5tu9xFyXXDGQd4soBl9jrCr10PpEEAYruvEa9AtCajoxUs57akZvg",
+            "session_id": "KDix9ANtm4Q5t2B7NOuKDr7ePNvmo0y1G195fQFvveIHyoX2yOzxe9h0zY7RvTGDjJPMqbQcf3zeBECdCs4KI1usCxzJ4pQBzo9HRTpfZn4DlEouYJOiBaaYuBvulb9lsNoaYlLUysV6N1ia6b0B4ldW0ZznGK1uN3aAYxQiEFulBVDJe1X02a5WblF8o90fOqEnzKSbvmVTC9r0McNrxsSWGOEW8vN2v1WtYK1YR6eFLq8i51zqiUV1eIaI54vr",
             "strategies": [
                 "Siri"
             ],
             "percentage": {
                 "Siri": 1.0
             },
-            "Siri_allocated": 61872.51
+            "Siri_allocated": 62247.24
         },
         "sridhar": {
             "username": "935347",
@@ -112,14 +112,14 @@
             "app_code": "HaRYaumJCQuFiEy",
             "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
             "totp_access": "LLVHRECRLXBEXEFDREHVSOFFJFLDISZO",
-            "session_id": "CLmqaQ80pdSKkMDbHqSZdyNQ2IzRBTbD7pD0p9iTjF8b76tlBXW0Z9Cgs2THKrJO01nLeOssqhbtJmpEpLNqDmjQgI9GmJMXLT2fv5eK6Yl0Rj0norJ6O6LGtjLAdUWudxpIz9A9lPtpfORaIn5BnKlulvRdW3u4FpZHLFcoVqmKuV8iGDGOhGttDuRD3i53mZzHDx8s3stG2f8or5vUDjlukCbz2mrejT5i0XKX3sNaxvkbMNMp8bXuElqaTdyO",
+            "session_id": "oGDRBysi1GOkRzhp2KyYXGed8ZjBlvvuaHqhpiiQ5yCpC2JC0yh7fSzARUuSUi0IJhvI3pMUGGF6ug3TypQADTQogILEPJ5fzCXtbru95P8BBmYee6hiNZREszrT2qKNDdExhClTJdRy8AE39M4Fbkt88X6005dNfuoikD1MTpgn8o8hng14noZRR79SX33bazrbWFYNyxFZaR4CHzaZMDtDATG2kroiWr30vDovyDLsq8u1yvd4pizQpJBgscsZ",
             "strategies": [
                 "Siri"
             ],
             "percentage": {
                 "Siri": 1.0
             },
-            "Siri_allocated": 36901.41
+            "Siri_allocated": 37394.65
         },
         "vinay": {
             "username": "935325",
@@ -129,14 +129,14 @@
             "app_code": "kKThxMchucTIuEs",
             "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
             "totp_access": "HYUHYOKAUBPEVZNNIHJLICGHSQNBQQDR",
-            "session_id": "AnzSoaWH7ZqSrmjkH5CNORBZiZJv5M8DMxVpgoSCPVbOMik8Bo7R7iLGiutivYDKncWTbtr65m6i7FOr8eQ9IRHRmE7cj1TQhFdNSNPJKrQtTM8qtMCXAaYi8eQZ5BBdQmBVJt0lC8FVZyubclz5Fqzz98Z1c4cdUqgxkFWGxfAvqmXIt3hnnS0J5tpfuzfCZo6U93W3BRPy77WkiDkhxk2b69Tkc5YYMdj8CGkxJNxWSAVmazZLoggXxn4a435u",
+            "session_id": "4l68s3vYj976RB8rPqqbVkNcuIWDz01M97WUvVKZdKskKq9aTAfIBWJnxQRbmID7Wafn6NnqPgh5agIds2ErE03tDT7sHbZzY8sOiZuzDD9NifcKQMFCm4tpoTgkqAkDQpqtKnHKdo9DBo2B1hYUg5H0E2xbMkpBr0K3GqVoc4b9BRjFy53BD5TzPrN1GcHjeAt7cpyfmqof2vKjsokyt0vOTgF3upUnPV61L0LJ4fV69OLerbSPGS5QhRRmY8OA",
             "strategies": [
                 "Siri"
             ],
             "percentage": {
                 "Siri": 1.0
             },
-            "Siri_allocated": 36812.59
+            "Siri_allocated": 37130.97
         },
         "vinod": {
             "username": "110958",
@@ -146,7 +146,7 @@
             "app_code": "skGIWlRuysmi9Lj",
             "api_key": "E08VqCkbrXqaWUnrQapGxA4VfDQVWJfZ9Jxs4nXcnbSoVME1NfnfjvLcWoLpxAE4lUzs5mzTohMThKD6K6GIc9Md3PHuja8IxRuF3Xr15ubIvEkzv4q7PsBxZX05niOA",
             "totp_access": "SXHHDMKDCNPQUQPQMJQETIDJKUUYGFAZ",
-            "session_id": "51bLjKKgfBcOOuNrBeijcq3Xy2JsDY9UQyjmGYEWrPvjiQjqeOL1Dd6U53NY3W0tIXb1gRSYj2aPaILQBISRDnrG0U0S10ie9a7psTgAPkHjhc3VWPCCyHITq1agbcUFRxdqkEUQm9llSvZq4N711iCWcKOk4jUxs4baZRV0rZdFGDYBaqHQsP0fMig4ArHOu3q8WEHXPyf0B4obUlYgxO69sWZeB7dWAGrU0696F1Idv4YUNOqD5j0FHp0BWnDf",
+            "session_id": "ViZv5Cpv6TSmqcBGCZgrJys2TRivuSUfRILl7qzWbzRjj1ux1VkBhLa3kbOYGslz35lrFSBJJYT5dTq5kDWH2jmIESDmQRph8a6U3gNehYLVU2QRPyXDJ3sSqB01JRu2HOK5BF1jo3TxSik1ua53Mv0Xtg7zPoBdF3Z3L4KyNOL1mBt06L4G8PqBy29jfQWdSAvrQ1lJLyDVLM4diijEvP1SoEK7ymHLWd9CuhMxQfBC8Lp99HDcFx5D2QuiXFZB",
             "strategies": [
                 "Siri"
             ],

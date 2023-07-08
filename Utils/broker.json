@@ -1,0 +1,135 @@
+{
+    "zerodha": {
+        "omkar": {
+            "username": "YY0222",
+            "password": "K@nnada444",
+            "api_key": "6b0dp5ussukmo67h",
+            "api_secret": "eln2qrqob5neowjuedmbv0f0hzq6lhby",
+            "totp": "3GN2DNUD35FZQDIIWJUK6CSUIWBPXSYJ",
+            "access_token": "C41XLlP4ClVieiBsJHqJ8jNJjyScnm68",
+            "percentageRisk": {
+                "AmiPy": 250000,
+                "MPWizard": 0.025
+            },
+            "current_capital": 20740.2
+        },
+        "user2": {
+            "username": "def",
+            "password": "456",
+            "api_key": "zerodha_api_key_2",
+            "api_secret": "zerodha_api_secret_2",
+            "totp": "zerodha_totp_2",
+            "access_token": "zerodha_access_token_2",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            }
+        },
+        "accounts_to_trade": [
+            "omkar"
+        ]
+    },
+    "aliceblue": {
+        "omkar": {
+            "username": "KH364",
+            "password": "K@nnada333",
+            "twoFA": "1990",
+            "api_secret": "XbUmH3toe7eD2GCXcoKoFiQkBQMtdebs4GeqGVH0phEGVPFD9ZKeiGFSOs79pSi7DO1WffZFobvqopu124rXWoNRRc3Qhba6yz6g",
+            "app_code": "QORxCzYeJAxafrn",
+            "api_key": "ejuSHTAmjA5SQvIRRdjx2rjQN6U0V7j80Ljp64L5tnsMN7PnQ1S5PGrebVo9peb13WLUtblSTbBmexCTFVHKgLu81UE3yrrsvKbkX4AQGbOpd08MPepMq4cMbCiOzKip",
+            "totp_access": "KOYCAJWOEAKDQUYFQQCFOZHXOMQCIOCZ",
+            "session_id": "UVsl4fIVhRATIIKcqukKxrX0vp99kC0UZCzBkyyzgVBaGEkuMaaF30isi5bfn7TCY7hFGLll7HEl4SSHZOg1paOeUFCxUI7jxHpYOCVWiGbnVM6tXjKGOeH9YyFouq3XnFuDkzTt1Sh2rZsKgUCXB4O25FdXu2BmziWe3Ma1p3xU5DzmiDx07HSQx8oHIWcHYPsUnkRdVYhPJUIbe0TsM8SThnpnlj21gNEx5LgfSb9onRRfE10lryKxifGr7Byf",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            }
+        },
+        "vimala": {
+            "username": "BY1424",
+            "password": "K@nnada333",
+            "twoFA": "1963",
+            "api_secret": "a9bkSpfZn6x24iWvh1L8epG464l2OqZJIpc4gzWOOmKSacMCtmZtTn8W328rqd1KVzDBPP3M50Frhy0cCnCk272E1z1CrosIAlTD",
+            "app_code": "mqTi31aA56ylUKh",
+            "api_key": "yn6YMylMSOa7Qmp9OPYhtFWSE4OL7hTMTIptvx1Odl1DkVOxqCFuboLnTCJiEd2IoEQolWY7G1JlABIkPxsvDL81hcAcOa08zszFj7DFgqPkNKGJAll3tP3OZjvmIYH6",
+            "totp_access": "URVGRRGRPHHCNBDFJFRSJRAQEOTOYOII",
+            "session_id": "m9nGcJTvBVH0KR4LDQIQsfuYirjd8yCMSN0s5oNxmd9AfdflkENshFx4psaQQASTa5ujR4xu0T6KsLDIdJKa6N2gvzzKSOB9jUis5SBp0QIGxzaIF2XAdggJa4Epim6ozJ3Oqetv5mcs7Tk1jk6soW6qg5mA4VlLutTmsm81pskddiszmYGkIBHaoUYhZMy3Ay35z7zi8r2neZC2a7GiGP5EvNOtSoZCNWMRfTF2cGmgemkR74zjEenWLMnEX66a",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            }
+        },
+        "brijesh": {
+            "username": "929016",
+            "password": "K@nnada222",
+            "twoFA": "1979",
+            "api_secret": "dkOINUeJELkqeHSuFWaqUMjNjAHarRQiAHpmiPOednLBCNCJzDlSLIAuJuGRHReOOpTkGGiLXaHHRGuPZEEYfvUYoLsLodjIJIlY",
+            "app_code": "JWbhBFJXIBlHpAd",
+            "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
+            "totp_access": "VFULKSAJCRMTSNRLEQDYVWBBFKHXOJQR",
+            "session_id": "Pv6Wru8h5K7iFGlSZHIWPt6y90P9gJEgxInf4CPiX06PLd1Wx4ZZKRZbTL9XDWrJyTb3zCxkIt8HibxDhpA8KpuOW9KUYVyLovet6kZByDggu2IPHJ26azmmofS4qXb5rnmOZIF034lac9iSgfFz6cfYdCYsv6qoOfbQ9py4A40AKf7ifHPaAWdtej93GbTvzEYE2AdWD8NK90lHqKtRXrpb6j2O5VM4b7MvGP5MH3ELsRdT9QTzM8XPP2PcCs3e",
+            "percentageRisk": {
+                "AmiPy": 250000,
+                "MPWizard": 0.015
+            },
+            "current_capital": 503778.76
+        },
+        "venkatesh": {
+            "username": "924446",
+            "password": "K@nnada444",
+            "twoFA": "1991",
+            "api_secret": "pyNZQITYOntcNgJfybPnjnzLCSWySWekJyIdWArllibJodoOUAZguBKBlmBZIhclcunfktVvuUpFsSGqoppQjPRiHVFRXMlfJPMx",
+            "app_code": "RPMGgKDNcqpdXtM",
+            "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
+            "totp_access": "JDPHMIKEPJERXYLFKDNFBVLIEKOTIQYX",
+            "session_id": "9Ac9DE5cE9VgzefdvQ4mibLEcqcUafHzP1FGjRA6p5NzVFRpLyqzxAWR4GkmoGuCyrPtphk6bZjBUm0FBdXTngWMOBrhXWNq1Oy32miJ5KXYG9NvS2Nhn5iT71BZz8GPb5x4IAh1XnxY8Wh3GFdnJNnjxR7S5SIcp4g9b82CMJn96lJU1QbOKyTvsntzmvN7Uz7Qu2y3rrS2FzijZ36JzxVizSne9Cx9sLKHomutP94aOqRF3zLM9U24oqZorECT",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            }
+        },
+        "sridhar": {
+            "username": "935347",
+            "password": "K@nnada333",
+            "twoFA": "1990",
+            "api_secret": "zmOAKJMzMpTKtuNNvPeRKHIWVKFFidIjyMcWxQgAgQVofznoPQzfZtzakSYIiWZmhyhtONSfTsUfmHAcRxVayQUymMLkrqfvGRdd",
+            "app_code": "HaRYaumJCQuFiEy",
+            "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
+            "totp_access": "LLVHRECRLXBEXEFDREHVSOFFJFLDISZO",
+            "session_id": "uMrJUEz0gKfsreVqGdNpWfbjltnUhgK4XKeURglb3WFx4AYpflGhfVUb6VAM0uCPy8Mqs1LvJUMuEmA4hu7cbXd3PDG9Za8JQsHbDthRnMp4tZNorE94WCvCAD6fl1z4h5tGbeEDj0xoXmNjSQxtzQWNiT0zmkoHHpFW4Z94GrIM0KtQdWzdEVkQ8ShqvoCSUg6KzPdVypPGHPjtXE8ajlos7m1yIbciItI7UIbg6bZ3caqWZGVnq17l0AXYToNo",
+            "percentageRisk": {
+                "MPWizard": 0.05
+            },
+            "current_capital": 36888.97
+        },
+        "vinay": {
+            "username": "935325",
+            "password": "K@nnada333",
+            "twoFA": "1987",
+            "api_secret": "GaHGHkoJMHOmclfFtBpsxFfCmftNaUbHhVWPrZZbeYIvarcIaTVhYJVZTRCAEcyCqbOTBdENgzENdtOWgrmJDPoevURyNISZeRaE",
+            "app_code": "kKThxMchucTIuEs",
+            "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
+            "totp_access": "HYUHYOKAUBPEVZNNIHJLICGHSQNBQQDR",
+            "session_id": "sdJ2t4ak6tJDQsRTDr8Ljr1o917AMSjJIPjgXn3amPRVg6jjyRQ3YVNQXJZVyg9NOXq3KdRcgfPcGMgygbzL5b0QdXhveZ1y7Up5CV9W8d2uTZC9OaGIci07cFC6pzOrQZGd6bnDf169tnM9cjgCcVdDmMYp3iKLGXaKUmrVH1tUpQFxO32YceiH1b6JPZQBLGVRn1AJH4z5VRDTPTA4O7tAcE1QBVKeQX0irGfj6cKcJ5YibYWmvxk9KcT6g8xE",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            },
+            "current_capital": 36411.41
+        },
+        "vinod": {
+            "username": "110958",
+            "password": "Vinod@222",
+            "twoFA": "1991",
+            "api_secret": "MsZG6SUDxamKdFGLYSkMxsT2isfqN8ooD0Vgu4jbqCQZJxJm1FGuavrjjdAc2nNGVOrVGqpRTihrPdQmaijx1iWAmqzRHMEagfRh",
+            "app_code": "skGIWlRuysmi9Lj",
+            "api_key": "E08VqCkbrXqaWUnrQapGxA4VfDQVWJfZ9Jxs4nXcnbSoVME1NfnfjvLcWoLpxAE4lUzs5mzTohMThKD6K6GIc9Md3PHuja8IxRuF3Xr15ubIvEkzv4q7PsBxZX05niOA",
+            "totp_access": "SXHHDMKDCNPQUQPQMJQETIDJKUUYGFAZ",
+            "session_id": "2YSH4TRDgRK2369df0JTIS8UQkpQgt13TMr1UyJkQZ1VLA3MlnNolb3Z5Oiuy8K4C4CEhOY96mHxC37AbeDDShWufyVd9qDUZBmg51aJ0C7FOAdrKNaAKXga7383bu1rt3iOd5KUZNcajgqNot3Emi2PO10dALJ0Vl4BVNtgZB03orY5bUBtdFNzm17NsvBqsjYTnhn4EOLHGYeBl643TJchFF9AH5ajGBUuxVDjPW2maR8bc3e3I1CqtSFgySGE",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            },
+            "current_capital": 0.0
+        },
+        "accounts_to_trade": [
+            "brijesh",
+            "sridhar",
+            "vinay",
+            "vinod"
+        ]
+    }
+}

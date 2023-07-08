@@ -1,0 +1,102 @@
+
+{
+	"indices": [{
+			"name": "Nifty", 
+			"token": 256265, 
+			"NextExpiry": "06Jul23", 
+			"InstruMood": "Bullish", 
+            "OptionRegime": "Buy",
+			"InTrade": false, 			
+            "WeekdayPrcRef": {
+                "Mon": 18,
+				"Tue": 21,
+				"Wed": 24,
+				"Thu": 25, 
+				"Fri": 15,
+				"Sat": 22 
+            },
+            "ATR5D": 129.40, 
+            "IBValue": 101.50, 
+            "IBLevel": "High", 	
+			"TriggerPoints": {
+				"IBHigh": 19523.50, 
+				"IBLow": 19422.00		
+			},
+            "TSLStepSize": 0.5, 
+            "SignalEntry": {
+                "Option": "NIFTY06Jul2319100CE",
+                "Event": "Bullish-MediumIB-IBHighUpcross",
+				"EntryTime": "10:45:29AM",
+				"EntryPrice": 85.50,
+                "ExitTime": "03:12:22PM",
+                "ExitPrice": 159.45			
+			}
+		},
+		{
+			"name": "BankNifty",
+			"token": 260105,
+			"NextExpiry": "06Jul23",
+			"InstruMood": "Bullish",
+            "OptionRegime": "Buy",
+			"InTrade": false,
+			"CompletedTrades": 0,
+            "WeekdayPrcRef": {
+                "Mon": 50,
+				"Tue": 65,
+				"Wed": 80,
+				"Thu": 90,
+				"Fri": 40,
+				"Sat": 55
+            },
+            "ATR5D": 436.80,
+            "IBValue": 161.80,
+            "IBLevel": "Medium",
+			"TriggerPoints": {
+				"IBHigh": 45226.80,
+				"IBLow": 45065.25				
+			},
+            "TSLStepSize": 0.5,
+            "SignalEntry": {
+                "Option": "BANKNIFTY06Jul2319100CE",
+                "Event": "Bullish-MediumIB-IBLowDowncross",
+				"EntryTime": "10:45:29AM",
+				"EntryPrice": 185.50,
+                "ExitTime": "03:12:22PM",
+                "ExitPrice": 159.45			
+			}
+		},
+		{
+			"name": "FinNifty",
+			"token": 257801,
+			"NextExpiry": "04Jul23",
+			"InstruMood": "Bullish",
+            "OptionRegime": "Buy", 
+			"InTrade": false,
+			"CompletedTrades": 0,
+            "WeekdayPrcRef": {
+                "Mon": 18,
+				"Tue": 21,
+				"Wed": 24,
+				"Thu": 25,
+				"Fri": 15,
+				"Sat": 22
+            },
+            "ATR5D": 192.80,
+            "IBValue": 89.20,
+            "IBLevel": "Medium",
+			"TriggerPoints": {
+				"IBHigh": 20246.50,
+				"IBLow": 20157.30				
+			},
+            "TSLStepSize": 0.5,
+            "SignalEntry": {
+                "Option": "NIFTY06Jul2319100CE",
+                "Event": "Bullish-MediumIB-IBHighUpcross",
+				"EntryTime": "10:45:29AM",
+				"EntryPrice": 85.50,
+                "ExitTime": "03:12:22PM",
+                "ExitPrice": 159.45		 	
+			}
+		}
+	]
+}

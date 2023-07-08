@@ -2,7 +2,12 @@
 .log
 .pyc
 
+/Users/traderscafe/Documents/TradeMan/Amipy/LiveCSV
 
 /__pycache__
-Amipy/LiveCSV/amipy_genSignals.csv
-Amipy/LiveCSV/amipy_supertrend.csv
+
+*.pyc
+*.csv
+*.log
+
+Amipy/.DS_Store

@@ -134,7 +134,7 @@ last_signal_minute = None
 trade_state_df = pd.DataFrame(columns=['in_trade', 'strike_price', 'trade_type', 'trade_points', 'TrendSL', 'close', 'TradeEntryPrice', 'SL_points'])
 
 # Time params ### TTTT
-entry_time = pd.Timestamp("09:31:00").time()
+entry_time = pd.Timestamp("09:20:00").time()
 last_buy_time = pd.Timestamp("14:50:00").time()
 sqroff_time = pd.Timestamp("14:55:00").time()
 

@@ -21254,3 +21254,1603 @@ Dash is running on http://0.0.0.0:8050/
 Address already in use
 Port 8050 is in use by another program. Either identify and stop that program, or start the server with a different port.
 The script has some errors. Please Check !!!
+/Users/traderscafe/Documents/TradeMan/Scripts/Amipy_NF.sh: line 17: ((: 09: value too great for base (error token is "09")
+Attempt: 1
+The expiry date is: 2023-07-13
+Waiting for 09:19 AM...
+Today's Strike Price: 19400
+Trading symbol:  ['NIFTY2371319400CE', 'NIFTY2371319400PE', 'NIFTY2371319900CE', 'NIFTY2371318900PE']
+Dash is running on http://0.0.0.0:8050/
+
+ * Serving Flask app 'AmiPyLive'
+ * Debug mode: on
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (WebSocket opening handshake timeout (peer did not finish the opening handshake in time))
+Connection closed: 1006 - connection was closed uncleanly (WebSocket opening handshake timeout (peer did not finish the opening handshake in time))
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+Connection error: 1006 - connection was closed uncleanly (None)
+Connection closed: 1006 - connection was closed uncleanly (None)
+/Users/traderscafe/Documents/TradeMan/Scripts/Amipy_NF.sh: line 45: 67188 Terminated: 15          /Users/traderscafe/miniconda3/envs/tradingenv/bin/python AmiPyLive.py
+Attempt: 2
+The expiry date is: 2023-07-13
+Today's Strike Price: 19500
+Trading symbol:  ['NIFTY2371319500CE', 'NIFTY2371319500PE', 'NIFTY2371320000CE', 'NIFTY2371319000PE']
+Dash is running on http://0.0.0.0:8050/
+
+ * Serving Flask app 'AmiPyLive'
+ * Debug mode: on
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 186, in genSignals
+    if long(resultdf, i):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+/Users/traderscafe/Documents/TradeMan/Scripts/Amipy_NF.sh: line 45: 68527 Terminated: 15          /Users/traderscafe/miniconda3/envs/tradingenv/bin/python AmiPyLive.py
+Attempt: 3
+The expiry date is: 2023-07-13
+Today's Strike Price: 19500
+Trading symbol:  ['NIFTY2371319500CE', 'NIFTY2371319500PE', 'NIFTY2371320000CE', 'NIFTY2371319000PE']
+Dash is running on http://0.0.0.0:8050/
+
+ * Serving Flask app 'AmiPyLive'
+ * Debug mode: on
+/Users/traderscafe/Documents/TradeMan/Scripts/Amipy_NF.sh: line 45: 68590 Terminated: 15          /Users/traderscafe/miniconda3/envs/tradingenv/bin/python AmiPyLive.py
+Attempt: 4
+/Users/traderscafe/Documents/TradeMan/Scripts/Amipy_NF.sh: line 45: 68598 Terminated: 15          /Users/traderscafe/miniconda3/envs/tradingenv/bin/python AmiPyLive.py
+Attempt: 5
+The expiry date is: 2023-07-13
+Today's Strike Price: 19500
+Trading symbol:  ['NIFTY2371319500CE', 'NIFTY2371319500PE', 'NIFTY2371320000CE', 'NIFTY2371319000PE']
+Dash is running on http://0.0.0.0:8050/
+
+ * Serving Flask app 'AmiPyLive'
+ * Debug mode: on
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 228, in genSignals
+    elif current_position == 'Short' and shortcover(resultdf, i):
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 170, in shortcover
+    return (current_minute not in shortcover_indices) and ((df.loc[df.index[i], "Trend"] == 1) or (df.index[i].time() > sqroff_time))
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Connection error: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Connection closed: 1006 - connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 148, in _doReadOrWrite
+    why = getattr(selectable, method)()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 248, in doRead
+    return self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 253, in _dataReceived
+    rval = self.protocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 329, in dataReceived
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1591, in processData
+    fr = self.onFrameEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1713, in onFrameEnd
+    self._onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 319, in _onMessageEnd
+    self.onMessageEnd()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 634, in onMessageEnd
+    self._onMessage(payload, self.message_is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 322, in _onMessage
+    self.onMessage(payload, isBinary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 71, in onMessage
+    self.factory.on_message(self, payload, is_binary)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/kiteconnect/ticker.py", line 679, in _on_message
+    self.on_ticks(self, self._parse_binary(payload))
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 384, in on_ticks
+    signalsdf, trade_state = genSignals(resultdf)
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 228, in genSignals
+    elif current_position == 'Short' and shortcover(resultdf, i):
+  File "/Users/traderscafe/Documents/TradeMan/Amipy/AmiPyLive.py", line 170, in shortcover
+    return (current_minute not in shortcover_indices) and ((df.loc[df.index[i], "Trend"] == 1) or (df.index[i].time() > sqroff_time))
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/pandas/core/generic.py", line 1527, in __nonzero__
+    raise ValueError(
+builtins.ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Unhandled Error
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/threading.py", line 975, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/base.py", line 1318, in run
+    self.mainLoop()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/base.py", line 1331, in mainLoop
+    reactorBaseSelf.doIteration(t)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 142, in doSelect
+    _logrun(selectable, _drdw, selectable, method)
+--- <exception caught here> ---
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 96, in callWithLogger
+    return callWithContext({"system": lp}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/log.py", line 80, in callWithContext
+    return context.call({ILogContext: newCtx}, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 117, in callWithContext
+    return self.currentContext().callWithContext(ctx, func, *args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/python/context.py", line 82, in callWithContext
+    return func(*args, **kw)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/selectreactor.py", line 153, in _doReadOrWrite
+    self._disconnectSelectable(selectable, why, method == "doRead")
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/posixbase.py", line 107, in _disconnectSelectable
+    selectable.connectionLost(failure.Failure(why))
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 508, in connectionLost
+    self._commonConnection.connectionLost(self, reason)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/internet/tcp.py", line 326, in connectionLost
+    protocol.connectionLost(reason)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 394, in connectionLost
+    self._flushReceiveBIO()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/tls.py", line 295, in _flushReceiveBIO
+    ProtocolWrapper.dataReceived(self, bytes)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/twisted/protocols/policies.py", line 110, in dataReceived
+    self.wrappedProtocol.dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 291, in dataReceived
+    self._dataReceived(data)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1213, in _dataReceived
+    self.consumeData()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1225, in consumeData
+    while self.processData() and self.state != WebSocketProtocol.STATE_CLOSED:
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1583, in processData
+    fr = self.onFrameData(payload)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 1678, in onFrameData
+    self._onMessageFrameData(payload)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/twisted/websocket.py", line 310, in _onMessageFrameData
+    self.onMessageFrameData(payload)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/autobahn/websocket/protocol.py", line 608, in onMessageFrameData
+    self.frame_data.append(payload)
+builtins.AttributeError: 'NoneType' object has no attribute 'append'
+
+/Users/traderscafe/Documents/TradeMan/Scripts/Amipy_NF.sh: line 45: 68604 Terminated: 15          /Users/traderscafe/miniconda3/envs/tradingenv/bin/python AmiPyLive.py
+The script has some errors. Please Check !!!
+{"ok":true,"result":{"message_id":864,"from":{"id":5994380365,"is_bot":true,"first_name":"trialbot","username":"traderstrialBOT"},"chat":{"id":-367108102,"title":"Traders cafe","type":"group","all_members_are_administrators":true},"date":1688706385,"text":"The script has some errors. Please Check !!!"}}

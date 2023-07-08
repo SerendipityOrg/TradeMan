@@ -1,2 +1,2 @@
-,Strike_Price,Trade_No,Trade_Type,Date,TradeEntryTime,TradeEntryPrice
-0,19400,1,ShortSignal,2023-07-06,09:32:00,89.4
+,Strike_Price,Trade_No,Trade_Type,Date,TradeEntryTime,TradeEntryPrice,TradeExitTime,TradeExitPrice,NetTradePoints
+0,19500,1,ShortSignal,2023-07-07,10:38:00,201.55,14:56:00,192.7,-8.850000000000023
