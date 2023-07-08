@@ -3,7 +3,8 @@ from dataclasses import dataclass
 @dataclass
 class Instrument:
     data: dict
-
+    additional_tokens: list = None
+    
     def get_name(self):
         return self.data["name"]
 

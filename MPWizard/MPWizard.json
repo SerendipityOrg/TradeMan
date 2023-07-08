@@ -1,7 +1,7 @@
 
 {
 	"indices": [{
-			"name": "Nifty", 
+			"name": "NIFTY", 
 			"token": 256265, 
 			"NextExpiry": "06Jul23", 
 			"InstruMood": "Bullish", 
@@ -18,8 +18,8 @@
             "IBValue": 80.50, 
             "IBLevel": "Medium", 	
 			"TriggerPoints": {
-				"IBHigh": 19452.50, 
-				"IBLow": 19384.00		
+				"IBHigh": 19325.50, 
+				"IBLow": 19318.00		
 			},
             "TSLStepSize": 0.5, 
             "SignalEntry": {
@@ -32,7 +32,7 @@
 			}
 		},
 		{
-			"name": "BankNifty",
+			"name": "BANKNIFTY",
 			"token": 260105,
 			"NextExpiry": "06Jul23",
 			"InstruMood": "Bullish",
@@ -64,7 +64,7 @@
 			}
 		},
 		{
-			"name": "FinNifty",
+			"name": "FINNIFTY",
 			"token": 257801,
 			"NextExpiry": "04Jul23",
 			"InstruMood": "Bullish",

@@ -14,7 +14,7 @@ EMA_period = 324
 def get_expiry_date():
     # Initialize the list of Thursdays in 2023
     thursdays_2023 = []
-    holidays = holidays = [
+    holidays = [
     datetime.date(2023, 1, 26),
     datetime.date(2023, 3, 7),
     datetime.date(2023, 3, 30),

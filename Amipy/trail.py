@@ -1,75 +1,55 @@
-# import json
-# import pandas as pd
-# from pya3 import *
+from kiteconnect import KiteConnect
+import datetime
 
-# # Load the JSON data from file
-# file_name = '28_Jun_23.json'
-# with open(file_name, 'r') as file:
-#     data = json.load(file)
+kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token="rvY4svWGY1CSbI3O1MhapTfpNJLcf2ka")
 
-# # Extract date from file name
-# date = file_name.split('_')
-# date = f"{date[0]}-{date[1]}-{date[2].split('.')[0]}"
+ltp_data = kite.ltp([260105,256265])
+# ltp = ltp_data['last_price']
+print(ltp_data)
+# def get_previous_dates(num_dates):
+#     dates = []
+#     current_date = datetime.date.today()
 
-# def calculate_trade_points(broker_json):
-#     global date
-#     rows = []
-#     for broker in broker_json:
-#         for user in broker_json[broker]:
-#             user_data = broker_json[broker][user]
-#             # date = user_data['date']
-#             qty = user_data['qty']
+#     while len(dates) < num_dates:
+#         current_date -= datetime.timedelta(days=1)
 
-#             # Calculate Long trade points
-#             long_signal = sum(float(order['avg_prc']) for order in user_data['orders']['LongSignal'] if order['trade_type'] == 'LongSignal')
-#             long_cover = sum(float(order['avg_prc']) for order in user_data['orders']['LongCoverSignal'] if order['trade_type'] == 'LongCoverSignal')
-#             long_trade_points = long_cover - long_signal
-#             rows.append({'User': user, 'Date': date, 'Trade_type': 'Long', 'Trade_points': long_trade_points, 'Qty': qty, 'PnL': long_trade_points * qty})
+#         if current_date.weekday() >= 5 or current_date in holidays:
+#             continue
 
-#             # Calculate Short trade points
-#             short_signal = sum(float(order['avg_prc']) for order in user_data['orders']['ShortSignal'] if order['trade_type'] == 'ShortSignal')
-#             short_cover = sum(float(order['avg_prc']) for order in user_data['orders']['ShortCoverSignal'] if order['trade_type'] == 'ShortCoverSignal')
-#             hedge_order_short = sum(float(order['avg_prc']) for order in user_data['orders']['ShortSignal'] if order['trade_type'] == 'HedgeOrder')
-#             hedge_order_cover = sum(float(order['avg_prc']) for order in user_data['orders']['ShortCoverSignal'] if order['trade_type'] == 'HedgeOrder')
-#             short_trade_points = (short_signal - short_cover) - (hedge_order_short - hedge_order_cover)
-#             rows.append({'User': user, 'Date': date, 'Trade_type': 'Short', 'Trade_points': short_trade_points, 'Qty': qty, 'PnL': short_trade_points * qty})
+#         dates.append(current_date.strftime("%Y-%m-%d"))
 
-#     return pd.DataFrame(rows)
+#     return dates
 
+# # List of holidays
+# holidays = [
+#     datetime.date(2023, 1, 26),
+#     datetime.date(2023, 3, 7),
+#     datetime.date(2023, 3, 30),
+#     datetime.date(2023, 4, 4),
+#     datetime.date(2023, 4, 7),
+#     datetime.date(2023, 4, 14),
+#     datetime.date(2023, 4, 22),
+#     datetime.date(2023, 5, 1),
+#     datetime.date(2023, 6, 28),
+#     datetime.date(2023, 8, 15),
+#     datetime.date(2023, 9, 19),
+#     datetime.date(2023, 10, 2),
+#     datetime.date(2023, 10, 24),
+#     datetime.date(2023, 11, 14),
+#     datetime.date(2023, 11, 27),
+#     datetime.date(2023, 12, 25)
+# ]
 
-# trade_points_df = calculate_trade_points(data)
-# # Write the DataFrame to a CSV file
-# trade_points_df.to_csv('trade_data.csv', index=False)
+# previous_dates = get_previous_dates(5)
+# tokens = [260105,256265,257801]
+# for token in tokens:
+#     data = kite.historical_data(instrument_token=token, from_date=previous_dates[-1], to_date=previous_dates[0], interval="day")
 
-# print("Data processing complete and written to trade_data.csv")
+#     # Calculate range for each day and find average range
+#     ranges = [d['high'] - d['low'] for d in data]
+#     average_range = sum(ranges) / len(ranges)
 
-# def send_aliceblue_pnl():
-#     for broker in data:
-#         if broker == 'aliceblue':
-#             print("Sending AliceBlue PnL")
-#             for user in data[broker]:
-#                 username = str(data[broker][user]['username'])
-#                 api_key = data[broker][user]['api_key']
-#                 alice = Aliceblue(username, api_key=api_key)
-#                 session_id = alice.get_session_id()
-#                 summary = alice.get_daywise_positions()
-#                 print(summary)
-                
-#                 for i in range(len(summary)):
-#                     # Get the AmiPy_PnL from the trade_points_df for this user
-#                     amiPy_PnL = trade_points_df.loc[(trade_points_df['User'] == user)]['PnL'].sum()
-#                     Total_PnL = summary[i]['MtoM']
-#                     Difference_PnL = Total_PnL - amiPy_PnL
-                    
-#                     # Send the PnL details as a Telegram message
-#                     message = f"AmiPy_PnL: {amiPy_PnL}\nDifference_PnL: {Difference_PnL}\nTotal_PnL: {Total_PnL}"
-#                     print(message)
+# print("Average range: ", average_range)
 
-# send_aliceblue_pnl()
-
-
-# import requests
-
-# 1125674485744402505
-
+# today = kite.historical_data(token,"2023-07-07 09:15:00","2023-07-07 10:10:00","hour")
 
