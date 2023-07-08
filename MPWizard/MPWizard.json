@@ -1,99 +1,59 @@
-
 {
-	"indices": [{
-			"name": "NIFTY", 
-			"token": 256265, 
-			"NextExpiry": "06Jul23", 
-			"InstruMood": "Bullish", 
-            "OptionRegime": "Buy",
-			"InTrade": false, 			
-            "WeekdayPrcRef": {
-                "Mon": 18,
-				"Tue": 21,
-				"Wed": 24,
-				"Thu": 25, 
-				"Fri": 15 
-            },
-            "ATR5D": 131.40, 
-            "IBValue": 80.50, 
-            "IBLevel": "Medium", 	
-			"TriggerPoints": {
-				"IBHigh": 19325.50, 
-				"IBLow": 19318.00		
-			},
-            "TSLStepSize": 0.5, 
-            "SignalEntry": {
-                "Option": "NIFTY06Jul2319100CE",
-                "Event": "Bullish-MediumIB-IBHighUpcross",
-				"EntryTime": "10:45:29AM",
-				"EntryPrice": 85.50,
-                "ExitTime": "03:12:22PM",
-                "ExitPrice": 159.45			
-			}
-		},
-		{
-			"name": "BANKNIFTY",
-			"token": 260105,
-			"NextExpiry": "06Jul23",
-			"InstruMood": "Bullish",
-            "OptionRegime": "Buy",
-			"InTrade": false,
-			"CompletedTrades": 0,
-            "WeekdayPrcRef": {
-                "Mon": 50,
-				"Tue": 65,
-				"Wed": 80,
-				"Thu": 90,
-				"Fri": 40
-            },
-            "ATR5D": 429.80,
-            "IBValue": 178.80,
-            "IBLevel": "Medium",
-			"TriggerPoints": {
-				"IBHigh": 45220.80,
-				"IBLow": 45062.25				
-			},
-            "TSLStepSize": 0.5,
-            "SignalEntry": {
-                "Option": "BANKNIFTY06Jul2319100CE",
-                "Event": "Bullish-MediumIB-IBLowDowncross",
-				"EntryTime": "10:45:29AM",
-				"EntryPrice": 185.50,
-                "ExitTime": "03:12:22PM",
-                "ExitPrice": 159.45			
-			}
-		},
-		{
-			"name": "FINNIFTY",
-			"token": 257801,
-			"NextExpiry": "04Jul23",
-			"InstruMood": "Bullish",
-            "OptionRegime": "Buy", 
-			"InTrade": false,
-			"CompletedTrades": 0,
-            "WeekdayPrcRef": {
-                "Mon": 18,
-				"Tue": 21,
-				"Wed": 24,
-				"Thu": 25,
-				"Fri": 15
-            },
-            "ATR5D": 194.80,
-            "IBValue": 58.20,
-            "IBLevel": "Medium",
-			"TriggerPoints": {
-				"IBHigh": 20246.50,
-				"IBLow": 20187.30				
-			},
-            "TSLStepSize": 0.5,
-            "SignalEntry": {
-                "Option": "NIFTY06Jul2319100CE",
-                "Event": "Bullish-MediumIB-IBHighUpcross",
-				"EntryTime": "10:45:29AM",
-				"EntryPrice": 85.50,
-                "ExitTime": "03:12:22PM",
-                "ExitPrice": 159.45		 	
-			}
-		}
-	]
+    "aliceblue": {
+        "brijesh": {
+            "nf_qty": 0,
+            "bnf_qty": 0,
+            "fnf_qty": 0,
+            "username": "929016",
+            "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
+            "session_id": "Pv6Wru8h5K7iFGlSZHIWPt6y90P9gJEgxInf4CPiX06PLd1Wx4ZZKRZbTL9XDWrJyTb3zCxkIt8HibxDhpA8KpuOW9KUYVyLovet6kZByDggu2IPHJ26azmmofS4qXb5rnmOZIF034lac9iSgfFz6cfYdCYsv6qoOfbQ9py4A40AKf7ifHPaAWdtej93GbTvzEYE2AdWD8NK90lHqKtRXrpb6j2O5VM4b7MvGP5MH3ELsRdT9QTzM8XPP2PcCs3e",
+            "Current_Capital": 503778.76
+        },
+        "venkatesh": {
+            "nf_qty": 0,
+            "bnf_qty": 0,
+            "fnf_qty": 0,
+            "username": "924446",
+            "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
+            "session_id": "9Ac9DE5cE9VgzefdvQ4mibLEcqcUafHzP1FGjRA6p5NzVFRpLyqzxAWR4GkmoGuCyrPtphk6bZjBUm0FBdXTngWMOBrhXWNq1Oy32miJ5KXYG9NvS2Nhn5iT71BZz8GPb5x4IAh1XnxY8Wh3GFdnJNnjxR7S5SIcp4g9b82CMJn96lJU1QbOKyTvsntzmvN7Uz7Qu2y3rrS2FzijZ36JzxVizSne9Cx9sLKHomutP94aOqRF3zLM9U24oqZorECT",
+            "Current_Capital": 60780.99
+        },
+        "sridhar": {
+            "nf_qty": 0,
+            "bnf_qty": 0,
+            "fnf_qty": 0,
+            "username": "935347",
+            "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
+            "session_id": "uMrJUEz0gKfsreVqGdNpWfbjltnUhgK4XKeURglb3WFx4AYpflGhfVUb6VAM0uCPy8Mqs1LvJUMuEmA4hu7cbXd3PDG9Za8JQsHbDthRnMp4tZNorE94WCvCAD6fl1z4h5tGbeEDj0xoXmNjSQxtzQWNiT0zmkoHHpFW4Z94GrIM0KtQdWzdEVkQ8ShqvoCSUg6KzPdVypPGHPjtXE8ajlos7m1yIbciItI7UIbg6bZ3caqWZGVnq17l0AXYToNo",
+            "Current_Capital": 36888.97
+        },
+        "vinay": {
+            "nf_qty": 0,
+            "bnf_qty": 0,
+            "fnf_qty": 0,
+            "username": "935325",
+            "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
+            "session_id": "sdJ2t4ak6tJDQsRTDr8Ljr1o917AMSjJIPjgXn3amPRVg6jjyRQ3YVNQXJZVyg9NOXq3KdRcgfPcGMgygbzL5b0QdXhveZ1y7Up5CV9W8d2uTZC9OaGIci07cFC6pzOrQZGd6bnDf169tnM9cjgCcVdDmMYp3iKLGXaKUmrVH1tUpQFxO32YceiH1b6JPZQBLGVRn1AJH4z5VRDTPTA4O7tAcE1QBVKeQX0irGfj6cKcJ5YibYWmvxk9KcT6g8xE",
+            "Current_Capital": 36411.41
+        },
+        "vinod": {
+            "nf_qty": 0,
+            "bnf_qty": 0,
+            "fnf_qty": 0,
+            "username": "110958",
+            "api_key": "E08VqCkbrXqaWUnrQapGxA4VfDQVWJfZ9Jxs4nXcnbSoVME1NfnfjvLcWoLpxAE4lUzs5mzTohMThKD6K6GIc9Md3PHuja8IxRuF3Xr15ubIvEkzv4q7PsBxZX05niOA",
+            "session_id": "2YSH4TRDgRK2369df0JTIS8UQkpQgt13TMr1UyJkQZ1VLA3MlnNolb3Z5Oiuy8K4C4CEhOY96mHxC37AbeDDShWufyVd9qDUZBmg51aJ0C7FOAdrKNaAKXga7383bu1rt3iOd5KUZNcajgqNot3Emi2PO10dALJ0Vl4BVNtgZB03orY5bUBtdFNzm17NsvBqsjYTnhn4EOLHGYeBl643TJchFF9AH5ajGBUuxVDjPW2maR8bc3e3I1CqtSFgySGE",
+            "Current_Capital": 0.0
+        }
+    },
+    "zerodha": {
+        "omkar": {
+            "nf_qty": 0,
+            "bnf_qty": 0,
+            "fnf_qty": 0,
+            "api_key": "6b0dp5ussukmo67h",
+            "access_token": "C41XLlP4ClVieiBsJHqJ8jNJjyScnm68",
+            "Current_Capital": 20740.2
+        }
+    }
 }

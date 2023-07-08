@@ -1,9 +1,5 @@
-.env
-.log
-.pyc
+*.pyc
+*.csv
+*.log
 
-
-/__pycache__
-Amipy/LiveCSV/amipy_genSignals.csv
-Amipy/LiveCSV/amipy_supertrend.csv
-Amipy/trail.py
+Amipy/.DS_Store
