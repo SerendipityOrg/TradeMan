@@ -62,9 +62,13 @@ class CryptoJsAES:
 script_dir = os.path.dirname(os.path.realpath(__file__))
 user_details_path = os.path.join(script_dir, 'broker.json')
 
-mpwizard_json_path = r"/Users/traderscafe/Documents/TradeMan/MPWizard/mpwizard(omkar).json"
+#go outside the folder and then go inside MPWizard folder
+script_dir = os.path.dirname(script_dir)
+mpwizard_json_path = os.path.join(script_dir, 'MPWizard', 'mpwizard(omkar).json')
 
 def calculate_quantity(capital, risk, prc_ref, lot_size):
+    if prc_ref == 0:
+        print("Price reference is 0")
     raw_quantity = (risk * capital) / prc_ref
     return int((raw_quantity // lot_size) * lot_size)
 
@@ -114,7 +118,16 @@ def create_strategy_json(broker_name, user, lots, balance, user_details_path, mp
 
     if broker_name not in data:
         data[broker_name] = {}
-        
+    
+    data[broker_name]['username'] = user_details['username']
+    data[broker_name]['api_key'] = user_details['api_key']    
+
+    if broker_name == 'aliceblue':
+        data[broker_name]['session_id'] = user_details['session_id']
+    elif broker_name == 'zerodha':
+        data[broker_name]['access_token'] = user_details['access_token']
+    else:
+        print("Broker not supported")
     data[broker_name]["Current_Capital"] = balance
 
     for strategy, qty in lots.items():
