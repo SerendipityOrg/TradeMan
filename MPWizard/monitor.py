@@ -3,22 +3,28 @@ from datetime import datetime as dt
 from time import sleep
 import json
 from telegram_bot import discord_bot
-from mpw_place_orders import *
+from MPW_place_orders import *
 from MPWizard_calc import *
 
-class OrderMonitor:
-    def __init__(self, brokers_file, instruments):
-        # Read brokers from file
-        with open(brokers_file, 'r') as file:
-            self.brokers = json.load(file)
-        with open('MPWizard.json') as f:
-            self.mood_data = json.load(f)
-        self.instruments = instruments
+script_dir = os.path.dirname(os.path.abspath(__file__))
+zerodha_omkar_filepath = os.path.join(script_dir, '..', 'Utils', 'users/omkar.json')
+levels_filepath = os.path.join(script_dir, 'mpwizard(omkar).json')
 
+class OrderMonitor:
+    def __init__(self, users,instruments):
+        # Read brokers from file
+        with open(zerodha_omkar_filepath, 'r') as file:
+            self.omkar = json.load(file)  
+        with open(levels_filepath) as f:
+            self.mood_data = json.load(f)
+        self.users = users
+        self.instruments = instruments
+        self.orders_placed_today = 0  # Add a counter for orders placed today
+        self.today_date = dt.now().date()  # Store today's date
 
     def monitor_instruments(self):
             # Retrieve Zerodha account details for fetching live data
-            zerodha_account = self.brokers.get('zerodha', {}).get('omkar', {})
+            zerodha_account = self.omkar.get('zerodha', {})
             api_key = zerodha_account.get('api_key')
             access_token = zerodha_account.get('access_token')
 
@@ -33,6 +39,11 @@ class OrderMonitor:
             message_sent = {instrument.get_name(): {level: False for level in instrument.get_trigger_points()} for instrument in self.instruments}        
 
             while True:
+                # Check if date has changed, if yes, reset the counter
+                if dt.now().date() != self.today_date:
+                    self.today_date = dt.now().date()
+                    self.orders_placed_today = 0
+
                 for instrument in self.instruments:
                     # Extract instrument details
                     token = instrument.get_token()
@@ -48,6 +59,10 @@ class OrderMonitor:
                     # Access the last_price using the string representation of the token
                     ltp = ltp_data[str(token)]['last_price'] 
 
+                    if self.orders_placed_today >= 2:  # If orders placed today are already 2
+                        print("Done for the day")
+                        continue
+
                     # Check if LTP crosses the given levels
                     for level_name, level_price in levels.items():
                         # Check if LTP crosses the level from the previous LTP
@@ -62,20 +77,22 @@ class OrderMonitor:
                                 message_sent[name][level_name] = True
                             else:
                                 continue
-
+                            
                             if cross_type is not None:
                                 # search for the name in the mood data
                                 for mood_data in self.mood_data['indices']:
                                     if mood_data['name'] == name:
+                                        weekday = dt.now().strftime('%a')
                                         ib_level = mood_data['IBLevel']
                                         instru_mood = mood_data['InstruMood']
-
+                                        prc_ref = mood_data['WeekdayPrcRef'].get(weekday, 0)
+                                        
                                         if ib_level == 'Big':
                                             option_type = 'PE' if cross_type == 'DownCross' else 'CE'
                                         elif ib_level == 'Small':
                                             option_type = 'PE' if cross_type == 'UpCross' else 'CE'
                                         elif ib_level == 'Medium':
-                                            option_type = 'PE' if instru_mood == 'Bearish' else 'CE'
+                                            option_type = 'PE' if instru_mood == 'Bearish' else 'CE'   #check this logic 
                                         else:
                                             continue  # or handle unknown ib_level
 
@@ -84,60 +101,47 @@ class OrderMonitor:
                                         else:
                                             strike_prc = round(ltp / 100) * 100
 
-                                        expiry_date = "2023-07-13"  # constant value
-                                        tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(name, expiry_date, option_type, strike_prc )
+                                        if name == 'NIFTY' or name == 'BANKNIFTY':
+                                            expiry = get_expiry_dates()
+                                            expiry_date = expiry[0].strftime("%Y-%m-%d")  # constant value
+                                        elif name == 'FINNIFTY':
+                                            expiry_date = expiry[1].strftime("%Y-%m-%d")
+                                        
+
+                                        tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(name, expiry_date, option_type, strike_prc)
+                                        print(tokens)
                                         instrument.additional_tokens = tokens                                      
                                         
-                                        #append tokens to instruments
+                                        if self.orders_placed_today < 2:
+                                            for broker, user in self.users:
+                                                # Send appropriate trading symbol to order functions based on broker
+                                                if 'zerodha' in broker:
+                                                    avg_prc =  place_zerodha_order(trading_symbol_list,"BUY", "BUY", strike_prc, name, user)                                                
+                                                    limit_prc = avg_prc - prc_ref
+                                                    order = place_stoploss_zerodha(trading_symbol_list, "SELL", "SELL", strike_prc, name, limit_prc, user, broker='zerodha')
 
-                                        # Send appropriate trading symbol to order functions based on broker
-                                        if 'zerodha' in self.brokers:
-                                            print(tokens,strike_prc,option_type,expiry_date)
-                                            avg_prc =  place_zerodha_order(trading_symbol_list,"BUY", "BUY", strike_prc, option_type, name)
-                                            print(avg_prc)
-                                            avg_prc = (avg_prc[0])
-                                            print("the type of avg prc is ",type(avg_prc))
-                                            if name == "NIFTY":
-                                                limit_prc = avg_prc - 20
-                                            elif name == "FINNIFTY":
-                                                limit_prc = avg_prc - 24
-                                            elif name == "BANKNIFTY":
-                                                limit_prc = avg_prc - 40
+                                                elif 'aliceblue' in broker:
+                                                    avg_prc = place_aliceblue_order(trading_symbol_aliceblue[0],"BUY", "BUY", strike_prc, name, user)                                                                       
+                                                    limit_prc = avg_prc - prc_ref
+                                                    order = place_stoploss_aliceblue(trading_symbol_aliceblue[0], "SELL", "SELL", strike_prc, name, limit_prc, user, broker='aliceblue')
+                                                else:
+                                                # Continue with the next mood data
+                                                    continue
 
-                                            place_stoploss_zerodha(trading_symbol_list, "SELL", "SELL", strike_prc, name, limit_prc, broker='zerodha')
-
-
-                                        elif 'aliceblue' in self.brokers:
-                                            print(tokens,strike_prc,option_type,expiry_date)
-                                            avg_prc = place_aliceblue_order(trading_symbol_aliceblue,"BUY", "BUY", strike_prc, option_type, name)
-                                            print(avg_prc)
-                                            avg_prc = (avg_prc[0])
-                                            print("the type of avg prc is ",type(avg_prc))
-                                            if name == "NIFTY":
-                                                limit_prc = avg_prc - 20
-                                            elif name == "FINNIFTY":
-                                                limit_prc = avg_prc - 24
-                                            elif name == "BANKNIFTY":
-                                                limit_prc = avg_prc - 40
-
-                                            print(" limit prc is ",limit_prc )
-                                            place_stoploss_zerodha(trading_symbol_aliceblue, "SELL", "SELL", strike_prc, name, limit_prc, broker='aliceblue')
-                                        else:
-                                        # Continue with the next mood data
-                                            continue
+                                            self.orders_placed_today += 1
+                                            
                                     # Send alert message to Telegram group
-                                        message = f"{cross_type}{level_name}: {ltp} for {name}! Trade? Reply 'call' or 'put' or 'pass'"
-                                        # self.telegram_bot.send_message(message=f"{message}")
-                                        print(message)
+                                message = f"{cross_type}{level_name}: {ltp} for {name}! Trade? Reply 'call' or 'put' or 'pass'"
+                                mpwizard_discord_bot(message)
+                                print(message)
 
                     if instrument.additional_tokens is not None:
                         for token in instrument.additional_tokens:
                             ltp_data = kite.ltp(str(token))
                             print(f"{dt.now().strftime('%H:%M:%S')} - {ltp_data} ")
 
-
                     # Update the previous LTP for the next iteration
                     prev_ltp[name] = ltp
 
                 # Wait for 1 minute before the next iteration
-                sleep(60)
+                sleep(30)

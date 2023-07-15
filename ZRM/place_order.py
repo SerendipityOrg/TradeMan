@@ -2,29 +2,19 @@ import json
 from kiteconnect import KiteConnect
 from pya3 import *
 import logging
-import os
-from Utilities.straddlecalculation import amipy_discord_bot
+from ZrOm_calc import zrm_discord_bot
 
-def get_amipy_users(filepath):
-    with open(filepath, 'r') as f:
-        data = json.load(f)
-    
-    users = []
-    for broker in data:
-        if broker != 'accounts_to_trade':
-            for user, details in data[broker].items():
-                if user != 'accounts_to_trade' and 'AmiPy' in details['percentageRisk'] and details['percentageRisk']['AmiPy'] != 0:
-                    users.append((broker,user))
-    return users
+script_dir = os.path.dirname(os.path.abspath(__file__))   
+parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
 
 def load_credentials(filepath):
     with open(filepath, 'r') as file:
         return json.load(file)
 
-def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_price, users, broker='zerodha'):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    filepath = os.path.join(script_dir, '..', '..', 'Utils', 'users', f'{users}.json')
+
+
+def place_zerodha_order(trading_symbol, transaction_type, trade_type, qty, strike_price, index, users, broker='zerodha'):
+    filepath = os.path.join(parent_dir, 'Utils', 'users', f'{users}.json')
     if not os.path.exists(filepath):
         print("file not exist")
         return
@@ -37,7 +27,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
     access_token = user_details[broker]['access_token']
     kite = KiteConnect(api_key=api_key)
     kite.set_access_token(access_token)
-    qty = user_details[broker]['AmiPy_qty']['AmiPy_qty']
+
 
     if transaction_type == 'BUY':
         order_type = kite.TRANSACTION_TYPE_BUY
@@ -46,6 +36,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
     else:
         logging.info(f"Invalid trade type for user {users}.")
         return
+
     try:           
         order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
                                     exchange=kite.EXCHANGE_NFO,
@@ -79,33 +70,35 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         if 'orders' not in user_details[broker]:
             user_details[broker]['orders'] = {}
         if trade_type not in user_details[broker]['orders']:
-            user_details[broker]['orders']['Amipy'][trade_type] = []
+            user_details[broker]['orders']['ZRM'][trade_type] = []
 
         # Add the order_dict to the corresponding trade_type list
         user_details[broker]['orders'][trade_type].append(order_dict)
-        print("here",user_details)
+
     except Exception as e:
         message = f"Order placement failed for user {users}: {e}"
-        amipy_discord_bot(message)
+        zrm_discord_bot(message)
         logging.info(message)
 
     with open(filepath, 'w') as file:
         json.dump(user_details, file, indent=4)  # Save the updated user_details back to json file
 
-def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_price, users,broker='aliceblue'):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    filepath = os.path.join(script_dir, '..', '..', 'Utils', 'users', f'{users}.json')
+
+
+def place_aliceblue_order(trading_symbol, transaction_type, trade_type, qty, strike_price, index, users, broker='aliceblue'):
+    filepath = os.path.join(parent_dir, 'Utils', 'users', f'{users}.json')
     if not os.path.exists(filepath):
+        print("file not exist")
         return
     user_details = load_credentials(filepath)
 
     if broker not in user_details:
         return
-    username = user_details[broker]['username']
+    
+    username = str(user_details[broker]['username'])
     api_key = user_details[broker]['api_key']
     alice = Aliceblue(username, api_key = api_key)
     session_id = alice.get_session_id()
-    qty = user_details[broker]['AmiPy_qty']['AmiPy_qty']
 
     if transaction_type == 'BUY':
         order_type = TransactionType.Buy
@@ -114,7 +107,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
     else:
         logging.info(f"Invalid trade type for user {users}.")
         return
-
+    
     try:
         order_id = alice.place_order(transaction_type = order_type,
                                         instrument = trading_symbol,
@@ -140,7 +133,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         order_dict = {
             "trade_type": order_trade_type,
             "avg_prc": avg_prc,
-            "timestamp": str(datetime.now()),
+            "timestamp": str(datetime.datetime.now()),
             "strike_price": strike_price,
             "tradingsymbol": trading_symbol[3]
         }
@@ -149,14 +142,14 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         if 'orders' not in user_details[broker]:
             user_details[broker]['orders'] = {}
         if trade_type not in user_details[broker]['orders']:
-            user_details[broker]['orders']['Amipy'][trade_type] = []
+            user_details[broker]['orders']['MPWizard'][trade_type] = []
 
         # Add the order_dict to the corresponding trade_type list
         user_details[broker]['orders'][trade_type].append(order_dict)
 
     except Exception as e:
         message = f"Order placement failed for user {users}: {e}"
-        amipy_discord_bot(message)
+        zrm_discord_bot(message)
         logging.info(message)
 
     with open(filepath, 'w') as file:

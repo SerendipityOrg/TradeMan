@@ -4,10 +4,10 @@ import json
 import os
 import logging
 
-from datetime import datetime,timedelta,date
+from datetime import timedelta,datetime,date
 from dateutil import parser
 import schedule
-import time
+
 
 from kiteconnect import KiteConnect
 from kiteconnect import KiteTicker
@@ -18,12 +18,9 @@ from dash.dependencies import Input, Output
 from dash import html, dcc
 import plotly.graph_objs as go
 
-from Utilities.place_orders import place_zerodha_order,place_aliceblue_order
-from Utilities.straddlecalculation import callputmergeddf, moving_average, supertrend, get_expiry_date, get_option_tokens
-from Utilities.messaging_bot import *
+from Utilities.place_orders import *
+from Utilities.straddlecalculation import *
 from Utilities.chart import plotly_plot
-
-
 
 nifty_token = [256265]
 trading_symbol = []
@@ -32,19 +29,22 @@ strike_prc = None
 base_symbol = "NIFTY" 
 
 hist_data = {token: pd.DataFrame(columns=['date', 'instrument_token', 'open', 'high', 'low', 'close']) for token in nifty_token}
-from_date = datetime.today().date() - pd.Timedelta(days=4)
-to_date = datetime.today().date()
+from_date =  date.today()- pd.Timedelta(days=4)
+to_date = date.today()
 interval = 'minute'
 
-# broker_file = os.path.join("Brokers","broker.json")
-script_dir = os.path.dirname(os.path.realpath(__file__))
-broker_file = os.path.join(script_dir, 'Brokers','broker.json')
+script_dir = os.path.dirname(os.path.abspath(__file__))
+broker_filepath = os.path.join(script_dir, '..', 'Utils', 'broker.json')
 
+users_to_trade = get_amipy_users(broker_filepath)
 
-with open(broker_file, 'r') as f:
-        user_details = json.load(f)
-kite_access_token = user_details['zerodha']['omkar']['access_token']
-kite_api_key = user_details['zerodha']['omkar']['api_key']
+omkar_aceess_token = os.path.join(script_dir, '..', 'Utils','users', 'omkar.json')
+
+with open(omkar_aceess_token, 'r') as f:
+        omkar_zerodha = json.load(f)
+
+kite_access_token = omkar_zerodha['zerodha']['access_token']
+kite_api_key = omkar_zerodha['zerodha']['api_key']
 kite = KiteConnect(api_key=kite_api_key)
 kite.set_access_token(kite_access_token)
 
@@ -75,8 +75,8 @@ for column, dtype in column_types.items():
 # Setting StrikePrc at 09.20 a.m.
 def job():
     global strike_prc , nifty_token
-    from_date = datetime.strptime(f'{date.today()} 09:18:59', '%Y-%m-%d %H:%M:%S')
-    to_date = datetime.strptime(f'{date.today()} 09:19:59', '%Y-%m-%d %H:%M:%S')
+    from_date = datetime.datetime.strptime(f'{date.today()} 09:18:59', '%Y-%m-%d %H:%M:%S')
+    to_date = datetime.datetime.strptime(f'{date.today()} 09:19:59', '%Y-%m-%d %H:%M:%S')
     nifty_data = kite.historical_data(instrument_token=nifty_token[0],from_date=from_date,to_date=to_date,interval='minute', oi=True)[0]['close']
     strike_prc = round(nifty_data/100)*100
     return strike_prc
@@ -87,9 +87,11 @@ def get_ltp():
     strike_prc = round(nifty_ltp['NSE:NIFTY 50']['last_price']/100)*100
     return strike_prc
 
-# job()
-#check the time is greater that 09.20 a.m. run job() or else wait for 09.20 a.m.
-if datetime.now().time() > parser.parse('09:21').time():
+# get_ltp()
+
+#check the time is greater that 09.20 a.m. run job() or else wait for 09.20 a.m
+if datetime.datetime.now().time() > parser.parse('09:21').time():
+    print('Running job()...')
     job()
 else:
     schedule.every().day.at("09:19").do(get_ltp)
@@ -98,13 +100,13 @@ else:
     while True:
         # Check whether there's any job scheduled for now
         schedule.run_pending()
-        if datetime.now().time() > parser.parse('09:19').time():
+        if datetime.datetime.now().time() > parser.parse('09:19').time():
             break
-        time.sleep(1)
+        sleep(1)
 
 print("Today's Strike Price:",strike_prc)
 
-holidays = ['2023-05-01', '2023-06-16','2023-06-29']  # Add all trading holidays here
+# holidays = ['2023-05-01', '2023-06-16','2023-06-29']  # Add all trading holidays here
 
 tokens,trading_symbol,trading_symbol_aliceblue = get_option_tokens(base_symbol,expiry_date,strike_prc)
 
@@ -117,13 +119,12 @@ for token in tokens:
     hist_data[token]['instrument_token'] = token
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
-# Remove the holidays from the resampled dataframe
-def remove_holiday_data(df, holidays):
-    # Convert the holidays list into a set for faster lookup
-    holidays_set = set(pd.to_datetime(holiday).date() for holiday in holidays)
-    mask = [date not in holidays_set for date in df.index.date]
-    df = df[mask]
-    return df
+with open('Amipy/AmiPy.json' , 'r') as f:
+    params = json.load(f)
+
+entry = params['Nifty'][0]['entry_time']
+last = params['Nifty'][0]['last_buy_time']
+sqroff = params['Nifty'][0]['sqroff_time']
 
 
 long_indices = []
@@ -134,9 +135,10 @@ last_signal_minute = None
 trade_state_df = pd.DataFrame(columns=['in_trade', 'strike_price', 'trade_type', 'trade_points', 'TrendSL', 'close', 'TradeEntryPrice', 'SL_points'])
 
 # Time params ### TTTT
-entry_time = pd.Timestamp("09:20:00").time()
-last_buy_time = pd.Timestamp("14:50:00").time()
-sqroff_time = pd.Timestamp("14:55:00").time()
+entry_time = pd.Timestamp(entry).time()
+last_buy_time = pd.Timestamp(last).time()
+sqroff_time = pd.Timestamp(sqroff).time()
+
 
 def genSignals(resultdf):
     counter = 0
@@ -178,7 +180,7 @@ def genSignals(resultdf):
         current_close = resultdf.loc[current_time, 'close']
         trend_sl = resultdf.loc[current_time, 'TrendSL']
         
-        if current_time.date() != datetime.today().date():
+        if current_time.date() != datetime.datetime.today().date():
             continue
                 
         if current_position is None:
@@ -262,26 +264,21 @@ def genSignals(resultdf):
 
 signals = []
 
-def place_order(broker, trading_symbol,transcation_type, trade_type):
+def place_order(broker, trading_symbol,transcation_type, trade_type,user):
     if broker == 'zerodha':
-        place_zerodha_order(trading_symbol, transcation_type, trade_type, strike_prc)
+        place_zerodha_order(trading_symbol, transcation_type, trade_type, strike_prc,user)
     elif broker == 'aliceblue':
-        place_aliceblue_order(trading_symbol, transcation_type, trade_type, strike_prc)
+        place_aliceblue_order(trading_symbol, transcation_type, trade_type, strike_prc,user)
     else:
         logging.info(f"Invalid broker type.")
 
-def updateSignalDf(last_signal):
+def updateSignalDf(last_signal,users_to_trade):
     print("updateSignalDf")
     global signalsdf, signals
 
     # trade_sig_path = os.path.join("LiveCSV", "amiNF_trd_sig_liv.csv")
     script_dir = os.path.dirname(os.path.realpath(__file__))
     trade_sig_path = os.path.join(script_dir, "LiveCSV", "amiNF_trd_sig_liv.csv")
-
-    # Load broker details from json file
-    filepath = "Utilities/AmiPy.json"
-    with open(filepath, 'r') as file:
-        broker_details = json.load(file)
 
     trade_no = 1
     current_close = last_signal['close']
@@ -296,7 +293,7 @@ def updateSignalDf(last_signal):
             print(f"{trade_type} is generated")
 
     # Iterate over all brokers
-    for broker, broker_users in broker_details.items():
+    for broker, username in users_to_trade:
         if broker == 'zerodha':
             trading_symbols = trading_symbol
         elif broker == 'aliceblue':
@@ -315,13 +312,13 @@ def updateSignalDf(last_signal):
             signals_df = pd.DataFrame(signal, index=[0])
             signals_df.to_csv(trade_sig_path, index=True)
             if trade_type == 'LongSignal':
-                place_order(broker, trading_symbols[0], 'BUY', trade_type)
-                place_order(broker, trading_symbols[1], 'BUY', trade_type)
+                place_order(broker, trading_symbols[0], 'BUY', trade_type,username)
+                place_order(broker, trading_symbols[1], 'BUY', trade_type,username)
             elif trade_type == 'ShortSignal':
-                place_order(broker, trading_symbols[2], 'BUY', trade_type)
-                place_order(broker, trading_symbols[3], 'BUY', trade_type)
-                place_order(broker, trading_symbols[0], 'SELL', trade_type)
-                place_order(broker, trading_symbols[1], 'SELL', trade_type)
+                place_order(broker, trading_symbols[2], 'BUY', trade_type,username)
+                place_order(broker, trading_symbols[3], 'BUY', trade_type,username)
+                place_order(broker, trading_symbols[0], 'SELL', trade_type,username)
+                place_order(broker, trading_symbols[1], 'SELL', trade_type,username)
         elif trade_type == 'LongCoverSignal' or trade_type == 'ShortCoverSignal':
             signal = signals.pop()  # Retrieve the last signal
             signal.update({
@@ -332,18 +329,18 @@ def updateSignalDf(last_signal):
             signals_df = pd.DataFrame(signal, index=[0])
             signals_df.to_csv(trade_sig_path, index=True)
             if trade_type == 'LongCoverSignal':
-                place_order(broker, trading_symbols[0], 'SELL', trade_type)
-                place_order(broker, trading_symbols[1], 'SELL', trade_type)
+                place_order(broker, trading_symbols[0], 'SELL', trade_type,username)
+                place_order(broker, trading_symbols[1], 'SELL', trade_type,username)
             elif trade_type == 'ShortCoverSignal':
-                place_order(broker, trading_symbols[2], 'SELL', trade_type)
-                place_order(broker, trading_symbols[3], 'SELL', trade_type)
-                place_order(broker, trading_symbols[0], 'BUY', trade_type)
-                place_order(broker, trading_symbols[1], 'BUY', trade_type)
+                place_order(broker, trading_symbols[2], 'SELL', trade_type,username)
+                place_order(broker, trading_symbols[3], 'SELL', trade_type,username)
+                place_order(broker, trading_symbols[0], 'BUY', trade_type,username)
+                place_order(broker, trading_symbols[1], 'BUY', trade_type,username)
 
     try:
         if trade_type is not None:  # check that a signal was generated
             message = f"Signal: {trade_type}\nStrikePrc: {strike_prc} \nDate: {trade_date}\nTime: {trade_time}\nClose: {str(last_signal['close'])}"
-            discord_bot(message)
+            amipy_discord_bot(message)
     except Exception as e:
         print(f"Error in sending telegram message: {e}")
 
@@ -352,7 +349,7 @@ last_signal_t = None
 def on_ticks(ws, ticks):
     global hist_data,signalsdf,last_signal_t 
     # print('Received ticks:', ticks)
-    current_minute = datetime.now().replace(second=0, microsecond=0).astimezone().strftime('%Y-%m-%d %H:%M:%S%z')[:-2] + ":" + datetime.now().astimezone().strftime('%z')[-2:]
+    current_minute = datetime.datetime.now().replace(second=0, microsecond=0).astimezone().strftime('%Y-%m-%d %H:%M:%S%z')[:-2] + ":" + datetime.datetime.now().astimezone().strftime('%z')[-2:]
 
     for tick in ticks:
         # print('Processing tick:', tick)
@@ -383,7 +380,7 @@ def on_ticks(ws, ticks):
     # resultdf.to_csv(f'Dataframescsv/amipy_resultdf.csv', index=True)
     signalsdf, trade_state = genSignals(resultdf)
 
-    current_time = datetime.now()
+    current_time = datetime.datetime.now()
     
     time_diff = (current_time - last_signal_t) if last_signal_t is not None else timedelta(minutes=1)
 
@@ -394,7 +391,7 @@ def on_ticks(ws, ticks):
         new_signal = signalsdf[['LongSignal', 'ShortSignal', 'LongCoverSignal', 'ShortCoverSignal']].iloc[-1].any()
         if new_signal:
             last_signal = signalsdf.iloc[-1]
-            updateSignalDf(last_signal)
+            updateSignalDf(last_signal, users_to_trade)
 
     # updateSignalDf(signalsdf, trade_state)
 

@@ -2,19 +2,30 @@ import json
 import csv
 import os
 import argparse
-import time
+
 from csv import writer
 from datetime import datetime
 from kiteconnect import KiteConnect
+from ZrOm_calc import get_option_tokens,get_zrm_users
+from place_order import *
+from time import sleep
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+zerodha_omkar_filepath = os.path.join(script_dir, '..', 'Utils', 'users/omkar.json')
+broker_filepath = os.path.join(script_dir, '..', 'Utils', 'broker.json')
+
 
 # Parsing the base entry time to a format which can be compared with current time
-base_entry_time = datetime.strptime("10:16:00", "%H:%M:%S").time()
+base_entry_time = datetime.strptime("09:24:00", "%H:%M:%S").time()
+
+users_to_trade = get_zrm_users(broker_filepath)
+print(users_to_trade)
 
 class Algo:
     base_entry_price = 0
     
-    zone_width = 25
-    quantity = 100
+    zone_width = 50
+    quantity = 50
     is_trade_cycle_done = False
     long_entry = False
     short_entry = False
@@ -27,9 +38,10 @@ class Algo:
     one_print = False
     result_csv = ""
 
-    def __init__(self, csv, zone_width):
+    def __init__(self, csv, zone_width,users):
         self.result_csv = csv
         self.zone_width = zone_width
+        self.users = users
 
     def is_trade_complete(self):
         return self.is_trade_cycle_done
@@ -89,7 +101,11 @@ class Algo:
             # Close the file object
             f_object.close()
 
+    str_prc = ""    
+
     def run(self, tick_price, tick_time):
+        global str_prc
+        expiry_date = "2023-07-20"
         # Check the base entry time constraint before entering the trades
         current_time = datetime.now().time()
         if current_time < base_entry_time:
@@ -98,12 +114,14 @@ class Algo:
 
         # Rest of the existing 'run' function here
         if self.init_timer is None:            
-            self.init_timer = time.time()
-        elif (tick_time) - self.init_timer >= 30:
+            self.init_timer = datetime.now()
+            
+        elif ((datetime.fromtimestamp(tick_time)) - self.init_timer).total_seconds() >= 30:
             if self.one_print is False:
                 print("#@# Base Entry Price is set to --> {}".format(tick_price))
                 self.base_entry_price = tick_price
                 self.one_print = True
+                print("Base Entry Price is set to --> {}".format(self.base_entry_price))    
                 # Place entry order here
             is_condition = False
             if self.is_trade_cycle_done is False:
@@ -130,7 +148,15 @@ class Algo:
                         q = self.quantity * 3
                     elif point == 'L2':
                         q = self.quantity * 12
-
+                    
+                    str_prc = round(tick_price/100)*100
+                    tokens,trading_symbol,trading_symbol_aliceblue = get_option_tokens("BANKNIFTY",expiry_date,str_prc,"CE")
+                    for brokers, users in self.users:
+                        if brokers == "aliceblue":
+                            order_id = place_aliceblue_order(trading_symbol_aliceblue,"BUY",point,q,str_prc,"BANKNIFTY",users)
+                        elif brokers == "zerodha":
+                            order_id = place_zerodha_order(trading_symbol,"BUY",point,q,str_prc,"BANKNIFTY",users)
+                    # order_id = place_zerodha_order(trading_symbol,"BUY",point,q,str_prc,"BANKNIFTY")###################################################
                     # place CE orders here
                     self.add_item_order_book(self.trade_cycle_count, "Long", point, tick_price, m_time, "", "", "", False, q)
                     self.open_order_counts += 1
@@ -148,6 +174,14 @@ class Algo:
                     elif point == 'S1':
                         q = self.quantity * 6
 
+                    print("str_prc",str_prc)
+                    tokens,trading_symbol,trading_symbol_aliceblue = get_option_tokens("BANKNIFTY",expiry_date,str_prc,"PE")
+                    for brokers, users in self.users:
+                        if brokers == "aliceblue":
+                            order_id = place_aliceblue_order(trading_symbol_aliceblue,"SELL",point,q,str_prc,"BANKNIFTY", users)
+                        elif brokers == "zerodha":
+                            order_id = place_zerodha_order(trading_symbol,"SELL",point,q,str_prc,"BANKNIFTY", users)
+                    # order_id = place_zerodha_order(trading_symbol,"BUY",point,q,str_prc,"BANKNIFTY") ########################################################
                     # place PE orders here
                     self.add_item_order_book(self.trade_cycle_count, "Short", point, tick_price, m_time, "", "", "", False, q)
                     self.open_order_counts += 1
@@ -178,11 +212,18 @@ class Algo:
                 print(json.dumps(self.order_book, indent=3))
                 self.write_results_csv(self.result_csv)
 
+
+
 def main(zone_width):
     order_open = False
     # Initialize KiteConnect object
-    kite = KiteConnect(api_key="6b0dp5ussukmo67h")
-    kite.set_access_token("CbAzIkAuJXC0xjTXy07mJuImHeWuEFQW")
+
+    with open(zerodha_omkar_filepath) as json_file:
+        data = json.load(json_file)
+    api_key = data.get('zerodha', {}).get('api_key')
+    access_token = data.get('zerodha', {}).get('access_token')
+    kite = KiteConnect(api_key=api_key)
+    kite.set_access_token(access_token)
 
     # open the file in the write mode
     header = ['trace_cycle', 'order_type', 'entry_point', 'entry_price', 'entry_time', 'exit_time', 'exit_price', 'exit_point',
@@ -192,7 +233,7 @@ def main(zone_width):
         writer = csv.writer(f)
         writer.writerow(header)
 
-    objalgo = Algo(file_path, zone_width)
+    objalgo = Algo(file_path, zone_width,users_to_trade)
 
     while True:
         try:
@@ -201,12 +242,10 @@ def main(zone_width):
             bnf_token = 260105
             ltp_data = kite.ltp(bnf_token)
             tick_price = ltp_data[str(bnf_token)]['last_price']
-            # print(tick_price)
             tick_time = datetime.now().strftime('%d-%m-%Y %H:%M:%S')  # Current time
             tick_time_obj = datetime.strptime(tick_time, '%d-%m-%Y %H:%M:%S')
             tick_time = tick_time_obj.timestamp()
 
-                
             objalgo.run(tick_price, tick_time)
 
             # Check if trade cycle is complete
@@ -216,7 +255,7 @@ def main(zone_width):
 
         except Exception as e:
             print("Error:", str(e))
-        time.sleep(1)  # Interval between successive ltp checks
+        sleep(1)  # Interval between successive ltp checks
 
 if __name__ == "__main__":
-    main(zone_width=25)  # Set the desired zone width
+    main(zone_width=50)  # Set the desired zone width

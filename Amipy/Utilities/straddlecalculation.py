@@ -2,14 +2,39 @@ import pandas as pd
 import os
 import numpy as np
 import datetime
-from Utilities.messaging_bot import telegram_bot_sendtext_AK
 from collections import namedtuple
+import requests
+import json
 
-Heikin_Ashi_MA_period = 13
-Supertrend_period = 7
-Supertrend_multiplier = 18
-EMA_period = 324
+script_dir = os.path.dirname(os.path.abspath(__file__))
+filepath = os.path.join(script_dir, '..', 'Amipy.json')
 
+with open(filepath, 'r') as file:
+    params = json.load(file)
+
+Heikin_Ashi_MA_period = params['Nifty'][0]["Heikin_Ashi_MA_period"]
+Supertrend_period = params['Nifty'][0]["Supertrend_period"]
+Supertrend_multiplier = params['Nifty'][0]["Supertrend_multiplier"]
+EMA_period = params['Nifty'][0]["EMA_period"]
+
+def amipy_discord_bot(message):
+    # CHANNEL_ID = "1125674485744402505" # Amipy Discord channel
+    CHANNEL_ID = "1128567144565723147" # Amipy Test channel
+    TOKEN = "MTEyNTY3MTgxODQxMDM0ODU2Ng.GQ5DLZ.BVLPrGy0AEX9ZiZOJsB6cSxOlf8hC2vaANuilA"
+    url = f"https://discord.com/api/v9/channels/{CHANNEL_ID}/messages"
+
+    headers = {
+        "Authorization": f"Bot {TOKEN}",
+        "Content-Type": "application/json",
+    }
+    data = {
+        "content": message
+    }
+    response = requests.post(url, headers=headers, json=data)
+    
+    if response.status_code != 200:
+        raise ValueError(f"Request to discord returned an error {response.status_code}, the response is:\n{response.text}")
+    return response
 
 def get_expiry_date():
     # Initialize the list of Thursdays in 2023
@@ -60,15 +85,15 @@ def get_expiry_date():
             print(f"The expiry date is: {expiry_date}")
         else:
             # Send a Telegram message
-            telegram_bot_sendtext_AK("Please check the expiry")
+            amipy_discord_bot("Please check the expiry")
     return expiry_date
 
 
 Instrument = namedtuple("Instrument", ['exchange', 'token', 'symbol', 'name', 'expiry', 'lot_size'])
 
 def get_option_tokens(base_symbol, expiry_date, strike_prc):
-    instrument_path = os.path.join("Brokers","instruments.csv")
-    instruments_df = pd.read_csv(instrument_path)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    instruments_df = pd.read_csv(os.path.join(script_dir, '..', '..', 'Utils', 'instruments.csv'))
 
     instruments_df = instruments_df[
         ["instrument_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike"]
@@ -271,7 +296,7 @@ def supertrend(ma_df):
 
     # Reorder the columns
     result = result[columns_order]
-    supertrend_path = os.path.join("LiveCSV", "amipy_supertrend.csv")
+    supertrend_path = os.path.join("Amipy/LiveCSV", "amipy_supertrend.csv")
     result.to_csv(supertrend_path, index=True)
     
     return result

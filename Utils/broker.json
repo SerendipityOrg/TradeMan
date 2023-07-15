@@ -6,12 +6,13 @@
             "api_key": "6b0dp5ussukmo67h",
             "api_secret": "eln2qrqob5neowjuedmbv0f0hzq6lhby",
             "totp": "3GN2DNUD35FZQDIIWJUK6CSUIWBPXSYJ",
-            "access_token": "C41XLlP4ClVieiBsJHqJ8jNJjyScnm68",
+            "access_token": "ghlsht3YKQrUglX6mD4q1BQf6Bh6uk6Y",
             "percentageRisk": {
                 "AmiPy": 250000,
-                "MPWizard": 0.025
+                "MPWizard": 0.01,
+                "ZRM": 0.01
             },
-            "current_capital": 20740.2
+            "current_capital": 2385755.1
         },
         "user2": {
             "username": "def",
@@ -63,12 +64,12 @@
             "app_code": "JWbhBFJXIBlHpAd",
             "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
             "totp_access": "VFULKSAJCRMTSNRLEQDYVWBBFKHXOJQR",
-            "session_id": "Pv6Wru8h5K7iFGlSZHIWPt6y90P9gJEgxInf4CPiX06PLd1Wx4ZZKRZbTL9XDWrJyTb3zCxkIt8HibxDhpA8KpuOW9KUYVyLovet6kZByDggu2IPHJ26azmmofS4qXb5rnmOZIF034lac9iSgfFz6cfYdCYsv6qoOfbQ9py4A40AKf7ifHPaAWdtej93GbTvzEYE2AdWD8NK90lHqKtRXrpb6j2O5VM4b7MvGP5MH3ELsRdT9QTzM8XPP2PcCs3e",
+            "session_id": "iqaTDiSRKM5iqGZxvGvRUm2hZAipiVQdLis05Ya8zh1vaXoWMjFfEuqPER271NN3BHUy2fcCTjbtJMU1cm8L0gW5QZQTi2MuVPJeJDgfpn4D5NGx7vxnnTcGTpW6QXvXFKrAH2Pv27gSRETPGBIhNuPjAIARIOn447Az4KBJXcJkdVv9nFPBl0oejqn38N35noCH3pLuTsnnRjXfZ5frNn2Qxu0nRquES1e9IsqrEgUVk0f4y56prbUxmF8Pp09C",
             "percentageRisk": {
                 "AmiPy": 250000,
                 "MPWizard": 0.015
             },
-            "current_capital": 503778.76
+            "current_capital": 471431.21
         },
         "venkatesh": {
             "username": "924446",
@@ -78,10 +79,11 @@
             "app_code": "RPMGgKDNcqpdXtM",
             "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
             "totp_access": "JDPHMIKEPJERXYLFKDNFBVLIEKOTIQYX",
-            "session_id": "9Ac9DE5cE9VgzefdvQ4mibLEcqcUafHzP1FGjRA6p5NzVFRpLyqzxAWR4GkmoGuCyrPtphk6bZjBUm0FBdXTngWMOBrhXWNq1Oy32miJ5KXYG9NvS2Nhn5iT71BZz8GPb5x4IAh1XnxY8Wh3GFdnJNnjxR7S5SIcp4g9b82CMJn96lJU1QbOKyTvsntzmvN7Uz7Qu2y3rrS2FzijZ36JzxVizSne9Cx9sLKHomutP94aOqRF3zLM9U24oqZorECT",
+            "session_id": "MS9DgiovYGbhGucc2yHhqYbZNjdiSp3A6maQaPeA24gTczySk8QaXDGrqsgpfTRMZHpnbCG6gqRjRx9R49dVVf48e7YpbSH6nzm2hO0CYtDUgAcpuqgvuRcLx9lO3X5q043VPEadC0J4W8LxJzrQ4jYEMZFaJK2WbAvJQ17NjPNm7nx8UZPTGWN0bKxpzu0pc1zVBamhBbhXO8ZyApYhHpduECokC56RJdOqfHKqva4dcRKack6ZFQPUUvdr17xh",
             "percentageRisk": {
                 "MPWizard": 0.025
-            }
+            },
+            "current_capital": 53065.39
         },
         "sridhar": {
             "username": "935347",
@@ -91,11 +93,11 @@
             "app_code": "HaRYaumJCQuFiEy",
             "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
             "totp_access": "LLVHRECRLXBEXEFDREHVSOFFJFLDISZO",
-            "session_id": "uMrJUEz0gKfsreVqGdNpWfbjltnUhgK4XKeURglb3WFx4AYpflGhfVUb6VAM0uCPy8Mqs1LvJUMuEmA4hu7cbXd3PDG9Za8JQsHbDthRnMp4tZNorE94WCvCAD6fl1z4h5tGbeEDj0xoXmNjSQxtzQWNiT0zmkoHHpFW4Z94GrIM0KtQdWzdEVkQ8ShqvoCSUg6KzPdVypPGHPjtXE8ajlos7m1yIbciItI7UIbg6bZ3caqWZGVnq17l0AXYToNo",
+            "session_id": "4suYnjX9sAWYyXnBuJdI22mMI3nACIGGh2V7VEN1Sx6hhVdXERYsAJWkOTUXkc0PDpavZJAUd9ibgqY2GpGCMvorz9ECoNDYGWyvdFDkz2cCPkQyfEgTnMWhb0uHQaVOp47WZr2biEBionResgyjsiyELCJgTh1FkD9nCAGGg1RGRuRI4RVGDX63u1Bohx5fQjUIENzMa3TYL0T60re8ADOggqigWjFKMuAUA8eGgC0tceKn0rRbNlOUrCaKCHxY",
             "percentageRisk": {
                 "MPWizard": 0.05
             },
-            "current_capital": 36888.97
+            "current_capital": 29452.65
         },
         "vinay": {
             "username": "935325",
@@ -105,11 +107,11 @@
             "app_code": "kKThxMchucTIuEs",
             "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
             "totp_access": "HYUHYOKAUBPEVZNNIHJLICGHSQNBQQDR",
-            "session_id": "sdJ2t4ak6tJDQsRTDr8Ljr1o917AMSjJIPjgXn3amPRVg6jjyRQ3YVNQXJZVyg9NOXq3KdRcgfPcGMgygbzL5b0QdXhveZ1y7Up5CV9W8d2uTZC9OaGIci07cFC6pzOrQZGd6bnDf169tnM9cjgCcVdDmMYp3iKLGXaKUmrVH1tUpQFxO32YceiH1b6JPZQBLGVRn1AJH4z5VRDTPTA4O7tAcE1QBVKeQX0irGfj6cKcJ5YibYWmvxk9KcT6g8xE",
+            "session_id": "ADuQZUrARaKkR5IRv4866tR9UW8dQfebLshpiMOBvqeRXOJxJzHo3nGj2gadsmaRxxRbE6qMFitk2GslWhOvbNtIUR3YmYG0uEumJ9jfnR0xZfao8zf3bKhsnmRlf8b6RaPWdNbJI7FZrOtbRQApYqZxosh45ClnM9gJOBk4ydM6rxJkrQQURqhm24TOYnCyLEXEyjG5DOysi1CnQ9uaZiTUE2CJY7VMAqJcmr5C2QzsJ0aYoUyP3hYIkTq8x7R0",
             "percentageRisk": {
                 "MPWizard": 0.025
             },
-            "current_capital": 36411.41
+            "current_capital": 31711.76
         },
         "vinod": {
             "username": "110958",
@@ -119,17 +121,18 @@
             "app_code": "skGIWlRuysmi9Lj",
             "api_key": "E08VqCkbrXqaWUnrQapGxA4VfDQVWJfZ9Jxs4nXcnbSoVME1NfnfjvLcWoLpxAE4lUzs5mzTohMThKD6K6GIc9Md3PHuja8IxRuF3Xr15ubIvEkzv4q7PsBxZX05niOA",
             "totp_access": "SXHHDMKDCNPQUQPQMJQETIDJKUUYGFAZ",
-            "session_id": "2YSH4TRDgRK2369df0JTIS8UQkpQgt13TMr1UyJkQZ1VLA3MlnNolb3Z5Oiuy8K4C4CEhOY96mHxC37AbeDDShWufyVd9qDUZBmg51aJ0C7FOAdrKNaAKXga7383bu1rt3iOd5KUZNcajgqNot3Emi2PO10dALJ0Vl4BVNtgZB03orY5bUBtdFNzm17NsvBqsjYTnhn4EOLHGYeBl643TJchFF9AH5ajGBUuxVDjPW2maR8bc3e3I1CqtSFgySGE",
+            "session_id": "iOgoHT8G66m9CjD4RIyejN9oYo6IFTlOjv8ocNMYJdBk8QoIplrqd8yINtxjlnqtKK3BEnV55GR5ix3aVVIWDxGg7Ctu13XARURcHWWyqSThst5VnGyKYxDgLSbT9HgZ89AuAPmqARMnmyOuRf2WBnVSmcDPd4A2JKg0kR2d5PhI2N3fgb179BKaDW5NNvPtfF74rWkRqNv5Tg5EbFi5nNojOLIaMLCKOBEFD5Q4MxNG9WHs5A3HXBVXoCH9R4vo",
             "percentageRisk": {
                 "MPWizard": 0.025
             },
-            "current_capital": 0.0
+            "current_capital": 90000.0
         },
         "accounts_to_trade": [
             "brijesh",
             "sridhar",
             "vinay",
-            "vinod"
+            "vinod",
+            "venkatesh"
         ]
     }
 }

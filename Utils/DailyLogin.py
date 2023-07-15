@@ -77,7 +77,7 @@ def calculate_lots(user_details, strategy_percentage, mpwizard_json):
     current_capital = user_details.get('current_capital', 0)
     percentage_risk = user_details.get('percentageRisk', {})
     weekday = datetime.now().strftime('%a')
-    indices_lot_sizes = {"Nifty": 50, "BankNifty": 25, "FinNifty": 40}
+    indices_lot_sizes = {"NIFTY": 50, "BANKNIFTY": 25, "FINNIFTY": 40}
 
     with open(mpwizard_json, 'r') as file:
         data = json.load(file)
@@ -138,8 +138,6 @@ def create_strategy_json(broker_name, user, lots, balance, user_details_path, mp
 
     with open(user_file_path, 'w') as json_file:
         json.dump(data, json_file, indent=4)
-
-
 
 
 alice = None

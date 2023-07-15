@@ -3,12 +3,14 @@ import time
 import datetime
 from datetime import datetime as dt
 from csv import writer
-
+from ZrOm_calc import get_option_tokens
+from place_order import *
 import json
 import csv
 import os
 import argparse
 from kiteconnect import KiteConnect
+
 
 # Parsing the base entry time to a format which can be compared with current time
 base_entry_time = dt.strptime("09:26:00", "%H:%M:%S").time()
@@ -17,7 +19,7 @@ class Algo:
     base_entry_price = 0
     
     zone_width = 25
-    quantity = 100
+    quantity = 50
     is_trade_cycle_done = False
     long_entry = False
     short_entry = False
@@ -93,6 +95,7 @@ class Algo:
             f_object.close()
 
     def run(self, tick_price, tick_time):
+        expiry_date = "2023-07-13"
         # Get the simulated current time from the tick_time
         current_time = dt.fromtimestamp(tick_time).time()
 
@@ -109,6 +112,9 @@ class Algo:
                 print("#@# Base Entry Price is set to --> {}".format(tick_price))
                 self.base_entry_price = tick_price
                 self.one_print = True
+                # str_prc = round(tick_price/100)*100
+                # tokens,trading_symbol,trading_symbol_aliceblue = get_option_tokens("BANKNIFTY",expiry_date,str_prc)
+                # print("trade symbol is {}".format(trading_symbol))
                 # Place entry order here
             is_condition = False
             if self.is_trade_cycle_done is False:
@@ -135,7 +141,9 @@ class Algo:
                         q = self.quantity * 3
                     elif point == 'L2':
                         q = self.quantity * 12
-
+                    str_prc = round(tick_price/100)*100
+                    tokens,trading_symbol,trading_symbol_aliceblue = get_option_tokens("BANKNIFTY",expiry_date,str_prc,"CE")
+                    order_id = place_zerodha_order(trading_symbol,"BUY",point,q,str_prc,"BANKNIFTY")
                     # place CE orders here
                     self.add_item_order_book(self.trade_cycle_count, "Long", point, tick_price, m_time, "", "", "", False, q)
                     self.open_order_counts += 1
@@ -152,7 +160,10 @@ class Algo:
                         q = self.quantity * 2
                     elif point == 'S1':
                         q = self.quantity * 6
-
+                    str_prc = round(tick_price/100)*100
+                    tokens,trading_symbol,trading_symbol_aliceblue = get_option_tokens("BANKNIFTY",expiry_date,str_prc,"PE")
+                    order_id = place_zerodha_order(trading_symbol,"BUY",point,q,str_prc,"BANKNIFTY")
+                    # print("trade symbol is {}".format(trading_symbol))
                     # place PE orders here
                     self.add_item_order_book(self.trade_cycle_count, "Short", point, tick_price, m_time, "", "", "", False, q)
                     self.open_order_counts += 1
@@ -184,7 +195,7 @@ class Algo:
                 self.write_results_csv(self.result_csv)
 
 # Load the csv file
-df = pd.read_csv('nifty_50.csv')
+df = pd.read_csv('banknifty_50.csv')
 
 # Convert the date column to datetime
 df['date'] = pd.to_datetime(df['date'])
@@ -211,7 +222,7 @@ for index, row in df.iterrows():
     tick_time = row['date'].timestamp()
 
     # Convert the Unix timestamp to a datetime object
-    tick_time_obj = datetime.datetime.fromtimestamp(tick_time)
+    tick_time_obj = datetime.fromtimestamp(tick_time)
 
     # Format the datetime object as a string
     formatted_tick_time = tick_time_obj.strftime('%d%b%y %I:%M:%S %p')
@@ -227,4 +238,4 @@ for index, row in df.iterrows():
         break
 
     # Sleep for the required time
-    time.sleep(sleep_time)
+    sleep(sleep_time)
