@@ -178,9 +178,9 @@ class Algo:
                     tokens,trading_symbol,trading_symbol_aliceblue = get_option_tokens("BANKNIFTY",expiry_date,str_prc,"PE")
                     for brokers, users in self.users:
                         if brokers == "aliceblue":
-                            order_id = place_aliceblue_order(trading_symbol_aliceblue,"SELL",point,q,str_prc,"BANKNIFTY", users)
+                            order_id = place_aliceblue_order(trading_symbol_aliceblue,"BUY",point,q,str_prc,"BANKNIFTY", users)
                         elif brokers == "zerodha":
-                            order_id = place_zerodha_order(trading_symbol,"SELL",point,q,str_prc,"BANKNIFTY", users)
+                            order_id = place_zerodha_order(trading_symbol,"BUY",point,q,str_prc,"BANKNIFTY", users)
                     # order_id = place_zerodha_order(trading_symbol,"BUY",point,q,str_prc,"BANKNIFTY") ########################################################
                     # place PE orders here
                     self.add_item_order_book(self.trade_cycle_count, "Short", point, tick_price, m_time, "", "", "", False, q)

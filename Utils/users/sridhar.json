@@ -1,0 +1,25 @@
+{
+    "aliceblue": {
+        "username": "935347",
+        "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
+        "session_id": "qHPEH8JBtsJqxt0s9VgE4lvgc1uBPYN1kD83O95psGA8rkm6zB43j3Br9rCPqDOUcem3fepCTbzTQXeWzaAyRksSTiiK9jDC1EZobY0Iasx9JbkJVjqFl7v6x8fxHoSJpZ6HF45v49voQQFU1JPXWnW6nVM91iPljN90FnsOhSs0z92K881d9GcLdnaZ3nxW1B9JHczue56sggUA9D5YQbvuFB8urkkatTWElPJHdr6MHcqrq9M8xOV5XNGnKzx9",
+        "Current_Capital": 39878.46,
+        "MPWizard_qty": {
+            "NIFTY_qty": 50,
+            "BANKNIFTY_qty": 25,
+            "FINNIFTY_qty": 80
+        },
+        "orders": {
+            "SELL": [
+                {
+                    "order_no": "230718000144369",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-18 11:09:06.183807",
+                    "strike_price": 19800,
+                    "tradingsymbol": "NIFTY2372019800CE"
+                }
+            ]
+        }
+    }
+}
