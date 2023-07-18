@@ -3,6 +3,7 @@ import pandas as pd
 from collections import namedtuple
 import json
 import requests
+import datetime
 
 Instrument = namedtuple("Instrument", ['exchange', 'token', 'symbol', 'name', 'expiry', 'lot_size'])
 
@@ -83,3 +84,53 @@ def zrm_discord_bot(message):
     if response.status_code != 200:
         raise ValueError(f"Request to discord returned an error {response.status_code}, the response is:\n{response.text}")
     return response
+
+
+holidays = [
+    datetime.date(2023, 1, 26),
+    datetime.date(2023, 3, 7),
+    datetime.date(2023, 3, 30),
+    datetime.date(2023, 4, 4),
+    datetime.date(2023, 4, 7),
+    datetime.date(2023, 4, 14),
+    datetime.date(2023, 4, 22),
+    datetime.date(2023, 5, 1),
+    datetime.date(2023, 6, 28),
+    datetime.date(2023, 8, 15),
+    datetime.date(2023, 9, 19),
+    datetime.date(2023, 10, 2),
+    datetime.date(2023, 10, 24),
+    datetime.date(2023, 11, 14),
+    datetime.date(2023, 11, 27),
+    datetime.date(2023, 12, 25)
+]
+
+def get_expiry_dates():
+    # Initialize the list of Thursdays and Tuesdays in 2023
+    thursdays_2023 = []
+    tuesdays_2023 = []
+
+    # Loop through each week in 2023
+    for week in range(1, 53):
+        # Calculate the date of the Thursday and Tuesday in the given week
+        thursday = datetime.datetime.strptime(f'2023-{week}-4', '%Y-%W-%w').date()
+        tuesday = datetime.datetime.strptime(f'2023-{week}-2', '%Y-%W-%w').date()
+
+        # Exclude the holidays
+        if thursday not in holidays:
+            thursdays_2023.append(thursday)
+        if tuesday not in holidays:
+            tuesdays_2023.append(tuesday)
+
+    # Get the current date
+    today = datetime.date.today()
+
+    # Find the next non-holiday Thursday and Tuesday
+    nifty_expiry = next((d for d in thursdays_2023 if d > today), None)
+    finnifty_expiry = next((d for d in tuesdays_2023 if d > today), None)
+
+    # Check if we found a valid expiry date for nifty and finnifty
+    if nifty_expiry is None or finnifty_expiry is None:
+        zrm_discord_bot("Please check the expiry dates")
+
+    return nifty_expiry, finnifty_expiry

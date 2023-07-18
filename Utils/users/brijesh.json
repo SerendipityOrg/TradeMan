@@ -11,18 +11,6 @@
             "NIFTY_qty": 350,
             "BANKNIFTY_qty": 100,
             "FINNIFTY_qty": 360
-        },
-        "orders": {
-            "SELL": [
-                {
-                    "order_no": "230718000144311",
-                    "trade_type": "SELL",
-                    "avg_prc": "00.00",
-                    "timestamp": "2023-07-18 11:09:04.764445",
-                    "strike_price": 19800,
-                    "tradingsymbol": "NIFTY2372019800CE"
-                }
-            ]
         }
     }
 }

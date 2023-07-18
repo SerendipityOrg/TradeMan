@@ -1,13 +1,13 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, CallbackContext
-from Utilities.siri_place_orders import *
-from Utilities.siricalculation import get_option_tokens 
+from MPWizard_calc import *
+from MPW_place_orders import * 
 
 token = '807232387:AAF5OgaGJuUPV8xwDUxYFRHaOWJSU5pIAic'
 
-# Load credentials from siri.json
-with open(r"/Users/traderscafe/Documents/TradeMan/Amipy/Utilities/Siri.json") as json_file:
-    credentials = json.load(json_file)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+broker_filepath = os.path.join(script_dir, '..', 'Utils', 'broker.json')
+users_to_trade = get_mpwizard_users(broker_filepath)
 
 def start(update: Update, context: CallbackContext) -> None:
     keyboard = [
@@ -100,15 +100,6 @@ def limit_callback(update: Update, context: CallbackContext) -> None:
     context.bot.send_message(chat_id=update.effective_chat.id, text='Select the trade type:', reply_markup=reply_markup)
     # context.bot.send_message(chat_id=update.effective_chat.id, text='Enter the trigger price:')
 
-# def trigger_callback(update: Update, context: CallbackContext) -> None:
-    
-#     keyboard = [
-#         [InlineKeyboardButton("BUY", callback_data='BUY'),
-#          InlineKeyboardButton("SELL", callback_data='SELL')],
-#     ]
-#     reply_markup = InlineKeyboardMarkup(keyboard)
-#     context.bot.send_message(chat_id=update.effective_chat.id, text='Select the trade type:', reply_markup=reply_markup)
-
 def trade_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     query.answer()
@@ -122,32 +113,32 @@ def trade_callback(update: Update, context: CallbackContext) -> None:
     trade_type = context.user_data['trade_type']
 
     if index == 'FINNIFTY':
-        expiry = '2023-07-11'
+        expiry = get_expiry_dates()[1]
     else:
-        expiry = '2023-07-13'
+        expiry = get_expiry_dates()[0]
 
     # Get tokens and trading symbols
-    tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(index, expiry, strike_price, option_type)
+    tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(index, expiry, option_type, strike_price)
     
     if context.user_data['action'] == 'Place Stoploss Order':
         limit_price = context.user_data['limit_price']
         trigger_price = context.user_data['trigger_price']
         # place_stoploss_order(index, strike_price, option_type, limit_price, trigger_price, trade_type)
-        for broker in credentials:
+        for broker,user in users_to_trade:
             print(broker)
             if broker == 'zerodha':
-                place_stoploss_zerodha(trading_symbol_list[0], trade_type, trade_type, strike_price, index, limit_price, trigger_price, broker='zerodha')
+                place_stoploss_zerodha(trading_symbol_list[0], trade_type, trade_type, strike_price, index, limit_price, user, broker='zerodha')
 
             elif broker == 'aliceblue':
-                place_stoploss_aliceblue(trading_symbol_aliceblue[0], trade_type, trade_type, strike_price, index,limit_price, trigger_price, broker='aliceblue')
+                place_stoploss_aliceblue(trading_symbol_aliceblue[0], trade_type, trade_type, strike_price, index,limit_price, user, broker='aliceblue')
 
     else:
-        for broker in credentials:
+        for broker,user in users_to_trade:
             if broker == 'zerodha':
-                place_zerodha_order(trading_symbol_list[0], trade_type, trade_type, strike_price, index, broker='zerodha')
+                place_zerodha_order(trading_symbol_list[0], trade_type, trade_type, strike_price, index, user, broker='zerodha')
 
             elif broker == 'aliceblue':
-                place_aliceblue_order(trading_symbol_aliceblue[0], trade_type, trade_type, strike_price, index, broker='aliceblue')
+                place_aliceblue_order(trading_symbol_aliceblue[0], trade_type, trade_type, strike_price, index, user, broker='aliceblue')
 
 
     reply_text = f"You selected:\nIndex: {index}\nStrike Price: {strike_price}\nOption Type: {option_type}\nTrade Type: {trade_type}"

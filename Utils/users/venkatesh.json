@@ -6,20 +6,8 @@
         "Current_Capital": 59278.47,
         "MPWizard_qty": {
             "NIFTY_qty": 50,
-            "BANKNIFTY_qty": 25,
+            "BANKNIFTY_qty": 0,
             "FINNIFTY_qty": 40
-        },
-        "orders": {
-            "SELL": [
-                {
-                    "order_no": "230718000144581",
-                    "trade_type": "SELL",
-                    "avg_prc": "00.00",
-                    "timestamp": "2023-07-18 11:09:10.530011",
-                    "strike_price": 19800,
-                    "tradingsymbol": "NIFTY2372019800CE"
-                }
-            ]
         }
     }
 }

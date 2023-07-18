@@ -30,14 +30,12 @@ def get_mpwizard_users(broker_filepath):
 
     return accounts_to_trade
 
-
 script_dir = os.path.dirname(os.path.abspath(__file__))   
 parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
 
 def load_credentials(filepath):
     with open(filepath, 'r') as file:
         return json.load(file)
-
 
 def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_price, index, users, broker='zerodha'):
     filepath = os.path.join(parent_dir, 'Utils', 'users', f'{users}.json')

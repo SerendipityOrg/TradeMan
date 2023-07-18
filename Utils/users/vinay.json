@@ -5,21 +5,9 @@
         "session_id": "nvC1QXQYa44Hrct2nmDdfubz5n0YtObG7tyhUsq3BfhskXNYoqP0kAqmb5vsgSuldyLbGmBjUZADnAOTQKNUZl1Z5ya3Oa77EgPX2O5Bk4pSZE2WQOUaBp55mheEp824dyOEdDDahjRpiRUHnv61xSJ1C72sNiuznZ5H0oMBQkjQakhgF8eT65niDsdyyjc0hDsT9MQFDullrilAMDTVtDA7UWly6cQLXKun70cKV7V6rWGYBcgD4nFki9DPPOGm",
         "Current_Capital": 37894.34,
         "MPWizard_qty": {
-            "NIFTY_qty": 50,
-            "BANKNIFTY_qty": 25,
+            "NIFTY_qty": 0,
+            "BANKNIFTY_qty": 0,
             "FINNIFTY_qty": 40
-        },
-        "orders": {
-            "SELL": [
-                {
-                    "order_no": "230718000144436",
-                    "trade_type": "SELL",
-                    "avg_prc": "00.00",
-                    "timestamp": "2023-07-18 11:09:07.694122",
-                    "strike_price": 19800,
-                    "tradingsymbol": "NIFTY2372019800CE"
-                }
-            ]
         }
     }
 }

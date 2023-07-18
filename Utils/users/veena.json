@@ -1,0 +1,13 @@
+{
+    "aliceblue": {
+        "username": "AB117607",
+        "api_key": "KZ2gGEyfvKC2x7KN4m1EMRU0aOQyNq2X1hcPKsdZoI8FgbjzLfLQva3IdJRmzntJyGH1f7sCsgvzLiKCE5l80iLVrRIGjBn7bn8vPe03BgmEYsLpsr2cMVYOYeX6LWNs",
+        "session_id": "nX9UJv7A7ZTNauXB35UKjP2PJXMn262KFiuRUUGHce4Dn6UtC4h7xrd2InUSpZI2F7SgWmAHo6sQTfZP7XdSAGn6sHfS0BT4LebZEjj63BVpqqRNZDQtgsu7Nvc25fJtKoZ5IVayaKcSI19fyvx4TUhHs6UxoCzDnB9LBVEIBX6iSdpOH6Dsh9I7uTq7GHWFeEGvzJ5vqBSya9g2Wukv3FIDKclCp9WXL0OG8GzGFWQLSlT3vrZEZBe4yevsXLKQ",
+        "Current_Capital": 90000.0,
+        "MPWizard_qty": {
+            "NIFTY_qty": 100,
+            "BANKNIFTY_qty": 25,
+            "FINNIFTY_qty": 80
+        }
+    }
+}

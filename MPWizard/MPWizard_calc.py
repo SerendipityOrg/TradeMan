@@ -125,8 +125,6 @@ def get_average_range_and_update_json():
             with open(mpwizard_file, 'w') as json_file:
                 json.dump(json_data, json_file, indent=4)
 
-
-
 def get_expiry_dates():
     # Initialize the list of Thursdays and Tuesdays in 2023
     thursdays_2023 = []

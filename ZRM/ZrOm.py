@@ -6,7 +6,7 @@ import argparse
 from csv import writer
 from datetime import datetime
 from kiteconnect import KiteConnect
-from ZrOm_calc import get_option_tokens,get_zrm_users
+from ZrOm_calc import get_option_tokens,get_zrm_users, get_expiry_dates
 from place_order import *
 from time import sleep
 
@@ -105,7 +105,7 @@ class Algo:
 
     def run(self, tick_price, tick_time):
         global str_prc
-        expiry_date = "2023-07-20"
+        expiry_date = get_expiry_dates()[0]
         # Check the base entry time constraint before entering the trades
         current_time = datetime.now().time()
         if current_time < base_entry_time:
