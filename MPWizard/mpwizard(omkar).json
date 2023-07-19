@@ -15,12 +15,12 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 153.31,
-            "IBValue": 69.20000000000073,
+            "ATR5D": 157.43,
+            "IBValue": 53.20000000000073,
             "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 19810.2,
-                "IBLow": 19741
+                "IBHigh": 19841.15,
+                "IBLow": 19787.95
             },
             "TSLStepSize": 0.5,
             "SignalEntry": {
@@ -48,12 +48,12 @@
                 "Fri": 40,
                 "Sat": 55
             },
-            "ATR5D": 512.35,
-            "IBValue": 306.1999999999971,
-            "IBLevel": "Medium",
+            "ATR5D": 541.96,
+            "IBValue": 124.05000000000291,
+            "IBLevel": "Small",
             "TriggerPoints": {
-                "IBHigh": 45902.7,
-                "IBLow": 45596.5
+                "IBHigh": 45633.8,
+                "IBLow": 45509.75
             },
             "TSLStepSize": 0.5,
             "SignalEntry": {
@@ -81,12 +81,12 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 236.85,
-            "IBValue": 102.95000000000073,
-            "IBLevel": "Medium",
+            "ATR5D": 238.16,
+            "IBValue": 59.39999999999782,
+            "IBLevel": "Small",
             "TriggerPoints": {
-                "IBHigh": 20475.45,
-                "IBLow": 20372.5
+                "IBHigh": 20336.85,
+                "IBLow": 20277.45
             },
             "TSLStepSize": 0.5,
             "SignalEntry": {

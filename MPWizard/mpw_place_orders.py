@@ -89,6 +89,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
 
         # Create a new dict for the order
         order_dict = {
+            "order_id": order_id,
             "trade_type": order_trade_type,
             "avg_prc": avg_prc,
             "timestamp": str(datetime.now()),
@@ -103,7 +104,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
             user_details[broker]['orders']['MPWizard'][trade_type] = []
 
         # Add the order_dict to the corresponding trade_type list
-        user_details[broker]['orders'][trade_type].append(order_dict)
+        user_details[broker]['orders']['MPWizard'][trade_type].append(order_dict)
 
     except Exception as e:
         message = f"Order placement failed for user {users}: {e}"
@@ -168,6 +169,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
 
         # Create a new dict for the order
         order_dict = {
+            "order_id": order_id['NOrdNo'],
             "trade_type": order_trade_type,
             "avg_prc": avg_prc,
             "timestamp": str(datetime.datetime.now()),
@@ -182,7 +184,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
             user_details[broker]['orders']['MPWizard'][trade_type] = []
 
         # Add the order_dict to the corresponding trade_type list
-        user_details[broker]['orders'][trade_type].append(order_dict)
+        user_details[broker]['orders']['MPWizard'][trade_type].append(order_dict)
 
     except Exception as e:
         message = f"Order placement failed for user {users}: {e}"

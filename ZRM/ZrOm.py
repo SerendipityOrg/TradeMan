@@ -105,7 +105,8 @@ class Algo:
 
     def run(self, tick_price, tick_time):
         global str_prc
-        expiry_date = get_expiry_dates()[0]
+        expiry_date = str(get_expiry_dates()[0])
+        # expiry_date = "2023-07-20"
         # Check the base entry time constraint before entering the trades
         current_time = datetime.now().time()
         if current_time < base_entry_time:
@@ -174,7 +175,6 @@ class Algo:
                     elif point == 'S1':
                         q = self.quantity * 6
 
-                    print("str_prc",str_prc)
                     tokens,trading_symbol,trading_symbol_aliceblue = get_option_tokens("BANKNIFTY",expiry_date,str_prc,"PE")
                     for brokers, users in self.users:
                         if brokers == "aliceblue":

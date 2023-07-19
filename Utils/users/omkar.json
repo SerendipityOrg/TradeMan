@@ -2,20 +2,20 @@
     "zerodha": {
         "username": "YY0222",
         "api_key": "6b0dp5ussukmo67h",
-        "access_token": "RBGEdVNCwnO3gTx2CFljxXeOwvRTc5DC",
-        "Current_Capital": 2580168.8,
+        "access_token": "qMh2CuBZJVNNY05HjAbgvSxHkmZM7w4R",
+        "Current_Capital": 2563184.8,
         "AmiPy_qty": {
             "AmiPy_qty": 10
         },
         "MPWizard_qty": {
-            "NIFTY_qty": 1200,
-            "BANKNIFTY_qty": 375,
-            "FINNIFTY_qty": 1200
+            "NIFTY_qty": 1050,
+            "BANKNIFTY_qty": 300,
+            "FINNIFTY_qty": 1040
         },
         "ZRM_qty": {
-            "NIFTY_qty": 1200,
-            "BANKNIFTY_qty": 375,
-            "FINNIFTY_qty": 1200
+            "NIFTY_qty": 1050,
+            "BANKNIFTY_qty": 300,
+            "FINNIFTY_qty": 1040
         },
         "orders": {}
     }

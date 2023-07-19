@@ -321,15 +321,6 @@ for user in zerodha_accounts_to_trade:
     # Updated logic to use strategy percentage
     strategy_percentage = user_details.get('percentageRisk', {})
     user_details['current_capital'] = balance
-    # for strategy in strategy_percentage:
-    #     if strategy in user_details.get('strategies', []):
-    #         user_details[f"{strategy}_allocated"] = balance * strategy_percentage[strategy]
-
-    # for strategy in list(user_details.keys()):
-    #     if strategy.endswith("_allocated"):
-    #         strategy_name = strategy.split("_allocated")[0]
-    #         if strategy_name not in user_details['strategies']:
-    #             user_details.pop(strategy, None)
 
     broker['zerodha'][user] = user_details  # persist the changes
     lots = calculate_lots(user_details, strategy_percentage,mpwizard_json_path)

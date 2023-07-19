@@ -1,7 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, CallbackContext
 from MPWizard_calc import *
-from MPW_place_orders import * 
+from mpw_place_orders import * 
 
 token = '807232387:AAF5OgaGJuUPV8xwDUxYFRHaOWJSU5pIAic'
 
@@ -113,13 +113,13 @@ def trade_callback(update: Update, context: CallbackContext) -> None:
     trade_type = context.user_data['trade_type']
 
     if index == 'FINNIFTY':
-        expiry = get_expiry_dates()[1]
+        expiry = str(get_expiry_dates()[1])
     else:
-        expiry = get_expiry_dates()[0]
+        expiry = str(get_expiry_dates()[0])
 
     # Get tokens and trading symbols
     tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(index, expiry, option_type, strike_price)
-    
+    print(tokens, trading_symbol_list, trading_symbol_aliceblue)
     if context.user_data['action'] == 'Place Stoploss Order':
         limit_price = context.user_data['limit_price']
         trigger_price = context.user_data['trigger_price']

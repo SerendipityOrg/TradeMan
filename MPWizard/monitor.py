@@ -3,7 +3,7 @@ from datetime import datetime as dt
 from time import sleep
 import json
 from telegram_bot import discord_bot
-from MPW_place_orders import *
+from mpw_place_orders import *
 from MPWizard_calc import *
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -88,9 +88,9 @@ class OrderMonitor:
                                         prc_ref = mood_data['WeekdayPrcRef'].get(weekday, 0)
                                         
                                         if ib_level == 'Big':
-                                            option_type = 'PE' if cross_type == 'DownCross' else 'CE'
-                                        elif ib_level == 'Small':
                                             option_type = 'PE' if cross_type == 'UpCross' else 'CE'
+                                        elif ib_level == 'Small':
+                                            option_type = 'PE' if cross_type == 'DownCross' else 'CE'    
                                         elif ib_level == 'Medium':
                                             option_type = 'PE' if instru_mood == 'Bearish' else 'CE'   #check this logic 
                                         else:
@@ -103,9 +103,11 @@ class OrderMonitor:
 
                                         if name == 'NIFTY' or name == 'BANKNIFTY':
                                             expiry = get_expiry_dates()
-                                            expiry_date = expiry[0].strftime("%Y-%m-%d")  # constant value
+                                            # expiry_date = "2023-07-20"
+                                            expiry_date = str(expiry[0])  # constant value
                                         elif name == 'FINNIFTY':
-                                            expiry_date = expiry[1].strftime("%Y-%m-%d")
+                                            # expiry_date = "2023-07-25"
+                                            expiry_date = str(expiry[1])
                                         
 
                                         tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(name, expiry_date, option_type, strike_prc)

@@ -2,15 +2,43 @@
     "aliceblue": {
         "username": "929016",
         "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
-        "session_id": "5bYaM9UPRPXbT22SkYS2rTFRa6Ao6ziTFYGC1zTKYxzavOGSQx3Jsd8AecAZBVq0sBlPxjtUnfU6hqLAWmggybsk4HcCWEkfGNyN45JdlgDZbRryPo2LC7svEWxBhPBOaaGAeQFv9CpHuUPhAGXOgL9S6prgSFmSH7gvXntEgcfsb11N5THh6nymxClU7T0WzSGuD74bElMvIprmbdchfjRgU5ia1Aabg0PE5aN1gtYZZuqK4janczPEdSctI6Qd",
-        "Current_Capital": 523088.94,
+        "session_id": "E0notx2qSlL1mSAbypTiKAQrAN8ATID9yUa56GJlUJQZJpiUxDGOkcMgCs2YVStkE6T41V1P8KJ4CZZLiI0jXvG4CQ4pPNLgjpN6FxkF6fUINvnJsA3VztZyFC5T7JEm35XTfohKy9d4jqtQ2mbZrrgMkx74flU83UY905y861EqR4mP5EL2AcZsyclNVmY50EYBuTKCc2mT1qjaJWf73aMyvdeVzj4JgzQqehNc9dZl386kmyzgM1IX2nZofHD3",
+        "Current_Capital": 512710.32,
         "AmiPy_qty": {
             "AmiPy_qty": 2
         },
         "MPWizard_qty": {
-            "NIFTY_qty": 350,
-            "BANKNIFTY_qty": 100,
-            "FINNIFTY_qty": 360
+            "NIFTY_qty": 300,
+            "BANKNIFTY_qty": 75,
+            "FINNIFTY_qty": 320
+        },
+        "orders": {
+            "SELL": [
+                {
+                    "order_no": "230719000095407",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:29:01.199303",
+                    "strike_price": 20350,
+                    "tradingsymbol": "FINNIFTY23JUL20350PE"
+                },
+                {
+                    "order_no": "230719000098751",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:33:02.981138",
+                    "strike_price": 45600,
+                    "tradingsymbol": "BANKNIFTY2372045600CE"
+                },
+                {
+                    "order_no": "230719000108783",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:43:48.386983",
+                    "strike_price": 19800,
+                    "tradingsymbol": "NIFTY2372019800CE"
+                }
+            ]
         }
     }
 }

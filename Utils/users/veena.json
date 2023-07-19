@@ -2,12 +2,40 @@
     "aliceblue": {
         "username": "AB117607",
         "api_key": "KZ2gGEyfvKC2x7KN4m1EMRU0aOQyNq2X1hcPKsdZoI8FgbjzLfLQva3IdJRmzntJyGH1f7sCsgvzLiKCE5l80iLVrRIGjBn7bn8vPe03BgmEYsLpsr2cMVYOYeX6LWNs",
-        "session_id": "nX9UJv7A7ZTNauXB35UKjP2PJXMn262KFiuRUUGHce4Dn6UtC4h7xrd2InUSpZI2F7SgWmAHo6sQTfZP7XdSAGn6sHfS0BT4LebZEjj63BVpqqRNZDQtgsu7Nvc25fJtKoZ5IVayaKcSI19fyvx4TUhHs6UxoCzDnB9LBVEIBX6iSdpOH6Dsh9I7uTq7GHWFeEGvzJ5vqBSya9g2Wukv3FIDKclCp9WXL0OG8GzGFWQLSlT3vrZEZBe4yevsXLKQ",
-        "Current_Capital": 90000.0,
+        "session_id": "ig8G9tgjqvpbqG70hd3r7XK6fnR5GJkE8uEAZYtaYlQ74PBte4ZpkjmAhSvKHIvvYYW51fvTjDuXY79W68aeIUTvzj0qr3Anq0HRLJNIpfKy2q7Hjsjlke1rSF5cTdW0HvqxOMZKVVKpGMqzPdRNgEB0UmL1nVZFAy8sB4SRCagUE5sqrhH2nIzVxCdjA67M3YsMq0m4GE0R3gc3r0x7oTaAxF8vAZ2XRt2vCvWXECKjCyI9hphZhlxxmu83lFh8",
+        "Current_Capital": 89489.1,
         "MPWizard_qty": {
-            "NIFTY_qty": 100,
+            "NIFTY_qty": 50,
             "BANKNIFTY_qty": 25,
             "FINNIFTY_qty": 80
+        },
+        "orders": {
+            "SELL": [
+                {
+                    "order_no": "230719000095550",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:29:07.746062",
+                    "strike_price": 20350,
+                    "tradingsymbol": "FINNIFTY23JUL20350PE"
+                },
+                {
+                    "order_no": "230719000098773",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:33:05.284709",
+                    "strike_price": 45600,
+                    "tradingsymbol": "BANKNIFTY2372045600CE"
+                },
+                {
+                    "order_no": "230719000109023",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:43:54.987828",
+                    "strike_price": 19800,
+                    "tradingsymbol": "NIFTY2372019800CE"
+                }
+            ]
         }
     }
 }

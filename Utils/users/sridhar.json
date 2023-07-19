@@ -2,12 +2,40 @@
     "aliceblue": {
         "username": "935347",
         "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
-        "session_id": "qHPEH8JBtsJqxt0s9VgE4lvgc1uBPYN1kD83O95psGA8rkm6zB43j3Br9rCPqDOUcem3fepCTbzTQXeWzaAyRksSTiiK9jDC1EZobY0Iasx9JbkJVjqFl7v6x8fxHoSJpZ6HF45v49voQQFU1JPXWnW6nVM91iPljN90FnsOhSs0z92K881d9GcLdnaZ3nxW1B9JHczue56sggUA9D5YQbvuFB8urkkatTWElPJHdr6MHcqrq9M8xOV5XNGnKzx9",
-        "Current_Capital": 39878.46,
+        "session_id": "NkniE8f16tDh1QXsEalgNI9oXruYnjjSYoMg2hpkTVdqD8Pn9vSmh2J38xUvpDhPQJz0vmKFnVagUFNOrUTeuW49Ym0ETqJhoWMaEdeDz1ixoU2o1X4DlZyYilOp4DEcp5U2FxXGu7Kq2f6NOYqzpKRlRIYSApi6WOJpyNNa40HcgoFlXgcq6Q334nLAPX6XeKbNjlqQKrtKy7F9PFU8fgAc4X8ts7QeN4HFKVFtQhQyYdBc8eGINRFdV7eZfH7k",
+        "Current_Capital": 37997.57,
         "MPWizard_qty": {
             "NIFTY_qty": 50,
             "BANKNIFTY_qty": 25,
-            "FINNIFTY_qty": 80
+            "FINNIFTY_qty": 40
+        },
+        "orders": {
+            "SELL": [
+                {
+                    "order_no": "230719000095442",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:29:02.583036",
+                    "strike_price": 20350,
+                    "tradingsymbol": "FINNIFTY23JUL20350PE"
+                },
+                {
+                    "order_no": "230719000098757",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:33:03.415112",
+                    "strike_price": 45600,
+                    "tradingsymbol": "BANKNIFTY2372045600CE"
+                },
+                {
+                    "order_no": "230719000108831",
+                    "trade_type": "SELL",
+                    "avg_prc": "00.00",
+                    "timestamp": "2023-07-19 10:43:49.663342",
+                    "strike_price": 19800,
+                    "tradingsymbol": "NIFTY2372019800CE"
+                }
+            ]
         }
     }
 }

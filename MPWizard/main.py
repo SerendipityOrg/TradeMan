@@ -2,9 +2,9 @@ from instrument import Instrument
 from order_manager import OrderManager
 from monitor import OrderMonitor
 from json_utils import read_json_file, write_json_file
-from MPW_place_orders import get_mpwizard_users
+from mpw_place_orders import get_mpwizard_users
 import os
-from MPWizard_calc import get_high_low_range_and_update_json, get_average_range_and_update_json
+from MPWizard_calc import get_high_low_range_and_update_json, get_average_range_and_update_json, get_expiry_dates
 import datetime
 import time
 
@@ -13,11 +13,11 @@ broker_filepath = os.path.join(script_dir, '..', 'Utils', 'broker.json')
 
 users_to_trade = get_mpwizard_users(broker_filepath)
 
-
 def main():
     get_average_range_and_update_json()
     now = datetime.datetime.now()
     wait_time = datetime.datetime(now.year, now.month, now.day, 10, 15) - now
+    print(f"Waiting for {wait_time} before starting the bot")
 
     if wait_time.total_seconds() > 0:  # only sleep if wait_time is positive
         time.sleep(wait_time.total_seconds())
