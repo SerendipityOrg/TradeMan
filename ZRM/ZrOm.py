@@ -25,7 +25,7 @@ class Algo:
     base_entry_price = 0
     
     zone_width = 50
-    quantity = 50
+    quantity = 45
     is_trade_cycle_done = False
     long_entry = False
     short_entry = False
@@ -106,6 +106,7 @@ class Algo:
     def run(self, tick_price, tick_time):
         global str_prc
         expiry_date = str(get_expiry_dates()[0])
+        # print("Expiry Date: ", type(expiry_date))
         # expiry_date = "2023-07-20"
         # Check the base entry time constraint before entering the trades
         current_time = datetime.now().time()

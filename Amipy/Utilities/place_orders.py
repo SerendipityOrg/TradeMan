@@ -78,12 +78,14 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         # Create a new list for each trade_type if it doesn't exist
         if 'orders' not in user_details[broker]:
             user_details[broker]['orders'] = {}
-        if trade_type not in user_details[broker]['orders']:
+        if "Amipy" not in user_details[broker]['orders']:
+            user_details[broker]['orders']['Amipy'] = {}
+        if trade_type not in user_details[broker]['orders']['Amipy']:
             user_details[broker]['orders']['Amipy'][trade_type] = []
 
         # Add the order_dict to the corresponding trade_type list
-        user_details[broker]['orders'][trade_type].append(order_dict)
-        print("here",user_details)
+        user_details[broker]['orders']['Amipy'][trade_type].append(order_dict)
+
     except Exception as e:
         message = f"Order placement failed for user {users}: {e}"
         amipy_discord_bot(message)
@@ -148,11 +150,13 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         # Create a new list for each trade_type if it doesn't exist
         if 'orders' not in user_details[broker]:
             user_details[broker]['orders'] = {}
-        if trade_type not in user_details[broker]['orders']:
+        if "Amipy" not in user_details[broker]['orders']:
+            user_details[broker]['orders']['Amipy'] = {}
+        if trade_type not in user_details[broker]['orders']['Amipy']:
             user_details[broker]['orders']['Amipy'][trade_type] = []
 
         # Add the order_dict to the corresponding trade_type list
-        user_details[broker]['orders'][trade_type].append(order_dict)
+        user_details[broker]['orders']['Amipy'][trade_type].append(order_dict)
 
     except Exception as e:
         message = f"Order placement failed for user {users}: {e}"

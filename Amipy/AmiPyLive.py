@@ -311,6 +311,11 @@ def updateSignalDf(last_signal,users_to_trade):
             signals.append(signal)
             signals_df = pd.DataFrame(signal, index=[0])
             signals_df.to_csv(trade_sig_path, index=True)
+            if 'SignalEntry' not in params['Nifty'][0]:
+                params['Nifty'][0]['SignalEntry'] = {}
+            params['Nifty'][0]['SignalEntry'][trade_type] = signal
+            with open('Amipy/AmiPy.json' , 'w') as f:
+                json.dump(params, f, indent=4)
             if trade_type == 'LongSignal':
                 place_order(broker, trading_symbols[0], 'BUY', trade_type,username)
                 place_order(broker, trading_symbols[1], 'BUY', trade_type,username)
@@ -328,6 +333,7 @@ def updateSignalDf(last_signal,users_to_trade):
             signal['NetTradePoints'] = signal['TradeExitPrice'] - signal['TradeEntryPrice']
             signals_df = pd.DataFrame(signal, index=[0])
             signals_df.to_csv(trade_sig_path, index=True)
+            params['Nifty'][0]['SignalEntry'] = signal
             if trade_type == 'LongCoverSignal':
                 place_order(broker, trading_symbols[0], 'SELL', trade_type,username)
                 place_order(broker, trading_symbols[1], 'SELL', trade_type,username)

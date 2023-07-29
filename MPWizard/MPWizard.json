@@ -1,53 +1,98 @@
 {
-    "aliceblue": {
-        "brijesh": {
-            "nf_qty": 0,
-            "bnf_qty": 0,
-            "fnf_qty": 0,
-            "username": "929016",
-            "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
-            "session_id": "lsGqzQcdFo7TPBsElDR0MEQTDOR1Emu8pzafDaDC9xpctzpuDM9v9Bq6qcCfXm83jx3rQc5gAP0FKROX3JcWeHB0rXyJBMIjbz0nopLVT4Sk6p3jeDR8dbkSBA6YWqfz04OeA7ugnYooVS7lyR7bx1So2KIIt0sbCgsg8LXoGfCTZoKlgCgIseUhqu6PuVYxPSrn7nZE0SAPjNQzUQpx1D8gfHRxZEWlX6qQLthDLK6ubMfKMneC3CWdtFaTT9RC"
+    "indices": [
+        {
+            "name": "NIFTY",
+            "token": 256265,
+            "NextExpiry": "06Jul23",
+            "InstruMood": "Bullish",
+            "OptionRegime": "Buy",
+            "InTrade": false,
+            "WeekdayPrcRef": {
+                "Mon": 18,
+                "Tue": 21,
+                "Wed": 24,
+                "Thu": 25,
+                "Fri": 15,
+                "Sat": 22
+            },
+            "ATR5D": 159.63,
+            "IBValue": 90.84999999999854,
+            "IBLevel": "Medium",
+            "TriggerPoints": {
+                "IBHigh": 19655.3,
+                "IBLow": 19650.45
+            },
+            "TSLStepSize": 0.5,
+            "SignalEntry": {
+                "Option": "NIFTY2380319650CE",
+                "Event": "Bullish-Medium-DownCross",
+                "EntryPrice": 102.4,
+                "EntryTime": "15:13:02"
+            }
         },
-        "venkatesh": {
-            "nf_qty": 0,
-            "bnf_qty": 0,
-            "fnf_qty": 0,
-            "username": "924446",
-            "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
-            "session_id": "tDQ0iaK9LgeneHLFs6umoCcIgrjqaNsJsDsBfylKe9Oc2Vihg6kOHlgYCdlMcSqe1tzd67SjGMUtPLMnio95M7OnVdH2v3H9NG3YUp9Axj1fLKK9T5ueEPgajYmbKpN6Ri0LS8ldcdjM8x6xXYmNXEchaNRQ7zTV8WgakVC0ISlPqiNGDJXD3W2BLyXFG7Hn9Ynq2mT2ilSoBiJX3iA9pm5k8vK5FoqbZ3xKAlclBq6mCG2ZyuZHemRKiCVhhqbc"
+        {
+            "name": "BANKNIFTY",
+            "token": 260105,
+            "NextExpiry": "06Jul23",
+            "InstruMood": "Bullish",
+            "OptionRegime": "Buy",
+            "InTrade": false,
+            "CompletedTrades": 0,
+            "WeekdayPrcRef": {
+                "Mon": 50,
+                "Tue": 65,
+                "Wed": 80,
+                "Thu": 90,
+                "Fri": 40,
+                "Sat": 55
+            },
+            "ATR5D": 468.19,
+            "IBValue": 332.75,
+            "IBLevel": "Big",
+            "TriggerPoints": {
+                "IBHigh": 45703.5,
+                "IBLow": 45370.75
+            },
+            "TSLStepSize": 0.5,
+            "SignalEntry": {
+                "Option": "BANKNIFTY2380345400CE",
+                "Event": "Bullish-Big-DownCross",
+                "EntryPrice": 305.05,
+                "EntryTime": "14:59:09",
+                "ExitPrice": 298.4,
+                "ExitTime": "14:59:10"
+            }
         },
-        "sridhar": {
-            "nf_qty": 0,
-            "bnf_qty": 0,
-            "fnf_qty": 0,
-            "username": "935347",
-            "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
-            "session_id": "uiNCc8WHv7d2tnEQ2BHzgsGWDcMu8VDy8QReFK99TT8TcaP70lDbljbI17COXhiNgFHdRsD6ad0yNgbaQKVq4kbh0XcCT0IdaaNCGSWrlUr6xgf6JySvJhZ0mfabXGOmJ4QPKzT8i0ps3XqY4mDU9tdorHIonP5EFa576HP05dHyaot6OCG3Dmm5ry5ZA9fG3gUjgLlKxlvvWjbG3DycYtzVbpvXj1UbXxIUrD6eUcvmYGlEPZMCSBAtV44habOR"
-        },
-        "vinay": {
-            "nf_qty": 0,
-            "bnf_qty": 0,
-            "fnf_qty": 0,
-            "username": "935325",
-            "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
-            "session_id": "MRM6j3EBrNIntWq7TtiIOM5E1sKZJitlRu3sy0Kn5OOA7MRtb46xCrR5TQD7TA330ILq8lc8XutEIOlntp3Y2qLxiX0kFZloOHTD93dW8sJlSOx80Td1EMC18x0TLH7JrGLD3VD58sIZTDYbdEQLjVb6nqduvNSy61IKGky9kQkOJtPNqJ2frHTZOgoN6NGgElR3ygghQufviCONDuJGemVUPpA2SlbdG7hEhGlLqQX863nNvcYFp9nRHak48b1R"
-        },
-        "vinod": {
-            "nf_qty": 0,
-            "bnf_qty": 0,
-            "fnf_qty": 0,
-            "username": "110958",
-            "api_key": "E08VqCkbrXqaWUnrQapGxA4VfDQVWJfZ9Jxs4nXcnbSoVME1NfnfjvLcWoLpxAE4lUzs5mzTohMThKD6K6GIc9Md3PHuja8IxRuF3Xr15ubIvEkzv4q7PsBxZX05niOA",
-            "session_id": "dG37bA8SJ6axlkO2MoeYEG02eGZ8XgVh5yCKadoLDegrHQSinqrbEB7uzyGIEWFB1SZF4UnvaL8DxmhM5RB53nNaVZEVScYnrcjg1J9G34OAcpyLOrEgq6i3jURozd5diSLcG6ICx5ggUNyZ4NN19enBj2UyTJQAgKOPSqfjEuRjvJUZheM1gcUABqAKbe7ebcY3CHVsPnWeD9JIo0J8BmumtayN9uI0MmvioFDFA2P4ThynHz9D6cCgUfxGgdqM"
+        {
+            "name": "FINNIFTY",
+            "token": 257801,
+            "NextExpiry": "04Jul23",
+            "InstruMood": "Bullish",
+            "OptionRegime": "Buy",
+            "InTrade": false,
+            "CompletedTrades": 0,
+            "WeekdayPrcRef": {
+                "Mon": 18,
+                "Tue": 21,
+                "Wed": 24,
+                "Thu": 25,
+                "Fri": 15,
+                "Sat": 22
+            },
+            "ATR5D": 198.13,
+            "IBValue": 175.35000000000218,
+            "IBLevel": "Big",
+            "TriggerPoints": {
+                "IBHigh": 20396.45,
+                "IBLow": 20221.1
+            },
+            "TSLStepSize": 0.5,
+            "SignalEntry": {
+                "Option": "FINNIFTY2380120200CE",
+                "Event": "Bullish-Big-DownCross",
+                "EntryTime": "14:42:32",
+                "EntryPrice": 122.05
+            }
         }
-    },
-    "zerodha": {
-        "omkar": {
-            "nf_qty": 0,
-            "bnf_qty": 0,
-            "fnf_qty": 0,
-            "api_key": "6b0dp5ussukmo67h",
-            "access_token": "2bqK0GZCBsl6KQG07cN1sAHGSE0uRS04"
-        }
-    }
+    ]
 }

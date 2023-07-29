@@ -70,14 +70,18 @@ def calculate_quantity(capital, risk, prc_ref, lot_size):
     if prc_ref == 0:
         print("Price reference is 0")
     raw_quantity = (risk * capital) / prc_ref
-    return int((raw_quantity // lot_size) * lot_size)
+    qty = int((raw_quantity // lot_size) * lot_size)
+    print(f"Raw quantity: {raw_quantity}, Quantity: {qty}")
+    if qty == 0:
+        qty = lot_size
+    return qty
 
 def calculate_lots(user_details, strategy_percentage, mpwizard_json):
     lots = {}
     current_capital = user_details.get('current_capital', 0)
     percentage_risk = user_details.get('percentageRisk', {})
     weekday = datetime.now().strftime('%a')
-    indices_lot_sizes = {"NIFTY": 50, "BANKNIFTY": 25, "FINNIFTY": 40}
+    indices_lot_sizes = {"NIFTY": 50, "BANKNIFTY": 15, "FINNIFTY": 40}
 
     with open(mpwizard_json, 'r') as file:
         data = json.load(file)

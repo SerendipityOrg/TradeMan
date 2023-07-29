@@ -21,10 +21,10 @@ def main():
 
     if wait_time.total_seconds() > 0:  # only sleep if wait_time is positive
         time.sleep(wait_time.total_seconds())
-    get_high_low_range_and_update_json()
+    # get_high_low_range_and_update_json()
 
     # # 10:15AM Tasks
-    levels_data = read_json_file("mpwizard(omkar).json")
+    levels_data = read_json_file("MPWizard.json")
 
     # Create a list of Instrument objects
     instruments = [Instrument(data) for data in levels_data["indices"]]

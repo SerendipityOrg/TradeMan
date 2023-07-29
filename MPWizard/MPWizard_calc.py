@@ -52,8 +52,8 @@ def get_option_tokens(base_symbol, expiry_date, option_type,strike_prc):
     return tokens, trading_symbol_list, trading_symbol_aliceblue
 
 def mpwizard_discord_bot(message):
-    # CHANNEL_ID = "1126027722431414362" # MPWizard Discord channel
-    CHANNEL_ID = "1128567144565723147" # Test channel
+    CHANNEL_ID = "1126027722431414362" # MPWizard Discord channel
+    # CHANNEL_ID = "1128567144565723147" # Test channel
     TOKEN = "MTEyNTY3MTgxODQxMDM0ODU2Ng.GQ5DLZ.BVLPrGy0AEX9ZiZOJsB6cSxOlf8hC2vaANuilA"
     url = f"https://discord.com/api/v9/channels/{CHANNEL_ID}/messages"
 
@@ -146,8 +146,8 @@ def get_expiry_dates():
     today = datetime.date.today()
 
     # Find the next non-holiday Thursday and Tuesday
-    nifty_expiry = next((d for d in thursdays_2023 if d > today), None)
-    finnifty_expiry = next((d for d in tuesdays_2023 if d > today), None)
+    nifty_expiry = next((d for d in thursdays_2023 if d >= today), None)
+    finnifty_expiry = next((d for d in tuesdays_2023 if d >= today), None)
 
     # Check if we found a valid expiry date for nifty and finnifty
     if nifty_expiry is None or finnifty_expiry is None:

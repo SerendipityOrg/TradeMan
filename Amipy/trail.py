@@ -1,58 +1,90 @@
+# from kiteconnect import KiteConnect
+# import datetime
+
+# kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token="qMh2CuBZJVNNY05HjAbgvSxHkmZM7w4R")
+
+# order = kite.modify_order(
+#     variety=kite.VARIETY_REGULAR,
+#     order_id="210201000000000",
+    
+
+# # )
+# import discord
+# import os
+# from discord.ext import commands
+# import asyncio
+
+# client = commands.Bot(command_prefix = '=',intents=discord.Intents.all())
+
+# @client.event
+# async def on_ready():
+#     await client.tree.sync()
+#     print('Bot is ready.')
+
+# async def load():
+#     for filename in os.listdir('./cogs'):
+#         if filename.endswith('.py'):
+#             client.load_extension(f'cogs.{filename[:-3]}')
+
+# class TestMenuButton(discord.ui.View):
+#     def __init__(self):
+#         super().__init__(timeout=None)
+
+#     @discord.ui.button(label='Test', style=discord.ButtonStyle.blurple)
+#     async def test(self, interaction:discord.Interaction, Button:discord.ui.Button):
+#         await interaction.channel.send(content='Test')
+#     @discord.ui.button(label='Test2', style=discord.ButtonStyle.green)
+#     async def test2(self, interaction:discord.Interaction, Button:discord.ui.Button):
+#         await interaction.channel.send(content='Test2')
+#     @discord.ui.button(label='Test3', style=discord.ButtonStyle.red)
+#     async def test3(self, interaction:discord.Interaction, Button:discord.ui.Button):
+#         await interaction.channel.send(content='Test3')
+
+# @client.tree.command(name='buttonmenu')
+# async def buttonmenu(interaction: discord.Interaction):
+#     await interaction.response.send_message(content='Here is the button menu!', view=TestMenuButton())
+
+# async def main():
+#     async with client:
+#         await client.start('MTEyODk0NjM1ODM2ODM1ODU1MQ.GXdOeu.lR7IU7OB8AqhSySBMde6oQas5P0AUzys1HpF5k')
+
+# asyncio.run(main())
+
+
 from kiteconnect import KiteConnect
-import datetime
 
-kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token="lYa6IRWuhTQJhokb3TCUouecGOaXpftk")
+username = "YY0222"
+api_key = "6b0dp5ussukmo67h"
+access_token = "ohf3V9Up1JH1Fecxh9rSfFwciQsPVTAi"
+kite = KiteConnect(api_key=api_key)
+kite.set_access_token(access_token)
 
-# ltp_data = kite.ltp([260105,256265])
-# ltp = ltp_data['last_price']
-# print(ltp_data)
-def get_previous_dates(num_dates):
-    dates = []
-    current_date = datetime.date.today()
 
-    while len(dates) < num_dates:
-        current_date -= datetime.timedelta(days=1)
+modify = kite.modify_order(
+                        variety=kite.VARIETY_REGULAR,
+                        order_id="230727602962249",
+                        price=8.1,
+                        trigger_price=8.2)
+print(modify)
 
-        if current_date.weekday() >= 5 or current_date in holidays:
-            continue
+# order = kite.place_order(variety=kite.VARIETY_REGULAR,
+#                          tradingsymbol="IDEA",
+#                          exchange=kite.EXCHANGE_NSE,
+#                         transaction_type=kite.TRANSACTION_TYPE_BUY,
+#                         quantity=1,
+#                         order_type=kite.ORDER_TYPE_MARKET,
+#                         product=kite.PRODUCT_MIS)
+# print(order)
 
-        dates.append(current_date.strftime("%Y-%m-%d"))
+# order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
+#                             exchange=kite.EXCHANGE_NSE,
+#                             price=7.9,
+#                             tradingsymbol="IDEA",
+#                             transaction_type=kite.TRANSACTION_TYPE_SELL,
+#                             quantity=1,
+#                             trigger_price=8.0,
+#                             product=kite.PRODUCT_MIS,
+#                             order_type=kite.ORDER_TYPE_SL)
 
-    return dates
+# print(order_id)
 
-# List of holidays
-holidays = [
-    datetime.date(2023, 1, 26),
-    datetime.date(2023, 3, 7),
-    datetime.date(2023, 3, 30),
-    datetime.date(2023, 4, 4),
-    datetime.date(2023, 4, 7),
-    datetime.date(2023, 4, 14),
-    datetime.date(2023, 4, 22),
-    datetime.date(2023, 5, 1),
-    datetime.date(2023, 6, 28),
-    datetime.date(2023, 8, 15),
-    datetime.date(2023, 9, 19),
-    datetime.date(2023, 10, 2),
-    datetime.date(2023, 10, 24),
-    datetime.date(2023, 11, 14),
-    datetime.date(2023, 11, 27),
-    datetime.date(2023, 12, 25)
-]
-
-previous_dates = get_previous_dates(5)
-tokens = [260105,256265,257801]
-for token in tokens:
-    data = kite.historical_data(instrument_token=token, from_date=previous_dates[-1], to_date=previous_dates[0], interval="day")
-
-    # Calculate range for each day and find average range
-    ranges = [d['high'] - d['low'] for d in data]
-    average_range = sum(ranges) / len(ranges)
-
-    print("Average range for {} is {}".format(token, average_range))
-
-# today = kite.historical_data(260105,"2023-07-13 09:15:00","2023-07-13 10:10:00","hour")
-# print(today)
-# ltp_data = kite.ltp([260105,256265])
-# ltp = ltp_data['last_price']
-# print(ltp_data)

@@ -3,6 +3,7 @@ from kiteconnect import KiteConnect
 from pya3 import *
 import logging
 from ZrOm_calc import zrm_discord_bot
+from datetime import datetime
 
 script_dir = os.path.dirname(os.path.abspath(__file__))   
 parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
@@ -10,7 +11,6 @@ parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
 def load_credentials(filepath):
     with open(filepath, 'r') as file:
         return json.load(file)
-
 
 
 def place_zerodha_order(trading_symbol, transaction_type, trade_type, qty, strike_price, index, users, broker='zerodha'):
@@ -74,7 +74,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, qty, strik
 
         # Add the order_dict to the corresponding trade_type list
         user_details[broker]['orders'][trade_type].append(order_dict)
-
+        print(order_id)
     except Exception as e:
         message = f"Order placement failed for user {users}: {e}"
         zrm_discord_bot(message)
@@ -133,7 +133,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, qty, str
         order_dict = {
             "trade_type": order_trade_type,
             "avg_prc": avg_prc,
-            "timestamp": str(datetime.datetime.now()),
+            "timestamp": str(datetime.now()),
             "strike_price": strike_price,
             "tradingsymbol": trading_symbol[3]
         }

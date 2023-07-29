@@ -2,40 +2,52 @@
     "aliceblue": {
         "username": "935325",
         "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
-        "session_id": "8gNrFNHNfRMJJvKWVDgXviy2YG6RnI8ZqCXHiihP5YZnbH7Y94kijvPpbU8uqjFBSmuJUPjColny6Vb8ycoG0r69HLXbrDVAhRbWOAC1zUSXPsMpHkX7Y5aukyqutQ2ZqWQr2MQdR1KYHGxp3Mq3rG8VPKidLUQcZvl8GPD9rxJdrJPiYlpFZ7CKN3n7ed8Zx3P4qIHbtRiDYAd4TaXldq7R1HW4oP6XXu8ayGq3vqdB8cV3My8tNvDR03pklM03",
-        "Current_Capital": 35999.95,
+        "session_id": "G6eQ3yePrUTSVMR5E9ZeG51JYUqRFmx0yP5BGBd3F56eDZls8RHZbxnrtq0rjSuozWJ8TAS9y4nLUnBktZpbgSRGzLNtLHt21DhAPj7Ckk4BpSRDYX4xKyHdW5jc6NgGXu4uzZ63TiFdFzIIRzihgDHv0A5V2EHG9Cd9rKsnlr0O4vYNzedAOxQ6GDUi04FszUCZNy9l6GJIaA0sdvs6u3Zakkp4riAeTHXkKidkU3YgYF7ukKrOyAWscoVYreRS",
+        "Current_Capital": 28858.58,
         "MPWizard_qty": {
             "NIFTY_qty": 50,
-            "BANKNIFTY_qty": 25,
+            "BANKNIFTY_qty": 15,
             "FINNIFTY_qty": 40
         },
         "orders": {
-            "SELL": [
-                {
-                    "order_no": "230719000095467",
-                    "trade_type": "SELL",
-                    "avg_prc": "00.00",
-                    "timestamp": "2023-07-19 10:29:03.883749",
-                    "strike_price": 20350,
-                    "tradingsymbol": "FINNIFTY23JUL20350PE"
-                },
-                {
-                    "order_no": "230719000098760",
-                    "trade_type": "SELL",
-                    "avg_prc": "00.00",
-                    "timestamp": "2023-07-19 10:33:03.890982",
-                    "strike_price": 45600,
-                    "tradingsymbol": "BANKNIFTY2372045600CE"
-                },
-                {
-                    "order_no": "230719000108897",
-                    "trade_type": "SELL",
-                    "avg_prc": "00.00",
-                    "timestamp": "2023-07-19 10:43:51.035433",
-                    "strike_price": 19800,
-                    "tradingsymbol": "NIFTY2372019800CE"
-                }
-            ]
+            "MPWizard": {
+                "BUY": [
+                    {
+                        "order_id": "230728000079717",
+                        "trade_type": "BUY",
+                        "avg_prc": "116.10",
+                        "timestamp": "2023-07-28 10:23:05.519417",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2380319600CE"
+                    },
+                    {
+                        "order_id": "230728000118204",
+                        "trade_type": "BUY",
+                        "avg_prc": "116.25",
+                        "timestamp": "2023-07-28 11:17:43.018704",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2380319600CE"
+                    }
+                ],
+                "SELL": [
+                    {
+                        "order_no": "230728000079765",
+                        "trade_type": "SELL",
+                        "avg_prc": "00.00",
+                        "timestamp": "2023-07-28 10:23:05.926496",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2380319600CE"
+                    },
+                    {
+                        "order_no": "230728000118217",
+                        "trade_type": "SELL",
+                        "avg_prc": "00.00",
+                        "timestamp": "2023-07-28 11:17:43.365075",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2380319600CE"
+                    }
+                ]
+            }
         }
     }
 }
