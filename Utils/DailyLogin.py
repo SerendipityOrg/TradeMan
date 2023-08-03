@@ -64,14 +64,13 @@ user_details_path = os.path.join(script_dir, 'broker.json')
 
 #go outside the folder and then go inside MPWizard folder
 script_dir = os.path.dirname(script_dir)
-mpwizard_json_path = os.path.join(script_dir, 'MPWizard', 'mpwizard(omkar).json')
+mpwizard_json_path = os.path.join(script_dir, 'MPWizard', 'MPWizard.json')
 
 def calculate_quantity(capital, risk, prc_ref, lot_size):
     if prc_ref == 0:
         print("Price reference is 0")
     raw_quantity = (risk * capital) / prc_ref
     qty = int((raw_quantity // lot_size) * lot_size)
-    print(f"Raw quantity: {raw_quantity}, Quantity: {qty}")
     if qty == 0:
         qty = lot_size
     return qty
@@ -135,6 +134,10 @@ def create_strategy_json(broker_name, user, lots, balance, user_details_path, mp
     data[broker_name]["Current_Capital"] = balance
 
     for strategy, qty in lots.items():
+        if strategy == 'AmiPy':
+            print("AmiPy strategy")
+            qty = qty['AmiPy_qty']*50
+            print(qty)
         data[broker_name][f"{strategy}_qty"] = qty
 
     if 'orders' in data[broker_name]:
@@ -298,16 +301,6 @@ for user in aliceblue_accounts_to_trade:
     # Updated logic to use strategy percentage
     strategy_percentage = user_details.get('percentageRisk', {})
     user_details['current_capital'] = balance
-    # for strategy in strategy_percentage:
-    #     if strategy in user_details.get('strategies', []):
-    #         user_details[f"{strategy}_allocated"] = balance * strategy_percentage[strategy]
-
-    # for strategy in list(user_details.keys()):
-    #     if strategy.endswith("_allocated"):
-    #         strategy_name = strategy.split("_allocated")[0]
-    #         if strategy_name not in user_details['strategies']:
-    #             user_details.pop(strategy, None)
-                
     broker['aliceblue'][user] = user_details  # persist the changes
     lots = calculate_lots(user_details, strategy_percentage,mpwizard_json_path)
     create_strategy_json('aliceblue', user, lots, balance, user_details_path,mpwizard_json_path)

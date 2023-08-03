@@ -354,24 +354,22 @@ def adjust_stoploss_zerodha(order_id, limit_prc, users, broker='zerodha'):
     if broker not in user_details:
         return
 
-    for user in user_details[broker]:
-        api_key = user_details[broker]['api_key']
-        access_token = user_details[broker]['access_token']
-        kite = KiteConnect(api_key=api_key)
-        kite.set_access_token(access_token)
-        trigger_prc = limit_prc + 1.0
-        while True:
-            try:
-                order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
-                                          order_id=order_id, 
-                                          price = limit_prc,
-                                          trigger_price = trigger_prc)
+    api_key = user_details[broker]['api_key']
+    access_token = user_details[broker]['access_token']
+    kite = KiteConnect(api_key=api_key)
+    kite.set_access_token(access_token)
+    trigger_prc = limit_prc + 1.0
+    while True:
+        try:
+            order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
+                                        order_id=order_id, 
+                                        price = round(limit_prc,2),
+                                        trigger_price = round(trigger_prc,2))
 
-            except Exception as e:
-                message = f"Adjusting stoploss failed for user {user}: {e}"
-                mpwizard_discord_bot(message)
-                logging.info(message)
-            sleep(1)  # Sleep for 1 second before checking again
+        except Exception as e:
+            message = f"Adjusting stoploss failed for user {users}: {e}"
+            mpwizard_discord_bot(message)
+            logging.info(message)
 
 def adjust_stoploss_aliceblue(order_id, trading_symbol, transaction_type, index, limit_prc, users,broker='aliceblue'):
     filepath = os.path.join(parent_dir, 'Utils', 'users', f'{users}.json')
@@ -422,4 +420,3 @@ def adjust_stoploss_aliceblue(order_id, trading_symbol, transaction_type, index,
         print(message)
         mpwizard_discord_bot(message)
         logging.info(message)
-    sleep(1)  # Sleep for 1 second before checking again

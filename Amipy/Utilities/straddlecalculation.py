@@ -296,7 +296,11 @@ def supertrend(ma_df):
 
     # Reorder the columns
     result = result[columns_order]
-    supertrend_path = os.path.join("Amipy/LiveCSV", "amipy_supertrend.csv")
+
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    supertrend_path = os.path.join(script_dir,"..","LiveCSV","amipy_supertrend.csv")
+
+    # supertrend_path = os.path.join("Amipy/LiveCSV", "amipy_supertrend.csv")
     result.to_csv(supertrend_path, index=True)
     
     return result
