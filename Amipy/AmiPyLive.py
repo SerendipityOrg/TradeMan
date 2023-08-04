@@ -8,7 +8,6 @@ from datetime import timedelta,datetime,date
 from dateutil import parser
 import schedule
 
-
 from kiteconnect import KiteConnect
 from kiteconnect import KiteTicker
 
@@ -119,7 +118,7 @@ for token in tokens:
     hist_data[token]['instrument_token'] = token
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
-with open('Amipy/AmiPy.json' , 'r') as f:
+with open('AmiPy.json' , 'r') as f:
     params = json.load(f)
 
 entry = params['Nifty'][0]['entry_time']
@@ -304,8 +303,8 @@ def updateSignalDf(last_signal,users_to_trade):
                 'Strike_Price': strike_prc,
                 'Trade_No': trade_no,
                 'Trade_Type': trade_type,
-                'Date': trade_date,
-                'TradeEntryTime': trade_time,
+                'Date': str(trade_date),
+                'TradeEntryTime': str(trade_time),
                 'TradeEntryPrice': current_close,
             }
             signals.append(signal)
@@ -314,7 +313,7 @@ def updateSignalDf(last_signal,users_to_trade):
             if 'SignalEntry' not in params['Nifty'][0]:
                 params['Nifty'][0]['SignalEntry'] = {}
             params['Nifty'][0]['SignalEntry'][trade_type] = signal
-            with open('Amipy/AmiPy.json' , 'w') as f:
+            with open('AmiPy.json' , 'w') as f:
                 json.dump(params, f, indent=4)
             if trade_type == 'LongSignal':
                 place_order(broker, trading_symbols[0], 'BUY', trade_type,username)
@@ -327,13 +326,16 @@ def updateSignalDf(last_signal,users_to_trade):
         elif trade_type == 'LongCoverSignal' or trade_type == 'ShortCoverSignal':
             signal = signals.pop()  # Retrieve the last signal
             signal.update({
-                'TradeExitTime': trade_time,
+                'TradeExitTime': str(trade_time),
                 'TradeExitPrice': current_close,
             })
             signal['NetTradePoints'] = signal['TradeExitPrice'] - signal['TradeEntryPrice']
             signals_df = pd.DataFrame(signal, index=[0])
             signals_df.to_csv(trade_sig_path, index=True)
             params['Nifty'][0]['SignalEntry'] = signal
+            #update the json file
+            with open('AmiPy.json' , 'w') as f:
+                json.dump(params, f, indent=4)
             if trade_type == 'LongCoverSignal':
                 place_order(broker, trading_symbols[0], 'SELL', trade_type,username)
                 place_order(broker, trading_symbols[1], 'SELL', trade_type,username)

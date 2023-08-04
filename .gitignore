@@ -3,3 +3,5 @@
 *.log
 
 Amipy/.DS_Store
+*.json
+Scripts/Logs/Amipy_NF.log

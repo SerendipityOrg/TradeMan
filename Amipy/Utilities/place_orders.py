@@ -69,6 +69,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         # Create a new dict for the order
         order_dict = {
             "trade_type": order_trade_type,
+            "qty": qty,
             "avg_prc": avg_prc,
             "timestamp": str(datetime.now()),
             "strike_price": strike_price,
@@ -141,6 +142,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         # Create a new dict for the order
         order_dict = {
             "trade_type": order_trade_type,
+            "qty": qty,
             "avg_prc": avg_prc,
             "timestamp": str(datetime.now()),
             "strike_price": strike_price,
