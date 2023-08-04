@@ -19,7 +19,7 @@ while true; do
     # Source conda, activate the environment and run the script
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
 	conda activate tradingenv && \
-    cd /Users/traderscafe/Documents/TradeMan/Amipy/Brokers/ && \
+    cd /Users/traderscafe/Documents/TradeMan/Utils/ && \
 	# cd /Users/traderscafe/Documents/NiftyStrategy/Brokers/ && \
 	/Users/traderscafe/miniconda3/envs/tradingenv/bin/python DailyLogin.py && \
 	echo "Program started successfully" && break

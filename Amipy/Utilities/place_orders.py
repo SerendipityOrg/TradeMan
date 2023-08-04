@@ -37,7 +37,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
     access_token = user_details[broker]['access_token']
     kite = KiteConnect(api_key=api_key)
     kite.set_access_token(access_token)
-    qty = user_details[broker]['AmiPy_qty']['AmiPy_qty']
+    qty = user_details[broker]['AmiPy_qty']
 
     if transaction_type == 'BUY':
         order_type = kite.TRANSACTION_TYPE_BUY
@@ -108,7 +108,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
     api_key = user_details[broker]['api_key']
     alice = Aliceblue(username, api_key = api_key)
     session_id = alice.get_session_id()
-    qty = user_details[broker]['AmiPy_qty']['AmiPy_qty']
+    qty = user_details[broker]['AmiPy_qty']
 
     if transaction_type == 'BUY':
         order_type = TransactionType.Buy

@@ -18,8 +18,8 @@ Supertrend_multiplier = params['Nifty'][0]["Supertrend_multiplier"]
 EMA_period = params['Nifty'][0]["EMA_period"]
 
 def amipy_discord_bot(message):
-    # CHANNEL_ID = "1125674485744402505" # Amipy Discord channel
-    CHANNEL_ID = "1128567144565723147" # Amipy Test channel
+    CHANNEL_ID = "1125674485744402505" # Amipy Discord channel
+    # CHANNEL_ID = "1128567144565723147" # Amipy Test channel
     TOKEN = "MTEyNTY3MTgxODQxMDM0ODU2Ng.GQ5DLZ.BVLPrGy0AEX9ZiZOJsB6cSxOlf8hC2vaANuilA"
     url = f"https://discord.com/api/v9/channels/{CHANNEL_ID}/messages"
 

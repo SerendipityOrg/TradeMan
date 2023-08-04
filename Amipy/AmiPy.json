@@ -1,30 +1,32 @@
-
 {
-	"Nifty": [{
-			"name": "Nifty", 
-			"token": 256265, 
-			"NextExpiry": "06Jul23",
+    "Nifty": [
+        {
+            "name": "Nifty",
+            "token": 256265,
+            "NextExpiry": "06Jul23",
             "LotSize": 50,
-            "Strike_prc": 19000, 
-			"InstruMood": "Bullish", 
+            "Strike_prc": 19000,
+            "InstruMood": "Bullish",
             "OptionRegime": "Buy",
-			"InTrade": false,
-            "Heikin_Ashi_MA_period" : 13,
-            "Supertrend_period" : 7,
-            "Supertrend_multiplier" : 18,
-            "EMA_period" : 324 ,			
+            "InTrade": false,
+            "Heikin_Ashi_MA_period": 13,
+            "Supertrend_period": 7,
+            "Supertrend_multiplier": 18,
+            "EMA_period": 324,
             "TSLStepSize": 0.5,
-            "entry_time" : "09:20:00",
-            "last_buy_time" : "14:50:00",
-            "sqroff_time" : "14:55:00" ,
+            "entry_time": "09:29:00",
+            "last_buy_time": "14:50:00",
+            "sqroff_time": "14:55:00",
             "SignalEntry": {
-                "Option": "NIFTY06Jul2319100CE",
-                "Event": "Bullish-MediumIB-IBHighUpcross",
-				"EntryTime": "10:45:29AM",
-				"EntryPrice": 85.50,
-                "ExitTime": "03:12:22PM",
-                "ExitPrice": 159.45			
-			}
-		}
+                "ShortSignal": {
+                    "Strike_Price": 19500,
+                    "Trade_No": 1,
+                    "Trade_Type": "ShortSignal",
+                    "Date": "2023-08-04",
+                    "TradeEntryTime": "09:30:00",
+                    "TradeEntryPrice": 198.45
+                }
+            }
+        }
     ]
 }

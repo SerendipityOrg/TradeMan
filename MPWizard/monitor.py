@@ -246,7 +246,7 @@ class OrderMonitor:
                                                 "avg_prc": ltp_token,
                                                 "timestamp": str(dt.now()),
                                                 "strike_price": strike_prc ,
-                                                "tradingsymbol": trading_symbol[3],
+                                                "tradingsymbol": trading_symbol,
                                             }
 
                                             if 'orders' not in user_details[broker]:
