@@ -91,6 +91,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         order_dict = {
             "order_id": order_id,
             "trade_type": order_trade_type,
+            "qty": qty,
             "avg_prc": avg_prc,
             "timestamp": str(datetime.now()),
             "strike_price": strike_price,
@@ -172,6 +173,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         order_dict = {
             "order_id": order_id['NOrdNo'],
             "trade_type": order_trade_type,
+            "qty": qty,
             "avg_prc": avg_prc,
             "timestamp": str(datetime.now()),
             "strike_price": strike_price,
@@ -256,6 +258,7 @@ def place_stoploss_zerodha(trading_symbol, transaction_type, trade_type, strike_
         order_dict = {
             "order_no": order_id,
             "trade_type": order_trade_type,
+            "qty": qty,
             "avg_prc": avg_prc,
             "timestamp": str(datetime.now()),
             "strike_price": strike_price,
@@ -328,6 +331,7 @@ def place_stoploss_aliceblue(trading_symbol, transaction_type, trade_type, strik
         order_dict = {
             "order_no": order_no,
             "trade_type": order_trade_type,
+            "qty": qty,
             "avg_prc": avg_prc,
             "timestamp": str(datetime.now()),
             "strike_price": strike_price,
