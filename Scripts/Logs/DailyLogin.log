@@ -153,3 +153,218 @@ Login Successfully
 Session id for 935325: AnzSoaWH7ZqSrmjkH5CNORBZiZJv5M8DMxVpgoSCPVbOMik8Bo7R7iLGiutivYDKncWTbtr65m6i7FOr8eQ9IRHRmE7cj1TQhFdNSNPJKrQtTM8qtMCXAaYi8eQZ5BBdQmBVJt0lC8FVZyubclz5Fqzz98Z1c4cdUqgxkFWGxfAvqmXIt3hnnS0J5tpfuzfCZo6U93W3BRPy77WkiDkhxk2b69Tkc5YYMdj8CGkxJNxWSAVmazZLoggXxn4a435u
 kite_access_token for YY0222: CbAzIkAuJXC0xjTXy07mJuImHeWuEFQW
 Program started successfully
+Attempt: 1
+Today's date: 2023-07-31 08:55:03.150389
+Login Successfully
+Session id for 929016: nthFGmYOyDlZB3dBEv6JbPnbSHyR3P7Ub2OY6Z04bDYM6RHr7i0qQvXbXOFzEc3TH2i21r9rKOmPG8OAFPoDhCuuLhi3AP1YxX1DKcaItEMKbvJUdCRocdYkO9aq0NmhuAjr79Hiz0XLih3vQ9q1lozWfE8kkuBd7GhTr0Kpj7uOg0bZFdRj26MbIJmCzRedeRp9yHk4LDlWLjEWgeZlXcGnxPooPL5W3BKq8atEn3NT2Z0If5lm3Vvn5ZIeaFsH
+Raw quantity: 396.5068333333333, Quantity: 350
+Raw quantity: 142.74246, Quantity: 135
+Raw quantity: 396.5068333333333, Quantity: 360
+Login Successfully
+Session id for 935325: LuzE8qW6DiEZ6bKfiNnoHU6Xi2cQEv4vPqqohibUUE21GWpVuoks4bQZ4oEEefKdFr68Qnx9XvqAMkNqhs4eYDpGlvBNhHnIdCmsgzOjPzVIasnaUpxiqvckteWqgvDUQJ13ksKeT1a2D6s2rCAbZVpxvozJFmfTS6CIgVD9oK55MBy62SsZoUrRjzA0vid6GIuA6LihcKDYfUbgz6plDNl2Z4NSct9FOr4NjMhrNKSbaTXjnnDB8ULhufrJu7T4
+Raw quantity: 46.76435, Quantity: 0
+Raw quantity: 16.835166, Quantity: 15
+Raw quantity: 46.76435, Quantity: 40
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 296, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 220, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+Attempt: 2
+Today's date: 2023-07-31 08:55:12.510631
+Login Successfully
+Session id for 929016: nthFGmYOyDlZB3dBEv6JbPnbSHyR3P7Ub2OY6Z04bDYM6RHr7i0qQvXbXOFzEc3TH2i21r9rKOmPG8OAFPoDhCuuLhi3AP1YxX1DKcaItEMKbvJUdCRocdYkO9aq0NmhuAjr79Hiz0XLih3vQ9q1lozWfE8kkuBd7GhTr0Kpj7uOg0bZFdRj26MbIJmCzRedeRp9yHk4LDlWLjEWgeZlXcGnxPooPL5W3BKq8atEn3NT2Z0If5lm3Vvn5ZIeaFsH
+Raw quantity: 396.5068333333333, Quantity: 350
+Raw quantity: 142.74246, Quantity: 135
+Raw quantity: 396.5068333333333, Quantity: 360
+Login Successfully
+Session id for 935325: LuzE8qW6DiEZ6bKfiNnoHU6Xi2cQEv4vPqqohibUUE21GWpVuoks4bQZ4oEEefKdFr68Qnx9XvqAMkNqhs4eYDpGlvBNhHnIdCmsgzOjPzVIasnaUpxiqvckteWqgvDUQJ13ksKeT1a2D6s2rCAbZVpxvozJFmfTS6CIgVD9oK55MBy62SsZoUrRjzA0vid6GIuA6LihcKDYfUbgz6plDNl2Z4NSct9FOr4NjMhrNKSbaTXjnnDB8ULhufrJu7T4
+Raw quantity: 46.76435, Quantity: 0
+Raw quantity: 16.835166, Quantity: 15
+Raw quantity: 46.76435, Quantity: 40
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 296, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 220, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+Attempt: 3
+Today's date: 2023-07-31 08:55:22.032359
+Login Successfully
+Session id for 929016: nthFGmYOyDlZB3dBEv6JbPnbSHyR3P7Ub2OY6Z04bDYM6RHr7i0qQvXbXOFzEc3TH2i21r9rKOmPG8OAFPoDhCuuLhi3AP1YxX1DKcaItEMKbvJUdCRocdYkO9aq0NmhuAjr79Hiz0XLih3vQ9q1lozWfE8kkuBd7GhTr0Kpj7uOg0bZFdRj26MbIJmCzRedeRp9yHk4LDlWLjEWgeZlXcGnxPooPL5W3BKq8atEn3NT2Z0If5lm3Vvn5ZIeaFsH
+Raw quantity: 396.5068333333333, Quantity: 350
+Raw quantity: 142.74246, Quantity: 135
+Raw quantity: 396.5068333333333, Quantity: 360
+Login Successfully
+Session id for 935325: LuzE8qW6DiEZ6bKfiNnoHU6Xi2cQEv4vPqqohibUUE21GWpVuoks4bQZ4oEEefKdFr68Qnx9XvqAMkNqhs4eYDpGlvBNhHnIdCmsgzOjPzVIasnaUpxiqvckteWqgvDUQJ13ksKeT1a2D6s2rCAbZVpxvozJFmfTS6CIgVD9oK55MBy62SsZoUrRjzA0vid6GIuA6LihcKDYfUbgz6plDNl2Z4NSct9FOr4NjMhrNKSbaTXjnnDB8ULhufrJu7T4
+Raw quantity: 46.76435, Quantity: 0
+Raw quantity: 16.835166, Quantity: 15
+Raw quantity: 46.76435, Quantity: 40
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 296, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 220, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+Attempt: 4
+Today's date: 2023-07-31 08:55:31.363887
+Login Successfully
+Session id for 929016: nthFGmYOyDlZB3dBEv6JbPnbSHyR3P7Ub2OY6Z04bDYM6RHr7i0qQvXbXOFzEc3TH2i21r9rKOmPG8OAFPoDhCuuLhi3AP1YxX1DKcaItEMKbvJUdCRocdYkO9aq0NmhuAjr79Hiz0XLih3vQ9q1lozWfE8kkuBd7GhTr0Kpj7uOg0bZFdRj26MbIJmCzRedeRp9yHk4LDlWLjEWgeZlXcGnxPooPL5W3BKq8atEn3NT2Z0If5lm3Vvn5ZIeaFsH
+Raw quantity: 396.5068333333333, Quantity: 350
+Raw quantity: 142.74246, Quantity: 135
+Raw quantity: 396.5068333333333, Quantity: 360
+Login Successfully
+Session id for 935325: LuzE8qW6DiEZ6bKfiNnoHU6Xi2cQEv4vPqqohibUUE21GWpVuoks4bQZ4oEEefKdFr68Qnx9XvqAMkNqhs4eYDpGlvBNhHnIdCmsgzOjPzVIasnaUpxiqvckteWqgvDUQJ13ksKeT1a2D6s2rCAbZVpxvozJFmfTS6CIgVD9oK55MBy62SsZoUrRjzA0vid6GIuA6LihcKDYfUbgz6plDNl2Z4NSct9FOr4NjMhrNKSbaTXjnnDB8ULhufrJu7T4
+Raw quantity: 46.76435, Quantity: 0
+Raw quantity: 16.835166, Quantity: 15
+Raw quantity: 46.76435, Quantity: 40
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 296, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 220, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+Attempt: 5
+Today's date: 2023-07-31 08:55:42.223626
+Login Successfully
+Session id for 929016: nthFGmYOyDlZB3dBEv6JbPnbSHyR3P7Ub2OY6Z04bDYM6RHr7i0qQvXbXOFzEc3TH2i21r9rKOmPG8OAFPoDhCuuLhi3AP1YxX1DKcaItEMKbvJUdCRocdYkO9aq0NmhuAjr79Hiz0XLih3vQ9q1lozWfE8kkuBd7GhTr0Kpj7uOg0bZFdRj26MbIJmCzRedeRp9yHk4LDlWLjEWgeZlXcGnxPooPL5W3BKq8atEn3NT2Z0If5lm3Vvn5ZIeaFsH
+Raw quantity: 396.5068333333333, Quantity: 350
+Raw quantity: 142.74246, Quantity: 135
+Raw quantity: 396.5068333333333, Quantity: 360
+Login Successfully
+Session id for 935325: LuzE8qW6DiEZ6bKfiNnoHU6Xi2cQEv4vPqqohibUUE21GWpVuoks4bQZ4oEEefKdFr68Qnx9XvqAMkNqhs4eYDpGlvBNhHnIdCmsgzOjPzVIasnaUpxiqvckteWqgvDUQJ13ksKeT1a2D6s2rCAbZVpxvozJFmfTS6CIgVD9oK55MBy62SsZoUrRjzA0vid6GIuA6LihcKDYfUbgz6plDNl2Z4NSct9FOr4NjMhrNKSbaTXjnnDB8ULhufrJu7T4
+Raw quantity: 46.76435, Quantity: 0
+Raw quantity: 16.835166, Quantity: 15
+Raw quantity: 46.76435, Quantity: 40
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 296, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 220, in login_in_aliceblue
+    userSessionID = twoFa['userSessionID']
+                    ~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'userSessionID'
+The script has some errors. Please Check !!!
+{"ok":true,"result":{"message_id":888,"from":{"id":5994380365,"is_bot":true,"first_name":"trialbot","username":"traderstrialBOT"},"chat":{"id":-367108102,"title":"Traders cafe","type":"group","all_members_are_administrators":true},"date":1690773946,"text":"Can't Login. Please Check !!!"}}Attempt: 1
+Today's date: 2023-08-01 08:55:03.279762
+Login Successfully
+Session id for 929016: kBmObM9OJkuOUMdnHVuXPrnqCS0YGnqFxBQiOCGBrO8xrECpZrGACK6tBvmaPgNFqdOg7rzKlHYerSYsKScZLGCT2iYBHbekf9sQWdjSNFnMeQsfsAZrBMJCoza0K0LBdzRamjrxRumEqxgHI1jUD4N56R4yTTNb6eg1fM3mpmtFKOQ9M0bVaupyUmLFxBrYd8WIMPOyIn5Sk4mTIjcy3zAuoyt6Tiavr6P6rH4nWlLPbYxLAAyCH9UxT6kgEsCV
+Raw quantity: 336.6786785714286, Quantity: 300
+Raw quantity: 108.77311153846155, Quantity: 105
+Raw quantity: 336.6786785714286, Quantity: 320
+1
+None
+Login Successfully
+Session id for 935325: k6icKIXENyoWsF6iJuDtKMhQUj1Qx3appelmmmWMrFipSfoBWLgsEfY6c8Mn2YPxuQ37L5g1eNSndrmpfCMx8BsHmeqaD2J07Ot08XcXl0rZzyS4ioeMITNS1Ox1Pda2qv55HR3on1A8UkZXtFDKX9JUB1bspH3C7hmUhU1UKRgsnCk4ZIFtc2JyQGmLLFuaqcGAhfqmiyjrK6XH0zIJEIiOL3sfq6GmBVv5L35UnecW6sfpfWaqzVxXydaT2aZb
+Raw quantity: 39.39072857142857, Quantity: 0
+Raw quantity: 12.726235384615384, Quantity: 0
+Raw quantity: 39.39072857142857, Quantity: 0
+None
+Login Successfully
+Session id for 924446: xKxryKp9YsUySiN3Er2R7Nat23aGtSTCCVJNnJEVeyie8ZWyPg0sZR1Cse8lPnH9KPvxN9Ru9vM9dQhU4YJ55kjW8es6zp07tYyDoeCs5fWTs3s7YofRjRXkdMl5U8zfVDEpMyIkDcsc4tJxSXomAQYkKvxFqfcjMDGKdIs6rdu7EptpaASPUdPUqYMGGWI7JeIm0x7g7xpsPGo1LLsDGCVzMEO6WZYr5uptN5rSk3LvoVFLQVC4bLpxjvhJrhiq
+Raw quantity: 66.96828571428571, Quantity: 50
+Raw quantity: 21.635907692307693, Quantity: 15
+Raw quantity: 66.96828571428571, Quantity: 40
+None
+Login Successfully
+Session id for 935347: XMt3R30gPoaJtQicVlcD8Hyy92oKQbmEl07umkeXmDad1qWXXON0YjZQd0ySYyDyVuvpUoiY8gcaGcG9P1ZJbSLcnl01KoqTf2SvKNHi3MFZMAhZ76Qsm0uy0bid0zotxMCYefPGBl5RN1Ijtrosp2GqCMGnjRZIY8sMVFktFRS952YE5SW9R0530HV1MlCKp8SnYmRRNeb9MBsloVvHp9FDAjoU7M1NaMHxQEU9AXdV4Do7auGaJuxNSpsc6dRJ
+Raw quantity: 68.0077380952381, Quantity: 50
+Raw quantity: 21.97173076923077, Quantity: 15
+Raw quantity: 68.0077380952381, Quantity: 40
+None
+kite_access_token for YY0222: PjO2xbA0WBiRNOXncXSc25Yi7EIxWYUI
+Raw quantity: 1147.443761904762, Quantity: 1100
+Raw quantity: 370.7126, Quantity: 360
+Raw quantity: 1147.443761904762, Quantity: 1120
+Raw quantity: 1147.443761904762, Quantity: 1100
+Raw quantity: 370.7126, Quantity: 360
+Raw quantity: 1147.443761904762, Quantity: 1120
+9
+None
+None
+Program started successfully
+Attempt: 1
+Today's date: 2023-08-02 08:55:04.215995
+Login Successfully
+Session id for 929016: KTUmMIJ4DJyfbI970KAPOku2DdgoPe9ZEPshvglr2Z8FG7tRl67HJzERGXpzoKcEKvhG9znrNRNxIlZPfPEExkRjDPsFXoNM3ARJhASgi9MpnLuxofiX5Msi5HDLM99NFzV22CmC1utmPvoqZ2ZsWJPn91igGylaMyNrPOjXNHXzo5AWsmiTRQuSATsqFNMahYUkqT1dBnVm3FnVutOQtUGW7f9NYPQUiMNXh9stz0XzU4ZjmkuGdAMa3ugalPUB
+Raw quantity: 291.43, Quantity: 250
+Raw quantity: 87.429, Quantity: 75
+Raw quantity: 291.43, Quantity: 280
+Login Successfully
+Session id for 935325: IreAHPOOOMfZ5jEMu5sbtz2KKBov1fZN4QGfcgrd78j1mHL01StANezmSQS8LCMLRP6e57MrQmJyv5SikXCjAhKjvsZhPtpemnplMuLb47b3LyYgDGo2yRehVddTAFvkUomJZ9jSxyN0PZLfO121gmt9MkN1zSXlvQsg3Ajtv687B2XZMgTaZ7luM3vSJ7JYS44fy8SC4KJOY0WzZ07oZc2jroOMWodQoqIjWDOSxlKW1irpakN6PBdVje1DOFDn
+Raw quantity: 33.182849999999995, Quantity: 0
+Raw quantity: 9.954854999999998, Quantity: 0
+Raw quantity: 33.182849999999995, Quantity: 0
+Login Successfully
+Session id for 924446: 4qbghAJD8Fjtzu8HrStlHcC5G2zpf3yXMFOY2RbERRK5sSY16o9PaycceIhFAM4QMev1LrLafykJTX4yamgv2t5R4aZUdgfknfWoSDpnE44ncYzPlyzr192ivKK035RKNFjhRobGBnMeSm80CTNP4Gn3I3xLoDq16AyDVHqIddB0nTKFFolayZUMkOg5qOxblWBaHYlOzxBRlTmYLmqXEXU6LQbm114aZi6CnQIto7KiRR47JU4o6KFTnpi1Fm8O
+Raw quantity: 57.56134375, Quantity: 50
+Raw quantity: 17.268403125, Quantity: 15
+Raw quantity: 57.56134375, Quantity: 40
+Login Successfully
+Session id for 935347: onCgWol24k2omPSJfx6qB9ntEDc24ZAOby6BUMBNPihgRiSA0tRSoEEvJTrGy1t6V6Z5LrtM5jrQpCIzSq82igLFhcEeeN5ERiZv1e27y9q1VnTvDdQDGclLGVKtBpjUgkqPiYFR8DNff5LS6Bu8QzypzK1cV1DCE2vbb2Kmv6kenhhRQn8ppo7TYMmycMxx9CV6h1jSJ0aXJibPcYBt27UlIQRF05fxaQKPuNcicULXPYaVD5Yxh8thUZsxLZGN
+Raw quantity: 58.413833333333336, Quantity: 50
+Raw quantity: 17.52415, Quantity: 15
+Raw quantity: 58.413833333333336, Quantity: 40
+kite_access_token for YY0222: gqDaAs6oH3tv212Xv6TD07GiYVqLIWZX
+Raw quantity: 991.7450833333334, Quantity: 950
+Raw quantity: 297.523525, Quantity: 285
+Raw quantity: 991.7450833333334, Quantity: 960
+Raw quantity: 991.7450833333334, Quantity: 950
+Raw quantity: 297.523525, Quantity: 285
+Raw quantity: 991.7450833333334, Quantity: 960
+Program started successfully
+Attempt: 1
+Today's date: 2023-08-03 08:55:03.936352
+Login Successfully
+Session id for 929016: I8yedFsj8cMLbcv4z6nveHTFcEKZ7F1IpTVHFAhr14NQSeD8EFHF89i3MkjMrYWgP1ngbU1XCfipLWLA1AOd8k4PCIB2evGbDCRbuvYNuXIgeo6sYeUrvv2xlO1YJn9EnDgP4HdB47scEzQ2aT13M1Ru71LbNEa62YVpxnbYEEXLatu6l3EX6CK90sJrZMOJR8bOkLDNT3Mc6Yjjl5ufd1vtuF2MYlXWBPmIHTKTA77Dhm54l1uykWVTmtrIY1eg
+Raw quantity: 268.426452, Quantity: 250
+Raw quantity: 74.56290333333332, Quantity: 60
+Raw quantity: 268.426452, Quantity: 240
+Login Successfully
+Session id for 935325: fQo6IOeDyHX2bHaS4aCN9yIG8dsYCObGqR3s7Nx2o6BGaWGND7kNLDk7GdRpRsWk0SJ46fuhXlOIA6Ha7Ye73ro4cxR1fTqJtuv5W57sovv1Tlh4XLkZ9is7J8brVVybQ80ofZcJn0gHdxHGFEfJaSY8D10Vumeqpx2APSaLp8rUuPOSPpXQY1rKfYfpnHe9UusSnHnmDOEc0uTRqnJedxFbHl9Po0SNTUlGPpqqCHtO31B8ivxGEjdeUlaFBdbJ
+Raw quantity: 28.998396000000003, Quantity: 0
+Raw quantity: 8.05511, Quantity: 0
+Raw quantity: 28.998396000000003, Quantity: 0
+Login Successfully
+Session id for 924446: KboRpgiHo2gXlB0H5pkXNGbdDSKiP1SyHfyl006sX763oFdIVBeJnnuqePWiiMlSSO53tDkitstcPtP9zGa6cIPAEmVZiWFekk1aA4bzZu9xHhRfmZXrlW0yEY7DxcMssqDspCRhUVlLGaTBNkQcVyeaubmGgui35zpmkCRNKk9nxULMETAa41n3Hsr0VXkZS4cm6ukJ2ng2Q1ArBdGVg4AB6sZrV5xOWozEi5P3y1WeU7WoWJVGRXWfekrHQfvZ
+Raw quantity: 52.873720000000006, Quantity: 50
+Raw quantity: 14.687144444444446, Quantity: 0
+Raw quantity: 52.873720000000006, Quantity: 40
+Login Successfully
+Session id for 935347: 9L1sBBky8Ujv5OdEbBbWPholvjCMeC2KWCVK4GFtZHoBVon6ZmgSv4BYgJSFEdkmi8zMl5HrGuuiHoNlbApSZXskgb3QGfoUKnM4WYtoBUIqQlNe7ChTEA12JyXLyFMdh2LOSHMNKNG0G7Oky069bJhEEYZPkcmnIu99QJjyDmgD6RuW0A3FToVIQ4XOVvyHl5uTC0CattyftmPfKKFWah12kjeM1Hx5PsOhFlO8I9X1WGEQz8F2kl4cOGZ4AWZJ
+Raw quantity: 64.03366000000001, Quantity: 50
+Raw quantity: 17.78712777777778, Quantity: 15
+Raw quantity: 64.03366000000001, Quantity: 40
+kite_access_token for YY0222: 1mS3sAFTtT5UlEY8YKV7pQBEDQr1vynz
+Raw quantity: 912.2900800000002, Quantity: 900
+Raw quantity: 253.41391111111116, Quantity: 240
+Raw quantity: 912.2900800000002, Quantity: 880
+Raw quantity: 912.2900800000002, Quantity: 900
+Raw quantity: 253.41391111111116, Quantity: 240
+Raw quantity: 912.2900800000002, Quantity: 880
+Program started successfully
+Attempt: 1
+Today's date: 2023-08-04 08:55:03.439387
+Login Successfully
+Session id for 929016: 5RTjLKn2b30Pn13XI3szJOhLQhukfDqxYiG9pOnCFJrSO3VESPWX1vKWzjOIFz77xn63c5fk76ibQNxAamN2oBfhdqKmLzME2t1DQFTKOMChJ7WpJrD0uM37zPT233yEE4TxKJ69vgcGOLIZGpZbVz1fES6Y1HUZ1nKtIKoJqkUQCYUgml1TpSVvjboGLSik2fvRTCJNgHcr1JhzIDhrz22V0Q8EQuXVSfskYhPvC0ZUQZOOWDUBuLPKD2uDtLWD
+AmiPy strategy
+50
+Login Successfully
+Session id for 935325: 54pD9z7SoGfvhQoW8u9Xc3Xtvb063OX3acEYCc1G4zm9bXTurfsKgkV5ykRIldPuf4hDPv6s93DqP31YtNzF7I7EJelAUcGnmmySVYz6ITUIYXkQClZK5gDa1sSaW93ZlqcH0ro50rCnEIAUNPQykJFx5dr5nPcLD8Uc9qqWIzd4oJUDXjEamg6uVCY6J6R0fZAlyDkKbj6cL5nqDQrEVJkWVhAceVkVeugSYD81aiCH19IpVjft11aj47n1guVY
+Login Successfully
+Session id for 924446: qvjjtAg9rrHiIiKcH2iExTsaXTAi58YBtSizFQkmMgKbZ8NVT4VTAvMcfNBZflg9S2OtGUmeBJdb85CHIkNekzf026aj9NH3pN9CNlKY5aUUyiqyvSNL7NnMxYcsmV7OUju7NASvGO5eaWEo1QbFfDuncQRH9WA56nhzbkgelusT5uepScOBOkDBI46ABMtL6EZQItZFh298fpAKHKkePlAzbIik0kScLlckYXjIGx0OuTln5iY2uX3uHCasAS4P
+Login Successfully
+Session id for 935347: jOiCxXfPVIQZm1bRX6ErI1834VzAsK3V71zGXsOd4UQQK0sZCMOgxmxQtQkDuNd0exfPT8z8jKpyI3UPERzmXb5cGEKgIBqdfugLVN6mkEkkQrPZqaBAgtGEl7K7i2DIOSuB6F4uEIH7QJnHWauPTKkCmzHAUfTF2XP1xqJ0uejptusvYdgVEExd9Ugnh6YSqhmLmuQE0jgFSyUGr2hFjXGczVEx3UczQI1f1xYZuNGG1b2mbtm8yE0dOOTnZkxl
+kite_access_token for YY0222: 5M0qN2o9jjiRjQ5KHYVzxYjw8nTH7p0A
+AmiPy strategy
+450
+Program started successfully

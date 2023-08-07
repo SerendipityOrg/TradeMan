@@ -67,8 +67,8 @@ def get_zrm_users(broker_filepath):
     return accounts_to_trade
 
 def zrm_discord_bot(message):
-    # CHANNEL_ID = "1129673128864391178" # MPWizard Discord channel
-    CHANNEL_ID = "1128567144565723147" # Test channel
+    CHANNEL_ID = "1129673128864391178" # MPWizard Discord channel
+    # CHANNEL_ID = "1128567144565723147" # Test channel
     TOKEN = "MTEyNTY3MTgxODQxMDM0ODU2Ng.GQ5DLZ.BVLPrGy0AEX9ZiZOJsB6cSxOlf8hC2vaANuilA"
     url = f"https://discord.com/api/v9/channels/{CHANNEL_ID}/messages"
 

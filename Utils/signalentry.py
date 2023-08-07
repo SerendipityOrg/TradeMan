@@ -33,13 +33,14 @@ def write_to_excel_MPWizard(data, sheet_name, workbook):
     for index, entry in enumerate(data['indices'], start=1):
         # Extract information
         trade_no = last_row + index
+        if 'SignalEntry' not in entry: continue
         option = entry['SignalEntry']['Option']
         event = entry['SignalEntry']['Event']
         entry_time = entry['SignalEntry']['EntryTime']
         exit_time = entry['SignalEntry']['ExitTime']
         entry_price = entry['SignalEntry']['EntryPrice']
         exit_price = entry['SignalEntry']['ExitPrice']
-        trade_points = entry_price - exit_price
+        trade_points = exit_price - entry_price 
 
         # Append to Excel
         row = [trade_no, option, event, entry_time, exit_time, entry_price, exit_price, trade_points]
@@ -77,6 +78,7 @@ def write_to_excel_AmiPy(data, sheet_name, workbook):
         trade_points = None
         date = None
 
+        if 'SignalEntry' not in entry: continue
         signal_entry = entry['SignalEntry']
         if 'ShortSignal' in signal_entry:
             trade_type = "ShortSignal"
@@ -88,6 +90,7 @@ def write_to_excel_AmiPy(data, sheet_name, workbook):
             exit_time = signal_entry['ShortCoverSignal']['TradeExitTime']
             exit_price = signal_entry['ShortCoverSignal']['TradeExitPrice']
             trade_points = entry_price - exit_price  # For ShortSignal
+            print(exit_price, entry_price, trade_points)
         elif 'LongSignal' in signal_entry:
             trade_type = "LongSignal"
             date = signal_entry['LongSignal']['Date']
@@ -115,10 +118,10 @@ def write_to_excel_AmiPy(data, sheet_name, workbook):
 # wb = load_workbook('example.xlsx')
 
 # Check if the file exists
-if not os.path.isfile(signal_excel):
-    # If the file doesn't exist, create a new one
-    wb = Workbook()
-    wb.save(signal_excel)
+# if not os.path.isfile(signal_excel):
+#     # If the file doesn't exist, create a new one
+#     wb = Workbook()
+#     wb.save(signal_excel)
 
 # Now you can safely load the workbook
 wb = load_workbook(signal_excel)

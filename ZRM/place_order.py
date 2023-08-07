@@ -69,7 +69,9 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, qty, strik
         # Create a new list for each trade_type if it doesn't exist
         if 'orders' not in user_details[broker]:
             user_details[broker]['orders'] = {}
-        if trade_type not in user_details[broker]['orders']:
+        if 'ZRM' not in user_details[broker]['orders']:
+            user_details[broker]['orders']['ZRM'] = {}
+        if trade_type not in user_details[broker]['orders']['ZRM']:
             user_details[broker]['orders']['ZRM'][trade_type] = []
 
         # Add the order_dict to the corresponding trade_type list
@@ -141,8 +143,10 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, qty, str
         # Create a new list for each trade_type if it doesn't exist
         if 'orders' not in user_details[broker]:
             user_details[broker]['orders'] = {}
-        if trade_type not in user_details[broker]['orders']:
-            user_details[broker]['orders']['MPWizard'][trade_type] = []
+        if 'ZRM' not in user_details[broker]['orders']:
+            user_details[broker]['orders']['ZRM'] = {}
+        if trade_type not in user_details[broker]['orders']['ZRM']:
+            user_details[broker]['orders']['ZRM'][trade_type] = []
 
         # Add the order_dict to the corresponding trade_type list
         user_details[broker]['orders'][trade_type].append(order_dict)

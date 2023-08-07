@@ -15,19 +15,21 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 159.63,
-            "IBValue": 90.84999999999854,
-            "IBLevel": "Medium",
+            "ATR5D": 172.89,
+            "IBValue": 56.900000000001455,
+            "IBLevel": "Small",
             "TriggerPoints": {
-                "IBHigh": 19655.3,
-                "IBLow": 19650.45
+                "IBHigh": 19582.45,
+                "IBLow": 19525.55
             },
             "TSLStepSize": 0.5,
             "SignalEntry": {
-                "Option": "NIFTY2380319650CE",
-                "Event": "Bullish-Medium-DownCross",
-                "EntryPrice": 102.4,
-                "EntryTime": "15:13:02"
+                "Option": "NIFTY2381019600CE",
+                "Event": "Bullish-Small-UpCross",
+                "EntryPrice": 76.6,
+                "EntryTime": "10:25:37",
+                "ExitPrice": 58.5,
+                "ExitTime": "10:59:27"
             }
         },
         {
@@ -46,22 +48,14 @@
                 "Fri": 40,
                 "Sat": 55
             },
-            "ATR5D": 468.19,
-            "IBValue": 332.75,
-            "IBLevel": "Big",
+            "ATR5D": 537.48,
+            "IBValue": 183.59999999999854,
+            "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 45703.5,
-                "IBLow": 45370.75
+                "IBHigh": 44996.25,
+                "IBLow": 44812.65
             },
-            "TSLStepSize": 0.5,
-            "SignalEntry": {
-                "Option": "BANKNIFTY2380345400CE",
-                "Event": "Bullish-Big-DownCross",
-                "EntryPrice": 305.05,
-                "EntryTime": "14:59:09",
-                "ExitPrice": 298.4,
-                "ExitTime": "14:59:10"
-            }
+            "TSLStepSize": 0.5
         },
         {
             "name": "FINNIFTY",
@@ -79,20 +73,14 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 198.13,
-            "IBValue": 175.35000000000218,
-            "IBLevel": "Big",
+            "ATR5D": 220.21,
+            "IBValue": 80.85000000000218,
+            "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 20396.45,
-                "IBLow": 20221.1
+                "IBHigh": 20062.65,
+                "IBLow": 19981.8
             },
-            "TSLStepSize": 0.5,
-            "SignalEntry": {
-                "Option": "FINNIFTY2380120200CE",
-                "Event": "Bullish-Big-DownCross",
-                "EntryTime": "14:42:32",
-                "EntryPrice": 122.05
-            }
+            "TSLStepSize": 0.5
         }
     ]
 }

@@ -14,17 +14,31 @@
             "Supertrend_multiplier": 18,
             "EMA_period": 324,
             "TSLStepSize": 0.5,
-            "entry_time": "09:29:00",
+            "entry_time": "09:24:00",
             "last_buy_time": "14:50:00",
             "sqroff_time": "14:55:00",
             "SignalEntry": {
                 "ShortSignal": {
-                    "Strike_Price": 19500,
+                    "Strike_Price": 19600,
                     "Trade_No": 1,
                     "Trade_Type": "ShortSignal",
-                    "Date": "2023-08-04",
-                    "TradeEntryTime": "09:30:00",
-                    "TradeEntryPrice": 198.45
+                    "Date": "2023-08-07",
+                    "TradeEntryTime": "09:25:00",
+                    "TradeEntryPrice": 169.6,
+                    "TradeExitTime": "14:56:00",
+                    "TradeExitPrice": 148.25,
+                    "NetTradePoints": -21.349999999999994
+                },
+                "ShortCoverSignal": {
+                    "Strike_Price": 19600,
+                    "Trade_No": 1,
+                    "Trade_Type": "ShortSignal",
+                    "Date": "2023-08-07",
+                    "TradeEntryTime": "09:25:00",
+                    "TradeEntryPrice": 169.6,
+                    "TradeExitTime": "14:56:00",
+                    "TradeExitPrice": 148.25,
+                    "NetTradePoints": -21.349999999999994
                 }
             }
         }

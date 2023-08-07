@@ -119,11 +119,11 @@ for token in tokens:
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
 with open('AmiPy.json' , 'r') as f:
-    params = json.load(f)
+    parameters = json.load(f)
 
-entry = params['Nifty'][0]['entry_time']
-last = params['Nifty'][0]['last_buy_time']
-sqroff = params['Nifty'][0]['sqroff_time']
+entry = parameters['Nifty'][0]['entry_time']
+last = parameters['Nifty'][0]['last_buy_time']
+sqroff = parameters['Nifty'][0]['sqroff_time']
 
 
 long_indices = []
@@ -332,7 +332,7 @@ def updateSignalDf(last_signal,users_to_trade):
             signal['NetTradePoints'] = signal['TradeExitPrice'] - signal['TradeEntryPrice']
             signals_df = pd.DataFrame(signal, index=[0])
             signals_df.to_csv(trade_sig_path, index=True)
-            params['Nifty'][0]['SignalEntry'] = signal
+            params['Nifty'][0]['SignalEntry'][trade_type] = signal
             #update the json file
             with open('AmiPy.json' , 'w') as f:
                 json.dump(params, f, indent=4)

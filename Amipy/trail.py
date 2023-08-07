@@ -50,41 +50,36 @@
 
 # asyncio.run(main())
 
+# from pya3 import *
+# from pprint import pprint
+
+# alice = Aliceblue(user_id='929016',api_key='NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
+# alice.get_session_id()
+
+# margin = (alice.get_balance())
+# print(margin[0]['net'])
 
 from kiteconnect import KiteConnect
-
+from pprint import pprint
 username = "YY0222"
 api_key = "6b0dp5ussukmo67h"
-access_token = "ohf3V9Up1JH1Fecxh9rSfFwciQsPVTAi"
+access_token = "2nfZjbZbw7B1lnFrkKB2G7ya6ezvDEOm"
 kite = KiteConnect(api_key=api_key)
 kite.set_access_token(access_token)
 
 
-modify = kite.modify_order(
-                        variety=kite.VARIETY_REGULAR,
-                        order_id="230727602962249",
-                        price=8.1,
-                        trigger_price=8.2)
-print(modify)
 
-# order = kite.place_order(variety=kite.VARIETY_REGULAR,
-#                          tradingsymbol="IDEA",
-#                          exchange=kite.EXCHANGE_NSE,
-#                         transaction_type=kite.TRANSACTION_TYPE_BUY,
-#                         quantity=1,
-#                         order_type=kite.ORDER_TYPE_MARKET,
-#                         product=kite.PRODUCT_MIS)
-# print(order)
+orders = (kite.orders())
 
-# order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
-#                             exchange=kite.EXCHANGE_NSE,
-#                             price=7.9,
-#                             tradingsymbol="IDEA",
-#                             transaction_type=kite.TRANSACTION_TYPE_SELL,
-#                             quantity=1,
-#                             trigger_price=8.0,
-#                             product=kite.PRODUCT_MIS,
-#                             order_type=kite.ORDER_TYPE_SL)
 
-# print(order_id)
+if orders[0]['status'] == 'COMPLETE':
+    print(orders['tradingsymbol'])
+
+# margins = (kite.margins(segment="equity"))
+
+# print(margins['available']['live_balance'])
+
+
+
+
 

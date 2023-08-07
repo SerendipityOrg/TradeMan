@@ -6,13 +6,14 @@
             "api_key": "6b0dp5ussukmo67h",
             "api_secret": "eln2qrqob5neowjuedmbv0f0hzq6lhby",
             "totp": "3GN2DNUD35FZQDIIWJUK6CSUIWBPXSYJ",
-            "access_token": "5M0qN2o9jjiRjQ5KHYVzxYjw8nTH7p0A",
+            "access_token": "2nfZjbZbw7B1lnFrkKB2G7ya6ezvDEOm",
+            "mobile_number": "+919902106162",
             "percentageRisk": {
                 "AmiPy": 250000,
                 "MPWizard": 0.01,
                 "ZRM": 0.01
             },
-            "current_capital": 2284766.6
+            "current_capital": 2223398.3
         },
         "user2": {
             "username": "def",
@@ -65,12 +66,13 @@
             "app_code": "JWbhBFJXIBlHpAd",
             "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
             "totp_access": "VFULKSAJCRMTSNRLEQDYVWBBFKHXOJQR",
-            "session_id": "5RTjLKn2b30Pn13XI3szJOhLQhukfDqxYiG9pOnCFJrSO3VESPWX1vKWzjOIFz77xn63c5fk76ibQNxAamN2oBfhdqKmLzME2t1DQFTKOMChJ7WpJrD0uM37zPT233yEE4TxKJ69vgcGOLIZGpZbVz1fES6Y1HUZ1nKtIKoJqkUQCYUgml1TpSVvjboGLSik2fvRTCJNgHcr1JhzIDhrz22V0Q8EQuXVSfskYhPvC0ZUQZOOWDUBuLPKD2uDtLWD",
+            "session_id": "linEnHVMcLCvtHftGJkXlKScyT82unXYX6HKpOHTb58Wb0WrbZqnpFE8907KDbD59MZ4eF6NCXz88Ak71njJkiUJ8MUB14ZgMP8RqDaBJ1m2SWLPzFkM3K61cZKfKtJ7HfmI2fv0p82sWGAPHV5x1M5xLm0BykoqZ2n8VgkNCFAED8hFCLgtbAAiZAdOenf6tYPqkIkF959KUpTFSFC17pQnmmszaRdjkDTLRn39KP9StBuKKCfbDMEmb4YF6k64",
+            "mobile_number": "+918762152111",
             "percentageRisk": {
                 "AmiPy": 250000,
                 "MPWizard": 0.015
             },
-            "current_capital": 470362.04
+            "current_capital": 452966.47
         },
         "venkatesh": {
             "username": "924446",
@@ -80,11 +82,12 @@
             "app_code": "RPMGgKDNcqpdXtM",
             "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
             "totp_access": "JDPHMIKEPJERXYLFKDNFBVLIEKOTIQYX",
-            "session_id": "qvjjtAg9rrHiIiKcH2iExTsaXTAi58YBtSizFQkmMgKbZ8NVT4VTAvMcfNBZflg9S2OtGUmeBJdb85CHIkNekzf026aj9NH3pN9CNlKY5aUUyiqyvSNL7NnMxYcsmV7OUju7NASvGO5eaWEo1QbFfDuncQRH9WA56nhzbkgelusT5uepScOBOkDBI46ABMtL6EZQItZFh298fpAKHKkePlAzbIik0kScLlckYXjIGx0OuTln5iY2uX3uHCasAS4P",
+            "session_id": "02yvz5nV6vARX71fj7Pa0oMQBsD2lb9r7VbWGOL6GLn4EQqDUSiOeZHGtRJq9pDkaN8v8pitEm64oI5uF56gqyNNAE7p9DsFADGsSp034oYnth9h0DlNfPy2iIocNYH5hnck3Wel7UBtKXLuGWD7aC89TNmQs05h3BMF2YdroSqXhxc1KmaUVJvnoV02VSUVleV9rSJcnnkQlVvyXuhql1GfJgK3MR6J7KFTy6XBfVqcBlcqjZZviOnF68TZiTIU",
+            "mobile_number": "+918147039490",
             "percentageRisk": {
                 "MPWizard": 0.025
             },
-            "current_capital": 57619.41
+            "current_capital": 55146.06
         },
         "sridhar": {
             "username": "935347",
@@ -94,11 +97,12 @@
             "app_code": "HaRYaumJCQuFiEy",
             "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
             "totp_access": "IPPRNKIUJHSRLEADIQKUPEXNPKIKOBEP",
-            "session_id": "jOiCxXfPVIQZm1bRX6ErI1834VzAsK3V71zGXsOd4UQQK0sZCMOgxmxQtQkDuNd0exfPT8z8jKpyI3UPERzmXb5cGEKgIBqdfugLVN6mkEkkQrPZqaBAgtGEl7K7i2DIOSuB6F4uEIH7QJnHWauPTKkCmzHAUfTF2XP1xqJ0uejptusvYdgVEExd9Ugnh6YSqhmLmuQE0jgFSyUGr2hFjXGczVEx3UczQI1f1xYZuNGG1b2mbtm8yE0dOOTnZkxl",
+            "session_id": "RWoZUHz6V48POhfM7ocIypmoQjLm7qSLHhqQpRCnhPPupj5zoJxAn1OIg7XnqhDOo8J0r5Gsns9fuLcGvyk79pWtdNGMhva9tES9nMtgYvTzhqLdqYcX5heTAFutujfgpMvLIFmD33L4ZeOm8Uk0ijlApG0JxSlWAtjqoyePF6i62kT98GcpJEIOsjgdk64Gp2kpsfFbRg1Gsl5ns6xJrpfLG0vKqtOeXztnUXu6ZCHuzYi1BDpi7Ez5cxcMamzA",
+            "mobile_number": "+919741371527",
             "percentageRisk": {
                 "MPWizard": 0.05
             },
-            "current_capital": 40414.31
+            "current_capital": 28463.19
         },
         "vinay": {
             "username": "935325",
@@ -108,11 +112,12 @@
             "app_code": "kKThxMchucTIuEs",
             "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
             "totp_access": "HYUHYOKAUBPEVZNNIHJLICGHSQNBQQDR",
-            "session_id": "54pD9z7SoGfvhQoW8u9Xc3Xtvb063OX3acEYCc1G4zm9bXTurfsKgkV5ykRIldPuf4hDPv6s93DqP31YtNzF7I7EJelAUcGnmmySVYz6ITUIYXkQClZK5gDa1sSaW93ZlqcH0ro50rCnEIAUNPQykJFx5dr5nPcLD8Uc9qqWIzd4oJUDXjEamg6uVCY6J6R0fZAlyDkKbj6cL5nqDQrEVJkWVhAceVkVeugSYD81aiCH19IpVjft11aj47n1guVY",
+            "session_id": "Ck7WKBUhbifos5sSBZ2RYRC38Zprd4Ib7eTWPPJUsA9frbQO2mdH7pC8nldsmlmLfkuaTd4RqCIC1Wf3rM105XoRhDTiLb0SmixqvubR9LnzhJAIeijFynV0KERYBtuFEWffUTiMSASOpBOFHHaNpnrYzPs2uUhVx17HzpFlPlMkAgna7I2cc6f9TjmT1vuhufkv5cOhcZDk8kUD8QTapmAyOyYjnC8IWBQulgfot71lZOVGcaSmmRRIfStdCQA6",
+            "mobile_number": "+919916838919",
             "percentageRisk": {
                 "MPWizard": 0.03
             },
-            "current_capital": 28940.79
+            "current_capital": 27680.97
         },
         "vinod": {
             "username": "110958",

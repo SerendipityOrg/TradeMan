@@ -110,7 +110,8 @@ class OrderMonitor:
                                                 # expiry_date = str(expiry[1])
                                             
                                             tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(name, expiry_date, option_type, strike_prc)
-                                            instrument.additional_tokens = tokens                                                                                  
+                                            instrument.additional_tokens = tokens
+                                            self.orders_placed_today += 1
                                             for broker, user in self.users:
                                                 # Send appropriate trading symbol to order functions based on broker
                                                 if 'zerodha' in broker:
@@ -147,7 +148,6 @@ class OrderMonitor:
                                                 with open(levels_filepath, 'w') as json_file:
                                                     json.dump(data, json_file, indent=4)                                                                           
 
-                                                self.orders_placed_today += 1
                                                 if 'zerodha' in broker:
                                                     order_details = {
                                                         'token': tokens,

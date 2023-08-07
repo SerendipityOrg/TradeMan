@@ -4,9 +4,8 @@ from openpyxl import load_workbook
 import os
 from telethon.sync import TelegramClient
 
-
-api_id = '28308447'
-api_hash = '63b0228d40d21350751400088775536a'
+api_id = '22941664'
+api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
 
 def process_mpwizard_trades(mpwizard_trades):
     if not mpwizard_trades:
@@ -49,7 +48,7 @@ def process_short_trades(short_signals, short_cover_signals):
 
         entry_price = sum(float(trade["avg_prc"]) for trade in short_signal_group)
         exit_price = sum(float(trade["avg_prc"]) for trade in short_cover_signal_group)
-        trade_points = exit_price - entry_price - hedge_price
+        trade_points = (entry_price - exit_price) + hedge_price
         trade_data = {
             "Strategy": "Nifty Straddle",
             "Index": "NIFTY",
@@ -126,23 +125,33 @@ for broker, user in user_list:
 
     phone_number = data[broker][user]["mobile_number"]
 
-    # Process the MPWizard trades
-    mpwizard_data = process_mpwizard_trades(user_data[broker]["orders"]["MPWizard"])
-    mpwizard_df = pd.DataFrame(mpwizard_data)
-    mpwizard_pnl = round(mpwizard_df["PnL"].sum(),1)
+    # Default values
+    amipy_df = pd.DataFrame()
+    amipy_pnl = 0
 
-    # Process the AmiPy ShortSignal and ShortCoverSignal trades
-    amipy_data_short = process_short_trades(user_data[broker]["orders"]["Amipy"]["ShortSignal"], 
-                                            user_data[broker]["orders"]["Amipy"]["ShortCoverSignal"])
+    if "MPWizard" in user_data[broker]["orders"]:
+        # Process the MPWizard trades
+        mpwizard_data = process_mpwizard_trades(user_data[broker]["orders"]["MPWizard"])
+        mpwizard_df = pd.DataFrame(mpwizard_data)
+        mpwizard_pnl = round(mpwizard_df["PnL"].sum(),1)
 
-    # Process the AmiPy LongSignal and LongCoverSignal trades
-    amipy_data_long = process_long_trades(user_data[broker]["orders"]["Amipy"]["LongSignal"], 
-                                          user_data[broker]["orders"]["Amipy"]["LongCoverSignal"])
+    if "Amipy" in user_data[broker]["orders"]:
+        amipy_data_short = []
+        amipy_data_long = []
+        if "ShortSignal" in user_data[broker]["orders"]["Amipy"]:
+            # Process the AmiPy ShortSignal and ShortCoverSignal trades
+            amipy_data_short = process_short_trades(user_data[broker]["orders"]["Amipy"]["ShortSignal"], 
+                                                    user_data[broker]["orders"]["Amipy"]["ShortCoverSignal"])
+        if "LongSignal" in user_data[broker]["orders"]["Amipy"]:
+            # Process the AmiPy LongSignal and LongCoverSignal trades
+            amipy_data_long = process_long_trades(user_data[broker]["orders"]["Amipy"]["LongSignal"], 
+                                                user_data[broker]["orders"]["Amipy"]["LongCoverSignal"])
 
-    # Combine short and long trades into a single DataFrame
-    amipy_data = amipy_data_short + amipy_data_long
-    amipy_df = pd.DataFrame(amipy_data)
-    amipy_pnl = round(amipy_df["PnL"].sum(),1)
+        # Combine short and long trades into a single DataFrame
+        amipy_data = amipy_data_short + amipy_data_long
+        if amipy_data:
+            amipy_df = pd.DataFrame(amipy_data)
+            amipy_pnl = round(amipy_df["PnL"].sum(), 1)
 
     # Read existing data from Excel file into separate DataFrames
     mpwizard_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="MPWizard")
@@ -152,11 +161,19 @@ for broker, user in user_list:
     mpwizard_final_df = pd.concat([mpwizard_existing_df, mpwizard_df])
     amipy_final_df = pd.concat([amipy_existing_df, amipy_df])
 
-    total_pnl = mpwizard_pnl + amipy_pnl
+    message_parts = [f"Hello {user}, here are your PNLs for today:\n"]
 
-    message = f"Hello {user}, here are your PNLs for today:\n\nMPWizard: {mpwizard_pnl}\nAmiPy: {amipy_pnl}\n\nTotal: {total_pnl}"
+    if "MPWizard" in user_data[broker]["orders"]:
+        message_parts.append(f"MPWizard: {mpwizard_pnl}")
 
-    # Send the message
+    if "Amipy" in user_data[broker]["orders"]:
+        message_parts.append(f"AmiPy: {amipy_pnl}")
+
+    message_parts.append(f"\nTotal: {mpwizard_pnl + amipy_pnl}")
+
+    message = "\n".join(message_parts)
+
+    # # Send the message
     with TelegramClient('anon', api_id, api_hash) as client:
         client.send_message(phone_number, message)
 
