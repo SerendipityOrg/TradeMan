@@ -368,3 +368,573 @@ kite_access_token for YY0222: 5M0qN2o9jjiRjQ5KHYVzxYjw8nTH7p0A
 AmiPy strategy
 450
 Program started successfully
+Attempt: 1
+Today's date: 2023-08-08 08:55:03.128100
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/connection.py", line 72, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 703, in urlopen
+    httplib_response = self._make_request(
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 386, in _make_request
+    self._validate_conn(conn)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1042, in _validate_conn
+    conn.connect()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 363, in connect
+    self.sock = conn = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x12a8871d0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 489, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x12a8871d0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 298, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 165, in login_in_aliceblue
+    getEncryptionKey = getEncryptionKey()
+                       ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 162, in getEncryptionKey
+    response = requests.post( url, headers=headers, data=payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 587, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 701, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 565, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x12a8871d0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+Attempt: 2
+Today's date: 2023-08-08 08:56:11.661439
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/connection.py", line 72, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 703, in urlopen
+    httplib_response = self._make_request(
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 386, in _make_request
+    self._validate_conn(conn)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1042, in _validate_conn
+    conn.connect()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 363, in connect
+    self.sock = conn = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x11236a750>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 489, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x11236a750>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 298, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 165, in login_in_aliceblue
+    getEncryptionKey = getEncryptionKey()
+                       ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 162, in getEncryptionKey
+    response = requests.post( url, headers=headers, data=payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 587, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 701, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 565, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x11236a750>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+Attempt: 3
+Today's date: 2023-08-08 08:56:19.240091
+Login Successfully
+Session id for 929016: FnU5aWaKfymyWsKvx4T39ZrrYOqLij8ipdKp1thqRSDS57qUj9cP2R6VgCHth5P4mn5UfRQvFBFlQKucdlatANrETjpE340XOzfmobx0LbbN66D8s7qUoYmzvVVtSBQshDvab85BvMxoU1MATlpM3WjnY837FLzPtTYtttMMH2GGODXsi4EmMTur2UNiVsIxfozIyTZbPmGOh7d4azuFd00EpfmfUBTaYGihs0dhQsa7HuSjDy3JCbxJ0nkR0Avu
+Login Successfully
+Session id for 935325: Wli7fMG1ZaFs4ciCBEjEoI7ZOZIDlVg6We98ssjLiRSnk6REEylAzXLDHZDRuy1OJTEdWNsrV7X4rzCY1KlXaepmqM9TdgXTQqfi2IVMbkgunALv69f8DQDIDpK7L5JEButW8KrgTaBlWquRQ3lVQ82LUUQMlKjd0ITGQFoFKFtahm1ms13BZTLjW0JUhSJlgfmStFLyYON2HkQJslCjH1VYIiPvnBNxePGEMAhd97BcGb9vNrsHkstLZy8VE6jc
+Login Successfully
+Session id for 924446: npWDLBoMZxHmpTGpldGrMCir9yLCnriHnQY2eZqkmB8L1n6fXJabXhnlOaECjHPUHEJ9dhEuGXMDN6c0RnfhgOR7hUypqPXOX9W8mY68Fx00CL8dVYQk60HZT837rHXrgPC3sk0nWkFe5V8JZM5f0yOT5BqRx1Z4pRiuQnBgQVFljRDaIUkBLEzEHCJ3JR7as7FE7fmx88RXWBMINKf8P0GvugjJClkMChclbHuSf24drkeUqQcMRTcVX7CgdGU3
+Login Successfully
+Session id for 935347: gzE5mGarxDgeMpd97Dub5zDgjQ0EfzY2FPndYpR8uFh1VLFuCellKeteSDVcPfyikikq60KSYGhmWBrLbcNNikx6GklaVG5caCKuvqDsnWhCG9By1PCmpLheL4h7rXSNpgEDmVTGXX29QghOMk0kVlcYE8gaqrWT9DqiZay4q7Ya3tqAIsIY7Py9VhQoQrepdYyAMWQ9mKeL4opOednsnWpMUplrsh3Ve1xyxROHod28sl3EuRiY2W16LiNu2tzu
+kite_access_token for YY0222: 9v2ZB6kcIO4ujITZ4ieIXfXf68nQLpYq
+Program started successfully
+Attempt: 1
+Today's date: 2023-08-09 08:55:03.276332
+Login Successfully
+Session id for 929016: 3jEIx83zqsXFtn4NTK3zxpgc4UuvHGSYWT3JhZkM93IdpW3nZUNM4IIqc8DPMhiN2s4RyzIyUprsxUgKF2MpDXujltz3RVeLZnl5ftzHM2LzV4o7AAWq0oLbNvme0bQNUuCJHvB4heBkquh2WK7QSQltErYUXNA8aUQZ9tfNOSRZ1kPCCriyCzu1v62VsEnQCTHVTdrynut580lZjucipzADi34CUY3lZjazjUzqADCJyr05bR41uQeQlaLY9RRk
+Login Successfully
+Session id for 935325: ZxmDoYAdH5rT0fSl5LN3CZeHOLOygr5GDjlSNvovTJgPj24vOnpURxj0fCh9SjP0KMvsrBHN0X4iGXbCU2U3fgjEUZaHgMnaiSpm39ZKNLu9lRmrnjO1Uz2OkkgNP0SVPUeCSufFGh4gCx2f5Ggm9Bhzgg37Ub1HBq9gBezZsVcAkM5j0qvJCyEkvMHqxEzfXDaCzF1UfBoiEQqCQdG3sWzP3EqYelOy7JPqeg4jInPj2UPRJzQb6pKVoae0dJER
+Login Successfully
+Session id for 924446: 9Q4ViTG2fkvX6eVq0mpy31l6LLE2u0aKKPSbucJzWRWDJNqfyNH0qaGnVGBx2FJ1BroLD7mAI7Cm3WSMIKAAAsotz6fslH4JtJ43UW9d49JhODb0tEp2RvXfE1UOu5Ng54KKzEm9EIdjjFWSaW0uogcmXmuocPChvzoSYcWh9K4ga6SZ4srvolvbbrScJnXCVo2e56KDCPIoiLFEb1bNLL5IjCuUXqXiqJP3a6ZBR6N3aaT1fhgORQA2bgeOQRx3
+Login Successfully
+Session id for 935347: 57yIBCShn0h6bsEyZbxIGT8V5aHSsOyHUlWrCNixWjeJSSJmI5agmHjVXhBt8izWGzys2PlytE0zDxatiKuc0ltY8kryMNhtDCUBFBzOzL9ZhOh3xfXBj8QvtKXuTttqFY6cUiOtx564X8FUkbGfCkJ7rTHDuTM1YqAEmZshRoHW6yXpCaucmUWvzNEDhyCGWHmSniUKusPAJzVTjMhz2slSY49sY0lnmsym1AbCIfyHVjCWEFqs9nHog6ZrW3Ek
+kite_access_token for YY0222: cSAgosR3xp2g5KNxTLhNxiiTvki3uMbU
+Program started successfully
+Attempt: 1
+Today's date: 2023-08-10 08:55:03.250918
+Login Successfully
+Session id for 929016: goDkt2NGTvSdoXBoCKZ23jXo7jcoWIfH3SlT2jQzipyIu2jL86stQnrkbRuOP6i9LZXbQZIZruZPgt53KzVUv2Zn4F38ski1L6kvuILCrWl1pt6deAtk19eCxCcN1s4OkG3ssO4SuapN6CuR0oqcdEX6BpARRbPharC8ySs6yOdKLgxkVTdqZJDAVdmP0Y4bVUaKDCN1i0ZWfigZGCAqOniEjxQuYjQ6a0diQYlooUfybXjHf77Ce8JZAjaiEg5A
+Login Successfully
+Session id for 935325: ReVeW5FQInM8uy7M3QBhYL0FEtNVklNIlqOBOtsu8xEDCSFlQQrERntnY7g0v1fWVy89DOmUrjgq7br5lJXvAT4zFRfTpgKSFdUPPHkjGyUKurMDtWt6odC4C7I1r89A50RhsY5nfohEqNBlNhggXvH1XUlZzOb6NS0E9tgIUJutQg6GHRBJNCsTBNgyZUrnqWy61f1uTygtgKuA2tjtWOIP3XBOc41iJnT50OFstRcxq47iOfupUNjctGDKcJ4d
+Login Successfully
+Session id for 924446: rY87L1m1NX8JxtRRKgWOELm5ydti2Tr9I0nKG7nMuUkl1l8T5OB8mFF85UgPSYeDnR5QoqvGmXEnlJMqu4FsmUzykotyH7suCbW28i7437iIbRedX10YTVv7HWev9zNpONICY3vJah9gmhF2sFeZkIzyYp9H3miYre3gQ3qArGQE8NGjxlhm1DnJczdeg2XOeOydTaQEaDbUQyxJVo1c3nHkEjKT2kjWuN6nYfSaWCPHKzkkGSgHtePBbuHPrcrt
+Login Successfully
+Session id for 935347: TInsetY2n5tQI0aGF1WgimQJRmhR934YKj098GIyqTlP9Z6IYJV3FKPVbi02yk6x2LYWjS9Zu8kCZYadDkhvmAQMqdCMqDCKKWyC794EO1N1JigLY1MQBnCx8IaDZNVbZcGIbCFunh8ja0gpZ0d7JUt6Cke4kxMrihVtBEg6nU934T9H276Uf8PN311XL7TGSxWgBGqTSdJ9V1brQCAc1ADZTMynhC10goXZeS5uK3Hh7pCaLgHxBIofisfshX4D
+kite_access_token for YY0222: 3LgZJSfdz8bLOCXy1Oy9SoJnqqx6lQHF
+Program started successfully
+Attempt: 1
+Today's date: 2023-08-11 08:55:03.441159
+Login Successfully
+Session id for 929016: jXnaqhq27qHTxYvMafGSLCckplgNEyldfBdVKUgPll0MJp1Ylzdjc1bC0gtNmcZ502EvzBabti3PgfRCcE5hVmlSzW80TKIxalOge4hnBIZ3iCS0vbde6p1PeOaj2CzrxiyaHBv2gEq5hkY0WU1WnMAhrrkEWmsQCD6Pq6bggrex6mTKPOjAhSlvMo6unibHxe7u39b6rCzKAxdB5HmUAlLKUdTOleA420OBJt5aS49K6tRopVeP6qKXTPoYSGVt
+Login Successfully
+Session id for 935325: BgqcFIadCsv2yXkWiKPKtPsMcdllfIyHP1r3zP8Y4qMSM9qqI0uqnikUDO45WWntVrzuMfUA9RFbJ7NE9dkUNBBst7HIcSVQ5Wd3Hcsr3fVrGXZaisBiC211F9u3XulGWQ8ZiHoToRTOLB1H97Hex6qXqpSdccfKlHdmzINx2FxKtGm52nj5oGP1kVojCLOOB1MuZEDVhxG2mkkAJZNy9yK7vulChkjWE35ABU8ygHEZSAxe0eKhCeRkepfORQK9
+Login Successfully
+Session id for 924446: d74ln0QeaTnIPQmkJkUYJ62BRuoSTW9ZJUB65hivAulZRiO3a3pXppDN6MMWcLGmmnfWuRO9bei9lt2hTUYvE6vfmvqKVqmepALPAXGG0lCTgqTn9I7ROJxz7bbZSBbg8LQGf1QktjATkzeMc5A0suO2mjo4WXhVO6vOWaaJI2JMOFl4tfvq7P2xSOn9TorT9AsysOSKNgmkg3qI6X7Ld3bvKp7tsjKIQ2U5buoItgjUX7svxMyQjznh7G6ZIfyz
+Login Successfully
+Session id for 935347: dsn4xIzSPkPbtrJFElRm1TXv2qIP52TyYj6ZX7a4IlsdKlCc13L5ieFcQqM5PlxK9XVb9WIhKbUEcR8zP30ReKyzZozgNttBVqXvx9AtxUlopj9LOuPuD3pyusK7D9onbGrj0D2jusA1R9tUC4LiadH1kAiKn48tXq87NOT9hcrNQ7qOg5fVqvbQW680sbrYUk4pzB7aovFhKLEyQEqk4uS87F230hTvfkyXSu0N8KRWl6bCq9i5lf4QV9Q9qU6q
+kite_access_token for YY0222: VQEE6QRLISfQY23XVT8ZfbRUne7eiZxD
+Program started successfully
+Attempt: 1
+Today's date: 2023-08-14 08:55:01.898546
+Login Successfully
+Session id for 929016: JCmRgCxtTDddRCZIDP7EXeeYOrg22Eo7heUM93MLdfhiY0DSuL3YAsgaKuJ73U7YlPG6T7DTrmuS1zHAMi3tEhkoRlnckRxJXYcE9QG9NCXHCJTZTPibNi6KYvJTVZ0rWVBZfvQVoNN53YPBr5WC3fHptZBbzgLBf8X0bs9J6uiAVBolxXLmXHyOdUi3nMf8i7esSOJsvVeAUBlTlk2VV3zVBB8lSVY3Ms35Hy5Ud6gtQM892lDMWOuY3QW12zjV
+Login Successfully
+Session id for 935325: XkxKWfAVBcvZK1VZaUEuZMFb9HH6X6C1cKFWegzjCNsNdZ8iJagyGMKRSVVrAx8l884f4IlH0rUDv1XHPCBcHV0rlfL7IU4UasKacr8kuUqIVsnyLfTVK9aeWjVhBPAtxrA559luKH9AyIk74JTY34nDF20inuGULrb235GQp4YU3b9RbkKcKUpBnzSE3B3llrJIVihOsabtNszTb816tO0dhBq2DJX8NskyFSqmFlfx5KDV0tcfkezEqPtODOlA
+Login Successfully
+Session id for 924446: AczPVRcezH6m4beT1J6kC2Sq0FUiBHAdWknKAzBu8LhDCT5Bm3E0zXRrDUd3oHC3VEPYHJRsrcsCJe8aLqcPcdj3UnoOTWKt7HF19VRO16Bt4jlLhRzftYaf7jmThbFEdd9MS9SrIlUGpAP8CzK1hT6vHgHU64izBcao70Q3QLi0EVyfS6bi1jVoymmUuoMOqcezqXQOQofTaaA1MTZVzLcrNSDNxHDoMSdXs1Um0mPRrJinUSC3fEagESbWYWg2
+Login Successfully
+Session id for 935347: cW3sjknNBKaOnYUSzzgfO7vzyk9HjoddE1FsY1TRndXMJPM3muQVJ7be6BkROKcxz6m8TGZYl6iA5mMKq8lgWDF4PestYFYsPSgHtDDRxtH3lAJELdOuadCDHKWR0gNrNSQpDyu1IlLy3i13AntWE3WuviQZ9aJRkJeKpSEn495fLyLEqGeh3etaseWR9ZVZ0OHN8n9iRkbFyfYDyfahBDPa7PS8UbZdy0k6vYbNseSlT9hXkeqtoLxryfx6t4Kv
+kite_access_token for YY0222: TM5qmwgU5les8pFHak7Za6lELvzvyFwb
+Program started successfully
+Attempt: 1
+Today's date: 2023-08-15 08:55:02.725432
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/connection.py", line 72, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 714, in urlopen
+    httplib_response = self._make_request(
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 403, in _make_request
+    self._validate_conn(conn)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1053, in _validate_conn
+    conn.connect()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 363, in connect
+    self.sock = conn = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x1346ee9d0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 798, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x1346ee9d0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 305, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 172, in login_in_aliceblue
+    getEncryptionKey = getEncryptionKey()
+                       ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 169, in getEncryptionKey
+    response = requests.post( url, headers=headers, data=payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x1346ee9d0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+Attempt: 2
+Today's date: 2023-08-15 08:56:09.924898
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/connection.py", line 72, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 714, in urlopen
+    httplib_response = self._make_request(
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 403, in _make_request
+    self._validate_conn(conn)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1053, in _validate_conn
+    conn.connect()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 363, in connect
+    self.sock = conn = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x12c6ab910>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 798, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x12c6ab910>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 305, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 172, in login_in_aliceblue
+    getEncryptionKey = getEncryptionKey()
+                       ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 169, in getEncryptionKey
+    response = requests.post( url, headers=headers, data=payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x12c6ab910>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+Attempt: 3
+Today's date: 2023-08-15 08:57:17.046383
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/connection.py", line 72, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 714, in urlopen
+    httplib_response = self._make_request(
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 403, in _make_request
+    self._validate_conn(conn)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1053, in _validate_conn
+    conn.connect()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 363, in connect
+    self.sock = conn = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x118dcfa10>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 798, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x118dcfa10>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 305, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 172, in login_in_aliceblue
+    getEncryptionKey = getEncryptionKey()
+                       ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 169, in getEncryptionKey
+    response = requests.post( url, headers=headers, data=payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x118dcfa10>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+Attempt: 4
+Today's date: 2023-08-15 08:58:24.482423
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/connection.py", line 72, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 714, in urlopen
+    httplib_response = self._make_request(
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 403, in _make_request
+    self._validate_conn(conn)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1053, in _validate_conn
+    conn.connect()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 363, in connect
+    self.sock = conn = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x11b0df450>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 798, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x11b0df450>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 305, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 172, in login_in_aliceblue
+    getEncryptionKey = getEncryptionKey()
+                       ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 169, in getEncryptionKey
+    response = requests.post( url, headers=headers, data=payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x11b0df450>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+Attempt: 5
+Today's date: 2023-08-15 08:59:31.607890
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/connection.py", line 72, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 714, in urlopen
+    httplib_response = self._make_request(
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 403, in _make_request
+    self._validate_conn(conn)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1053, in _validate_conn
+    conn.connect()
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 363, in connect
+    self.sock = conn = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x11e418850>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 798, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x11e418850>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 305, in <module>
+    user_details = login_in_aliceblue(user_details)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 172, in login_in_aliceblue
+    getEncryptionKey = getEncryptionKey()
+                       ^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 169, in getEncryptionKey
+    response = requests.post( url, headers=headers, data=payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/requests/adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='ant.aliceblueonline.com', port=443): Max retries exceeded with url: /rest/AliceBlueAPIService/customer/getEncryptionKey (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x11e418850>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+The script has some errors. Please Check !!!
+Attempt: 1
+Today's date: 2023-08-16 08:55:04.366173
+Login Successfully
+Session id for 929016: C2JLukT8bJYAldruyhf6kEa568BLySuUTyeBfsfxq3Ur5pFvW8tXCPrY8hB1II8c5stgoxo41k8yWLd8EYsyfjaUOT381J5SfmVZcAU1TUYqvmrP4IkPlVBggSRNbUFiEM81bhztdt7GSvB4uqYnV01L4EUAt5Zzed8xrpcRNT3fUICpDOknjeLYEZztihRK7RJshFCHE7t500cNdF3GXi8n5cjz00Yjq9hUZBNHVG6QYD9d2Pf9jeZuazEQS5mY
+Login Successfully
+Session id for 935325: zgGbliSIbvma1vjpUuUz4ykyoZ6FeTZYAGXmZpBGzi2FvBI3A3au0ZrrZKNgZrenO9gWXI0xLKfhguepouY4srG3PCKSmaobvucVhiCZBUerDyoc6qfSF5i1UPFlPxjm6uqcpzSlzl4p7WQXsVK5Vpsd9jXukLYCNm8tNTbitdlU33qpP5zvvelFfYhG3gGQmzMAJJ7UntQUt2z2aVY5zGvCA1yLrpxQfG0UuORZBxyImEFZcqzojIvZzIWkBl3j
+Login Successfully
+Session id for 924446: 5JsDJyJADDNMAo978akCujLsiUtzEakoi9eQW6vbxSili0iJI1mjtKdZGAF5EN02fekGq1eKVeLelyTUpNgmsXSp9i5TSniTr0FOAjAtC3u5qXPeB15XmqnWKhJFmsXkIRmKy93iKEvtkZGjN9WZP3f8f227IorI2hv7bTlJLBaOXNZbKpSrddo6gNR177x4FN6b8jJhvcjenKPjsWS0MdETucyjG0L4kdcuaaOWDqt7lAzDP9fWcWE68esEV8Bc
+Login Successfully
+Session id for 935347: eR2l6JvTqRZZeqt9ioOLUoA1qY4pLZdo5PY6SSjRhxVI1COVDhLqlUcnu4dLYGQgEu1PW2q7j3nKHVITGZ2vGMryF83zTMm7VtPULg6OD1kC5xZuKnn2r0QIook07C0OJlDRjSGZDCl7uGWtOZ66OhaT6apM8MIEBDkObK2XbaBqIrLHP7axDm4ghxqhDTGkcZBdSSmJ52dktTsd7fAIYF0T5jB84Zq9VOnXs77QAyKPajRI2zWNSagz3bWIuOWx
+kite_access_token for YY0222: gxryTzBzAjKfmyxXGkVPry2VGbM7mCn4
+Program started successfully

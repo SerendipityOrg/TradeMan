@@ -102,16 +102,17 @@ class OrderMonitor:
 
                                             if name == 'NIFTY' or name == 'BANKNIFTY':
                                                 expiry = get_expiry_dates()
-                                                print(expiry[1])
+                                                print("Finfinity expiry", expiry[1])
                                                 # expiry_date = "2023-07-20"
                                                 expiry_date = str(expiry[0])  # constant value
                                             elif name == 'FINNIFTY':
-                                                expiry_date = "2023-08-08"
+                                                expiry_date = "2023-08-22"
                                                 # expiry_date = str(expiry[1])
                                             
                                             tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(name, expiry_date, option_type, strike_prc)
                                             instrument.additional_tokens = tokens
                                             self.orders_placed_today += 1
+                                            print(f"Orders placed today: {self.orders_placed_today}")
                                             for broker, user in self.users:
                                                 # Send appropriate trading symbol to order functions based on broker
                                                 if 'zerodha' in broker:
@@ -204,6 +205,7 @@ class OrderMonitor:
                                         next_stoploss = order_details['next_stoploss']
                                         token_ltp = str(ltp_data[str(token)]['instrument_token'])
                                         if avg_prc is not None and token_ltp == order_token and ltp_token >= next_change and not adjust_called:
+                                            print("next_change", next_change)
                                             next_stoploss = order_details['next_stoploss']
                                             limit_prc = next_stoploss  # New stoploss price
                                             print(f"Adjusting stoploss for {name} to {limit_prc}")
@@ -261,15 +263,15 @@ class OrderMonitor:
                                             with open(user_filepath, 'w') as f:
                                                 json.dump(user_details, f, indent=4)
 
-                                            for idx, instrument in enumerate(data['indices']):
-                                                if instrument['name'] == name:
-                                                    if instrument['SignalEntry']['Option'] == trading_symbol_list[0]: # replace with your condition
-                                                        instrument['SignalEntry']['ExitPrice'] = ltp_token
-                                                        instrument['SignalEntry']['ExitTime'] = dt.now().strftime('%H:%M:%S')
-                                                    
-                                            # write the updated data back to the file
-                                            with open(levels_filepath, 'w') as json_file:
-                                                json.dump(data, json_file, indent=4)
+                                        for idx, instrument in enumerate(data['indices']):
+                                            if instrument['name'] == name:
+                                                if instrument['SignalEntry']['Option'] == trading_symbol_list[0]: # replace with your condition
+                                                    instrument['SignalEntry']['ExitPrice'] = ltp_token
+                                                    instrument['SignalEntry']['ExitTime'] = dt.now().strftime('%H:%M:%S')
+                                                
+                                        # write the updated data back to the file
+                                        with open(levels_filepath, 'w') as json_file:
+                                            json.dump(data, json_file, indent=4)
                                 
                                             # Remove the token from the additional tokens
                                         

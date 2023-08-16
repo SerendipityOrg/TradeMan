@@ -15,21 +15,21 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 172.89,
-            "IBValue": 56.900000000001455,
-            "IBLevel": "Small",
+            "ATR5D": 152.09,
+            "IBValue": 65.09999999999854,
+            "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 19582.45,
-                "IBLow": 19525.55
+                "IBHigh": 19384.35,
+                "IBLow": 19319.25
             },
             "TSLStepSize": 0.5,
             "SignalEntry": {
-                "Option": "NIFTY2381019600CE",
-                "Event": "Bullish-Small-UpCross",
-                "EntryPrice": 76.6,
-                "EntryTime": "10:25:37",
-                "ExitPrice": 58.5,
-                "ExitTime": "10:59:27"
+                "Option": "NIFTY2381719400CE",
+                "Event": "Bullish-Medium-UpCross",
+                "EntryPrice": 51.7,
+                "EntryTime": "10:17:10",
+                "ExitPrice": 77.60,
+                "ExitTime": "15:15:00"
             }
         },
         {
@@ -48,14 +48,22 @@
                 "Fri": 40,
                 "Sat": 55
             },
-            "ATR5D": 537.48,
-            "IBValue": 183.59999999999854,
+            "ATR5D": 433.68,
+            "IBValue": 235.5,
             "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 44996.25,
-                "IBLow": 44812.65
+                "IBHigh": 43849.85,
+                "IBLow": 43614.35
             },
-            "TSLStepSize": 0.5
+            "TSLStepSize": 0.5,
+            "SignalEntry": {
+                "Option": "BANKNIFTY2381743900CE",
+                "Event": "Bullish-Medium-UpCross",
+                "EntryPrice": 150.92,
+                "EntryTime": "10:20:10",
+                "ExitPrice": 132.70,
+                "ExitTime": "15:15:00"
+            }
         },
         {
             "name": "FINNIFTY",
@@ -73,12 +81,12 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 220.21,
-            "IBValue": 80.85000000000218,
+            "ATR5D": 183.66,
+            "IBValue": 103.60000000000218,
             "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 20062.65,
-                "IBLow": 19981.8
+                "IBHigh": 19530.45,
+                "IBLow": 19426.85
             },
             "TSLStepSize": 0.5
         }

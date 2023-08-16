@@ -7,6 +7,7 @@ import logging
 from datetime import timedelta,datetime,date
 from dateutil import parser
 import schedule
+from time import sleep
 
 from kiteconnect import KiteConnect
 from kiteconnect import KiteTicker
@@ -89,19 +90,39 @@ def get_ltp():
 # get_ltp()
 
 #check the time is greater that 09.20 a.m. run job() or else wait for 09.20 a.m
-if datetime.datetime.now().time() > parser.parse('09:21').time():
+# if datetime.datetime.now().time() > parser.parse('09:21').time():
+#     print('Running job()...')
+#     job()
+# else:
+#     schedule.every().day.at("09:19").do(get_ltp)
+#     print('Waiting for 09:19 AM...')
+# # Keep the script running
+#     while True:
+#         # Check whether there's any job scheduled for now
+#         schedule.run_pending()
+#         if datetime.datetime.now().time() > parser.parse('09:19').time():
+#             break
+#         sleep(1)
+
+def time_until(target_time):
+    now = datetime.datetime.now()
+    target_datetime = datetime.datetime.combine(now.date(), target_time)
+    if now > target_datetime:
+        return datetime.timedelta(0)
+    return target_datetime - now
+
+# check if the time is greater than 09:20 a.m. to run job() or else wait for 09:20 a.m
+current_time = datetime.datetime.now().time()
+target_time = datetime.time(9, 19)
+
+if current_time > target_time:
     print('Running job()...')
     job()
 else:
-    schedule.every().day.at("09:19").do(get_ltp)
+    # Wait until 09:19
     print('Waiting for 09:19 AM...')
-# Keep the script running
-    while True:
-        # Check whether there's any job scheduled for now
-        schedule.run_pending()
-        if datetime.datetime.now().time() > parser.parse('09:19').time():
-            break
-        sleep(1)
+    sleep(time_until(target_time).seconds)
+    get_ltp()
 
 print("Today's Strike Price:",strike_prc)
 

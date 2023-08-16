@@ -67,7 +67,8 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         logging.info(f"Invalid trade type for user {users}.")
         return
 
-    try:           
+    try:
+        entry_margin = round(kite.margins(segment="equity")['available']['live_balance'],2)           
         order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
                                     exchange=kite.EXCHANGE_NFO,
                                     tradingsymbol=trading_symbol,
@@ -82,13 +83,17 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         # Fetch avg_prc using the order_id
         order_history = kite.order_history(order_id=order_id)
         avg_prc = order_history[-1]['average_price']  # Assuming last entry contains the final average price
-
+        print(f"Average price for user {users} is: {avg_prc}")
         order_trade_type = trade_type
         if str(strike_price) not in trading_symbol:
             order_trade_type = "HedgeOrder"
 
+        exit_margin = round(kite.margins(segment="equity")['available']['live_balance'],2)
+        margin_used = round(entry_margin - exit_margin,2)
+
         # Create a new dict for the order
         order_dict = {
+            "margin_used": margin_used,
             "order_id": order_id,
             "trade_type": order_trade_type,
             "qty": qty,
@@ -150,6 +155,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         return
     
     try:
+        entry_margin = (float(alice.get_balance()[0]['net']))
         order_id = alice.place_order(transaction_type = order_type,
                                         instrument = trading_symbol,
                                         quantity = qty ,
@@ -169,8 +175,12 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         if str(strike_price) not in trading_symbol[3]:
             order_trade_type = "HedgeOrder"
 
+        exit_margin = (float(alice.get_balance()[0]['net']))
+        margin_used = (entry_margin - exit_margin)
+
         # Create a new dict for the order
         order_dict = {
+            "margin_used": margin_used,
             "order_id": order_id['NOrdNo'],
             "trade_type": order_trade_type,
             "qty": qty,
@@ -217,6 +227,9 @@ def place_stoploss_zerodha(trading_symbol, transaction_type, trade_type, strike_
     access_token = user_details[broker]['access_token']
     kite = KiteConnect(api_key=api_key)
     kite.set_access_token(access_token)
+
+    print("price",limit_prc)
+
     if index == 'NIFTY':
         qty = user_details[broker]['MPWizard_qty']['NIFTY_qty']
     elif index == 'BANKNIFTY':
@@ -251,8 +264,8 @@ def place_stoploss_zerodha(trading_symbol, transaction_type, trade_type, strike_
         avg_prc = order_history[-1]['average_price']  # Assuming last entry contains the final average price
 
         order_trade_type = trade_type
-        if str(strike_price) not in trading_symbol:
-            order_trade_type = "HedgeOrder"
+        if trading_symbol:
+            print("trading symbol",trading_symbol[0])
 
         # Create a new dict for the order
         order_dict = {
@@ -272,6 +285,11 @@ def place_stoploss_zerodha(trading_symbol, transaction_type, trade_type, strike_
 
     with open(filepath, 'w') as file:
         json.dump(user_details, file, indent=4)  # Save the updated user_details back to json file
+    
+    if order_id is None:
+        mpwizard_discord_bot(f"Order placement failed for user {users}.")
+        order_id = 0
+    
     return order_id
 
 
@@ -363,12 +381,16 @@ def adjust_stoploss_zerodha(order_id, limit_prc, users, broker='zerodha'):
     kite = KiteConnect(api_key=api_key)
     kite.set_access_token(access_token)
     trigger_prc = limit_prc + 1.0
+    print("trigger_prc",trigger_prc)
+    print("limit_prc",limit_prc)
+    price = round(limit_prc,2)
+    trigger = round(trigger_prc,2)
     while True:
         try:
             order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
                                         order_id=order_id, 
-                                        price = round(limit_prc,2),
-                                        trigger_price = round(trigger_prc,2))
+                                        price = price,
+                                        trigger_price = trigger)
 
         except Exception as e:
             message = f"Adjusting stoploss failed for user {users}: {e}"

@@ -2,37 +2,13 @@
     "aliceblue": {
         "username": "935325",
         "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
-        "session_id": "Ck7WKBUhbifos5sSBZ2RYRC38Zprd4Ib7eTWPPJUsA9frbQO2mdH7pC8nldsmlmLfkuaTd4RqCIC1Wf3rM105XoRhDTiLb0SmixqvubR9LnzhJAIeijFynV0KERYBtuFEWffUTiMSASOpBOFHHaNpnrYzPs2uUhVx17HzpFlPlMkAgna7I2cc6f9TjmT1vuhufkv5cOhcZDk8kUD8QTapmAyOyYjnC8IWBQulgfot71lZOVGcaSmmRRIfStdCQA6",
-        "Current_Capital": 27680.97,
+        "session_id": "zgGbliSIbvma1vjpUuUz4ykyoZ6FeTZYAGXmZpBGzi2FvBI3A3au0ZrrZKNgZrenO9gWXI0xLKfhguepouY4srG3PCKSmaobvucVhiCZBUerDyoc6qfSF5i1UPFlPxjm6uqcpzSlzl4p7WQXsVK5Vpsd9jXukLYCNm8tNTbitdlU33qpP5zvvelFfYhG3gGQmzMAJJ7UntQUt2z2aVY5zGvCA1yLrpxQfG0UuORZBxyImEFZcqzojIvZzIWkBl3j",
+        "Current_Capital": 29165.17,
         "MPWizard_qty": {
             "NIFTY_qty": 50,
             "BANKNIFTY_qty": 15,
             "FINNIFTY_qty": 40
         },
-        "orders": {
-            "MPWizard": {
-                "BUY": [
-                    {
-                        "order_id": "230807000085199",
-                        "trade_type": "BUY",
-                        "qty": 50,
-                        "avg_prc": "76.55",
-                        "timestamp": "2023-08-07 10:25:36.035886",
-                        "strike_price": 19600,
-                        "tradingsymbol": "NIFTY2381019600CE"
-                    }
-                ],
-                "SELL": [
-                    {
-                        "order_no": "230807000085185",
-                        "trade_type": "SELL",
-                        "avg_prc": "59.45",
-                        "timestamp": "2023-08-07 10:59:25.643080",
-                        "strike_price": 19600,
-                        "tradingsymbol": "NIFTY2381019600CE"
-                    }
-                ]
-            }
-        }
+        "orders": {}
     }
 }

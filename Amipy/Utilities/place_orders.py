@@ -46,7 +46,8 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
     else:
         logging.info(f"Invalid trade type for user {users}.")
         return
-    try:           
+    try:       
+        entry_margin = round(kite.margins(segment="equity")['available']['live_balance'],2)
         order_id = kite.place_order(variety=kite.VARIETY_REGULAR,
                                     exchange=kite.EXCHANGE_NFO,
                                     tradingsymbol=trading_symbol,
@@ -61,13 +62,17 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         # Fetch avg_prc using the order_id
         order_history = kite.order_history(order_id=order_id)
         avg_prc = order_history[-1]['average_price']  # Assuming last entry contains the final average price
-
         order_trade_type = trade_type
+
+        exit_margin = round(kite.margins(segment="equity")['available']['live_balance'],2)
+        margin_used = round(entry_margin - exit_margin,2)
+
         if str(strike_price) not in trading_symbol:
             order_trade_type = "HedgeOrder"
 
         # Create a new dict for the order
         order_dict = {
+            "margin_used": margin_used,
             "trade_type": order_trade_type,
             "qty": qty,
             "avg_prc": avg_prc,
@@ -119,6 +124,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         return
 
     try:
+        entry_margin = float(alice.get_balance()[0]['net'])
         order_id = alice.place_order(transaction_type = order_type,
                                         instrument = trading_symbol,
                                         quantity = qty ,
@@ -134,13 +140,17 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
 
         # Fetch avg_prc using the order_id
         avg_prc = alice.get_order_history(order_id['NOrdNo'])['Avgprc']
-
         order_trade_type = trade_type
+
+        exit_margin = float(alice.get_balance()[0]['net'])
+        margin_used = round((entry_margin - exit_margin),2)
+
         if str(strike_price) not in trading_symbol[3]:
             order_trade_type = "HedgeOrder"
 
         # Create a new dict for the order
         order_dict = {
+            "margin_used": margin_used,
             "trade_type": order_trade_type,
             "qty": qty,
             "avg_prc": avg_prc,

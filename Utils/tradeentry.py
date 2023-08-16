@@ -3,6 +3,7 @@ import json
 from openpyxl import load_workbook
 import os
 from telethon.sync import TelegramClient
+from calculations.taxcalculation import *
 
 api_id = '22941664'
 api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
@@ -17,6 +18,13 @@ def process_mpwizard_trades(mpwizard_trades):
     for i in range(len(mpwizard_trades["BUY"])):
         buy_trade = mpwizard_trades["BUY"][i]
         sell_trade = mpwizard_trades["SELL"][i]
+        
+        if broker == "zerodha":
+            charges = zerodha_taxes(buy_trade["qty"], buy_trade["avg_prc"], sell_trade["avg_prc"],1)
+        elif broker == "aliceblue":
+            charges = aliceblue_taxes(buy_trade["qty"], float(buy_trade["avg_prc"]), float(sell_trade["avg_prc"]),1)
+        
+
         trade_data = {
             "Strategy": "MPWizard",
             "Index": buy_trade["tradingsymbol"][:-12],
@@ -28,6 +36,7 @@ def process_mpwizard_trades(mpwizard_trades):
             "Exit Price": sell_trade["avg_prc"],
             "Trade points": float(sell_trade["avg_prc"]) - float(buy_trade["avg_prc"]),
             "Qty": buy_trade["qty"],
+            "Tax": charges,
             "PnL": (float(sell_trade["avg_prc"]) - float(buy_trade["avg_prc"])) * int(buy_trade["qty"]) 
         }
         result.append(trade_data)
@@ -43,12 +52,22 @@ def process_short_trades(short_signals, short_cover_signals):
         short_signal_group = short_signals[i:i+4]
         short_cover_signal_group = short_cover_signals[i:i+4]
 
-        hedge_price = sum(float(trade["avg_prc"]) for trade in short_signal_group if trade["trade_type"] == "HedgeOrder") - \
-                      sum(float(trade["avg_prc"]) for trade in short_cover_signal_group if trade["trade_type"] == "HedgeOrder")
+        hedge_entry = sum(float(trade["avg_prc"]) for trade in short_signal_group if trade["trade_type"] == "HedgeOrder") 
+        hedge_exit =  sum(float(trade["avg_prc"]) for trade in short_cover_signal_group if trade["trade_type"] == "HedgeOrder")
 
-        entry_price = sum(float(trade["avg_prc"]) for trade in short_signal_group)
-        exit_price = sum(float(trade["avg_prc"]) for trade in short_cover_signal_group)
+        entry_price = sum(float(trade["avg_prc"]) for trade in short_signal_group if trade["trade_type"] == "ShortSignal")
+        exit_price = sum(float(trade["avg_prc"]) for trade in short_cover_signal_group if trade["trade_type"] == "ShortCoverSignal")
+        hedge_price = hedge_exit - hedge_entry
         trade_points = (entry_price - exit_price) + hedge_price
+
+        if broker == "zerodha":
+            charges = zerodha_taxes(short_signal_group[0]["qty"], entry_price, exit_price,2)
+            hedge_charges = zerodha_taxes(short_signal_group[0]["qty"], hedge_entry, hedge_exit,2)
+        elif broker == "aliceblue":
+            charges = aliceblue_taxes(short_signal_group[0]["qty"], entry_price, exit_price,2)
+            hedge_charges = aliceblue_taxes(short_signal_group[0]["qty"], hedge_entry, hedge_exit,2)
+        charges = charges + hedge_charges
+        
         trade_data = {
             "Strategy": "Nifty Straddle",
             "Index": "NIFTY",
@@ -59,10 +78,12 @@ def process_short_trades(short_signals, short_cover_signals):
             "Exit Time": pd.to_datetime(short_cover_signal_group[0]["timestamp"]).strftime('%H:%M'),
             "Entry Price": entry_price,
             "Exit Price": exit_price,
-            "Hedge Price": hedge_price,
-            "Trade points": exit_price - entry_price - hedge_price,
+            "Hedge Entry": hedge_entry,
+            "Hedge Exit": hedge_exit,
+            "Trade points": trade_points,
             "Qty": short_signal_group[0]["qty"],
-            "PnL": trade_points * int(short_signal_group[0]["qty"])            
+            "PnL": trade_points * int(short_signal_group[0]["qty"]),
+            "Tax": charges            
         }
         result.append(trade_data)
     return result
@@ -79,6 +100,12 @@ def process_long_trades(long_signals, long_cover_signals):
 
         entry_price = sum(float(trade["avg_prc"]) for trade in long_signal_pair)
         exit_price = sum(float(trade["avg_prc"]) for trade in long_cover_signal_pair)
+        trade_points = entry_price - exit_price
+
+        if broker == "zerodha":
+            charges = zerodha_taxes(long_signal_pair[0]["qty"], entry_price, exit_price,2)
+        elif broker == "aliceblue":
+            charges = aliceblue_taxes(long_signal_pair[0]["qty"], entry_price, exit_price,2)
 
         trade_data = {
             "Strategy": "Amipy",
@@ -90,10 +117,11 @@ def process_long_trades(long_signals, long_cover_signals):
             "Exit Time": pd.to_datetime(long_cover_signal_pair[0]["timestamp"]).strftime('%H:%M'),
             "Entry Price": entry_price,
             "Exit Price": exit_price,
-            "Trade points": exit_price - entry_price,
+            "Trade points": trade_points,
             "Qty": long_signal_pair[0]["qty"],
             "Hedge Price": float('nan'),
-            "PnL": (exit_price - entry_price) * int(long_signal_pair[0]["qty"]) 
+            "PnL": trade_points * int(long_signal_pair[0]["qty"]),
+            "Tax": charges 
         }
         result.append(trade_data)
     return result
@@ -133,7 +161,7 @@ for broker, user in user_list:
         # Process the MPWizard trades
         mpwizard_data = process_mpwizard_trades(user_data[broker]["orders"]["MPWizard"])
         mpwizard_df = pd.DataFrame(mpwizard_data)
-        mpwizard_pnl = round(mpwizard_df["PnL"].sum(),1)
+        mpwizard_pnl = round(mpwizard_df["PnL"].sum(),2)
 
     if "Amipy" in user_data[broker]["orders"]:
         amipy_data_short = []
@@ -151,7 +179,7 @@ for broker, user in user_list:
         amipy_data = amipy_data_short + amipy_data_long
         if amipy_data:
             amipy_df = pd.DataFrame(amipy_data)
-            amipy_pnl = round(amipy_df["PnL"].sum(), 1)
+            amipy_pnl = round(amipy_df["PnL"].sum(), 2)
 
     # Read existing data from Excel file into separate DataFrames
     mpwizard_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="MPWizard")
@@ -161,28 +189,45 @@ for broker, user in user_list:
     mpwizard_final_df = pd.concat([mpwizard_existing_df, mpwizard_df])
     amipy_final_df = pd.concat([amipy_existing_df, amipy_df])
 
-    message_parts = [f"Hello {user}, here are your PNLs for today:\n"]
+    message_parts = [f"Hello {user},We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"]
 
     if "MPWizard" in user_data[broker]["orders"]:
-        message_parts.append(f"MPWizard: {mpwizard_pnl}")
+        message_parts.append(f"MPWizard: ₹{mpwizard_pnl:.2f}")
 
     if "Amipy" in user_data[broker]["orders"]:
-        message_parts.append(f"AmiPy: {amipy_pnl}")
+        message_parts.append(f"AmiPy: ₹{amipy_pnl:.2f}")
 
-    message_parts.append(f"\nTotal: {mpwizard_pnl + amipy_pnl}")
+    message_parts.append(f"\n**Total: ₹{(mpwizard_pnl + amipy_pnl):.2f}**")
+    message_parts.append("\nBest Regards,\nSerendipity Trading Firm")
 
     message = "\n".join(message_parts)
+    print(message)
 
-    # # Send the message
-    with TelegramClient('anon', api_id, api_hash) as client:
-        client.send_message(phone_number, message)
+    # send discord message
+    # with TelegramClient('anon', api_id, api_hash) as client:
+    #     client.send_message(phone_number, message, parse_mode='md')
 
-    # Create a new Excel file to store the updated data
-    with pd.ExcelWriter(os.path.join(excel_dir, f"{user}_new.xlsx"), engine='openpyxl') as writer:
-        # Write each DataFrame to a specific sheet
+    #     # # Load existing workbook
+    excel_path = os.path.join(excel_dir, f"{user}.xlsx")
+    book = load_workbook(excel_path)
+
+    # Read existing sheets into DataFrames, except for the ones we want to replace
+    existing_dfs = {}
+    for sheet_name in book.sheetnames:
+        if sheet_name not in ['MPWizard', 'AmiPy']:
+            existing_dfs[sheet_name] = pd.read_excel(excel_path, sheet_name=sheet_name)
+
+    # Create a temporary new Excel file
+    temp_path = os.path.join(excel_dir, f"{user}_new.xlsx")
+    with pd.ExcelWriter(temp_path, engine='openpyxl') as writer:
+        # Write existing sheets
+        for sheet_name, df in existing_dfs.items():
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+        # Write new sheets
         mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
         amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
 
     # Delete the old file and rename the new one
-    os.remove(os.path.join(excel_dir, f"{user}.xlsx"))
-    os.rename(os.path.join(excel_dir, f"{user}_new.xlsx"), os.path.join(excel_dir, f"{user}.xlsx"))
+    os.remove(excel_path)
+    os.rename(temp_path, excel_path)

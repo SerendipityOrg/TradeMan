@@ -31,8 +31,10 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, qty, strik
 
     if transaction_type == 'BUY':
         order_type = kite.TRANSACTION_TYPE_BUY
+        trade = 'BUY'
     elif transaction_type == 'SELL':
         order_type = kite.TRANSACTION_TYPE_SELL
+        trade = 'SELL'
     else:
         logging.info(f"Invalid trade type for user {users}.")
         return
@@ -53,10 +55,8 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, qty, strik
         order_history = kite.order_history(order_id=order_id)
         avg_prc = order_history[-1]['average_price']  # Assuming last entry contains the final average price
 
-        order_trade_type = trade_type
-        if str(strike_price) not in trading_symbol:
-            order_trade_type = "HedgeOrder"
-
+        order_trade_type = trade
+        print("checking the orderdict")
         # Create a new dict for the order
         order_dict = {
             "trade_type": order_trade_type,
@@ -66,16 +66,18 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, qty, strik
             "tradingsymbol": trading_symbol
         }
 
+        print(order_dict)
+
         # Create a new list for each trade_type if it doesn't exist
         if 'orders' not in user_details[broker]:
             user_details[broker]['orders'] = {}
         if 'ZRM' not in user_details[broker]['orders']:
             user_details[broker]['orders']['ZRM'] = {}
         if trade_type not in user_details[broker]['orders']['ZRM']:
-            user_details[broker]['orders']['ZRM'][trade_type] = []
+            user_details[broker]['orders']['ZRM'][trade] = []
 
         # Add the order_dict to the corresponding trade_type list
-        user_details[broker]['orders'][trade_type].append(order_dict)
+        user_details[broker]['orders'][trade].append(order_dict)
         print(order_id)
     except Exception as e:
         message = f"Order placement failed for user {users}: {e}"
@@ -104,8 +106,10 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, qty, str
 
     if transaction_type == 'BUY':
         order_type = TransactionType.Buy
+        trade = 'BUY'
     elif transaction_type == 'SELL':
         order_type = TransactionType.Sell
+        trade = 'SELL'
     else:
         logging.info(f"Invalid trade type for user {users}.")
         return
@@ -127,9 +131,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, qty, str
         # Fetch avg_prc using the order_id
         avg_prc = alice.get_order_history(order_id['NOrdNo'])['Avgprc']
 
-        order_trade_type = trade_type
-        if str(strike_price) not in trading_symbol[3]:
-            order_trade_type = "HedgeOrder"
+        order_trade_type = trade
 
         # Create a new dict for the order
         order_dict = {

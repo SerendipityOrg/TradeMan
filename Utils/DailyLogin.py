@@ -65,6 +65,7 @@ user_details_path = os.path.join(script_dir, 'broker.json')
 #go outside the folder and then go inside MPWizard folder
 script_dir = os.path.dirname(script_dir)
 mpwizard_json_path = os.path.join(script_dir, 'MPWizard', 'MPWizard.json')
+amipy_json_path = os.path.join(script_dir, 'Amipy', 'AmiPy.json')
 
 def calculate_quantity(capital, risk, prc_ref, lot_size):
     if prc_ref == 0:
@@ -135,13 +136,19 @@ def create_strategy_json(broker_name, user, lots, balance, user_details_path, mp
 
     for strategy, qty in lots.items():
         if strategy == 'AmiPy':
-            print("AmiPy strategy")
             qty = qty['AmiPy_qty']*50
-            print(qty)
+        data[broker_name][f"{strategy}_qty"] = qty
+        if strategy == 'overnight_option':
+            qty = qty['overnight_option_qty']*50
         data[broker_name][f"{strategy}_qty"] = qty
 
     if 'orders' in data[broker_name]:
-        del data[broker_name]['orders']
+        overnight_option_data = data[broker_name]['orders'].get('Overnight_Options', None)
+        print(overnight_option_data)
+        data[broker_name]['orders'] = {}
+        if overnight_option_data is not None:
+            data[broker_name]['orders']['Overnight_Options'] = overnight_option_data
+
 
     with open(user_file_path, 'w') as json_file:
         json.dump(data, json_file, indent=4)
@@ -334,3 +341,24 @@ if datetime.today().weekday() == 4:
     instrument_dump = kite.instruments()
     instrument_df = pd.DataFrame(instrument_dump)
     instrument_df.to_csv(r'instruments.csv')
+
+with open(mpwizard_json_path) as f:
+    mpwizard_data = json.load(f)
+
+# Iterate over the list of dictionaries
+for dictionary in mpwizard_data["indices"]:
+    # Remove 'SignalEntry' from the dictionary
+    dictionary.pop('SignalEntry', None)
+
+# Save the modified data back to the file
+with open(mpwizard_json_path, 'w') as f:
+    json.dump(mpwizard_data, f,indent=4)
+
+with open(amipy_json_path) as f:
+    amipy_data = json.load(f)
+
+for dictionary in amipy_data["Nifty"]:
+    dictionary.pop('SignalEntry', None)
+
+with open(amipy_json_path, 'w') as f:
+    json.dump(amipy_data, f,indent=4)
