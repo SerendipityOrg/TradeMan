@@ -27,7 +27,7 @@ def load_credentials(filepath):
 ########Change the product type from MIS to NRML for overnight orders
 
 
-def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_price, users, broker='zerodha'):
+def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_price, users, direction, qty = None, broker='zerodha'):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     filepath = os.path.join(script_dir, '..', '..', 'Utils', 'users', f'{users}.json')
@@ -43,8 +43,8 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
     access_token = user_details[broker]['access_token']
     kite = KiteConnect(api_key=api_key)
     kite.set_access_token(access_token)
-    qty = user_details[broker]['overnight_option_qty']
-
+    if qty == None:
+        qty = user_details[broker]['overnight_option_qty']
     if transaction_type == 'BUY':
         order_type = kite.TRANSACTION_TYPE_BUY
     elif transaction_type == 'SELL':
@@ -76,6 +76,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
 
         # Create a new dict for the order
         order_dict = {
+            "direction": direction,
             "margin_used": margin_used,
             "trade_type": order_trade_type,
             "qty": qty,
@@ -106,7 +107,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
     with open(filepath, 'w') as file:
         json.dump(user_details, file, indent=4)  # Save the updated user_details back to json file
 
-def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_price, users,broker='aliceblue'):
+def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_price, users, direction, qty = None,broker='aliceblue'):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(script_dir, '..', '..', 'Utils', 'users', f'{users}.json')
     if not os.path.exists(filepath):
@@ -119,7 +120,8 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
     api_key = user_details[broker]['api_key']
     alice = Aliceblue(username, api_key = api_key)
     session_id = alice.get_session_id()
-    qty = user_details[broker]['overnight_option_qty']
+    if qty == None:
+        qty = user_details[broker]['overnight_option_qty']
     
     if transaction_type == 'BUY':
         order_type = TransactionType.Buy
@@ -154,6 +156,7 @@ def place_aliceblue_order(trading_symbol, transaction_type, trade_type, strike_p
         
         # Create a new dict for the order
         order_dict = {
+            "direction": direction,
             "margin_used": margin_used,
             "trade_type": order_trade_type,
             "qty": qty,

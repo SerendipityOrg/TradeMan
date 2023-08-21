@@ -1,0 +1,5 @@
+<<<<<<< Updated upstream
+=======
+in_trade,strike_price,trade_type,trade_points,TrendSL,close,TradeEntryPrice,SL_points
+True,19300,Short,5.199999999999989,234.63296586826044,161.05,166.25,73.58296586826043
+>>>>>>> Stashed changes

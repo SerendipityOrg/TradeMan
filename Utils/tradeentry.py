@@ -126,6 +126,65 @@ def process_long_trades(long_signals, long_cover_signals):
         result.append(trade_data)
     return result
 
+def process_overnight_options_trades(overnight_options_trades):
+    if not overnight_options_trades:
+        print("No Overnight_Options trades found.")
+        return []
+    
+    result = []
+    
+    # Extracting trade details from Afternoon and Morning
+    afternoon_trades = overnight_options_trades.get("Afternoon", [])
+    morning_trades = overnight_options_trades.get("Morning", [])
+    qty = afternoon_trades[0]["qty"]
+    
+    if afternoon_trades[0]["direction"] == "BULLISH":
+    # Extracting BULLISH trades with strike_price = 0 for both Afternoon and Morning
+        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == "0"), None)
+        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == "0"), None)    
+    # Extracting BULLISH trades with strike_price != 0 for both Afternoon and Morning
+        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != "0"), None)
+        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != "0"), None)
+    elif afternoon_trades[0]["direction"] == "BEARISH":
+    # Extracting BEARISH trades with strike_price = 0 for both Afternoon and Morning
+        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == "0"), None)
+        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == "0"), None)
+    # Extracting BEARISH trades with strike_price != 0 for both Afternoon and Morning
+        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
+        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
+
+    
+    if broker == "zerodha":
+        future_tax = zerodha_futures_taxes(qty, future_entry, future_exit, 1)
+        option_tax = zerodha_taxes(qty, option_entry, option_exit, 1)
+        total_tax = future_tax + option_tax
+    elif broker == "aliceblue":
+        future_tax = aliceblue_futures_taxes(qty, future_entry, future_exit, 1)
+        option_tax = aliceblue_taxes(qty, option_entry, option_exit, 1)
+        total_tax = future_tax + option_tax
+
+    # Calculating trade points based on direction
+    direction = "BULLISH"  # As given in the example
+    if direction == "BULLISH":
+        trade_points = (future_entry - future_exit) + (option_exit - option_entry)
+    else:  # Assuming BEARISH
+        trade_points = (future_exit - future_entry) + (option_exit - option_entry)
+    PnL = trade_points * qty
+    print(f"PnL: {PnL}")
+    # Appending to result list
+    trade_data = {
+        "Trade_Type": direction,
+        "Qty": qty,
+        "Future_Entry": future_entry,
+        "Future_Exit": future_exit,
+        "Option_Entry": option_entry,
+        "Option_Exit": option_exit,
+        "Trade_Points": trade_points,
+        "PnL": PnL,
+        "Tax": total_tax,
+    }
+    result.append(trade_data)
+    return result
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 broker_filepath = os.path.join(script_dir, "broker.json")
@@ -155,13 +214,18 @@ for broker, user in user_list:
 
     # Default values
     amipy_df = pd.DataFrame()
+    overnight_df = pd.DataFrame()
     amipy_pnl = 0
+    amipy_tax = 0
+    overnight_options_pnl = 0
+    overnight_options_tax = 0
 
     if "MPWizard" in user_data[broker]["orders"]:
         # Process the MPWizard trades
         mpwizard_data = process_mpwizard_trades(user_data[broker]["orders"]["MPWizard"])
         mpwizard_df = pd.DataFrame(mpwizard_data)
         mpwizard_pnl = round(mpwizard_df["PnL"].sum(),2)
+        mpwizard_tax = round(mpwizard_df["Tax"].sum(),2)
 
     if "Amipy" in user_data[broker]["orders"]:
         amipy_data_short = []
@@ -180,14 +244,34 @@ for broker, user in user_list:
         if amipy_data:
             amipy_df = pd.DataFrame(amipy_data)
             amipy_pnl = round(amipy_df["PnL"].sum(), 2)
+            amipy_tax = round(amipy_df["Tax"].sum(), 2)
+    
+    if "Overnight_Options" in user_data[broker]["orders"]:
+        # Process the Overnight_Options trades
+        overnight_options_data = process_overnight_options_trades(user_data[broker]["orders"]["Overnight_Options"])
+        if overnight_options_data:
+            overnight_options_df = pd.DataFrame(overnight_options_data)
+            overnight_options_pnl = round(overnight_options_df["PnL"].sum(),2)
+            overnight_options_tax = round(overnight_options_df["Tax"].sum(),2)
 
-    # Read existing data from Excel file into separate DataFrames
+    # # Read existing data from Excel file into separate DataFrames
     mpwizard_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="MPWizard")
     amipy_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="AmiPy")
+    overnight_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="Overnight_options")
 
-    # Append new data
+    # # Append new data
     mpwizard_final_df = pd.concat([mpwizard_existing_df, mpwizard_df])
     amipy_final_df = pd.concat([amipy_existing_df, amipy_df])
+    # print(overnight_options_df)
+    overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
+
+
+
+    gross_pnl = mpwizard_pnl + amipy_pnl + overnight_options_pnl
+    tax = mpwizard_tax + amipy_tax + overnight_options_tax
+    net_pnl = gross_pnl - tax
+
+
 
     message_parts = [f"Hello {user},We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"]
 
@@ -197,7 +281,11 @@ for broker, user in user_list:
     if "Amipy" in user_data[broker]["orders"]:
         message_parts.append(f"AmiPy: ₹{amipy_pnl:.2f}")
 
-    message_parts.append(f"\n**Total: ₹{(mpwizard_pnl + amipy_pnl):.2f}**")
+    if "Overnight_Options" in user_data[broker]["orders"]:
+        message_parts.append(f"Overnight Options: ₹{overnight_options_pnl:.2f}")
+
+    message_parts.append(f"\n**Gross PnL: ₹{(gross_pnl):.2f}**")
+    message_parts.append(f"**Expected Tax: ₹{(tax):.2f}**")
     message_parts.append("\nBest Regards,\nSerendipity Trading Firm")
 
     message = "\n".join(message_parts)
@@ -207,14 +295,14 @@ for broker, user in user_list:
     # with TelegramClient('anon', api_id, api_hash) as client:
     #     client.send_message(phone_number, message, parse_mode='md')
 
-    #     # # Load existing workbook
+    # # Load existing workbook
     excel_path = os.path.join(excel_dir, f"{user}.xlsx")
     book = load_workbook(excel_path)
 
     # Read existing sheets into DataFrames, except for the ones we want to replace
     existing_dfs = {}
     for sheet_name in book.sheetnames:
-        if sheet_name not in ['MPWizard', 'AmiPy']:
+        if sheet_name not in ['MPWizard', 'AmiPy', 'Overnight_options']:
             existing_dfs[sheet_name] = pd.read_excel(excel_path, sheet_name=sheet_name)
 
     # Create a temporary new Excel file
@@ -227,6 +315,7 @@ for broker, user in user_list:
         # Write new sheets
         mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
         amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
+        overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
 
     # Delete the old file and rename the new one
     os.remove(excel_path)

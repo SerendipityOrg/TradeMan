@@ -156,23 +156,23 @@ for broker,user in users_to_trade:
     print(f"Trading for {broker} user {user}")
     if prediction == 'BEARISH':
         future_tokens, future_trading_symbol, future_trading_symbol_aliceblue = get_future_tokens(future_expiry)
-        option_tokens, option_trading_symbol, option_trading_symbol_aliceblue = get_option_tokens(base_symbol='NIFTY', expiry_date=expiry, option_type='CE',strike_prc=strikeprc)
+        option_tokens, option_trading_symbol, option_trading_symbol_aliceblue = get_option_tokens(base_symbol='NIFTY', expiry_date=expiry, option_type='CE',strike_prc=bear_strikeprc)
         if broker == 'aliceblue':
-            future_avgprc = place_aliceblue_order(future_trading_symbol_aliceblue[0],'SELL',"BEARISH","0",user)
-            option_avgprc = place_aliceblue_order(option_trading_symbol_aliceblue[0],'BUY','BEARISH',bear_strikeprc,user)
+            future_avgprc = place_aliceblue_order(future_trading_symbol_aliceblue[0],'SELL',"Afternoon","0",user,"BEARISH")
+            option_avgprc = place_aliceblue_order(option_trading_symbol_aliceblue[0],'BUY','Afternoon',bear_strikeprc,user,"BEARISH")
         elif broker == 'zerodha':
-            future_avgprc = place_zerodha_order(future_trading_symbol[0],'SELL',"BEARISH","0",user)
-            option_avgprc = place_zerodha_order(option_trading_symbol[0],'BUY','BEARISH',bear_strikeprc,user)
+            future_avgprc = place_zerodha_order(future_trading_symbol[0],'SELL',"Afternoon","0",user,"BEARISH")
+            option_avgprc = place_zerodha_order(option_trading_symbol[0],'BUY','Afternoon',bear_strikeprc,user,"BEARISH")
         print("[-] Nifty is predicted to be Bearish!")
     elif prediction == 'BULLISH':
         future_tokens, future_trading_symbol, future_trading_symbol_aliceblue = get_future_tokens(future_expiry)
-        option_tokens, option_trading_symbol, option_trading_symbol_aliceblue = get_option_tokens(base_symbol='NIFTY', expiry_date=expiry, option_type='PE',strike_prc=strikeprc)
+        option_tokens, option_trading_symbol, option_trading_symbol_aliceblue = get_option_tokens(base_symbol='NIFTY', expiry_date=expiry, option_type='PE',strike_prc=bull_strikeprc)
         if broker == 'aliceblue':
-            future_avgprc = place_aliceblue_order(future_trading_symbol_aliceblue[0],'BUY','BULLISH',"0",user)
-            option_avgprc = place_aliceblue_order(option_trading_symbol_aliceblue[0],'BUY','BULLISH',bull_strikeprc,user)
+            future_avgprc = place_aliceblue_order(future_trading_symbol_aliceblue[0],'BUY','Afternoon',"0",user,"BULLISH")
+            option_avgprc = place_aliceblue_order(option_trading_symbol_aliceblue[0],'BUY','Afternoon',bull_strikeprc,user,"BULLISH")
         elif broker == 'zerodha':
-            future_avgprc = place_zerodha_order(future_trading_symbol[0],'BUY','BULLISH',"0",user)
-            option_avgprc = place_zerodha_order(option_trading_symbol[0],'BUY','BULLISH',bull_strikeprc,user)
+            future_avgprc = place_zerodha_order(future_trading_symbol[0],'BUY','Afternoon',"0",user,"BULLISH")
+            option_avgprc = place_zerodha_order(option_trading_symbol[0],'BUY','Afternoon',bull_strikeprc,user,"BULLISH")
         print("[+] Nifty is predicted to be Bullish!")
 
 

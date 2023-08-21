@@ -82,7 +82,11 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         
         # Fetch avg_prc using the order_id
         order_history = kite.order_history(order_id=order_id)
-        avg_prc = order_history[-1]['average_price']  # Assuming last entry contains the final average price
+        for i in order_history:
+            if i['status'] == 'COMPLETE':
+                avg_prc = (i['average_price'])
+
+        # avg_prc = order_history[-1]['average_price']  # Assuming last entry contains the final average price
         print(f"Average price for user {users} is: {avg_prc}")
         order_trade_type = trade_type
         if str(strike_price) not in trading_symbol:
@@ -100,7 +104,7 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
             "avg_prc": avg_prc,
             "timestamp": str(datetime.now()),
             "strike_price": strike_price,
-            "tradingsymbol": trading_symbol
+            "tradingsymbol": trading_symbol[0]
         }
 
         # Create a new list for each trade_type if it doesn't exist
@@ -222,13 +226,19 @@ def place_stoploss_zerodha(trading_symbol, transaction_type, trade_type, strike_
     if broker not in user_details:
         return
 
-    trigger_prc = limit_prc+1
     api_key = user_details[broker]['api_key']
     access_token = user_details[broker]['access_token']
     kite = KiteConnect(api_key=api_key)
     kite.set_access_token(access_token)
 
     print("price",limit_prc)
+    #check if the limit_prc is negative if it is negative print a message
+    if limit_prc < 0:
+        limit_prc = 10.0
+        message = f"Check the stoploss for {users}"
+        mpwizard_discord_bot(message)
+
+    trigger_prc = limit_prc+1
 
     if index == 'NIFTY':
         qty = user_details[broker]['MPWizard_qty']['NIFTY_qty']
@@ -303,6 +313,11 @@ def place_stoploss_aliceblue(trading_symbol, transaction_type, trade_type, strik
     if broker not in user_details:
         return
     
+    if limit_prc < 0:
+        limit_prc = 10.0
+        message = f"Check the stoploss for {users}"
+        mpwizard_discord_bot(message)
+
     trigger_prc = limit_prc+1
 
     username = str(user_details[broker]['username'])
@@ -385,17 +400,16 @@ def adjust_stoploss_zerodha(order_id, limit_prc, users, broker='zerodha'):
     print("limit_prc",limit_prc)
     price = round(limit_prc,2)
     trigger = round(trigger_prc,2)
-    while True:
-        try:
-            order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
-                                        order_id=order_id, 
-                                        price = price,
-                                        trigger_price = trigger)
+    try:
+        order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
+                                    order_id=order_id, 
+                                    price = price,
+                                    trigger_price = trigger)
 
-        except Exception as e:
-            message = f"Adjusting stoploss failed for user {users}: {e}"
-            mpwizard_discord_bot(message)
-            logging.info(message)
+    except Exception as e:
+        message = f"Adjusting stoploss failed for user {users}: {e}"
+        mpwizard_discord_bot(message)
+        logging.info(message)
 
 def adjust_stoploss_aliceblue(order_id, trading_symbol, transaction_type, index, limit_prc, users,broker='aliceblue'):
     filepath = os.path.join(parent_dir, 'Utils', 'users', f'{users}.json')

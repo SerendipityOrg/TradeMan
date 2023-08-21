@@ -116,12 +116,16 @@ class OrderMonitor:
                                             for broker, user in self.users:
                                                 # Send appropriate trading symbol to order functions based on broker
                                                 if 'zerodha' in broker:
-                                                    avg_prc =  place_zerodha_order(trading_symbol_list,"BUY", "BUY", strike_prc, name, user) 
+                                                    avg_prc =  place_zerodha_order(trading_symbol_list,"BUY", "BUY", strike_prc, name, user)
+                                                    if avg_prc is None:
+                                                        avg_prc = 0.00 
                                                     limit_prc = avg_prc - prc_ref
                                                     order = place_stoploss_zerodha(trading_symbol_list, "SELL", "SELL", strike_prc, name, limit_prc, user, broker='zerodha')
 
                                                 elif 'aliceblue' in broker:
                                                     avg_prc = place_aliceblue_order(trading_symbol_aliceblue[0],"BUY", "BUY", strike_prc, name, user) 
+                                                    if avg_prc is None:
+                                                        avg_prc = 0.00 
                                                     limit_prc = avg_prc - prc_ref
                                                     order = place_stoploss_aliceblue(trading_symbol_aliceblue[0], "SELL", "SELL", strike_prc, name, limit_prc, user, broker='aliceblue')
                                                 else:
@@ -205,25 +209,29 @@ class OrderMonitor:
                                         next_stoploss = order_details['next_stoploss']
                                         token_ltp = str(ltp_data[str(token)]['instrument_token'])
                                         if avg_prc is not None and token_ltp == order_token and ltp_token >= next_change and not adjust_called:
-                                            print("next_change", next_change)
+                                            print(f"Adjusting stoploss for token: {order_token}, LTP: {ltp_token}, next_change: {next_change}, adjust_called: {adjust_called}")
+
                                             next_stoploss = order_details['next_stoploss']
                                             limit_prc = next_stoploss  # New stoploss price
                                             print(f"Adjusting stoploss for {name} to {limit_prc}")
+
                                             # Call the adjust stoploss function with necessary parameters based on broker
                                             if broker == 'aliceblue':
                                                 adjust_stoploss_aliceblue(order_id, trading_symbol[0], "SELL", name, limit_prc, user)
                                             elif broker == 'zerodha':
                                                 adjust_stoploss_zerodha(order_id,limit_prc, user)
-                                            order_details['current_stoploss'] = limit_prc
-                                                
 
+                                            order_details['current_stoploss'] = limit_prc                                                
                                             # After calling the function, update 'next_stoploss' and 'next_change'
                                             order_details['next_stoploss'] = limit_prc + (prc_ref / 2)
                                             order_details['next_change'] = ltp_token + (prc_ref / 2)
 
                                             # Mark that the adjust stoploss function has been called for this order
                                             order_details['adjust_called'] = True
-                                        elif ltp_token < next_change:
+                                            print(f"Stoploss adjusted for token: {order_token}, adjust_called set to: {order_details['adjust_called']}")
+                                        else:
+                                            print(f"No adjustment needed for token: {order_token}, LTP: {ltp_token}, next_change: {next_change}, adjust_called: {adjust_called}")
+                                        if ltp_token < next_change:
                                             # If LTP drops below next_change, reset the adjust_called flag
                                             order_details['adjust_called'] = False
 

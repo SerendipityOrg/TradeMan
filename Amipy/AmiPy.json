@@ -22,23 +22,23 @@
                     "Strike_Price": 19300,
                     "Trade_No": 1,
                     "Trade_Type": "ShortSignal",
-                    "Date": "2023-08-16",
-                    "TradeEntryTime": "11:40:00",
-                    "TradeEntryPrice": 122.35,
+                    "Date": "2023-08-21",
+                    "TradeEntryTime": "09:21:00",
+                    "TradeEntryPrice": 165.35,
                     "TradeExitTime": "14:56:00",
-                    "TradeExitPrice": 149.45,
-                    "NetTradePoints": -27.099999999999994
+                    "TradeExitPrice": 162.89,
+                    "NetTradePoints": -2.45
                 },
                 "ShortCoverSignal": {
                     "Strike_Price": 19300,
                     "Trade_No": 1,
                     "Trade_Type": "ShortSignal",
-                    "Date": "2023-08-16",
-                    "TradeEntryTime": "11:40:00",
-                    "TradeEntryPrice": 122.35,
+                    "Date": "2023-08-21",
+                    "TradeEntryTime": "09:21:00",
+                    "TradeEntryPrice": 165.35,
                     "TradeExitTime": "14:56:00",
-                    "TradeExitPrice": 149.45,
-                    "NetTradePoints": -27.099999999999994
+                    "TradeExitPrice": 162.89,
+                    "NetTradePoints": -2.45
                 }
             }
         }
