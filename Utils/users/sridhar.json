@@ -2,58 +2,13 @@
     "aliceblue": {
         "username": "935347",
         "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
-        "session_id": "q8sB4ikmCFEsb4HASfzblqWsKbU6pbZmxDIj8uk2VXL9qr9rsHP3ptr5mMLMb433ZZRjcWtjyug5FCZZRFpsb3suAcsaQEPTQzuOaRaPnAR2LpLMCMTiKCKGcBNfTd075LK4BbEl0hayAS2kWTOkdNlab2g4XQXLIBO24ClBcUTELnfVXSuUgG0MoinEKvJv2uOdLSv1TTaSVXRu2rQ0P5SHAM64mIhWcfNUgmY8cSgs1UK0zlFyVnxRBHFSQ46J",
-        "Current_Capital": 20610.16,
+        "session_id": "p75OrMfQoa9XCehk25MuYsx0s2WkJWKBtLCD7mKbxfsGFNSgeqsYQkQqtNhGDCclOG4JpaZiI6Mn7086YTmT6mBidKust7x4fBxYryQ316OSyiS6XjJiSQdOoS4sSQO2ectA0QLVBB68JHDmV8KbaqardRfTMjJEmEHEIpBLaEGkFggPYj2LzQopomk66fMeF4i3p3yOVY1UVHNEeKmRkJWhPKdiDMHWCFbBUnrVyc74Y9nNMDDNMWOR5Kaz0WcY",
+        "Current_Capital": 24046.84,
         "MPWizard_qty": {
             "NIFTY_qty": 50,
             "BANKNIFTY_qty": 15,
             "FINNIFTY_qty": 40
         },
-        "orders": {
-            "MPWizard": {
-                "BUY": [
-                    {
-                        "margin_used": 3972.5,
-                        "order_id": "230821000068381",
-                        "trade_type": "BUY",
-                        "qty": 50,
-                        "avg_prc": "78.95",
-                        "timestamp": "2023-08-21 10:16:34.773077",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2382419300CE"
-                    },
-                    {
-                        "margin_used": 2931.2400000000007,
-                        "order_id": "230821000085810",
-                        "trade_type": "BUY",
-                        "qty": 15,
-                        "avg_prc": "193.75",
-                        "timestamp": "2023-08-21 10:31:54.301110",
-                        "strike_price": 44000,
-                        "tradingsymbol": "BANKNIFTY2382444000CE"
-                    }
-                ],
-                "SELL": [
-                    {
-                        "order_id": "230804000110966",
-                        "trade_type": "SELL",
-                        "qty": 50,
-                        "avg_prc": "114.00",
-                        "timestamp": "2023-08-21 14:09:54.594522",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2382419300CE"
-                    },
-                    {
-                        "order_id": "230804000127847",
-                        "trade_type": "SELL",
-                        "qty": 15,
-                        "avg_prc": "222.00",
-                        "timestamp": "2023-08-21 14:09:23.120862",
-                        "strike_price": 44000,
-                        "tradingsymbol": "BANKNIFTY2382444000CE"
-                    }
-                ]
-            }
-        }
+        "orders": {}
     }
 }

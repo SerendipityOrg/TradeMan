@@ -15,22 +15,14 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 154.8,
-            "IBValue": 64.54999999999927,
+            "ATR5D": 151.73,
+            "IBValue": 60.849999999998545,
             "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 19367.55,
-                "IBLow": 19303
+                "IBHigh": 19443.05,
+                "IBLow": 19382.2
             },
-            "TSLStepSize": 0.5,
-            "SignalEntry": {
-                "Option": "NIFTY2382419300CE",
-                "Event": "Bullish-Medium-DownCross",
-                "EntryPrice": 78.85,
-                "EntryTime": "10:16:35",
-                "ExitPrice": 114.00,
-                "ExitTime": "10:27:41"
-            }
+            "TSLStepSize": 0.5
         },
         {
             "name": "BANKNIFTY",
@@ -48,22 +40,14 @@
                 "Fri": 40,
                 "Sat": 55
             },
-            "ATR5D": 380.12,
-            "IBValue": 123.84999999999854,
+            "ATR5D": 340.41,
+            "IBValue": 103.75,
             "IBLevel": "Small",
             "TriggerPoints": {
-                "IBHigh": 43986.75,
-                "IBLow": 43862.9
+                "IBHigh": 44140.05,
+                "IBLow": 44036.3
             },
-            "TSLStepSize": 0.5,
-            "SignalEntry": {
-                "Option": "BANKNIFTY2382444000CE",
-                "Event": "Bullish-Medium-UpCross",
-                "EntryPrice": 194.05,
-                "EntryTime": "10:31:35",
-                "ExitPrice": 222.00,
-                "ExitTime": "14:09:41"
-            }
+            "TSLStepSize": 0.5
         },
         {
             "name": "FINNIFTY",
@@ -81,12 +65,12 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 159.81,
-            "IBValue": 72.69999999999709,
-            "IBLevel": "Medium",
+            "ATR5D": 146.89,
+            "IBValue": 45.10000000000218,
+            "IBLevel": "Small",
             "TriggerPoints": {
-                "IBHigh": 19546.6,
-                "IBLow": 19473.9
+                "IBHigh": 19649.15,
+                "IBLow": 19604.05
             },
             "TSLStepSize": 0.5
         }

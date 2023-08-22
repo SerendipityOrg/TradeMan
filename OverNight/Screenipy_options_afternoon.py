@@ -36,8 +36,8 @@ future_expiry = get_future_expiry_date()
 expiry = get_expiry_date()
 strikeprc = get_strikeprc()
 
-bull_strikeprc = strikeprc - 250
-bear_strikeprc = strikeprc + 250
+bull_strikeprc = strikeprc - 150
+bear_strikeprc = strikeprc + 150
 
 class SuppressOutput: 
     def __init__(self,suppress_stdout=False,suppress_stderr=False): 

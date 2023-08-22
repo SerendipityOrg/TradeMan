@@ -166,11 +166,10 @@ def process_overnight_options_trades(overnight_options_trades):
     # Calculating trade points based on direction
     direction = "BULLISH"  # As given in the example
     if direction == "BULLISH":
-        trade_points = (future_entry - future_exit) + (option_exit - option_entry)
-    else:  # Assuming BEARISH
         trade_points = (future_exit - future_entry) + (option_exit - option_entry)
+    else:  # Assuming BEARISH
+        trade_points = (future_entry - future_exit) + (option_exit - option_entry)
     PnL = trade_points * qty
-    print(f"PnL: {PnL}")
     # Appending to result list
     trade_data = {
         "Trade_Type": direction,
@@ -188,7 +187,7 @@ def process_overnight_options_trades(overnight_options_trades):
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 broker_filepath = os.path.join(script_dir, "broker.json")
-json_dir = os.path.join(script_dir, "users")
+json_dir = os.path.join(script_dir, "userscopy")
 excel_dir = os.path.join(script_dir, "excel")
 
 with open(broker_filepath) as file:
@@ -262,16 +261,17 @@ for broker, user in user_list:
     # # Append new data
     mpwizard_final_df = pd.concat([mpwizard_existing_df, mpwizard_df])
     amipy_final_df = pd.concat([amipy_existing_df, amipy_df])
-    # print(overnight_options_df)
     overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
-
-
 
     gross_pnl = mpwizard_pnl + amipy_pnl + overnight_options_pnl
     tax = mpwizard_tax + amipy_tax + overnight_options_tax
     net_pnl = gross_pnl - tax
 
-
+    current_capital = data[broker][user]['current_capital']
+    if net_pnl > 0:
+        expected_capital = current_capital + net_pnl
+    else:
+        expected_capital = current_capital - abs(net_pnl)
 
     message_parts = [f"Hello {user},We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"]
 
@@ -284,39 +284,61 @@ for broker, user in user_list:
     if "Overnight_Options" in user_data[broker]["orders"]:
         message_parts.append(f"Overnight Options: ₹{overnight_options_pnl:.2f}")
 
-    message_parts.append(f"\n**Gross PnL: ₹{(gross_pnl):.2f}**")
-    message_parts.append(f"**Expected Tax: ₹{(tax):.2f}**")
+    message_parts.append(f"\n**Gross PnL: ₹{(gross_pnl): .2f}**")
+    message_parts.append(f"**Expected Tax: ₹{(tax): .2f}**")
+    message_parts.append(f"**Current Capital: ₹{(current_capital): .2f}**")
+    message_parts.append(
+        f"**Expected Morning Balance : ₹{(expected_capital): .2f}**")
     message_parts.append("\nBest Regards,\nSerendipity Trading Firm")
 
     message = "\n".join(message_parts)
+    message = message.replace('\u20b9', 'INR')
+
+
+    message = "\n".join(message_parts)
     print(message)
+
+        # Save data to broker.json
+    data_to_store = {
+        'Total PnL': net_pnl,
+        'Current Capital': current_capital,
+        'Expected Morning Balance': expected_capital
+    }
+    user_details = data[broker][user]
+    user_details["yesterday_PnL"] = net_pnl
+    user_details["expected_morning_balance"] = round(expected_capital,2)
+    data[broker][user] = user_details
+
+
+    with open(broker_filepath, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
 
     # send discord message
     # with TelegramClient('anon', api_id, api_hash) as client:
     #     client.send_message(phone_number, message, parse_mode='md')
 
     # # Load existing workbook
-    excel_path = os.path.join(excel_dir, f"{user}.xlsx")
-    book = load_workbook(excel_path)
+    # excel_path = os.path.join(excel_dir, f"{user}.xlsx")
+    # book = load_workbook(excel_path)
 
-    # Read existing sheets into DataFrames, except for the ones we want to replace
-    existing_dfs = {}
-    for sheet_name in book.sheetnames:
-        if sheet_name not in ['MPWizard', 'AmiPy', 'Overnight_options']:
-            existing_dfs[sheet_name] = pd.read_excel(excel_path, sheet_name=sheet_name)
+    # # Read existing sheets into DataFrames, except for the ones we want to replace
+    # existing_dfs = {}
+    # for sheet_name in book.sheetnames:
+    #     if sheet_name not in ['MPWizard', 'AmiPy', 'Overnight_options']:
+    #         existing_dfs[sheet_name] = pd.read_excel(excel_path, sheet_name=sheet_name)
 
-    # Create a temporary new Excel file
-    temp_path = os.path.join(excel_dir, f"{user}_new.xlsx")
-    with pd.ExcelWriter(temp_path, engine='openpyxl') as writer:
-        # Write existing sheets
-        for sheet_name, df in existing_dfs.items():
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
+    # # Create a temporary new Excel file
+    # temp_path = os.path.join(excel_dir, f"{user}_new.xlsx")
+    # with pd.ExcelWriter(temp_path, engine='openpyxl') as writer:
+    #     # Write existing sheets
+    #     for sheet_name, df in existing_dfs.items():
+    #         df.to_excel(writer, sheet_name=sheet_name, index=False)
 
-        # Write new sheets
-        mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
-        amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
-        overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
+    #     # Write new sheets
+    #     mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
+    #     amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
+    #     overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
 
-    # Delete the old file and rename the new one
-    os.remove(excel_path)
-    os.rename(temp_path, excel_path)
+    # # Delete the old file and rename the new one
+    # os.remove(excel_path)
+    # os.rename(temp_path, excel_path)

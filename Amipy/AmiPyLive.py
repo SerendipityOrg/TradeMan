@@ -368,8 +368,10 @@ def updateSignalDf(last_signal,users_to_trade):
 
     try:
         if trade_type is not None:  # check that a signal was generated
+            print(trade_type)
             signal_prc = round(str(last_signal['close']),2)
             message = f"Signal: {trade_type}\nStrikePrc: {strike_prc} \nDate: {trade_date}\nTime: {trade_time}\nClose: {signal_prc}"
+            print(message)
             amipy_discord_bot(message)
     except Exception as e:
         print(f"Error in sending telegram message: {e}")

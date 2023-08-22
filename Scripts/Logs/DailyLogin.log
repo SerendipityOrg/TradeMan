@@ -1036,3 +1036,320 @@ None
 kite_access_token for YY0222: TcHQRv8XBKbm8PaonQOCbB1Ynaf4sIyZ
 {'Afternoon': [{'direction': 'BEARISH', 'margin_used': 1003998.58, 'trade_type': 'Afternoon', 'qty': 450, 'avg_prc': 19393.2, 'timestamp': '2023-08-17 15:15:14.612100', 'strike_price': '0', 'tradingsymbol': 'NIFTY23AUGFUT'}, {'direction': 'BEARISH', 'margin_used': -761180.8, 'trade_type': 'Afternoon', 'qty': 450, 'avg_prc': 47.8, 'timestamp': '2023-08-17 15:15:15.042409', 'strike_price': 19500, 'tradingsymbol': 'NIFTY2381719350CE'}], 'Morning': [{'direction': 'BEARISH', 'margin_used': -329354.28, 'trade_type': 'Morning', 'qty': 450, 'avg_prc': 19319.8, 'timestamp': '2023-08-18 09:18:28.887882', 'strike_price': '0', 'tradingsymbol': 'NIFTY23AUGFUT'}, {'direction': 'BEARISH', 'margin_used': 168456.6, 'trade_type': 'Morning', 'qty': 450, 'avg_prc': 26.0, 'timestamp': '2023-08-18 09:18:29.141319', 'strike_price': 19600, 'tradingsymbol': 'NIFTY2382419600CE'}]}
 Program started successfully
+Attempt: 1
+Today's date: 2023-08-22 08:55:05.357529
+Login Successfully
+Session id for 929016: G78luhp4mCPd4DMLSLesORW55B2MiRSN68ihMzYmeTF3iagiTmaaAz2Krrhj4ZgcHzczP4kyMh6r8IJhop7QRvtCHRi4isTjiRyeDsMYlsBXrCQbp2fvYrA2JrBBPAhB293Ryiev8j62ekeQPImqXxYGFOiPNkSf9LyeJiqySOYgI2hCUoFxvefdq8xNqMsesejCQX5f4i6GUr95keHapvQco1kJfoWrNrJYUjm7aUouo3aOgbB73e9fjBClkXa8
+{'Afternoon': [{'direction': 'BULLISH', 'margin_used': 220737.12, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '19400.95', 'timestamp': '2023-08-21 15:15:50.508034', 'strike_price': '0', 'tradingsymbol': 'NIFTY23AUGFUT'}, {'direction': 'BULLISH', 'margin_used': -137137.13, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '12.30', 'timestamp': '2023-08-21 15:15:51.129838', 'strike_price': 19150, 'tradingsymbol': 'NIFTY2382419150PE'}]}
+Login Successfully
+Session id for 935325: FODhrINA4G2W9F3Wl3vIVHLvK5IjGgOk5b1KRpQKvSdmhIyo6PdghglLZ8EBYUYO6PSDLx2ZAYMYB1JCCCnGrEban09J1x1mahBRRMmJFSmA5b3eqd7dLEafTuUWd1KF7Bur4Az0rnjvWqg9LbNIGTcDUIXYWeQGsb9HfyoLXmRV2Dp2imQh7X4WWTt3JtAXT50x2kckVeqtGfg8qM6i0SxUzvUgGhOZ2f943IydlDohDRMmythB3IKNGF23Zq5Y
+None
+Login Successfully
+Session id for 924446: c5dicQU3fVpC7BZASMX77R00isI1DpESHB2iGDQcRlgjGXoYgXN5htbonJok6hYo9zpCcWoi8xdhdjOezqY5kNWpe7njafAahyrhODERYRWmcQAy88eDKlLo4tXaFPk3CHkvOhMmgydCGe1t4vhnUd5SPvLZyWg22YPXL1uRi3oW1TDNelZ8BioxfT029JsGyueiEuSAhR16YaDxKOR0Q5AIZBziTxkOgerdgei4ckLMQaVjADJWUzzZ8sHf65Wv
+None
+Login Successfully
+Session id for 935347: p75OrMfQoa9XCehk25MuYsx0s2WkJWKBtLCD7mKbxfsGFNSgeqsYQkQqtNhGDCclOG4JpaZiI6Mn7086YTmT6mBidKust7x4fBxYryQ316OSyiS6XjJiSQdOoS4sSQO2ectA0QLVBB68JHDmV8KbaqardRfTMjJEmEHEIpBLaEGkFggPYj2LzQopomk66fMeF4i3p3yOVY1UVHNEeKmRkJWhPKdiDMHWCFbBUnrVyc74Y9nNMDDNMWOR5Kaz0WcY
+None
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 323, in <module>
+    kite, user_details = login_in_zerodha(user_details)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 250, in login_in_zerodha
+    driver = uc.Chrome()
+             ^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 453, in __init__
+    super(Chrome, self).__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chrome/webdriver.py", line 84, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chromium/webdriver.py", line 104, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 286, in __init__
+    self.start_session(capabilities, browser_profile)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 716, in start_session
+    super(selenium.webdriver.chrome.webdriver.WebDriver, self).start_session(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 378, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 440, in execute
+    self.error_handler.check_response(response)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: cannot connect to chrome at 127.0.0.1:62860
+from session not created: This version of ChromeDriver only supports Chrome version 114
+Current browser version is 116.0.5845.96
+Stacktrace:
+0   undetected_chromedriver             0x00000001025836b8 undetected_chromedriver + 4937400
+1   undetected_chromedriver             0x000000010257ab73 undetected_chromedriver + 4901747
+2   undetected_chromedriver             0x0000000102138616 undetected_chromedriver + 435734
+3   undetected_chromedriver             0x000000010216ad10 undetected_chromedriver + 642320
+4   undetected_chromedriver             0x0000000102161f98 undetected_chromedriver + 606104
+5   undetected_chromedriver             0x00000001021a9a08 undetected_chromedriver + 899592
+6   undetected_chromedriver             0x00000001021a8ebf undetected_chromedriver + 896703
+7   undetected_chromedriver             0x000000010219fde3 undetected_chromedriver + 859619
+8   undetected_chromedriver             0x000000010216dd7f undetected_chromedriver + 654719
+9   undetected_chromedriver             0x000000010216f0de undetected_chromedriver + 659678
+10  undetected_chromedriver             0x000000010253f2ad undetected_chromedriver + 4657837
+11  undetected_chromedriver             0x0000000102544130 undetected_chromedriver + 4677936
+12  undetected_chromedriver             0x000000010254adef undetected_chromedriver + 4705775
+13  undetected_chromedriver             0x000000010254505a undetected_chromedriver + 4681818
+14  undetected_chromedriver             0x000000010251792c undetected_chromedriver + 4495660
+15  undetected_chromedriver             0x0000000102562838 undetected_chromedriver + 4802616
+16  undetected_chromedriver             0x00000001025629b7 undetected_chromedriver + 4802999
+17  undetected_chromedriver             0x000000010257399f undetected_chromedriver + 4872607
+18  libsystem_pthread.dylib             0x00007ff80226f1d3 _pthread_start + 125
+19  libsystem_pthread.dylib             0x00007ff80226abd3 thread_start + 15
+
+Attempt: 2
+Today's date: 2023-08-22 08:55:24.544207
+Login Successfully
+Session id for 929016: G78luhp4mCPd4DMLSLesORW55B2MiRSN68ihMzYmeTF3iagiTmaaAz2Krrhj4ZgcHzczP4kyMh6r8IJhop7QRvtCHRi4isTjiRyeDsMYlsBXrCQbp2fvYrA2JrBBPAhB293Ryiev8j62ekeQPImqXxYGFOiPNkSf9LyeJiqySOYgI2hCUoFxvefdq8xNqMsesejCQX5f4i6GUr95keHapvQco1kJfoWrNrJYUjm7aUouo3aOgbB73e9fjBClkXa8
+{'Afternoon': [{'direction': 'BULLISH', 'margin_used': 220737.12, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '19400.95', 'timestamp': '2023-08-21 15:15:50.508034', 'strike_price': '0', 'tradingsymbol': 'NIFTY23AUGFUT'}, {'direction': 'BULLISH', 'margin_used': -137137.13, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '12.30', 'timestamp': '2023-08-21 15:15:51.129838', 'strike_price': 19150, 'tradingsymbol': 'NIFTY2382419150PE'}]}
+Login Successfully
+Session id for 935325: FODhrINA4G2W9F3Wl3vIVHLvK5IjGgOk5b1KRpQKvSdmhIyo6PdghglLZ8EBYUYO6PSDLx2ZAYMYB1JCCCnGrEban09J1x1mahBRRMmJFSmA5b3eqd7dLEafTuUWd1KF7Bur4Az0rnjvWqg9LbNIGTcDUIXYWeQGsb9HfyoLXmRV2Dp2imQh7X4WWTt3JtAXT50x2kckVeqtGfg8qM6i0SxUzvUgGhOZ2f943IydlDohDRMmythB3IKNGF23Zq5Y
+None
+Login Successfully
+Session id for 924446: c5dicQU3fVpC7BZASMX77R00isI1DpESHB2iGDQcRlgjGXoYgXN5htbonJok6hYo9zpCcWoi8xdhdjOezqY5kNWpe7njafAahyrhODERYRWmcQAy88eDKlLo4tXaFPk3CHkvOhMmgydCGe1t4vhnUd5SPvLZyWg22YPXL1uRi3oW1TDNelZ8BioxfT029JsGyueiEuSAhR16YaDxKOR0Q5AIZBziTxkOgerdgei4ckLMQaVjADJWUzzZ8sHf65Wv
+None
+Login Successfully
+Session id for 935347: p75OrMfQoa9XCehk25MuYsx0s2WkJWKBtLCD7mKbxfsGFNSgeqsYQkQqtNhGDCclOG4JpaZiI6Mn7086YTmT6mBidKust7x4fBxYryQ316OSyiS6XjJiSQdOoS4sSQO2ectA0QLVBB68JHDmV8KbaqardRfTMjJEmEHEIpBLaEGkFggPYj2LzQopomk66fMeF4i3p3yOVY1UVHNEeKmRkJWhPKdiDMHWCFbBUnrVyc74Y9nNMDDNMWOR5Kaz0WcY
+None
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 323, in <module>
+    kite, user_details = login_in_zerodha(user_details)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 250, in login_in_zerodha
+    driver = uc.Chrome()
+             ^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 453, in __init__
+    super(Chrome, self).__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chrome/webdriver.py", line 84, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chromium/webdriver.py", line 104, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 286, in __init__
+    self.start_session(capabilities, browser_profile)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 716, in start_session
+    super(selenium.webdriver.chrome.webdriver.WebDriver, self).start_session(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 378, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 440, in execute
+    self.error_handler.check_response(response)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: cannot connect to chrome at 127.0.0.1:62918
+from session not created: This version of ChromeDriver only supports Chrome version 114
+Current browser version is 116.0.5845.96
+Stacktrace:
+0   undetected_chromedriver             0x00000001009fe6b8 undetected_chromedriver + 4937400
+1   undetected_chromedriver             0x00000001009f5b73 undetected_chromedriver + 4901747
+2   undetected_chromedriver             0x00000001005b3616 undetected_chromedriver + 435734
+3   undetected_chromedriver             0x00000001005e5d10 undetected_chromedriver + 642320
+4   undetected_chromedriver             0x00000001005dcf98 undetected_chromedriver + 606104
+5   undetected_chromedriver             0x0000000100624a08 undetected_chromedriver + 899592
+6   undetected_chromedriver             0x0000000100623ebf undetected_chromedriver + 896703
+7   undetected_chromedriver             0x000000010061ade3 undetected_chromedriver + 859619
+8   undetected_chromedriver             0x00000001005e8d7f undetected_chromedriver + 654719
+9   undetected_chromedriver             0x00000001005ea0de undetected_chromedriver + 659678
+10  undetected_chromedriver             0x00000001009ba2ad undetected_chromedriver + 4657837
+11  undetected_chromedriver             0x00000001009bf130 undetected_chromedriver + 4677936
+12  undetected_chromedriver             0x00000001009c5def undetected_chromedriver + 4705775
+13  undetected_chromedriver             0x00000001009c005a undetected_chromedriver + 4681818
+14  undetected_chromedriver             0x000000010099292c undetected_chromedriver + 4495660
+15  undetected_chromedriver             0x00000001009dd838 undetected_chromedriver + 4802616
+16  undetected_chromedriver             0x00000001009dd9b7 undetected_chromedriver + 4802999
+17  undetected_chromedriver             0x00000001009ee99f undetected_chromedriver + 4872607
+18  libsystem_pthread.dylib             0x00007ff80226f1d3 _pthread_start + 125
+19  libsystem_pthread.dylib             0x00007ff80226abd3 thread_start + 15
+
+Attempt: 3
+Today's date: 2023-08-22 08:55:41.706331
+Login Successfully
+Session id for 929016: G78luhp4mCPd4DMLSLesORW55B2MiRSN68ihMzYmeTF3iagiTmaaAz2Krrhj4ZgcHzczP4kyMh6r8IJhop7QRvtCHRi4isTjiRyeDsMYlsBXrCQbp2fvYrA2JrBBPAhB293Ryiev8j62ekeQPImqXxYGFOiPNkSf9LyeJiqySOYgI2hCUoFxvefdq8xNqMsesejCQX5f4i6GUr95keHapvQco1kJfoWrNrJYUjm7aUouo3aOgbB73e9fjBClkXa8
+{'Afternoon': [{'direction': 'BULLISH', 'margin_used': 220737.12, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '19400.95', 'timestamp': '2023-08-21 15:15:50.508034', 'strike_price': '0', 'tradingsymbol': 'NIFTY23AUGFUT'}, {'direction': 'BULLISH', 'margin_used': -137137.13, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '12.30', 'timestamp': '2023-08-21 15:15:51.129838', 'strike_price': 19150, 'tradingsymbol': 'NIFTY2382419150PE'}]}
+Login Successfully
+Session id for 935325: FODhrINA4G2W9F3Wl3vIVHLvK5IjGgOk5b1KRpQKvSdmhIyo6PdghglLZ8EBYUYO6PSDLx2ZAYMYB1JCCCnGrEban09J1x1mahBRRMmJFSmA5b3eqd7dLEafTuUWd1KF7Bur4Az0rnjvWqg9LbNIGTcDUIXYWeQGsb9HfyoLXmRV2Dp2imQh7X4WWTt3JtAXT50x2kckVeqtGfg8qM6i0SxUzvUgGhOZ2f943IydlDohDRMmythB3IKNGF23Zq5Y
+None
+Login Successfully
+Session id for 924446: c5dicQU3fVpC7BZASMX77R00isI1DpESHB2iGDQcRlgjGXoYgXN5htbonJok6hYo9zpCcWoi8xdhdjOezqY5kNWpe7njafAahyrhODERYRWmcQAy88eDKlLo4tXaFPk3CHkvOhMmgydCGe1t4vhnUd5SPvLZyWg22YPXL1uRi3oW1TDNelZ8BioxfT029JsGyueiEuSAhR16YaDxKOR0Q5AIZBziTxkOgerdgei4ckLMQaVjADJWUzzZ8sHf65Wv
+None
+Login Successfully
+Session id for 935347: p75OrMfQoa9XCehk25MuYsx0s2WkJWKBtLCD7mKbxfsGFNSgeqsYQkQqtNhGDCclOG4JpaZiI6Mn7086YTmT6mBidKust7x4fBxYryQ316OSyiS6XjJiSQdOoS4sSQO2ectA0QLVBB68JHDmV8KbaqardRfTMjJEmEHEIpBLaEGkFggPYj2LzQopomk66fMeF4i3p3yOVY1UVHNEeKmRkJWhPKdiDMHWCFbBUnrVyc74Y9nNMDDNMWOR5Kaz0WcY
+None
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 323, in <module>
+    kite, user_details = login_in_zerodha(user_details)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 250, in login_in_zerodha
+    driver = uc.Chrome()
+             ^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 453, in __init__
+    super(Chrome, self).__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chrome/webdriver.py", line 84, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chromium/webdriver.py", line 104, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 286, in __init__
+    self.start_session(capabilities, browser_profile)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 716, in start_session
+    super(selenium.webdriver.chrome.webdriver.WebDriver, self).start_session(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 378, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 440, in execute
+    self.error_handler.check_response(response)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: cannot connect to chrome at 127.0.0.1:62971
+from session not created: This version of ChromeDriver only supports Chrome version 114
+Current browser version is 116.0.5845.96
+Stacktrace:
+0   undetected_chromedriver             0x00000001053f86b8 undetected_chromedriver + 4937400
+1   undetected_chromedriver             0x00000001053efb73 undetected_chromedriver + 4901747
+2   undetected_chromedriver             0x0000000104fad616 undetected_chromedriver + 435734
+3   undetected_chromedriver             0x0000000104fdfd10 undetected_chromedriver + 642320
+4   undetected_chromedriver             0x0000000104fd6f98 undetected_chromedriver + 606104
+5   undetected_chromedriver             0x000000010501ea08 undetected_chromedriver + 899592
+6   undetected_chromedriver             0x000000010501debf undetected_chromedriver + 896703
+7   undetected_chromedriver             0x0000000105014de3 undetected_chromedriver + 859619
+8   undetected_chromedriver             0x0000000104fe2d7f undetected_chromedriver + 654719
+9   undetected_chromedriver             0x0000000104fe40de undetected_chromedriver + 659678
+10  undetected_chromedriver             0x00000001053b42ad undetected_chromedriver + 4657837
+11  undetected_chromedriver             0x00000001053b9130 undetected_chromedriver + 4677936
+12  undetected_chromedriver             0x00000001053bfdef undetected_chromedriver + 4705775
+13  undetected_chromedriver             0x00000001053ba05a undetected_chromedriver + 4681818
+14  undetected_chromedriver             0x000000010538c92c undetected_chromedriver + 4495660
+15  undetected_chromedriver             0x00000001053d7838 undetected_chromedriver + 4802616
+16  undetected_chromedriver             0x00000001053d79b7 undetected_chromedriver + 4802999
+17  undetected_chromedriver             0x00000001053e899f undetected_chromedriver + 4872607
+18  libsystem_pthread.dylib             0x00007ff80226f1d3 _pthread_start + 125
+19  libsystem_pthread.dylib             0x00007ff80226abd3 thread_start + 15
+
+Attempt: 4
+Today's date: 2023-08-22 08:55:59.093751
+Login Successfully
+Session id for 929016: G78luhp4mCPd4DMLSLesORW55B2MiRSN68ihMzYmeTF3iagiTmaaAz2Krrhj4ZgcHzczP4kyMh6r8IJhop7QRvtCHRi4isTjiRyeDsMYlsBXrCQbp2fvYrA2JrBBPAhB293Ryiev8j62ekeQPImqXxYGFOiPNkSf9LyeJiqySOYgI2hCUoFxvefdq8xNqMsesejCQX5f4i6GUr95keHapvQco1kJfoWrNrJYUjm7aUouo3aOgbB73e9fjBClkXa8
+{'Afternoon': [{'direction': 'BULLISH', 'margin_used': 220737.12, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '19400.95', 'timestamp': '2023-08-21 15:15:50.508034', 'strike_price': '0', 'tradingsymbol': 'NIFTY23AUGFUT'}, {'direction': 'BULLISH', 'margin_used': -137137.13, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '12.30', 'timestamp': '2023-08-21 15:15:51.129838', 'strike_price': 19150, 'tradingsymbol': 'NIFTY2382419150PE'}]}
+Login Successfully
+Session id for 935325: FODhrINA4G2W9F3Wl3vIVHLvK5IjGgOk5b1KRpQKvSdmhIyo6PdghglLZ8EBYUYO6PSDLx2ZAYMYB1JCCCnGrEban09J1x1mahBRRMmJFSmA5b3eqd7dLEafTuUWd1KF7Bur4Az0rnjvWqg9LbNIGTcDUIXYWeQGsb9HfyoLXmRV2Dp2imQh7X4WWTt3JtAXT50x2kckVeqtGfg8qM6i0SxUzvUgGhOZ2f943IydlDohDRMmythB3IKNGF23Zq5Y
+None
+Login Successfully
+Session id for 924446: c5dicQU3fVpC7BZASMX77R00isI1DpESHB2iGDQcRlgjGXoYgXN5htbonJok6hYo9zpCcWoi8xdhdjOezqY5kNWpe7njafAahyrhODERYRWmcQAy88eDKlLo4tXaFPk3CHkvOhMmgydCGe1t4vhnUd5SPvLZyWg22YPXL1uRi3oW1TDNelZ8BioxfT029JsGyueiEuSAhR16YaDxKOR0Q5AIZBziTxkOgerdgei4ckLMQaVjADJWUzzZ8sHf65Wv
+None
+Login Successfully
+Session id for 935347: p75OrMfQoa9XCehk25MuYsx0s2WkJWKBtLCD7mKbxfsGFNSgeqsYQkQqtNhGDCclOG4JpaZiI6Mn7086YTmT6mBidKust7x4fBxYryQ316OSyiS6XjJiSQdOoS4sSQO2ectA0QLVBB68JHDmV8KbaqardRfTMjJEmEHEIpBLaEGkFggPYj2LzQopomk66fMeF4i3p3yOVY1UVHNEeKmRkJWhPKdiDMHWCFbBUnrVyc74Y9nNMDDNMWOR5Kaz0WcY
+None
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 323, in <module>
+    kite, user_details = login_in_zerodha(user_details)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 250, in login_in_zerodha
+    driver = uc.Chrome()
+             ^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 453, in __init__
+    super(Chrome, self).__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chrome/webdriver.py", line 84, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chromium/webdriver.py", line 104, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 286, in __init__
+    self.start_session(capabilities, browser_profile)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 716, in start_session
+    super(selenium.webdriver.chrome.webdriver.WebDriver, self).start_session(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 378, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 440, in execute
+    self.error_handler.check_response(response)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: cannot connect to chrome at 127.0.0.1:63026
+from session not created: This version of ChromeDriver only supports Chrome version 114
+Current browser version is 116.0.5845.96
+Stacktrace:
+0   undetected_chromedriver             0x00000001034556b8 undetected_chromedriver + 4937400
+1   undetected_chromedriver             0x000000010344cb73 undetected_chromedriver + 4901747
+2   undetected_chromedriver             0x000000010300a616 undetected_chromedriver + 435734
+3   undetected_chromedriver             0x000000010303cd10 undetected_chromedriver + 642320
+4   undetected_chromedriver             0x0000000103033f98 undetected_chromedriver + 606104
+5   undetected_chromedriver             0x000000010307ba08 undetected_chromedriver + 899592
+6   undetected_chromedriver             0x000000010307aebf undetected_chromedriver + 896703
+7   undetected_chromedriver             0x0000000103071de3 undetected_chromedriver + 859619
+8   undetected_chromedriver             0x000000010303fd7f undetected_chromedriver + 654719
+9   undetected_chromedriver             0x00000001030410de undetected_chromedriver + 659678
+10  undetected_chromedriver             0x00000001034112ad undetected_chromedriver + 4657837
+11  undetected_chromedriver             0x0000000103416130 undetected_chromedriver + 4677936
+12  undetected_chromedriver             0x000000010341cdef undetected_chromedriver + 4705775
+13  undetected_chromedriver             0x000000010341705a undetected_chromedriver + 4681818
+14  undetected_chromedriver             0x00000001033e992c undetected_chromedriver + 4495660
+15  undetected_chromedriver             0x0000000103434838 undetected_chromedriver + 4802616
+16  undetected_chromedriver             0x00000001034349b7 undetected_chromedriver + 4802999
+17  undetected_chromedriver             0x000000010344599f undetected_chromedriver + 4872607
+18  libsystem_pthread.dylib             0x00007ff80226f1d3 _pthread_start + 125
+19  libsystem_pthread.dylib             0x00007ff80226abd3 thread_start + 15
+
+Attempt: 5
+Today's date: 2023-08-22 08:56:17.081705
+Login Successfully
+Session id for 929016: G78luhp4mCPd4DMLSLesORW55B2MiRSN68ihMzYmeTF3iagiTmaaAz2Krrhj4ZgcHzczP4kyMh6r8IJhop7QRvtCHRi4isTjiRyeDsMYlsBXrCQbp2fvYrA2JrBBPAhB293Ryiev8j62ekeQPImqXxYGFOiPNkSf9LyeJiqySOYgI2hCUoFxvefdq8xNqMsesejCQX5f4i6GUr95keHapvQco1kJfoWrNrJYUjm7aUouo3aOgbB73e9fjBClkXa8
+{'Afternoon': [{'direction': 'BULLISH', 'margin_used': 220737.12, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '19400.95', 'timestamp': '2023-08-21 15:15:50.508034', 'strike_price': '0', 'tradingsymbol': 'NIFTY23AUGFUT'}, {'direction': 'BULLISH', 'margin_used': -137137.13, 'trade_type': 'Afternoon', 'qty': 100, 'avg_prc': '12.30', 'timestamp': '2023-08-21 15:15:51.129838', 'strike_price': 19150, 'tradingsymbol': 'NIFTY2382419150PE'}]}
+Login Successfully
+Session id for 935325: FODhrINA4G2W9F3Wl3vIVHLvK5IjGgOk5b1KRpQKvSdmhIyo6PdghglLZ8EBYUYO6PSDLx2ZAYMYB1JCCCnGrEban09J1x1mahBRRMmJFSmA5b3eqd7dLEafTuUWd1KF7Bur4Az0rnjvWqg9LbNIGTcDUIXYWeQGsb9HfyoLXmRV2Dp2imQh7X4WWTt3JtAXT50x2kckVeqtGfg8qM6i0SxUzvUgGhOZ2f943IydlDohDRMmythB3IKNGF23Zq5Y
+None
+Login Successfully
+Session id for 924446: c5dicQU3fVpC7BZASMX77R00isI1DpESHB2iGDQcRlgjGXoYgXN5htbonJok6hYo9zpCcWoi8xdhdjOezqY5kNWpe7njafAahyrhODERYRWmcQAy88eDKlLo4tXaFPk3CHkvOhMmgydCGe1t4vhnUd5SPvLZyWg22YPXL1uRi3oW1TDNelZ8BioxfT029JsGyueiEuSAhR16YaDxKOR0Q5AIZBziTxkOgerdgei4ckLMQaVjADJWUzzZ8sHf65Wv
+None
+Login Successfully
+Session id for 935347: p75OrMfQoa9XCehk25MuYsx0s2WkJWKBtLCD7mKbxfsGFNSgeqsYQkQqtNhGDCclOG4JpaZiI6Mn7086YTmT6mBidKust7x4fBxYryQ316OSyiS6XjJiSQdOoS4sSQO2ectA0QLVBB68JHDmV8KbaqardRfTMjJEmEHEIpBLaEGkFggPYj2LzQopomk66fMeF4i3p3yOVY1UVHNEeKmRkJWhPKdiDMHWCFbBUnrVyc74Y9nNMDDNMWOR5Kaz0WcY
+None
+Traceback (most recent call last):
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 323, in <module>
+    kite, user_details = login_in_zerodha(user_details)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py", line 250, in login_in_zerodha
+    driver = uc.Chrome()
+             ^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 453, in __init__
+    super(Chrome, self).__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chrome/webdriver.py", line 84, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/chromium/webdriver.py", line 104, in __init__
+    super().__init__(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 286, in __init__
+    self.start_session(capabilities, browser_profile)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/undetected_chromedriver/__init__.py", line 716, in start_session
+    super(selenium.webdriver.chrome.webdriver.WebDriver, self).start_session(
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 378, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 440, in execute
+    self.error_handler.check_response(response)
+  File "/Users/traderscafe/miniconda3/envs/tradingenv/lib/python3.11/site-packages/selenium/webdriver/remote/errorhandler.py", line 245, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: cannot connect to chrome at 127.0.0.1:63081
+from session not created: This version of ChromeDriver only supports Chrome version 114
+Current browser version is 116.0.5845.96
+Stacktrace:
+0   undetected_chromedriver             0x0000000104c366b8 undetected_chromedriver + 4937400
+1   undetected_chromedriver             0x0000000104c2db73 undetected_chromedriver + 4901747
+2   undetected_chromedriver             0x00000001047eb616 undetected_chromedriver + 435734
+3   undetected_chromedriver             0x000000010481dd10 undetected_chromedriver + 642320
+4   undetected_chromedriver             0x0000000104814f98 undetected_chromedriver + 606104
+5   undetected_chromedriver             0x000000010485ca08 undetected_chromedriver + 899592
+6   undetected_chromedriver             0x000000010485bebf undetected_chromedriver + 896703
+7   undetected_chromedriver             0x0000000104852de3 undetected_chromedriver + 859619
+8   undetected_chromedriver             0x0000000104820d7f undetected_chromedriver + 654719
+9   undetected_chromedriver             0x00000001048220de undetected_chromedriver + 659678
+10  undetected_chromedriver             0x0000000104bf22ad undetected_chromedriver + 4657837
+11  undetected_chromedriver             0x0000000104bf7130 undetected_chromedriver + 4677936
+12  undetected_chromedriver             0x0000000104bfddef undetected_chromedriver + 4705775
+13  undetected_chromedriver             0x0000000104bf805a undetected_chromedriver + 4681818
+14  undetected_chromedriver             0x0000000104bca92c undetected_chromedriver + 4495660
+15  undetected_chromedriver             0x0000000104c15838 undetected_chromedriver + 4802616
+16  undetected_chromedriver             0x0000000104c159b7 undetected_chromedriver + 4802999
+17  undetected_chromedriver             0x0000000104c2699f undetected_chromedriver + 4872607
+18  libsystem_pthread.dylib             0x00007ff80226f1d3 _pthread_start + 125
+19  libsystem_pthread.dylib             0x00007ff80226abd3 thread_start + 15
+
+The script has some errors. Please Check !!!
+{"ok":true,"result":{"message_id":893,"from":{"id":5994380365,"is_bot":true,"first_name":"trialbot","username":"traderstrialBOT"},"chat":{"id":-367108102,"title":"Traders cafe","type":"group","all_members_are_administrators":true},"date":1692674789,"text":"Can't Login. Please Check !!!"}}

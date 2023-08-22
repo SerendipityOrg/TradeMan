@@ -16,31 +16,7 @@
             "TSLStepSize": 0.5,
             "entry_time": "09:20:00",
             "last_buy_time": "14:50:00",
-            "sqroff_time": "14:55:00",
-            "SignalEntry": {
-                "ShortSignal": {
-                    "Strike_Price": 19300,
-                    "Trade_No": 1,
-                    "Trade_Type": "ShortSignal",
-                    "Date": "2023-08-21",
-                    "TradeEntryTime": "09:21:00",
-                    "TradeEntryPrice": 165.35,
-                    "TradeExitTime": "14:56:00",
-                    "TradeExitPrice": 162.89,
-                    "NetTradePoints": -2.45
-                },
-                "ShortCoverSignal": {
-                    "Strike_Price": 19300,
-                    "Trade_No": 1,
-                    "Trade_Type": "ShortSignal",
-                    "Date": "2023-08-21",
-                    "TradeEntryTime": "09:21:00",
-                    "TradeEntryPrice": 165.35,
-                    "TradeExitTime": "14:56:00",
-                    "TradeExitPrice": 162.89,
-                    "NetTradePoints": -2.45
-                }
-            }
+            "sqroff_time": "14:55:00"
         }
     ]
 }

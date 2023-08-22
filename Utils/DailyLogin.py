@@ -4,6 +4,8 @@ import pandas as pd
 import undetected_chromedriver as uc
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
 from time import sleep
 import datetime
 import json
@@ -144,7 +146,6 @@ def create_strategy_json(broker_name, user, lots, balance, user_details_path, mp
 
     if 'orders' in data[broker_name]:
         overnight_option_data = data[broker_name]['orders'].get('Overnight_Options', None)
-        print(overnight_option_data)
         data[broker_name]['orders'] = {}
         if overnight_option_data is not None:
             data[broker_name]['orders']['Overnight_Options'] = overnight_option_data
@@ -247,8 +248,9 @@ def login_in_zerodha(user_details):
     totp_key = user_details['totp']
 
     global request_token, kite_access_token
-    driver = uc.Chrome()
-    
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+    # driver  = webdriver.Chrome()
+
     driver.get(f'https://kite.trade/connect/login?api_key={api_key}&v=3')
 
     login_id = WebDriverWait(driver, 10).until(lambda x: x.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[1]/div/div/div[2]/form/div[1]/input'))
@@ -307,7 +309,7 @@ for user in aliceblue_accounts_to_trade:
     balance = float(alice.get_balance()[0]['cashmarginavailable'])
     # Updated logic to use strategy percentage
     strategy_percentage = user_details.get('percentageRisk', {})
-    user_details['current_capital'] = balance
+    # user_details['current_capital'] = balance
     broker['aliceblue'][user] = user_details  # persist the changes
     lots = calculate_lots(user_details, strategy_percentage,mpwizard_json_path)
     create_strategy_json('aliceblue', user, lots, balance, user_details_path,mpwizard_json_path)
@@ -324,7 +326,7 @@ for user in zerodha_accounts_to_trade:
     balance = kite.margins(segment = 'equity')['available']['opening_balance']
     # Updated logic to use strategy percentage
     strategy_percentage = user_details.get('percentageRisk', {})
-    user_details['current_capital'] = balance
+    # user_details['current_capital'] = balance
 
     broker['zerodha'][user] = user_details  # persist the changes
     lots = calculate_lots(user_details, strategy_percentage,mpwizard_json_path)

@@ -39,30 +39,27 @@
 
 # asyncio.run(main())
 
-from kiteconnect import KiteConnect
-from pprint import pprint
+# from kiteconnect import KiteConnect
+# from pprint import pprint
 
 # api_key = '6b0dp5ussukmo67h'
-# access_token = 'C462xyhTHBs65ghisB4LXiv82A6rhXyx'
+# api_secret = 'eln2qrqob5neowjuedmbv0f0hzq6lhby'
 # kite = KiteConnect(api_key=api_key)
-# kite.set_access_token(access_token)
-
-# history = kite.order_history(order_id=230818600929703)
-# # pprint(history)
-
-# #in history, check for the dict where 'status' is 'COMPLETE'
-
-# for i in history:
-#     if i['status'] == 'COMPLETE':
-#         print(i['average_price'])
+# # print(kite.login_url())
+# data = kite.generate_session('dVSA80jTIZy8wQ4t90Sz2sDmELz9w2fL', api_secret=api_secret)
+# print(data)
+# print(kite.set_access_token(data["access_token"]))
 
 
+#update ChromeDriver
 
+from kiteconnect import KiteConnect
 
+kite = KiteConnect(api_key="6b0dp5ussukmo67h")
+kite.set_access_token('AU7Od95aBxOmHUzdn5rivCRkyFkpMjsy')
 
+a = kite.historical_data(instrument_token=256265,from_date="2023-08-16",to_date="2023-08-22",interval="minute",continuous=False)
 
-
-
-
+print(a)
 
 
