@@ -1352,4 +1352,17 @@ Stacktrace:
 19  libsystem_pthread.dylib             0x00007ff80226abd3 thread_start + 15
 
 The script has some errors. Please Check !!!
-{"ok":true,"result":{"message_id":893,"from":{"id":5994380365,"is_bot":true,"first_name":"trialbot","username":"traderstrialBOT"},"chat":{"id":-367108102,"title":"Traders cafe","type":"group","all_members_are_administrators":true},"date":1692674789,"text":"Can't Login. Please Check !!!"}}
+{"ok":true,"result":{"message_id":893,"from":{"id":5994380365,"is_bot":true,"first_name":"trialbot","username":"traderstrialBOT"},"chat":{"id":-367108102,"title":"Traders cafe","type":"group","all_members_are_administrators":true},"date":1692674789,"text":"Can't Login. Please Check !!!"}}Attempt: 1
+/Users/traderscafe/Documents/TradeMan/Utils/DailyLogin.py:251: DeprecationWarning: executable_path has been deprecated, please pass in a Service object
+  driver = webdriver.Chrome(ChromeDriverManager().install())
+Today's date: 2023-08-23 08:55:03.608463
+Login Successfully
+Session id for 929016: eKLp5kIXs8zvjzLk59ZDm8x6lF1qMBv1KgkST6m7OeTpm9OPpMU8P4Az8FV2Y8vYxMGdMFvLAyiDb0KxeONsCEHKmWNLeJV64bohIBd6kpd0OjSRCX8Yglj7z4gXNsZ9icfnSYt0BaQuYKffaWmIcpokNxAuHZnQTjPi0BzC6DVApaXxzzKy7iN47ptqjrudT1vBXrjrtRM8CMCr74htKcObrhmY8E8robCVvpXz3erpykctMIalIY47jkCvJqqD
+Login Successfully
+Session id for 924446: veMY1dH9AYE8sSZgiDU3pFbPquCiI54LuGiGaDWsY3STIxcAJ706cKS4QUUChpNS7og8FzAXStCMIPGsW7hq4uUzQ665KVpXC09I6m49KYbigJl8kjUfiCLS8jQz2ZRVjAJ29YKS7RsKiMqCB8do7TtDgqbhrTXBeLWcbogjdTL4sdPpq5SAgKjBk2LTtUamLgbd5rneOa8T4hYisi3418sa1o9xLOq6NCDMkLRvixQHaHTjol6snFhTOYxemxln
+Login Successfully
+Session id for 935347: 6yhzLhoJ6s7BqcCKTtRXh3SmxqWUervgkQloV5cQRUfsdNRXe1nbEN2gRY6MAJ3GKsUbh5vqhtzeOCxL7NfXkjvBgDs3G2XpU5sq1oj2i7z5NXtxSVy6zPaZjcXgmO24jC9QB7EChg96Eduz7c16K1HeWh4AGUZmdEXQy4kFZTWhv64WLJuKj2rIsk8TT48ZGb8fyISODPGNnfsx3EkT2vEXQ5ZgOvGQNCTiKrHxc92zqZUn5khEmYzB3fRFcW5u
+Login Successfully
+Session id for 935325: jNqCuxz2dYX35Bti5vZLNbcZ7Fm3lYCVr9Xq7Ruhrqyx8jbrxPUHZ8GIc9BuMYXq1gEIvtGdD54zNGnngqBnDROjjAxVLk8PCkoRLE5CU9ApQeghsvy8hqlFNB22uyBaTTlJCc8MyxNySgXBNaJj8dnbbUMAslD3DyooyxG9a3xQlnv6Hb48fYxvqCTKJnCNYRO15Q93X1pb2eceGepN1ccnpTNOo6jP3Aa9lC5EnXXfCCZC72pNLMeHDSm2rYFp
+kite_access_token for YY0222: G3N31Hyh7WkHC7S6t7LoqDAWeauDTHKv
+Program started successfully

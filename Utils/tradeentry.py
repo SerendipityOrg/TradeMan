@@ -59,6 +59,7 @@ def process_short_trades(short_signals, short_cover_signals):
         exit_price = sum(float(trade["avg_prc"]) for trade in short_cover_signal_group if trade["trade_type"] == "ShortCoverSignal")
         hedge_price = hedge_exit - hedge_entry
         trade_points = (entry_price - exit_price) + hedge_price
+        print(trade_points, hedge_price)
 
         if broker == "zerodha":
             charges = zerodha_taxes(short_signal_group[0]["qty"], entry_price, exit_price,2)
@@ -187,7 +188,7 @@ def process_overnight_options_trades(overnight_options_trades):
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 broker_filepath = os.path.join(script_dir, "broker.json")
-json_dir = os.path.join(script_dir, "userscopy")
+json_dir = os.path.join(script_dir, "users")
 excel_dir = os.path.join(script_dir, "excel")
 
 with open(broker_filepath) as file:
@@ -298,7 +299,7 @@ for broker, user in user_list:
     message = "\n".join(message_parts)
     print(message)
 
-        # Save data to broker.json
+    # Save data to broker.json
     data_to_store = {
         'Total PnL': net_pnl,
         'Current Capital': current_capital,
@@ -314,7 +315,11 @@ for broker, user in user_list:
         json.dump(data, json_file, indent=4)
 
     # send discord message
-    # with TelegramClient('anon', api_id, api_hash) as client:
+    script_dir = os.path.dirname(os.path.abspath(__file__))   
+    parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
+    filepath = os.path.join(parent_dir, '+918618221715.session')
+    
+    # with TelegramClient(filepath, api_id, api_hash) as client:
     #     client.send_message(phone_number, message, parse_mode='md')
 
     # # Load existing workbook

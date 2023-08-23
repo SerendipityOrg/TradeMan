@@ -106,8 +106,8 @@ class OrderMonitor:
                                                 # expiry_date = "2023-07-20"
                                                 expiry_date = str(expiry[0])  # constant value
                                             elif name == 'FINNIFTY':
-                                                expiry_date = "2023-08-22"
-                                                # expiry_date = str(expiry[1])
+                                                # expiry_date = "2023-08-22"
+                                                expiry_date = str(expiry[1])
                                             
                                             tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(name, expiry_date, option_type, strike_prc)
                                             instrument.additional_tokens = tokens

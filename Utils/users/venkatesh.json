@@ -2,13 +2,60 @@
     "aliceblue": {
         "username": "924446",
         "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
-        "session_id": "c5dicQU3fVpC7BZASMX77R00isI1DpESHB2iGDQcRlgjGXoYgXN5htbonJok6hYo9zpCcWoi8xdhdjOezqY5kNWpe7njafAahyrhODERYRWmcQAy88eDKlLo4tXaFPk3CHkvOhMmgydCGe1t4vhnUd5SPvLZyWg22YPXL1uRi3oW1TDNelZ8BioxfT029JsGyueiEuSAhR16YaDxKOR0Q5AIZBziTxkOgerdgei4ckLMQaVjADJWUzzZ8sHf65Wv",
-        "Current_Capital": 57757.74,
+        "session_id": "veMY1dH9AYE8sSZgiDU3pFbPquCiI54LuGiGaDWsY3STIxcAJ706cKS4QUUChpNS7og8FzAXStCMIPGsW7hq4uUzQ665KVpXC09I6m49KYbigJl8kjUfiCLS8jQz2ZRVjAJ29YKS7RsKiMqCB8do7TtDgqbhrTXBeLWcbogjdTL4sdPpq5SAgKjBk2LTtUamLgbd5rneOa8T4hYisi3418sa1o9xLOq6NCDMkLRvixQHaHTjol6snFhTOYxemxln",
+        "Current_Capital": 56617.27,
         "MPWizard_qty": {
             "NIFTY_qty": 50,
             "BANKNIFTY_qty": 15,
             "FINNIFTY_qty": 40
         },
-        "orders": {}
+        "orders": {
+            "MPWizard": {
+                "BUY": [
+                    {
+                        "margin_used": 2127.25,
+                        "order_id": "230823000104409",
+                        "trade_type": "BUY",
+                        "qty": 15,
+                        "avg_prc": "140.15",
+                        "timestamp": "2023-08-23 11:07:23.653658",
+                        "strike_price": 44100,
+                        "tradingsymbol": "BANKNIFTY2382444100CE"
+                    },
+                    {
+                        "margin_used": 13150.479999999981,
+                        "order_id": "230823000104376",
+                        "trade_type": "BUY",
+                        "qty": 40,
+                        "avg_prc": "118.30",
+                        "timestamp": "2023-08-23 11:25:22.782907",
+                        "strike_price": 19600,
+                        "tradingsymbol": "FINNIFTY2382919600CE"
+                    }
+                ],
+                "SELL":[
+                    {
+                        "margin_used": 13150.479999999981,
+                        "order_id": "230823000104376",
+                        "trade_type": "SELL",
+                        "qty": 15,
+                        "avg_prc": "385.50",
+                        "timestamp": "2023-08-23 15:05:22.782907",
+                        "strike_price": 44100,
+                        "tradingsymbol": "BANKNIFTY2382444100CE"
+                    },
+                    {
+                        "margin_used": 13150.479999999981,
+                        "order_id": "230823000104376",
+                        "trade_type": "SELL",
+                        "qty": 40,
+                        "avg_prc": "178.00",
+                        "timestamp": "2023-08-23 14:20:22.782907",
+                        "strike_price": 19600,
+                        "tradingsymbol": "FINNIFTY2382919600CE"
+                    }
+                ]
+            }
+        }
     }
 }

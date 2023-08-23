@@ -15,12 +15,12 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 151.73,
-            "IBValue": 60.849999999998545,
+            "ATR5D": 122.58,
+            "IBValue": 74.75,
             "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 19443.05,
-                "IBLow": 19382.2
+                "IBHigh": 19441.6,
+                "IBLow": 19366.85
             },
             "TSLStepSize": 0.5
         },
@@ -40,14 +40,22 @@
                 "Fri": 40,
                 "Sat": 55
             },
-            "ATR5D": 340.41,
-            "IBValue": 103.75,
-            "IBLevel": "Small",
+            "ATR5D": 295.76,
+            "IBValue": 126.90000000000146,
+            "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 44140.05,
-                "IBLow": 44036.3
+                "IBHigh": 44079.15,
+                "IBLow": 43952.25
             },
-            "TSLStepSize": 0.5
+            "TSLStepSize": 0.5,
+            "SignalEntry": {
+                "Option": "BANKNIFTY2382444100CE",
+                "Event": "Bullish-Medium-UpCross",
+                "EntryPrice": 135.25,
+                "EntryTime": "11:07:25",
+                "ExitPrice": 381.60,
+                "ExitTime": "15:05:26"
+            }
         },
         {
             "name": "FINNIFTY",
@@ -65,14 +73,22 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 146.89,
-            "IBValue": 45.10000000000218,
-            "IBLevel": "Small",
+            "ATR5D": 137.28,
+            "IBValue": 77.34999999999854,
+            "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 19649.15,
-                "IBLow": 19604.05
+                "IBHigh": 19589.55,
+                "IBLow": 19512.2
             },
-            "TSLStepSize": 0.5
+            "TSLStepSize": 0.5,
+            "SignalEntry": {
+                "Option": "FINNIFTY2382919600CE",
+                "Event": "Bullish-Medium-UpCross",
+                "EntryPrice": 117.40,
+                "EntryTime": "11:25:25",
+                "ExitPrice": 178.00,
+                "ExitTime": "14:20:22"
+            }
         }
     ]
 }
