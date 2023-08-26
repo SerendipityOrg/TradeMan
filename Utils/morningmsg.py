@@ -17,17 +17,26 @@ def load_userdata():
 # Calculate invested value for AliceBlue user using the loop format
 
 
-def aliceblue_invested_value(broker_data, broker, user):
-    alice = Aliceblue(user_id=broker_data[broker][user]['username'],
-                      api_key=broker_data[broker][user]['api_key'])
+# Calculate invested value for AliceBlue user using the loop format
+def aliceblue_invested_value(user_data):
+    # Initialization and other parts of your function
+    alice = Aliceblue(user_data['username'], user_data['api_key'])
+    session_id = alice.get_session_id()
+    holdings = alice.get_holding_positions()
 
-    print(alice.get_session_id())  # Get Session ID
-    # Fetch holding positions using the given loop method
-    holdings = alice.get_holding_positions().get('HoldingVal', [])
+    # Ensure 'HoldingVal' is a key in holdings and is of type list
+    if not isinstance(holdings, dict) or 'HoldingVal' not in holdings or not isinstance(holdings['HoldingVal'], list):
+        raise ValueError("Unexpected format for holdings data.")
+
+    invested_value = 0
+    for stock in holdings['HoldingVal']:
+        average_price = float(stock['Price'])
+        quantity = float(stock['HUqty'])
+        invested_value += average_price * quantity
+    
+    return invested_value
 
 # Calculate invested value for Zerodha user
-
-
 def zerodha_invested_value(broker_data, broker, user):
     user_details = broker_data[broker][user]
     kite = KiteConnect(api_key=user_details['api_key'])
@@ -37,16 +46,14 @@ def zerodha_invested_value(broker_data, broker, user):
 
 # Fetch invested value based on broker type
 
-
 def get_invested_value(broker_data, broker, user):
+    user_details = broker_data[broker][user]
     if broker == "aliceblue":
-        return aliceblue_invested_value(broker_data, broker, user)
+        return aliceblue_invested_value(user_details)
     elif broker == "zerodha":
         return zerodha_invested_value(broker_data, broker, user)
 
 # Generate morning report message for a user
-
-
 def report_msg(broker_data, broker, user):
     user_data = broker_data[broker][user]
     today = date.today()
@@ -59,8 +66,7 @@ def report_msg(broker_data, broker, user):
         formatted = format_currency(amount, 'INR', locale='en_IN')
         return formatted.replace('₹', 'Rs')
 
-    return (f"Report for {user} on {formatted_date}:\n"
-            f"Morning Report:\n"
+    return (f"Morning Report for {user} on {formatted_date}:\n"
             f"Yesterday's Capital: {custom_format(user_data['current_capital'])}\n"
             f"Yesterday's PnL: {custom_format(user_data['yesterday_PnL'])}\n"
             f"Cash Balance: {custom_format(cash_balance)}\n"
@@ -74,3 +80,4 @@ userdata = load_userdata()
 for broker, data in userdata.items():
     for user in data['accounts_to_trade']:
         print(report_msg(userdata, broker, user))
+
