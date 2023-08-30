@@ -10,7 +10,7 @@
             "mobile_number": "+919902106162",
             "percentageRisk": {
                 "AmiPy": 250000,
-                "MPWizard": 0.01,
+                
                 "ZRM": 0.01,
                 "overnight_option": 200000
             },
@@ -156,7 +156,7 @@
             "totp_access": "NAMPXPILOZZKQXECENDFRGGRTXDHAXNI",
             "session_id": "yia7Z9oak0r1ayUjvJO6ix5a9xgXTpQaRjaCaMXaIhuouleUjcBulrPePLaMyVVeuMWcga57vpp3EP6VfvJq8W4VQJlb2V7BW3mUEvZy3ZkR3zjvPh5QBilv5b5itBtTvAVyW8XulngmXDdpx6oOMCidYqTIf4R8YlmkVrJ7b3aeylqseDsWheJmehcyKS8NHPJSLfbyrg9TtjM5N6PR7KLQPofSvxQ1MWveja9RJW7FALqfY1AXK1sP9LddEzW8",
             "percentageRisk": {
-                "MPWizard": 0.025
+                
             },
             "current_capital": 90548.36
         },
@@ -164,7 +164,8 @@
             "brijesh",
             "venkatesh",
             "sridhar",
-            "vinay"
+            "vinay",
+            "vimala"
         ]
     }
 }
