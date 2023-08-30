@@ -1,5 +1,7 @@
 import os
 import json
+import sys
+import io
 from datetime import date
 from babel.numbers import format_currency
 from pya3 import Aliceblue
@@ -11,6 +13,11 @@ api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
 
 # Get the directory where the script is located
 script_dir = os.path.dirname(os.path.realpath(__file__))
+
+
+# Change the standard output encoding to UTF-8
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 
 # Load user data from the JSON file
 
@@ -63,7 +70,7 @@ def get_invested_value(broker_data, broker, user):
 
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
-    return formatted.replace('₹', 'Rs')
+    return formatted.replace('₹', '₹ ')
 
 # Generate a morning report message for a user
 
@@ -124,3 +131,4 @@ for broker, user in user_list:
     # # Ensure you have `api_id` and `api_hash` defined elsewhere in your code
     # with TelegramClient('anon', api_id, api_hash) as client:
     #     client.send_message(phone_number, message, parse_mode='md')
+ 
