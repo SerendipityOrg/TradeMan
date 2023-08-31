@@ -8,11 +8,12 @@ from pya3 import Aliceblue
 from kiteconnect import KiteConnect
 from telethon.sync import TelegramClient
 
-api_id = '22941664'
-api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
+# api_id = '22941664'
+# api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
 
 # Get the directory where the script is located
 script_dir = os.path.dirname(os.path.realpath(__file__))
+json_dir = os.path.join(script_dir, "users")
 
 
 # Change the standard output encoding to UTF-8
@@ -20,8 +21,6 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 # Load user data from the JSON file
-
-
 def load_userdata():
     with open(os.path.join(script_dir, "broker.json")) as f:
         return json.load(f)
@@ -77,15 +76,17 @@ def custom_format(amount):
 
 def generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital):
     message = (
-        f"Morning Report for {user} on {formatted_date}:\n"
+        f"Morning Report for {user} on {formatted_date}:\n\n"
         f"Yesterday's Capital: {custom_format(user_data['current_capital'])}\n"
-        f"Yesterday's PnL: {custom_format(user_data['yesterday_PnL'])}\n"
+        f"Yesterday's PnL: {custom_format(user_data['yesterday_PnL'])}\n\n"
         f"Cash Balance: {custom_format(cash_balance)}\n"
         f"Stocks Invested: {custom_format(invested_value)}\n\n"
         f"Current Capital: {custom_format(current_capital)}\n\n"
         "Best regards,\nSerendipity Trading Firm"
     )
+    print(message)
     return message
+
 
 
 # Main code execution
@@ -102,6 +103,7 @@ for broker, broker_data in userdata.items():
 
 # Iterate through each user and generate and send report
 for broker, user in user_list:
+    # print(user)
     user_data = userdata[broker][user]
 
     # Calculate investment values
@@ -118,17 +120,23 @@ for broker, user in user_list:
         user, formatted_date, user_data, cash_balance, invested_value, current_capital)
 
     # Print report for debugging purposes
-    print(message)
+    # print(message)
 
-    # # Load user-specific JSON data (assuming each user has a separate JSON)
-    # with open(os.path.join(script_dir, f"{user}.json")) as file:
-    #     specific_user_data = json.load(file)
+    # Load user-specific JSON data (assuming each user has a separate JSON)
+    data = load_userdata()
+    phone_number = data[broker][user]['mobile_number']
 
-    # # Extract phone number
-    # phone_number = specific_user_data["mobile_number"]
+    # Save data to broker.json
+    data_to_store = {
+        'Current Capital': current_capital,
+    }
+    user_details = data[broker][user]
+    user_details["current_capital"] = current_capital
+    data[broker][user] = user_details
 
-    # # Send the report to the user via Telegram
-    # # Ensure you have `api_id` and `api_hash` defined elsewhere in your code
-    # with TelegramClient('anon', api_id, api_hash) as client:
+    # parent_file = os.path.abspath(os.path.join(script_dir, '..'))
+    # filepath = os.path.join(parent_file, '+918618221715.session')
+    # # # Send the report to the user via Telegram
+    # # # Ensure you have `api_id` and `api_hash` defined elsewhere in your code
+    # with TelegramClient(filepath, api_id, api_hash) as client:
     #     client.send_message(phone_number, message, parse_mode='md')
- 
