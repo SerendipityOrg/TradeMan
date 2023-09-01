@@ -38,6 +38,7 @@ def get_siri_users(broker_filepath):
 Instrument = namedtuple("Instrument", ['exchange', 'token', 'symbol', 'name', 'expiry', 'lot_size'])
 
 def get_option_tokens(base_symbol, expiry_date, option_type,strike_prc):
+    print(base_symbol, expiry_date, option_type,strike_prc)
     instruments_df = pd.read_csv(filepath)
 
     instruments_df = instruments_df[

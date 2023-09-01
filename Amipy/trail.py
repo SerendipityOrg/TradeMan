@@ -53,13 +53,11 @@
 
 #update ChromeDriver
 
-from kiteconnect import KiteConnect
+avg_prc = None
 
-kite = KiteConnect(api_key="6b0dp5ussukmo67h")
-kite.set_access_token('AU7Od95aBxOmHUzdn5rivCRkyFkpMjsy')
+if avg_prc == None or avg_prc == 0:
+    avg_prc = 100
 
-a = kite.historical_data(instrument_token=256265,from_date="2023-08-16",to_date="2023-08-22",interval="minute",continuous=False)
-
-print(a)
+print(avg_prc)
 
 

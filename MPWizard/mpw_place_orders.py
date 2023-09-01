@@ -85,6 +85,8 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         for i in order_history:
             if i['status'] == 'COMPLETE':
                 avg_prc = (i['average_price'])
+        
+        
 
         # avg_prc = order_history[-1]['average_price']  # Assuming last entry contains the final average price
         print(f"Average price for user {users} is: {avg_prc}")
@@ -124,7 +126,10 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
         logging.info(message)
 
     with open(filepath, 'w') as file:
-        json.dump(user_details, file, indent=4)  # Save the updated user_details back to json file
+        json.dump(user_details, file, indent=4)  # Save the updated user_details back to json file+
+    if avg_prc == 0 or avg_prc == None:
+            avg_prc = 10.0
+            mpwizard_discord_bot(f"Check the order for {users}")
     return float(avg_prc)
 
 

@@ -78,6 +78,7 @@ class OrderMonitor:
                                 if cross_type is not None:
                                     message = f"{cross_type}{level_name}: {ltp} for {name}! Trade? Reply 'call' or 'put' or 'pass'"
                                     print(message)
+                                    mpwizard_discord_bot(message)
                                     # search for the name in the mood data
                                     for mood_data in self.mood_data['indices']:
                                         if mood_data['name'] == name:
@@ -117,15 +118,11 @@ class OrderMonitor:
                                                 # Send appropriate trading symbol to order functions based on broker
                                                 if 'zerodha' in broker:
                                                     avg_prc =  place_zerodha_order(trading_symbol_list,"BUY", "BUY", strike_prc, name, user)
-                                                    if avg_prc is None:
-                                                        avg_prc = 0.00 
                                                     limit_prc = avg_prc - prc_ref
                                                     order = place_stoploss_zerodha(trading_symbol_list, "SELL", "SELL", strike_prc, name, limit_prc, user, broker='zerodha')
 
                                                 elif 'aliceblue' in broker:
                                                     avg_prc = place_aliceblue_order(trading_symbol_aliceblue[0],"BUY", "BUY", strike_prc, name, user) 
-                                                    if avg_prc is None:
-                                                        avg_prc = 0.00 
                                                     limit_prc = avg_prc - prc_ref
                                                     order = place_stoploss_aliceblue(trading_symbol_aliceblue[0], "SELL", "SELL", strike_prc, name, limit_prc, user, broker='aliceblue')
                                                 else:
@@ -188,7 +185,6 @@ class OrderMonitor:
                                                     else:
                                                         self.order_details_dict[broker].append(order_details)
                                         # Send alert message to Telegram group
-                                    mpwizard_discord_bot(message)
 
                     if instrument.additional_tokens is not None:
                         for token in instrument.additional_tokens:

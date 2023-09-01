@@ -34,6 +34,7 @@ def get_strikeprc():
 
 future_expiry = get_future_expiry_date()
 expiry = get_expiry_date()
+
 strikeprc = get_strikeprc()
 
 bull_strikeprc = strikeprc - 150

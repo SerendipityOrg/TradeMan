@@ -337,9 +337,11 @@ def updateSignalDf(last_signal,users_to_trade):
             with open('AmiPy.json' , 'w') as f:
                 json.dump(params, f, indent=4)
             if trade_type == 'LongSignal':
+                print(trade_type)
                 place_order(broker, trading_symbols[0], 'BUY', trade_type,username)
                 place_order(broker, trading_symbols[1], 'BUY', trade_type,username)
             elif trade_type == 'ShortSignal':
+                print(trade_type)
                 place_order(broker, trading_symbols[2], 'BUY', trade_type,username)
                 place_order(broker, trading_symbols[3], 'BUY', trade_type,username)
                 place_order(broker, trading_symbols[0], 'SELL', trade_type,username)
@@ -358,23 +360,26 @@ def updateSignalDf(last_signal,users_to_trade):
             with open('AmiPy.json' , 'w') as f:
                 json.dump(params, f, indent=4)
             if trade_type == 'LongCoverSignal':
+                print(trade_type)
                 place_order(broker, trading_symbols[0], 'SELL', trade_type,username)
                 place_order(broker, trading_symbols[1], 'SELL', trade_type,username)
             elif trade_type == 'ShortCoverSignal':
+                print(trade_type)
                 place_order(broker, trading_symbols[2], 'SELL', trade_type,username)
                 place_order(broker, trading_symbols[3], 'SELL', trade_type,username)
                 place_order(broker, trading_symbols[0], 'BUY', trade_type,username)
                 place_order(broker, trading_symbols[1], 'BUY', trade_type,username)
 
-    try:
+    # try:
         if trade_type is not None:  # check that a signal was generated
             print(trade_type)
-            signal_prc = round(str(last_signal['close']),2)
+            signal_prc = round(last_signal['close'],2)
             message = f"Signal: {trade_type}\nStrikePrc: {strike_prc} \nDate: {trade_date}\nTime: {trade_time}\nClose: {signal_prc}"
             print(message)
             amipy_discord_bot(message)
-    except Exception as e:
-        print(f"Error in sending telegram message: {e}")
+    # except Exception as e:
+    #     print(e)
+    
 
 last_signal_t = None
 
