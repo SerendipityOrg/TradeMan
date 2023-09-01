@@ -30,7 +30,6 @@
             }
         },
         "accounts_to_trade": [
-            "omkar"
         ]
     },
     "aliceblue": {
@@ -161,10 +160,6 @@
             "current_capital": 90548.36
         },
         "accounts_to_trade": [
-            "brijesh",
-            "venkatesh",
-            "sridhar",
-            "vinay",
             "vimala"
         ]
     }

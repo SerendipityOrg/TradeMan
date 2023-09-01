@@ -8,7 +8,7 @@ from datetime import timedelta
 
 # Constants and Configurations
 API_KEY = '6b0dp5ussukmo67h'
-ACCESS_TOKEN = 'v5RIUWQZT1bw2lPQe7Puw4dTYrrHzjxX'
+ACCESS_TOKEN = 'GpG6HFawpFidYv25rmvu0U0vBFXsSPJP'
 kite = KiteConnect(api_key=API_KEY)
 kite.set_access_token(ACCESS_TOKEN)
 

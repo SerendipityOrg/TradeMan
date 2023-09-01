@@ -13,7 +13,7 @@ env_file_path = os.path.abspath(env_file_path)
 
 print(env_file_path)
 
-users_to_trade = get_mpwizard_users(r'C:\Users\user\Desktop\TradeMan\Utils\broker.json')
+users_to_trade = get_mpwizard_users(r'C:\Users\user\Desktop\TradeMan_Dev\Utils\broker.json')
 
 def main():
     # get_average_range_and_update_json()

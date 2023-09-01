@@ -91,7 +91,7 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
     kite = KiteConnect(api_key=user_details['zerodha']['api_key'])
     kite.set_access_token(user_details['zerodha']['access_token'])
     if qty is None:
-        qty = get_quantity(user_details, strategy, order_details['tradingsymbol'])
+        qty = get_quantity(user_details, strategy, order_details['tradingsymbol'],'zerodha')
     order_id, avg_price = place_order(kite, order_details, qty)
     log_order(order_id, avg_price, order_details, user_details, strategy)
     return order_id, avg_price
