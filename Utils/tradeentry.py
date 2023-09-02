@@ -12,15 +12,14 @@ import firebase_admin
 from firebase_admin import credentials, storage, db
 
 
-api_id = '22941664'
-api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
+# api_id = '22941664'
+# api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
 
 # Change the standard output encoding to UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Initialize Firebase app
-cred = credentials.Certificate(
-    r"C:\Users\vanis\OneDrive\Desktop\Serendipity trading firm\App\credentials.json")
+cred = credentials.Certificate("credentials.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
 })
@@ -28,18 +27,12 @@ firebase_admin.initialize_app(cred, {
 
 # Function to save the Excel file to Firebase
 def save_to_firebase(user, excel_path):
-    # Read the Excel file
-    df = pd.read_excel(excel_path)
-
-    # Convert DataFrame to JSON
-    json_data = df.to_json(orient='records')
-
-    # Define the destination path on Firebase Realtime Database
-    destination_path = f'clientsexcel/{user}'
-
-    # Upload the JSON data to Firebase Realtime Database
-    ref = db.reference(destination_path)
-    ref.set(json_data)
+    # Correct bucket name
+    bucket = storage.bucket(name='trading-app-caf8e.appspot.com')
+    blob = bucket.blob(f'{user}.xlsx')
+    with open(excel_path, 'rb') as my_file:
+        blob.upload_from_file(my_file)
+    print(f"Excel file for {user} has been uploaded to Firebase.")
 
 
 def custom_format(amount):
@@ -370,31 +363,32 @@ for broker, user in user_list:
     message = "\n".join(message_parts)
     print(message)
 
-    # # Save data to broker.json
-    # data_to_store = {
-    #     'Total PnL': net_pnl,
-    #     'Current Capital': current_capital,
-    #     'Expected Morning Balance': expected_capital
-    # }
-    # user_details = data[broker][user]
-    # user_details["yesterday_PnL"] = net_pnl
-    # user_details["expected_morning_balance"] = round(expected_capital,2)
-    # data[broker][user] = user_details
+    # Save data to broker.json
+    data_to_store = {
+        'Total PnL': net_pnl,
+        'Current Capital': current_capital,
+        'Expected Morning Balance': expected_capital
+    }
+    user_details = data[broker][user]
+    user_details["yesterday_PnL"] = net_pnl
+    user_details["expected_morning_balance"] = round(expected_capital, 2)
+    data[broker][user] = user_details
 
-    # with open(broker_filepath, 'w') as json_file:
-    #     json.dump(data, json_file, indent=4)
+    with open(broker_filepath, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
 
     # # Save the Excel file locally
-    # if user:
-    #     excel_filename = f"{user}.xlsx"
-    #     excel_path = os.path.join(excel_dir, excel_filename)
-    #     with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-    #         mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
-    #         amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
-    #         # overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
+    if user:
+        excel_filename = f"{user}.xlsx"
+        excel_path = os.path.join(excel_dir, excel_filename)
+        with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+            mpwizard_final_df.to_excel(
+                writer, sheet_name='MPWizard', index=False)
+            amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
+            # overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
 
-    #     # Save the Excel file to Firebase
-    #     save_to_firebase(user, excel_path)
+        # Save the Excel file to Firebase
+        save_to_firebase(user, excel_path)
 
     # # send discord message
     # script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -404,28 +398,29 @@ for broker, user in user_list:
     # with TelegramClient(filepath, api_id, api_hash) as client:
     #     client.send_message(phone_number, message, parse_mode='md')
 
-    # # Load existing workbook
-    # excel_path = os.path.join(excel_dir, f"{user}.xlsx")
-    # book = load_workbook(excel_path)
+    # Load existing workbook
+    excel_path = os.path.join(excel_dir, f"{user}.xlsx")
+    book = load_workbook(excel_path)
 
-    # # Read existing sheets into DataFrames, except for the ones we want to replace
-    # existing_dfs = {}
-    # for sheet_name in book.sheetnames:
-    #     if sheet_name not in ['MPWizard', 'AmiPy', 'Overnight_options']:
-    #         existing_dfs[sheet_name] = pd.read_excel(excel_path, sheet_name=sheet_name)
+    # Read existing sheets into DataFrames, except for the ones we want to replace
+    existing_dfs = {}
+    for sheet_name in book.sheetnames:
+        if sheet_name not in ['MPWizard', 'AmiPy', 'Overnight_options']:
+            existing_dfs[sheet_name] = pd.read_excel(
+                excel_path, sheet_name=sheet_name)
 
-    # # Create a temporary new Excel file
-    # temp_path = os.path.join(excel_dir, f"{user}_new.xlsx")
-    # with pd.ExcelWriter(temp_path, engine='openpyxl') as writer:
-    #     # Write existing sheets
-    #     for sheet_name, df in existing_dfs.items():
-    #         df.to_excel(writer, sheet_name=sheet_name, index=False)
+    # Create a temporary new Excel file
+    temp_path = os.path.join(excel_dir, f"{user}_new.xlsx")
+    with pd.ExcelWriter(temp_path, engine='openpyxl') as writer:
+        # Write existing sheets
+        for sheet_name, df in existing_dfs.items():
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
 
-    #     # Write new sheets
-    #     mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
-    #     amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
-    #     overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
+        # Write new sheets
+        mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
+        amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
+        # overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
 
-    # # Delete the old file and rename the new one
-    # os.remove(excel_path)
-    # os.rename(temp_path, excel_path)
+    # Delete the old file and rename the new one
+    os.remove(excel_path)
+    os.rename(temp_path, excel_path)

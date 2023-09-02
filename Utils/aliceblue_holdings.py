@@ -13,17 +13,23 @@ with open(broker_filepath) as file:
     data = json.load(file)
 
 # Function to fetch orders from Alice Blue using smartapi-python
-def fetch_aliceblue_orders(username,api_key):
+def fetch_aliceblue_orders(username, api_key):
     # print(username, api_key)
-    alice = Aliceblue(username,api_key )
+    alice = Aliceblue(username, api_key)
     session_id = alice.get_session_id()
+    holdings=alice.get_holding_positions()
+    print(holdings)
+    
     # access_token = alice.login_and_get_access_token()
     orders = alice.get_daywise_positions()
-    pprint(orders)
+
+    # pprint(orders)
     # Filter only the orders from NSE
     return [order for order in orders if order['Exchange'] == 'NSE']
 
 # Function to find the first empty row in a worksheet
+
+
 def find_first_empty_row(sheet):
     for i, row in enumerate(sheet.iter_rows(values_only=True), 1):
         if all(cell is None for cell in row):
@@ -31,6 +37,8 @@ def find_first_empty_row(sheet):
     return sheet.max_row + 1
 
 # Function to check if an order is already in the worksheet
+
+
 def is_order_present(sheet, tradingsymbol, timestamp):
     for row in sheet.iter_rows(values_only=True):
         if row:
@@ -38,6 +46,7 @@ def is_order_present(sheet, tradingsymbol, timestamp):
             if row[1] == tradingsymbol and row[2] == timestamp:
                 return True
     return False
+
 
 # Populate user_list with accounts from each broker
 user_list = []
@@ -107,4 +116,3 @@ for broker, user in user_list:
             last_row += 1
 
         workbook.save(workbook_path)
-
