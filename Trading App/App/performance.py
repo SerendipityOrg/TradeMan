@@ -26,8 +26,8 @@ selected = option_menu(None, ["Calendar", "Statistics", "Graph"],
                            "icon": {"color": "orange", "font-size": "25px"},
                            "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
                            "nav-link-selected": {"background-color": "purple"},
-                       }
-                       )
+}
+)
 
 # Calendar functionality
 if selected == "Calendar":
@@ -45,7 +45,8 @@ if selected == "Calendar":
 
     # If a date is selected, filter the Excel data
     if selected_date:
-        filtered_data = [record for record in data if record[2] == selected_date]
+        filtered_data = [
+            record for record in data if record[2] == selected_date]
 
         # Display the filtered data
         for record in filtered_data:
@@ -89,7 +90,8 @@ if file_exists:
         for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
             strategy = row[column_indices['Strategy']].value
             index = row[column_indices['Index']].value
-            date = row[column_indices['Date']].value.strftime('%Y-%m-%d')  # Format date from Excel
+            date = row[column_indices['Date']].value.strftime(
+                '%Y-%m-%d')  # Format date from Excel
             pnl = row[column_indices['PnL']].value
 
             # Append the row data to the list
@@ -102,10 +104,11 @@ selected_date = st.date_input("Select a Date")
 
 # If a date is selected, filter and display the data
 if selected_date:
-    filtered_data = [record for record in data if record[2] == selected_date.strftime('%Y-%m-%d')]
+    filtered_data = [record for record in data if record[2]
+                     == selected_date.strftime('%Y-%m-%d')]
     if filtered_data:
         st.write("Selected Date Data:")
         for record in filtered_data:
-            st.write(f"Strategy: {record[0]}, Date: {record[2]}, PnL: {record[3]}")
+            st.write(f"Strategy: {record[0]}, PnL: {record[3]}")
     else:
         st.warning("No data found for the selected date.")
