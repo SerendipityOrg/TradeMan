@@ -25,11 +25,12 @@ import general_calc
 class OrderMonitor:
     def __init__(self, users, instruments):
         self.monitor = InstrumentMonitor()
-        self.omkar = self._load_json_data(r'C:\Users\user\Desktop\TradeMan\UserProfile\Json\omkar.json')
+        self.omkar = self._load_json_data(r'C:\Users\user\Desktop\Dev\UserProfile\Json\omkar.json')
         self.mood_data = self._load_json_data(r'Strategies\MPWizard\MPWizard.json')
         self.users = users
         self.instruments = instruments
         self.orders_placed_today = 0
+        self.max_orders_per_day = 2  # Setting the daily limit to 2 signals.
         self.today_date = dt.date.today()
         self.done_for_the_day = False
         self.order_details_dict = {}
@@ -83,13 +84,18 @@ class OrderMonitor:
 
     
     def _process_instrument(self, ltp, instrument, prev_ltp, message_sent):
+        if self.orders_placed_today >= self.max_orders_per_day:
+            print("Daily signal limit reached. No more signals will be generated today.")
+            return
+        
         token = instrument.get_token()
         levels = instrument.get_trigger_points()
         name = instrument.get_name()
         
-
         cross_type = self._check_price_crossing(prev_ltp[name], ltp, levels)
         if cross_type:
+            # Check if the daily limit has been reached
+            self.orders_placed_today += 1
             mood_data_entry = self._get_mood_data_for_instrument(name)
             if not mood_data_entry:
                 return

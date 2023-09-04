@@ -2,7 +2,7 @@ import logging
 from kiteconnect import KiteConnect
 from place_order_calc import log_order, get_user_details, get_quantity
 import sys
-sys.path.append(r'C:\Users\user\Desktop\TradeMan\Utils')
+sys.path.append(r'C:\Users\user\Desktop\Dev\Utils')
 from general_calc import *
 
 kite = None
@@ -87,7 +87,7 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
         Exception: If the order placement fails.
     """
     global kite
-    user_details = get_user_details(order_details['user'])
+    user_details,_ = get_user_details(order_details['user'])
     kite = KiteConnect(api_key=user_details['zerodha']['api_key'])
     kite.set_access_token(user_details['zerodha']['access_token'])
     if qty is None:

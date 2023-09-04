@@ -10,7 +10,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
 filepath = os.path.join(parent_dir, 'Utils', 'instruments.csv')
 # omkar_filepath = os.path.join(parent_dir, '..','..','UserProfile', 'Json\\omkar.json')
-omkar_filepath = r'C:\Users\user\Desktop\TradeMan\UserProfile\Json\omkar.json'
+omkar_filepath = r'C:\Users\user\Desktop\Dev\UserProfile\Json\omkar.json'
 mpwizard_file = os.path.join(parent_dir,"MPWizard", "MPWizard.json")
 
 with open(omkar_filepath, 'r') as file:

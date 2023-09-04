@@ -11,12 +11,10 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 env_file_path = os.path.join(CURRENT_DIR, '..','..','Brokers','.env')
 env_file_path = os.path.abspath(env_file_path)
 
-print(env_file_path)
-
-users_to_trade = get_mpwizard_users(r'C:\Users\user\Desktop\TradeMan_Dev\Utils\broker.json')
+users_to_trade = get_mpwizard_users(r'C:\Users\user\Desktop\Dev\Utils\broker.json')
 
 def main():
-    # get_average_range_and_update_json()
+    get_average_range_and_update_json()
     # now = datetime.datetime.now()
     # wait_time = datetime.datetime(now.year, now.month, now.day, 13, 13) - now
     # print(f"Waiting for {wait_time} before starting the bot")
@@ -42,3 +40,5 @@ def main():
     
 if __name__ == "__main__":
     main()
+
+

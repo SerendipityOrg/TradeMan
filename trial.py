@@ -54,12 +54,11 @@
 #update ChromeDriver
 
 from kiteconnect import KiteConnect
+import pandas as pd
 
-kite = KiteConnect(api_key="6b0dp5ussukmo67h")
-kite.set_access_token('AU7Od95aBxOmHUzdn5rivCRkyFkpMjsy')
-
-a = kite.historical_data(instrument_token=256265,from_date="2023-08-16",to_date="2023-08-22",interval="minute",continuous=False)
-
-print(a)
+kite = KiteConnect(api_key='6b0dp5ussukmo67h', access_token='mnjPA1a5tUdWH1gcCvsL56tyfEQPluWY')
+instrument_dump = kite.instruments()
+instrument_df = pd.DataFrame(instrument_dump)
+instrument_df.to_csv(r'instruments.csv')
 
 

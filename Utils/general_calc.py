@@ -66,7 +66,9 @@ def get_expiry_dates(base_symbol):
         weekly_expiry = get_next_weekday(today, 0)  # Monday
     elif base_symbol == "FINNIFTY":
         weekly_expiry = get_next_weekday(today, 1)  # Tuesday
-    elif base_symbol == "NIFTY" or base_symbol == "BANKNIFTY":
+    elif base_symbol == "BANKNIFTY":
+        weekly_expiry = get_next_weekday(today, 2)  # Wednesday
+    elif base_symbol == "NIFTY" :
         weekly_expiry = get_next_weekday(today, 3)  # Thursday
     elif base_symbol == "SENSEX":
         weekly_expiry = get_next_weekday(today, 4)  # Friday

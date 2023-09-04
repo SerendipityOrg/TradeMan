@@ -8,14 +8,15 @@ from datetime import timedelta
 
 # Constants and Configurations
 API_KEY = '6b0dp5ussukmo67h'
-ACCESS_TOKEN = 'GpG6HFawpFidYv25rmvu0U0vBFXsSPJP'
+ACCESS_TOKEN = 'mnjPA1a5tUdWH1gcCvsL56tyfEQPluWY'
 kite = KiteConnect(api_key=API_KEY)
 kite.set_access_token(ACCESS_TOKEN)
 
 base_symbol_map = {
     0: ["MIDCPNIFTY"],
     1: ["FINNIFTY"],
-    3: ["NIFTY", "BANKNIFTY"],
+    2: ["BANKNIFTY"],
+    3: ["NIFTY"],
     4: ["SENSEX"],
 }
 

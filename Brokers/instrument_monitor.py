@@ -5,7 +5,7 @@ import threading
 from kiteconnect import KiteConnect
 import asyncio
 import sys
-sys.path.append(r'C:\Users\user\Desktop\TradeMan_Dev\Utils')
+sys.path.append(r'C:\Users\user\Desktop\Dev\Utils')
 from general_calc import *
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -38,9 +38,8 @@ class InstrumentMonitor:
         self.lock = threading.Lock()
         self.tokens_to_monitor = {}  # Using a dictionary to store token along with its target and limit price
         self.callback = callback
-
+        
     def add_token(self, token, target=None, limit_prc=None,order_details = None):
-        print(order_details)
         if token not in self.tokens_to_monitor:
             print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor}")
         else:
@@ -54,9 +53,6 @@ class InstrumentMonitor:
         # Print the price_ref from the order_details
         if self.tokens_to_monitor[token] is not None :
             print("price_ref:" ,self.tokens_to_monitor[token])
-        
-        
-        
         print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor.keys()}")
 
     def remove_token(self, token):
@@ -108,6 +104,8 @@ class InstrumentMonitor:
                 # Check if the limit_prc is not None and if LTP has fallen below it
                 elif token_data['limit_prc'] is not None and ltp <= token_data['limit_prc']:
                     print(f"Limit price reached for token {token}! LTP is {ltp}.")
+                    #remove the token from the list
+                    self.remove_token(token)
                 
             sleep(10)
 
@@ -118,14 +116,3 @@ class InstrumentMonitor:
                     
                     # Place a new order
                     # place_order_for_limit(token, ltp)
-
-
-
-
-
-
-
-
-
-        
-

@@ -12,6 +12,10 @@ UTILS_DIR = os.path.join(CURRENT_DIR, '..','Utils')
 sys.path.append(UTILS_DIR)
 from general_calc import *
 
+def start_monitoring(monitor):
+    monitor_thread = threading.Thread(target=monitor.fetch)
+    monitor_thread.daemon = True  # This ensures the thread will exit when the main program exits
+    monitor_thread.start()
 
 
 
@@ -63,20 +67,19 @@ def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
                         'limit_prc': limit_prc,
                         'price_ref' : order_details['stoploss_points']
                     }
-            print(order_func['tradingsymbol'])
             place_order_func(strategy, order_func , qty=qty)
         #calculate the target based on the priceref
-            target = round(float(avg_prc[1]) + order_details['stoploss_points'],1)
+            target = round((float(avg_prc[1]) + (order_details['stoploss_points']/2)))
             print(f"Target is {target}")
             print(f"Limit price is {limit_prc}")
             monitor.add_token(token, target, limit_prc,order_func)
             
-    # if not monitor:
-    #     monitor = InstrumentMonitor(callback=partial(modify_orders, monitor=monitor))
-    # start_monitoring(monitor)                
     if not monitor:
-        monitor = InstrumentMonitor()
-    monitor.fetch()
+        monitor = InstrumentMonitor(callback=partial(modify_orders, monitor=monitor))
+    start_monitoring(monitor)                
+    # if not monitor:
+    #     monitor = InstrumentMonitor()
+    # start_monitoring(monitor)
     sleep(10)
 
 def modify_orders(token,monitor=None):
