@@ -1,12 +1,15 @@
 import logging
 from pya3 import *
-from place_order_calc import log_order, get_user_details, get_quantity,retrieve_order_id
 import sys
 sys.path.append(r'C:\Users\user\Desktop\Dev\Utils')
 import general_calc
 
-alice = None
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+FILE_DIR = os.path.join(CURRENT_DIR,'..',)
+sys.path.append(FILE_DIR)
+from place_order_calc import *
 
+alice = None
 
 def place_order(alice, order_details, qty):
 
@@ -100,18 +103,18 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
 
 def update_stoploss(monitor_order_func):
     global alice
-    print(monitor_order_func)
+    
     order_id = retrieve_order_id(
             monitor_order_func.get('user'),
             monitor_order_func.get('broker'),
             monitor_order_func.get('strategy'),
             monitor_order_func.get('trade_type'),
-            monitor_order_func['token']
+            monitor_order_func.get('token').name
         )
     
     new_stoploss = round(float(monitor_order_func.get('target')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
-    print(order_id,new_stoploss,trigger_price,monitor_order_func.get('token'))
+    print(order_id,new_stoploss,trigger_price)
     modify_order =  alice.modify_order(transaction_type = TransactionType.Sell,
                     order_id=str(order_id),
                     instrument = monitor_order_func.get('token'),
@@ -120,5 +123,5 @@ def update_stoploss(monitor_order_func):
                     product_type = ProductType.Intraday,
                     price=new_stoploss,
                     trigger_price = trigger_price)
-    print(modify_order)
     
+

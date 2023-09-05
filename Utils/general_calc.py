@@ -1,7 +1,6 @@
 import json
 import os
 import datetime as dt
-from collections import namedtuple
 import pandas as pd
 # from pya3 import *
 
@@ -35,13 +34,26 @@ def get_strategy_users(strategy):
 
     return users
 
-
 #Expiry Dates Calculation
 holidays = [dt.date(2023, i, j) for i, j in [
     (1, 26), (3, 7), (3, 30), (4, 4), (4, 7), (4, 14),
     (4, 22), (5, 1), (6, 28), (8, 15), (9, 19), (10, 2),
     (10, 24), (11, 14), (11, 27), (12, 25)]
 ]
+
+def get_previous_dates(num_dates):
+    dates = []
+    current_date = dt.date.today()
+
+    while len(dates) < num_dates:
+        current_date -= dt.timedelta(days=1)
+
+        if current_date.weekday() >= 5 or current_date in holidays:
+            continue
+
+        dates.append(current_date.strftime("%Y-%m-%d"))
+
+    return dates
 
 def get_next_weekday(d, weekday):
     days_ahead = weekday - d.weekday()
@@ -57,7 +69,6 @@ def last_weekday_of_month(year, month, weekday):
     while last_day.weekday() != weekday or last_day in holidays:
         last_day -= dt.timedelta(1)
     return last_day
-
 
 def get_expiry_dates(base_symbol):
     today = dt.date.today()
@@ -84,7 +95,6 @@ def get_expiry_dates(base_symbol):
             monthly_expiry = last_weekday_of_month(today.year, today.month+1, weekly_expiry.weekday())
 
     return weekly_expiry, monthly_expiry
-
 
 #token calculation
 from pya3 import *
@@ -133,4 +143,5 @@ def round_strike_prc(strike_prc, base_symbol):
         return round(strike_prc / 50) * 50
     if base_symbol == 'BANKNIFTY':
         return round(strike_prc / 100) * 100
+
 

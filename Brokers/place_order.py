@@ -17,8 +17,6 @@ def start_monitoring(monitor):
     monitor_thread.daemon = True  # This ensures the thread will exit when the main program exits
     monitor_thread.start()
 
-
-
 def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
     from instrument_monitor import InstrumentMonitor
     

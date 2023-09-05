@@ -27,6 +27,9 @@ kite = KiteConnect(api_key=omkar_details['zerodha']['api_key'])
 kite.set_access_token(omkar_details['zerodha']['access_token'])
 
 class InstrumentMonitor:
+    """
+    Singleton class to monitor instruments and handle trading signals.
+    """    
     _instance = None
     
     def __new__(cls, *args, **kwargs):
@@ -40,6 +43,7 @@ class InstrumentMonitor:
         self.callback = callback
         
     def add_token(self, token, target=None, limit_prc=None,order_details = None):
+        """Add a token to the monitoring list."""
         if token not in self.tokens_to_monitor:
             print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor}")
         else:
@@ -56,10 +60,12 @@ class InstrumentMonitor:
         print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor.keys()}")
 
     def remove_token(self, token):
+        """Remove a token from the monitoring list."""
         if token in self.tokens_to_monitor:
             del self.tokens_to_monitor[token]
 
     def monitor(self):
+        """Monitor tokens and execute callback on LTP changes."""
         while True:
             ltps = self._fetch_ltps()
             for token, ltp in ltps.items():
@@ -68,10 +74,12 @@ class InstrumentMonitor:
             sleep(10)
 
     def _fetch_ltp_for_token(self, token):
+        """Fetch the LTP for a given token."""
         ltp = kite.ltp(token)  # assuming 'kite' is accessible here or you may need to pass it
         return ltp[str(token)]['last_price']
 
     def _fetch_ltps(self):
+        """Fetch LTPs for all monitored tokens."""
         ltps = {}
         for token in self.tokens_to_monitor.keys():
             try:
@@ -82,6 +90,7 @@ class InstrumentMonitor:
         return ltps
     
     def fetch(self):
+        """Fetch and print LTPs for all monitored tokens and handle target/limit price scenarios."""
         while True:
             tokens = list(self.tokens_to_monitor.keys())
             print(f"fetching {tokens}")
@@ -106,13 +115,12 @@ class InstrumentMonitor:
                     print(f"Limit price reached for token {token}! LTP is {ltp}.")
                     #remove the token from the list
                     self.remove_token(token)
+                    
+                #Check if there any open orders for the token at 3:10 pm if yes then cancel the order and sqaure off that order
+                
+                
                 
             sleep(10)
 
 
-                # if self.callback:
-                #     print(f"Callback called for token {token} with LTP {ltp}.")
-                #     self.callback(token, ltp)
-                    
-                    # Place a new order
-                    # place_order_for_limit(token, ltp)
+

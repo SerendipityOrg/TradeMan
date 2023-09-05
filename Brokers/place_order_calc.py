@@ -65,12 +65,11 @@ def retrieve_order_id(user, broker,strategy, trade_type, tradingsymbol):
     orders = strategy_orders.get(trade_type, [])
     for order in orders:
         if order['tradingsymbol'] == tradingsymbol:
-            return order['order_id'],order['qty']
+            return order['order_id']
 
     return None
 
-a,b = retrieve_order_id('vimala','aliceblue','MPWizard','SELL','NIFTY2390719500CE')
-print(a)
+
 
 
 
