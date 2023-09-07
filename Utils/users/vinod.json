@@ -13,16 +13,45 @@
             "MPWizard": {
                 "BUY": [
                     {
-                        "order_id": "230727000100333",
+                        "order_id": "230804000110966",
                         "trade_type": "BUY",
-                        "avg_prc": "00.00",
-                        "timestamp": "2023-07-27 10:27:26.565852",
-                        "strike_price": 46300,
-                        "tradingsymbol": "BANKNIFTY23JUL46300CE"
+                        "qty": 40,
+                        "avg_prc": "82.65",
+                        "timestamp": "2023-09-07 10:40:54.594522",
+                        "strike_price": 19800,
+                        "tradingsymbol": "FINNIFTY2391219800CE"
+                    },
+                    {
+                        "order_id": "230804000127847",
+                        "trade_type": "BUY",
+                        "qty": 15,
+                        "avg_prc": "263.05",
+                        "timestamp": "2023-09-07 10:42:23.120862",
+                        "strike_price": 44500,
+                        "tradingsymbol": "BANKNIFTY2391344500CE"
                     }
                 ],
-                "SELL": []
+                "SELL": [
+                    {
+                        "order_id": "230804000110966",
+                        "trade_type": "SELL",
+                        "qty": 360,
+                        "avg_prc": "108.95",
+                        "timestamp": "2023-09-07 11:33:54.594522",
+                        "strike_price": 19800,
+                        "tradingsymbol": "FINNIFTY2391219800CE"
+                    },
+                    {
+                        "order_id": "230804000127847",
+                        "trade_type": "SELL",
+                        "qty": 90,
+                        "avg_prc": "263.60",
+                        "timestamp": "2023-08-04 11:19:23.120862",
+                        "strike_price": 44500,
+                        "tradingsymbol": "BANKNIFTY2391344500CE"
+                    }
+                ]
             }
-        }
+        }    
     }
 }

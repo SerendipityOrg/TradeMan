@@ -2,8 +2,8 @@
     "aliceblue": {
         "username": "935325",
         "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
-        "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTM2MjUxMDgsImlhdCI6MTY5MzUzODcwOCwianRpIjoiMDA0Zjg1OTQtYzA3Yy00OWZhLWJjNTgtZmI2YzU4MjlmMDE2IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjMwNWNjYTNiLTFmYmQtNDQ1Yi1iNGZkLWU0ZTY0ZGVmNTI0NSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjNmMTJkZTY3LTgwZGEtNDg3MS04NTc3LTJhZTUzZDdlMDgwMyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiM2YxMmRlNjctODBkYS00ODcxLTg1NzctMmFlNTNkN2UwODAzIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkzNTMyNSIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJESE9OREFMRSBKQU5BUkRIQU4gVklOQVkiLCJtb2JpbGUiOiI5OTE2ODM4OTE5IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiOTM1MzI1IiwiZ2l2ZW5fbmFtZSI6IkRIT05EQUxFIEpBTkFSREhBTiBWSU5BWSIsImVtYWlsIjoic2VyZW5kaXBpdHkudmluYXlAZ21haWwuY29tIn0.EH9DMpqmP38oXYTizmmsLYrP83K2ACWilvK5EFtkucHafLuXE4VRCbMxWoM07oq_aue231ket_I0CPiDmTFy2UuJefLNr71sxztcIQ_H5EwU17WAFfv29gledwlZaCPTM-VJbHCDnO2ZSu9mfy5ZIbnoR1p-tS_Z7ooRzdntBsEzAFaPeEcxvXuVUKAki8HQclcLdqEnXMCImg9e0hwzJpE_TGYZSEPOQGr56tGyBum-jh84HTLYiNYjB0MyYkjkoh3ZgAdi1-21GAj7sjVvOFd0TVPnPV4JvvUCCGaHiF0YR1eZDUEEFw8LJ05n2nHNrGYEZPSFwP8LwB_5XvaHNw",
-        "Current_Capital": 32781.87,
+        "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQxNDM1MTAsImlhdCI6MTY5NDA1NzExMCwianRpIjoiYWVmN2EwZjItYmU5NS00NTQwLWE4MmQtYTk2ODJhNzQyZTA4IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjMwNWNjYTNiLTFmYmQtNDQ1Yi1iNGZkLWU0ZTY0ZGVmNTI0NSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImFiYzE2OTUyLTcwNmUtNDZiOC1hYjE4LWQzZGQyNzliNjUyOCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiYWJjMTY5NTItNzA2ZS00NmI4LWFiMTgtZDNkZDI3OWI2NTI4IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkzNTMyNSIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJESE9OREFMRSBKQU5BUkRIQU4gVklOQVkiLCJtb2JpbGUiOiI5OTE2ODM4OTE5IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiOTM1MzI1IiwiZ2l2ZW5fbmFtZSI6IkRIT05EQUxFIEpBTkFSREhBTiBWSU5BWSIsImVtYWlsIjoic2VyZW5kaXBpdHkudmluYXlAZ21haWwuY29tIn0.CYQ91EyiU3iis8UmkpaOIQs9SHTSno0ifhltCbCRCE0iNH7TJNezc-ztAuM_hWQObV4dlth2b6ytcQXmOZL7P3TmBrShYID9cdwTMp87ie--llACTYFgpb9LWcOW4foveRSIsd3gWECab8zJArC4WuBXS_WPykSniQ33wo7NQS9LRX2jyz7u2a28s7c8EK1o8sS2CWe5xTtJrLbzZjENX4KTqAOepRtP2KJqwiMyOkcoECh-4OaViZbPPuH7b-8d_7OP8yTop6FRPjJVgvQh56Jsmukk73ckHSLUEw3dZ8rV0NnvjZPNvwnuULja4CnVjKMYz09KISbbePalBhkTMQ",
+        "Current_Capital": 33727.38,
         "MPWizard_qty": {
             "NIFTY_qty": 50,
             "BANKNIFTY_qty": 15,
@@ -13,42 +13,42 @@
             "MPWizard": {
                 "BUY": [
                     {
-                        "margin_used": 4687.500000000004,
-                        "order_id": "230901000080800",
+                        "order_id": "230804000110966",
                         "trade_type": "BUY",
-                        "qty": 50,
-                        "avg_prc": "93.25",
-                        "timestamp": "2023-09-01 10:30:07.543881",
-                        "strike_price": 19350,
-                        "tradingsymbol": "NIFTY2390719350CE"
+                        "qty": 80,
+                        "avg_prc": "84.88",
+                        "timestamp": "2023-09-07 10:40:54.594522",
+                        "strike_price": 19800,
+                        "tradingsymbol": "FINNIFTY2391219800CE"
                     },
                     {
-                        "margin_used": 3449.0,
-                        "order_id": "230901000089666",
+                        "order_id": "230804000127847",
                         "trade_type": "BUY",
-                        "qty": 40,
-                        "avg_prc": "85.60",
-                        "timestamp": "2023-09-01 10:41:48.111267",
-                        "strike_price": 19600,
-                        "tradingsymbol": "FINNIFTY2390519600CE"
+                        "qty": 15,
+                        "avg_prc": "264.35",
+                        "timestamp": "2023-09-07 10:42:23.120862",
+                        "strike_price": 44500,
+                        "tradingsymbol": "BANKNIFTY2391344500CE"
                     }
                 ],
                 "SELL": [
                     {
-                        "order_no": "230901000080690",
+                        "order_id": "230804000110966",
                         "trade_type": "SELL",
-                        "avg_prc": "79.15",
-                        "timestamp": "2023-09-01 10:44:50.727550",
-                        "strike_price": 19600,
-                        "tradingsymbol": "NIFTY2390719350CE"
+                        "qty": 360,
+                        "avg_prc": "98.08",
+                        "timestamp": "2023-09-07 11:33:54.594522",
+                        "strike_price": 19800,
+                        "tradingsymbol": "FINNIFTY2391219800CE"
                     },
                     {
-                        "order_no": "230901000080690",
+                        "order_id": "230804000127847",
                         "trade_type": "SELL",
-                        "avg_prc": "71.55",
-                        "timestamp": "2023-09-01 10:45:50.727550",
-                        "strike_price": 19600,
-                        "tradingsymbol": "NIFTY2390719350CE"
+                        "qty": 90,
+                        "avg_prc": "263.60",
+                        "timestamp": "2023-08-04 11:19:23.120862",
+                        "strike_price": 44500,
+                        "tradingsymbol": "BANKNIFTY2391344500CE"
                     }
                 ]
             }

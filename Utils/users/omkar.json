@@ -2,18 +2,18 @@
     "zerodha": {
         "username": "YY0222",
         "api_key": "6b0dp5ussukmo67h",
-        "access_token": "GpG6HFawpFidYv25rmvu0U0vBFXsSPJP",
-        "Current_Capital": 1816788.6,
+        "access_token": "NxfYUO8YrtAXg1Cfz5DRF8RUCJPh4He7",
+        "Current_Capital": 1828629.7,
         "AmiPy_qty": 450,
         "MPWizard_qty": {
-            "NIFTY_qty": 1550,
-            "BANKNIFTY_qty": 585,
-            "FINNIFTY_qty": 1560
+            "NIFTY_qty": 900,
+            "BANKNIFTY_qty": 240,
+            "FINNIFTY_qty": 880
         },
         "ZRM_qty": {
-            "NIFTY_qty": 1550,
-            "BANKNIFTY_qty": 585,
-            "FINNIFTY_qty": 1560
+            "NIFTY_qty": 900,
+            "BANKNIFTY_qty": 240,
+            "FINNIFTY_qty": 880
         },
         "overnight_option_qty": 550,
         "orders": {
@@ -21,169 +21,185 @@
                 "Afternoon": [
                     {
                         "direction": "BEARISH",
-                        "margin_used": 1204318.25,
+                        "margin_used": 1217393.35,
                         "trade_type": "Afternoon",
                         "qty": 550,
-                        "avg_prc": 19421.47727273,
-                        "timestamp": "2023-08-31 15:17:53.289514",
+                        "avg_prc": 19660.85,
+                        "timestamp": "2023-09-06 15:15:12.044651",
                         "strike_price": "0",
                         "tradingsymbol": "NIFTY23SEPFUT"
                     },
                     {
                         "direction": "BEARISH",
-                        "margin_used": -794106.54,
+                        "margin_used": -811706.12,
                         "trade_type": "Afternoon",
                         "qty": 550,
-                        "avg_prc": 85.85,
-                        "timestamp": "2023-08-31 15:17:53.606704",
-                        "strike_price": 19400,
-                        "tradingsymbol": "NIFTY2390719400CE"
+                        "avg_prc": 1.55,
+                        "timestamp": "2023-09-06 15:15:12.257018",
+                        "strike_price": 19750,
+                        "tradingsymbol": "NIFTY2390719750CE"
+                    },
+                    {
+                        "direction": "BULLISH",
+                        "margin_used": 1231308.43,
+                        "trade_type": "Afternoon",
+                        "qty": 550,
+                        "avg_prc": 19766.08181818,
+                        "timestamp": "2023-09-07 15:15:12.998263",
+                        "strike_price": "0",
+                        "tradingsymbol": "NIFTY23SEPFUT"
+                    },
+                    {
+                        "direction": "BULLISH",
+                        "margin_used": -810661.67,
+                        "trade_type": "Afternoon",
+                        "qty": 550,
+                        "avg_prc": 34.8,
+                        "timestamp": "2023-09-07 15:15:13.365658",
+                        "strike_price": 19550,
+                        "tradingsymbol": "NIFTY2391419550PE"
                     }
                 ],
                 "Morning": [
                     {
                         "direction": "BEARISH",
-                        "margin_used": -388111.13,
+                        "margin_used": -379221.81,
                         "trade_type": "Morning",
                         "qty": 550,
-                        "avg_prc": 19402.59545455,
-                        "timestamp": "2023-09-01 09:18:11.558487",
+                        "avg_prc": 19630.08636364,
+                        "timestamp": "2023-09-07 09:18:08.843273",
                         "strike_price": "0",
                         "tradingsymbol": "NIFTY23SEPFUT"
                     },
                     {
                         "direction": "BEARISH",
-                        "margin_used": -35505.0,
+                        "margin_used": -577.5,
                         "trade_type": "Morning",
                         "qty": 550,
-                        "avg_prc": 64.55454544999999,
-                        "timestamp": "2023-09-01 09:18:11.840809",
-                        "strike_price": 19400,
-                        "tradingsymbol": "NIFTY2390719400CE"
+                        "avg_prc": 1.05,
+                        "timestamp": "2023-09-07 09:18:09.182195",
+                        "strike_price": 19750,
+                        "tradingsymbol": "NIFTY2390719750CE"
                     }
                 ]
             },
             "Amipy": {
                 "ShortSignal": [
                     {
-                        "margin_used": 1260.0,
+                        "margin_used": 180.0,
                         "trade_type": "HedgeOrder",
                         "qty": 450,
-                        "avg_prc": 2.8,
-                        "timestamp": "2023-09-01 09:21:17.737618",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2390719800CE"
+                        "avg_prc": 0.4,
+                        "timestamp": "2023-09-07 09:33:11.637632",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2390720100CE"
                     },
                     {
-                        "margin_used": 3172.5,
+                        "margin_used": 202.5,
                         "trade_type": "HedgeOrder",
                         "qty": 450,
-                        "avg_prc": 7.05,
-                        "timestamp": "2023-09-01 09:21:18.074834",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2390718800PE"
+                        "avg_prc": 0.45,
+                        "timestamp": "2023-09-07 09:33:11.912393",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2390719100PE"
                     },
                     {
-                        "margin_used": 348296.45,
+                        "margin_used": 378329.0,
                         "trade_type": "ShortSignal",
                         "qty": 450,
-                        "avg_prc": 112.27222222,
-                        "timestamp": "2023-09-01 09:21:18.699077",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2390719300CE"
+                        "avg_prc": 10.05555556,
+                        "timestamp": "2023-09-07 09:33:12.303717",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2390719600CE"
                     },
                     {
-                        "margin_used": 137722.05,
+                        "margin_used": 156253.95,
                         "trade_type": "ShortSignal",
                         "qty": 450,
-                        "avg_prc": 81.25,
-                        "timestamp": "2023-09-01 09:21:19.070072",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2390719300PE"
+                        "avg_prc": 65.52777778,
+                        "timestamp": "2023-09-07 09:33:12.782701",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2390719600PE"
                     }
                 ],
                 "ShortCoverSignal": [
                     {
-                        "margin_used": 558742.0,
+                        "margin_used": 593289.0,
                         "trade_type": "HedgeOrder",
                         "qty": 450,
-                        "avg_prc": 3.55,
-                        "timestamp": "2023-09-01 14:09:40.344817",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2390719800CE"
+                        "avg_prc": 0.05,
+                        "timestamp": "2023-09-07 14:09:40.144999",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2390720100CE"
                     },
                     {
-                        "margin_used": -2065.9,
+                        "margin_used": 553.5,
                         "trade_type": "HedgeOrder",
                         "qty": 450,
-                        "avg_prc": 4.6,
-                        "timestamp": "2023-09-01 14:09:41.112532",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2390718800PE"
+                        "avg_prc": 0.55,
+                        "timestamp": "2023-09-07 14:09:40.487964",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2390719100PE"
                     },
                     {
-                        "margin_used": -116173.75,
+                        "margin_used": -180582.4,
                         "trade_type": "ShortCoverSignal",
                         "qty": 450,
-                        "avg_prc": 187.98,
-                        "timestamp": "2023-09-01 14:09:41.764967",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2390719300CE"
+                        "avg_prc": 82.39444444,
+                        "timestamp": "2023-09-07 14:09:40.910373",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2390719600CE"
                     },
                     {
-                        "margin_used": -932535.05,
+                        "margin_used": -953729.05,
                         "trade_type": "ShortCoverSignal",
                         "qty": 450,
-                        "avg_prc": 38.35,
-                        "timestamp": "2023-09-01 14:09:42.041291",
-                        "strike_price": 19300,
-                        "tradingsymbol": "NIFTY2390719300PE"
+                        "avg_prc": 1.65,
+                        "timestamp": "2023-09-07 14:09:41.253423",
+                        "strike_price": 19600,
+                        "tradingsymbol": "NIFTY2390719600PE"
                     }
                 ]
             },
             "MPWizard": {
                 "BUY": [
                     {
-                        "margin_used": 108736.5,
-                        "order_id": "230901600914998",
-                        "trade_type": "HedgeOrder",
-                        "qty": 1550,
-                        "avg_prc": 92.99516129,
-                        "timestamp": "2023-09-01 10:30:03.587444",
-                        "strike_price": 19350,
-                        "tradingsymbol": "NIFTY2390719350CE"
+                        "order_id": "230804000110966",
+                        "trade_type": "BUY",
+                        "qty": 880,
+                        "avg_prc": 83.8,
+                        "timestamp": "2023-09-07 10:40:54.594522",
+                        "strike_price": 19800,
+                        "tradingsymbol": "FINNIFTY2391219800CE"
                     },
                     {
-                        "margin_used": 134160.0,
-                        "order_id": "230901601002278",
-                        "trade_type": "HedgeOrder",
-                        "qty": 1560,
-                        "avg_prc": 86,
-                        "timestamp": "2023-09-01 10:41:44.008627",
-                        "strike_price": 19600,
-                        "tradingsymbol": "FINNIFTY2390519600CE"
+                        "order_id": "230804000127847",
+                        "trade_type": "BUY",
+                        "qty": 240,
+                        "avg_prc": 263.78,
+                        "timestamp": "2023-09-07 10:42:23.120862",
+                        "strike_price": 44500,
+                        "tradingsymbol": "BANKNIFTY2391344500CE"
                     }
                 ],
                 "SELL": [
                     {
-                        "order_no": "230901600915038",
+                        "order_id": "230804000110966",
                         "trade_type": "SELL",
-                        "avg_prc": 79.00,
-                        "timestamp": "2023-09-01 10:44:50.288116",
-                        "strike_price": 19600,
-                        "tradingsymbol": 
-                            "NIFTY2390719350CE"
-                        
+                        "qty": 360,
+                        "avg_prc": 108.99,
+                        "timestamp": "2023-09-07 11:33:54.594522",
+                        "strike_price": 19800,
+                        "tradingsymbol": "FINNIFTY2391219800CE"
                     },
                     {
-                        "order_no": "230901601002325",
+                        "order_id": "230804000127847",
                         "trade_type": "SELL",
-                        "avg_prc": 72.00,
-                        "timestamp": "2023-09-01 10:45:53.223256",
-                        "strike_price": 19600,
-                        "tradingsymbol": 
-                            "FINNIFTY2390519600CE"
-                        
+                        "qty": 90,
+                        "avg_prc": 263.6,
+                        "timestamp": "2023-08-04 11:19:23.120862",
+                        "strike_price": 44500,
+                        "tradingsymbol": "BANKNIFTY2391344500CE"
                     }
                 ]
             }

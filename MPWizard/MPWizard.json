@@ -15,22 +15,14 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 115.68,
-            "IBValue": 75.14999999999782,
+            "ATR5D": 131.81,
+            "IBValue": 46.69999999999709,
             "IBLevel": "Medium",
             "TriggerPoints": {
-                "IBHigh": 19333.3,
-                "IBLow": 19258.15
+                "IBHigh": 19604.1,
+                "IBLow": 19557.4
             },
-            "TSLStepSize": 0.5,
-            "SignalEntry": {
-                "Option": "NIFTY2390719350CE",
-                "Event": "Bullish-Medium-UpCross",
-                "EntryPrice": 93.25,
-                "EntryTime": "10:30:07",
-                "ExitPrice": 91.8,
-                "ExitTime": "10:41:42"
-            }
+            "TSLStepSize": 0.5
         },
         {
             "name": "BANKNIFTY",
@@ -48,12 +40,12 @@
                 "Fri": 40,
                 "Sat": 55
             },
-            "ATR5D": 432.39,
-            "IBValue": 202.4499999999971,
-            "IBLevel": "Medium",
+            "ATR5D": 496.87,
+            "IBValue": 115.25,
+            "IBLevel": "Small",
             "TriggerPoints": {
-                "IBHigh": 44035.25,
-                "IBLow": 43832.8
+                "IBHigh": 44560.25,
+                "IBLow": 44445
             },
             "TSLStepSize": 0.5
         },
@@ -73,22 +65,14 @@
                 "Fri": 15,
                 "Sat": 22
             },
-            "ATR5D": 165.59,
-            "IBValue": 76.09999999999854,
-            "IBLevel": "Medium",
+            "ATR5D": 193.75,
+            "IBValue": 62.79999999999927,
+            "IBLevel": "Small",
             "TriggerPoints": {
-                "IBHigh": 19622.8,
-                "IBLow": 19546.7
+                "IBHigh": 19792.7,
+                "IBLow": 19729.9
             },
-            "TSLStepSize": 0.5,
-            "SignalEntry": {
-                "Option": "FINNIFTY2390519600CE",
-                "Event": "Bullish-Medium-UpCross",
-                "EntryPrice": 85.6,
-                "EntryTime": "10:41:48",
-                "ExitPrice": 76.5,
-                "ExitTime": "10:48:57"
-            }
+            "TSLStepSize": 0.5
         }
     ]
 }

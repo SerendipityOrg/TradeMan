@@ -11,34 +11,34 @@
             "InTrade": false,
             "Heikin_Ashi_MA_period": 13,
             "Supertrend_period": 7,
-            "Supertrend_multiplier": 18,
+            "Supertrend_multiplier": 12,
             "EMA_period": 324,
             "TSLStepSize": 0.5,
-            "entry_time": "09:20:00",
+            "entry_time": "09:32:00",
             "last_buy_time": "14:50:00",
             "sqroff_time": "14:55:00",
             "SignalEntry": {
                 "ShortSignal": {
-                    "Strike_Price": 19300,
+                    "Strike_Price": 19600,
                     "Trade_No": 1,
                     "Trade_Type": "ShortSignal",
-                    "Date": "2023-09-01",
-                    "TradeEntryTime": "09:21:00",
-                    "TradeEntryPrice": 194.0,
+                    "Date": "2023-09-07",
+                    "TradeEntryTime": "09:33:00",
+                    "TradeEntryPrice": 75.5,
                     "TradeExitTime": "14:09:00",
-                    "TradeExitPrice": 227.29999999999998,
-                    "NetTradePoints": 33.29999999999998
+                    "TradeExitPrice": 84.89999999999999,
+                    "NetTradePoints": 9.399999999999991
                 },
                 "ShortCoverSignal": {
-                    "Strike_Price": 19300,
+                    "Strike_Price": 19600,
                     "Trade_No": 1,
                     "Trade_Type": "ShortSignal",
-                    "Date": "2023-09-01",
-                    "TradeEntryTime": "09:21:00",
-                    "TradeEntryPrice": 194.0,
+                    "Date": "2023-09-07",
+                    "TradeEntryTime": "09:33:00",
+                    "TradeEntryPrice": 75.5,
                     "TradeExitTime": "14:09:00",
-                    "TradeExitPrice": 227.29999999999998,
-                    "NetTradePoints": 33.29999999999998
+                    "TradeExitPrice": 84.89999999999999,
+                    "NetTradePoints": 9.399999999999991
                 }
             }
         }

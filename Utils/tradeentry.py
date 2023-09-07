@@ -22,6 +22,7 @@ def process_mpwizard_trades(mpwizard_trades):
     for i in range(len(mpwizard_trades["BUY"])):
         buy_trade = mpwizard_trades["BUY"][i]
         sell_trade = mpwizard_trades["SELL"][i]
+
         
         if broker == "zerodha":
             charges = zerodha_taxes(buy_trade["qty"], buy_trade["avg_prc"], sell_trade["avg_prc"],1)

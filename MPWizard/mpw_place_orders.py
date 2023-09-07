@@ -66,6 +66,8 @@ def place_zerodha_order(trading_symbol, transaction_type, trade_type, strike_pri
     else:
         logging.info(f"Invalid trade type for user {users}.")
         return
+    
+    avg_prc = 0
 
     try:
         entry_margin = round(kite.margins(segment="equity")['available']['live_balance'],2)           
