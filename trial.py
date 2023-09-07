@@ -54,4 +54,33 @@
 #update ChromeDriver
 
 
+# from pya3 import *
+
+# alice = Aliceblue("929016",'NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
+# alice.get_session_id()
+
+# order_id = alice.place_order(transaction_type = TransactionType.Buy,
+#                     instrument =alice.get_instrument_for_fno(exch="NFO",symbol='BANKNIFTY', expiry_date="2023-09-13", is_fut=False,strike=44500, is_CE=False),
+#                     quantity = 15,
+#                     order_type = OrderType.Market,
+#                     product_type = ProductType.Intraday,
+#                     price=0.0,
+#                     trigger_price = 0.0)
+
+                             
+# order_id_value = order_id.get('NOrdNo')
+# print(order_id_value)
+# avg_prc_data = alice.get_order_history(order_id_value)
+# avg_prc = avg_prc_data.get('AvgPrice')
+
+# print(avg_prc)
+
+from pyflowchart import Flowchart
+with open('/Users/amolkittur/Documents/Dev/Strategies/MPWizard/main.py') as f:
+   code = f.read()
+ 
+fc = Flowchart.from_code(code)
+print(fc.flowchart())
+
+# output flowchart code.
 

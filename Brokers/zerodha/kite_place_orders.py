@@ -27,29 +27,31 @@ def place_order(kite, order_details, qty):
         Exception: If the order placement fails.
     """
               
-    if order_details['transaction_type'] == 'BUY':
+    transaction_type = order_details.get('transaction_type')
+    if transaction_type == 'BUY':
         transaction_type = kite.TRANSACTION_TYPE_BUY
-    elif order_details['transaction_type'] == 'SELL':
+    elif transaction_type == 'SELL':
         transaction_type = kite.TRANSACTION_TYPE_SELL
-    
-    if order_details['order_type'] == 'Stoploss':
+    else:
+        raise ValueError("Invalid transaction_type in order_details")
+
+    order_type_value = order_details.get('order_type')
+    if order_type_value == 'Stoploss':
         order_type = kite.ORDER_TYPE_SL
-    elif order_details['order_type'] == 'Market':
-        order_type = kite.ORDER_TYPE_MARKET   
+    elif order_type_value == 'Market':
+        order_type = kite.ORDER_TYPE_MARKET
+    else:
+        raise ValueError("Invalid order_type in order_details")
     
     avg_prc = 0.0
-    limit_prc = 0.0 
-    trigger_price = None   
-
-    if 'limit_prc' in order_details:      
-        limit_prc = round(float(order_details['limit_prc']),1)
-        trigger_price = round((float(order_details['limit_prc'])+1.00),1) 
+    limit_prc = order_details.get('limit_prc', 0.0)
+    trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
     
     try:
         order_id = kite.place_order(
             variety=kite.VARIETY_REGULAR,
             exchange=kite.EXCHANGE_NFO,
-            price=limit_prc,
+            price=float(limit_prc),
             tradingsymbol=order_details['tradingsymbol'],
             transaction_type=transaction_type, 
             quantity=qty,
@@ -59,11 +61,14 @@ def place_order(kite, order_details, qty):
         )
         logging.info(f"Order placed. ID is: {order_id}")
         
+        # Safely fetch the order history.
         order_history = kite.order_history(order_id=order_id)
-        for i in order_history:
-            if i['status'] == 'COMPLETE':
-                avg_prc = i['average_price']
+        for order in order_history:
+            if order.get('status') == 'COMPLETE':
+                avg_prc = order.get('average_price', 0.0)
                 break  # Exit the loop once you find the completed order
+        if avg_prc == 0.0:
+            raise Exception("Order completed but average price not found.")
 
         return order_id, avg_prc
     
@@ -98,8 +103,19 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
         qty = get_quantity(user_details, strategy, order_details['tradingsymbol'],'zerodha')
     
     order_details['qty'] = qty
-    order_id, avg_price = place_order(kite, order_details, qty)
-    log_order(order_id, avg_price, order_details, user_details,qty, strategy)
+    try:
+        order_id, avg_price = place_order(kite, order_details, qty)
+    except TypeError:
+        print("Failed to place the order and retrieve the order ID and average price.")
+        # You can set default or fallback values if needed
+        order_id = None
+        avg_price = 0.0
+    
+    try:
+        log_order(order_id, avg_price, order_details, user_details,qty, strategy)
+    except Exception as e:
+        print(f"Failed to log the order: {e}")
+        
     return order_id, avg_price
         
         

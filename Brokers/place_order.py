@@ -34,6 +34,7 @@ def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
     )
     
     users_to_trade = get_strategy_users(strategy)
+    token_added = False
     
     for broker,user in users_to_trade:
         if broker == 'zerodha':
@@ -70,14 +71,15 @@ def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
             target = round((float(avg_prc[1]) + (order_details['stoploss_points']/2)))
             print(f"Target is {target}")
             print(f"Limit price is {limit_prc}")
-            monitor.add_token(token, target, limit_prc,order_func)
             
+             # Add token only if it's not added yet
+            if not token_added:
+                monitor.add_token(token, target, limit_prc, order_func)
+                token_added = True  # Update the flag to indicate the token was added
+                            
     if not monitor:
         monitor = InstrumentMonitor(callback=partial(modify_orders, monitor=monitor))
     start_monitoring(monitor)                
-    # if not monitor:
-    #     monitor = InstrumentMonitor()
-    # start_monitoring(monitor)
     sleep(10)
 
 def modify_orders(token,monitor=None):
