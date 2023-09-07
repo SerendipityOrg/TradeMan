@@ -87,22 +87,6 @@ def get_ltp():
     strike_prc = round(nifty_ltp['NSE:NIFTY 50']['last_price']/100)*100
     return strike_prc
 
-# get_ltp()
-
-#check the time is greater that 09.20 a.m. run job() or else wait for 09.20 a.m
-# if datetime.datetime.now().time() > parser.parse('09:21').time():
-#     print('Running job()...')
-#     job()
-# else:
-#     schedule.every().day.at("09:19").do(get_ltp)
-#     print('Waiting for 09:19 AM...')
-# # Keep the script running
-#     while True:
-#         # Check whether there's any job scheduled for now
-#         schedule.run_pending()
-#         if datetime.datetime.now().time() > parser.parse('09:19').time():
-#             break
-#         sleep(1)
 
 def time_until(target_time):
     now = datetime.datetime.now()

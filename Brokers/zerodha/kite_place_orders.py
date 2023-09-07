@@ -1,8 +1,11 @@
 import logging
 from kiteconnect import KiteConnect
 from place_order_calc import log_order, get_user_details, get_quantity
-import sys
-sys.path.append(r'C:\Users\user\Desktop\Dev\Utils')
+import sys,os
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..','Utils')
+
+sys.path.append(UTILS_DIR)
 from general_calc import *
 
 kite = None
@@ -34,6 +37,7 @@ def place_order(kite, order_details, qty):
     elif order_details['order_type'] == 'Market':
         order_type = kite.ORDER_TYPE_MARKET   
     
+    avg_prc = 0.0
     limit_prc = 0.0 
     trigger_price = None   
 
@@ -56,7 +60,6 @@ def place_order(kite, order_details, qty):
         logging.info(f"Order placed. ID is: {order_id}")
         
         order_history = kite.order_history(order_id=order_id)
-        avg_prc = None
         for i in order_history:
             if i['status'] == 'COMPLETE':
                 avg_prc = i['average_price']
@@ -90,10 +93,13 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
     user_details,_ = get_user_details(order_details['user'])
     kite = KiteConnect(api_key=user_details['zerodha']['api_key'])
     kite.set_access_token(user_details['zerodha']['access_token'])
+
     if qty is None:
         qty = get_quantity(user_details, strategy, order_details['tradingsymbol'],'zerodha')
+    
+    order_details['qty'] = qty
     order_id, avg_price = place_order(kite, order_details, qty)
-    log_order(order_id, avg_price, order_details, user_details, strategy)
+    log_order(order_id, avg_price, order_details, user_details,qty, strategy)
     return order_id, avg_price
         
         

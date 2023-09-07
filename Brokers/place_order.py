@@ -93,7 +93,7 @@ def modify_orders(token,monitor=None):
                 'token': order_details['tradingsymbol'],
                 'target': token_data['target'],
                 'limit_prc': token_data['limit_prc'],
-                'strategy': 'strategy',
+                'strategy': token_data['strategy'],
                 'trade_type': 'SELL'
             }
     
@@ -101,7 +101,3 @@ def modify_orders(token,monitor=None):
         aliceblue.update_stoploss(monitor_order_func)
     elif order_details['broker'] == 'zerodha':
         zerodha.update_stoploss(monitor_order_func)
-        
-            
-            
-    

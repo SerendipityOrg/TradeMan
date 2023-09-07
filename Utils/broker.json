@@ -30,6 +30,7 @@
             }
         },
         "accounts_to_trade": [
+            "omkar"
         ]
     },
     "aliceblue": {
@@ -132,18 +133,21 @@
             "expected_morning_balance": 39166.83
         },
         "vinod": {
-            "username": "110958",
-            "password": "Vinod@222",
-            "twoFA": "1991",
-            "api_secret": "MsZG6SUDxamKdFGLYSkMxsT2isfqN8ooD0Vgu4jbqCQZJxJm1FGuavrjjdAc2nNGVOrVGqpRTihrPdQmaijx1iWAmqzRHMEagfRh",
-            "app_code": "skGIWlRuysmi9Lj",
-            "api_key": "E08VqCkbrXqaWUnrQapGxA4VfDQVWJfZ9Jxs4nXcnbSoVME1NfnfjvLcWoLpxAE4lUzs5mzTohMThKD6K6GIc9Md3PHuja8IxRuF3Xr15ubIvEkzv4q7PsBxZX05niOA",
-            "totp_access": "SXHHDMKDCNPQUQPQMJQETIDJKUUYGFAZ",
+            "username": "1008309",
+            "password": "K@nnada333",
+            "twoFA": "1990",
+            "api_secret": "qLgKKmriOmDfoxErfNttajTQoTjzjnuXzzsFmJFSWeczJYYvSBGVFyFGppMiYmUmEyLKbWSdTnAqYXjoTqNEKMMBDgInOgpVQzJV",
+            "app_code": "UcBJnUXcaGKCNjg",
+            "api_key": "a5FhPC3QX0KebQlOBPjBzpt621T8lEAAyN7bduK3Qn9fUIhuTZXzM4AOkS4Yp5hRLKBZl4Ji5UiCG9qD4Gjnf1GesVGPyjUurODdBVJjo9AhptVlZ2cfU6pbldOo56fS",
+            "totp_access": "OIRGHCBGHVIXRETMMZYCNJNYHYFMMTYJ",
             "session_id": "RQHuqyIrbGUiVCcMFW2G2tbR72trID52ocqIS32vdi0OUF1ueVZvaGGdtbxHiKdYup3AiH9N4ryMXmvti6JmRGT8rqQQ3QvezpaGfMcd8vlM7GIMk08iSuay6bp9oPfUDNaEFlsKOb6RLWMVFj1FsZiqZeYzzyRxoVXJDnunXHK35az5HeZOoaGXO4zq4hDuAq8BBgqBVf7jGvEtiXGZ8IPVvziDAiUvoQgpHtEMyMREv4o0yydAjQ8CuIoCUNgm",
+            "mobile_number": "+919686357376",
             "percentageRisk": {
                 "MPWizard": 0.025
             },
-            "current_capital": 89960.7
+            "current_capital": 50000,
+            "yesterday_PnL": 687.0699999999999,
+            "expected_morning_balance": 50687.07
         },
         "veena": {
             "username": "AB117607",
@@ -160,7 +164,11 @@
             "current_capital": 90548.36
         },
         "accounts_to_trade": [
-            "vimala"
+            "brijesh",
+            "vinay",
+            "vinod",
+            "sridhar",
+            "venkatesh"
         ]
     }
 }

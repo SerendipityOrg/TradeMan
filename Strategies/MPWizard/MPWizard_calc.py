@@ -80,5 +80,3 @@ def determine_ib_level(ratio):
         return "Medium"
     else:
         return "Big"
-
-print(get_high_low_range_and_update_json())

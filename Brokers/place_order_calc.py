@@ -68,16 +68,3 @@ def retrieve_order_id(user, broker,strategy, trade_type, tradingsymbol):
             return order['order_id']
 
     return None
-
-
-
-
-
-
-
-
-
-
-
-
-

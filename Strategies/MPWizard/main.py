@@ -43,7 +43,7 @@ def main():
     
     # Sleep for the calculated wait time if it's positive
     if wait_time.total_seconds() > 0:
-        time.sleep(wait_time.total_seconds())
+        sleep(wait_time.total_seconds())
     
     # Update the JSON file with high-low range data
     get_high_low_range_and_update_json()

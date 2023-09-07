@@ -1,10 +1,12 @@
 import logging
 from pya3 import *
 import sys
-sys.path.append(r'C:\Users\user\Desktop\Dev\Utils')
-import general_calc
-
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..','Utils')
+
+sys.path.append(UTILS_DIR)
+from general_calc import *
+
 FILE_DIR = os.path.join(CURRENT_DIR,'..',)
 sys.path.append(FILE_DIR)
 from place_order_calc import *
@@ -38,6 +40,7 @@ def place_order(alice, order_details, qty):
     elif order_details['order_type'] == 'Market':
         order_type = OrderType.Market
         
+    avg_prc = 0.0    
     limit_prc = 0.0 
     trigger_price = None   
 
@@ -99,8 +102,6 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
     log_order(order_id, avg_price, order_details, user_details, qty ,strategy)
     return order_id, avg_price
 
-
-
 def update_stoploss(monitor_order_func):
     global alice
     
@@ -124,4 +125,3 @@ def update_stoploss(monitor_order_func):
                     price=new_stoploss,
                     trigger_price = trigger_price)
     
-

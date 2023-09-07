@@ -3,12 +3,14 @@ from dotenv import load_dotenv
 import os 
 import threading
 from kiteconnect import KiteConnect
-import asyncio
 import sys
-sys.path.append(r'C:\Users\user\Desktop\Dev\Utils')
-from general_calc import *
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+UTILS_DIR = os.path.join(CURRENT_DIR, '..', 'Utils')
+
+sys.path.append(UTILS_DIR)
+from general_calc import *
+
 BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
 
 sys.path.append(BROKERS_DIR)
@@ -42,7 +44,7 @@ class InstrumentMonitor:
         self.tokens_to_monitor = {}  # Using a dictionary to store token along with its target and limit price
         self.callback = callback
         
-    def add_token(self, token, target=None, limit_prc=None,order_details = None):
+    def add_token(self, token, target=None, limit_prc=None,order_details = None,strategy = None):
         """Add a token to the monitoring list."""
         if token not in self.tokens_to_monitor:
             print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor}")
@@ -52,7 +54,8 @@ class InstrumentMonitor:
         self.tokens_to_monitor[token] = {
             'target': target,
             'limit_prc': limit_prc,
-            'order_details': order_details
+            'order_details': order_details,
+            'strategy': strategy
         }
         # Print the price_ref from the order_details
         if self.tokens_to_monitor[token] is not None :
@@ -118,9 +121,4 @@ class InstrumentMonitor:
                     
                 #Check if there any open orders for the token at 3:10 pm if yes then cancel the order and sqaure off that order
                 
-                
-                
             sleep(10)
-
-
-

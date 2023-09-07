@@ -23,6 +23,9 @@ import place_order
 sys.path.append(UTILS_DIR)
 import general_calc
 
+sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
+import discordchannels as discord
+
 class OrderMonitor:
     """
     Class to monitor orders and handle trading signals.
@@ -75,7 +78,7 @@ class OrderMonitor:
 
     def _alert_via_telegram(self, message):
         """Send an alert via Telegram."""
-        mpwizard_discord_bot(message)
+        discord.discord_bot(message,"MPWizard")
 
     def _process_instrument(self, ltp, instrument, prev_ltp, message_sent):
         """Process an instrument's data and handle trading signals."""
