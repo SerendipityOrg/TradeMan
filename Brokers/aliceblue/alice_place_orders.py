@@ -73,7 +73,7 @@ def place_order(alice, order_details, qty):
         if avg_prc is None:
             raise Exception("Order placement failed")
         
-        return order_id, avg_prc
+        return order_id, avg_prc # Merge place_order
   
     except Exception as e:
         message = f"Order placement failed: {e}"
@@ -144,4 +144,6 @@ def update_stoploss(monitor_order_func):
                     product_type = ProductType.Intraday,
                     price=new_stoploss,
                     trigger_price = trigger_price)
+    
+    #TODO update using discord when sl is modified
     

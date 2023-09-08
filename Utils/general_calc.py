@@ -125,7 +125,7 @@ def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
     tokens = int(nfo_ins_df["instrument_token"].values[0])
     trading_symbols = nfo_ins_df["tradingsymbol"].values[0]
     trading_symbols_aliceblue = []
-    trading_symbols_aliceblue = Instrument("NFO", tokens, base_symbol, trading_symbols, expiry_date, 50)
+    trading_symbols_aliceblue = Instrument("NFO", tokens, base_symbol, trading_symbols, expiry_date, 50) #TODO: generalize exchange values
     return tokens, trading_symbols, trading_symbols_aliceblue
 
 ##########################append the lot_size to env file ############

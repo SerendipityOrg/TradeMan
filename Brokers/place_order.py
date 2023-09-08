@@ -17,11 +17,12 @@ def start_monitoring(monitor):
     monitor_thread.daemon = True  # This ensures the thread will exit when the main program exits
     monitor_thread.start()
 
+#TODO: write documentation
 def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
     from instrument_monitor import InstrumentMonitor
     
            
-    weeklyexpiry, _ = get_expiry_dates(order_details['base_symbol'])
+    weeklyexpiry, _ = get_expiry_dates(order_details['base_symbol']) # TODO: Process before 10:15 at the start of the script
     
     strike_prc = round_strike_prc(order_details['strike_prc'],order_details['base_symbol'])
     
@@ -84,9 +85,8 @@ def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
 
 def modify_orders(token,monitor=None):
     
-    token_data = monitor.tokens_to_monitor[token] 
+    token_data = monitor.tokens_to_monitor[token] #change monitor to intruMonitor
     order_details = token_data['order_details']
-    print(f"Inside modify_orders for token {token} with LTP")
     
     monitor_order_func = {
                 'user': order_details['user'],

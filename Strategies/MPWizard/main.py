@@ -23,7 +23,7 @@ UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'Utils')
 sys.path.append(UTILS_DIR)
 
 # Import utility functions and classes
-from general_calc import *
+from general_calc import *  #TODO change naming convention
 from instrument import Instrument as instru
 
 # Fetch the list of users to trade with the strategy
@@ -55,7 +55,7 @@ def main():
     instruments = [instru(data) for data in levels_data["indices"]]
     
     # Initialize the OrderMonitor with the users and instruments, then start monitoring
-    order_monitor = OrderMonitor(users=users_to_trade, instruments=instruments)
+    order_monitor = OrderMonitor(users=users_to_trade, instruments=instruments) #TODO Remove users to trade param)
     order_monitor.monitor_index()
 
 

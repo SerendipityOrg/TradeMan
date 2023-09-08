@@ -106,7 +106,7 @@ class InstrumentMonitor:
                 # Check if the target is not None and if LTP has reached or exceeded it
                 if token_data['target'] is not None and ltp >= token_data['target']:
                     print(f"Target reached for token {token}! LTP is {ltp}.")
-                    price_ref = token_data['order_details']['price_ref']
+                    price_ref = token_data['order_details']['price_ref'] # TODO: This is related to MPwizard. Generalize this function
                     token_data['target'] += (price_ref / 2)  # Adjust target by half of price_ref
                     token_data['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
                     place_order.modify_orders(token,monitor=self)
@@ -115,10 +115,10 @@ class InstrumentMonitor:
 
                 # Check if the limit_prc is not None and if LTP has fallen below it
                 elif token_data['limit_prc'] is not None and ltp <= token_data['limit_prc']:
-                    print(f"Limit price reached for token {token}! LTP is {ltp}.")
+                    print(f"Limit price reached for token {token}! LTP is {ltp}.") # TODO: send discord msg after sl
                     #remove the token from the list
                     self.remove_token(token)
                     
-                #Check if there any open orders for the token at 3:10 pm if yes then cancel the order and sqaure off that order
+                # TODO: Check if there any open orders for the token at 3:10 pm if yes then cancel the order and sqaure off that order
                 
             sleep(10)

@@ -6,7 +6,7 @@ import sys
 # Constants and paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BROKERS_DIR = os.path.abspath(os.path.join(CURRENT_DIR, '..', '..', 'Brokers'))
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'Utils')
+UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'Utils') # TODO move these three lines to a general location
 
 # Load environment variables
 mpwizard_json = os.path.abspath(os.path.join(CURRENT_DIR, "MPWizard.json"))
@@ -17,11 +17,11 @@ omkar_json = os.getenv('omkar_json_filepath')
 
 # Append paths to system path
 sys.path.append(BROKERS_DIR)
-from instrument_monitor import *
+from instrument_monitor import * #TODO add proper naming conventions during import
 import place_order 
 
 sys.path.append(UTILS_DIR)
-import general_calc
+import general_calc #TODO add proper naming conventions during import
 
 sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
 import discordchannels as discord
@@ -94,7 +94,7 @@ class OrderMonitor:
         if cross_type and not self.message_sent[name][level_name]:
             mood_data_entry = self._get_mood_data_for_instrument(name)
             if not mood_data_entry:
-                return
+                return #TODO add try exception for all the points of failure.
 
             option_type = self._determine_option_type(cross_type, mood_data_entry)
             if not option_type:
@@ -113,8 +113,8 @@ class OrderMonitor:
             
             place_order.place_order_for_broker("MPWizard", order_details, monitor=self.monitor)
             
-            message = f"{cross_type} at {ltp} for {name}! Trade? Reply 'call' or 'put' or 'pass'"
-            self._alert_via_telegram(message)
+            message = f"{cross_type} at {ltp} for {name}!"
+            self._alert_via_telegram(message) # TODO change this to discord
             self.orders_placed_today += 1
             self.message_sent[name][level_name] = True
         prev_ltp[name] = ltp
@@ -152,7 +152,7 @@ class OrderMonitor:
         message_sent = {
             instrument.get_name(): {level: False for level in instrument.get_trigger_points()}
             for instrument in self.instruments
-        }
+        } # TODO ADD comments for this block
 
         tokens = [str(instrument.get_token()) for instrument in self.instruments]
         monitor = self.monitor
