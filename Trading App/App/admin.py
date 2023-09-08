@@ -57,47 +57,12 @@ if not firebase_admin._apps:
     cred = credentials.Certificate("credentials.json")
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com',
-        'storageBucket': 'gs://trading-app-caf8e.appspot.com'
+        'storageBucket': 'trading-app-caf8e.appspot.com'
     })
 
-# Reference the Firebase Storage bucket
-bucket = storage.bucket()
+    # Initialize variables
+data = []  # This will hold the Excel data
 
-# Function to fetch data from Firebase for a specific client
-def fetch_data_from_firebase(selected_client):
-    blobs = bucket.list_blobs()
-    data = []
-    for blob in blobs:
-        if blob.name == f'{selected_client}.xlsx':
-            # Download the blob into an in-memory bytes object
-            byte_stream = BytesIO()
-            blob.download_to_file(byte_stream)
-            byte_stream.seek(0)
-
-            # Load the Excel workbook from the bytes object
-            wb = openpyxl.load_workbook(byte_stream)
-
-            # Loop through each sheet in the workbook
-            for sheet_name in wb.sheetnames:
-                sheet = wb[sheet_name]
-                column_indices = {}
-                for idx, cell in enumerate(sheet[1]):
-                    column_indices[cell.value] = idx
-
-                for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
-                    strategy = row[column_indices['Strategy']].value
-                    index = row[column_indices['Index']].value
-                    date = row[column_indices['Date']].value
-                    pnl = row[column_indices['PnL']].value
-
-                    data.append({
-                        'strategy': strategy,
-                        'index': index,
-                        'date': date,
-                        'pnl': pnl
-                    })
-            break
-    return data
 
 def login_admin(username, password):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -205,7 +170,7 @@ def select_client():
 
     # If 'Performance Dashboard' is selected, display the dashboard info and return
     if next_selection == 'Performance Dashboard':
-        display_performance_dashboard()
+        display_performance_dashboard(selected_client)
 
 
 def display_profile(selected_client, selected_client_name):
@@ -544,34 +509,134 @@ def display_profile(selected_client, selected_client_name):
                     st.success('Client details updated successfully.')
                 st.session_state.edit_mode = False  # Switch out of edit mode
 
+
 # Function to display performance dashboard
-
-
-def display_performance_dashboard():
-    # CSS style definitions
-    selected = option_menu(None, ["Calendar", "Statistics",  "Graph"],
+def display_performance_dashboard(selected_client):
+   # CSS style definitions
+    selected = option_menu(None, ["Calendar", "Statistics", "Graph"],
                            icons=['calendar', 'file-bar-graph', 'graph-up'],
                            menu_icon="cast", default_index=0, orientation="horizontal",
                            styles={
-        "container": {"padding": "0!important", "background-color": "#fafafa"},
-        "icon": {"color": "orange", "font-size": "25px"},
-        "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
-        "nav-link-selected": {"background-color": "purple"},
-    }
-    )
-
-    # Assuming calendar is supposed to be a string
+                               "container": {"padding": "0!important", "background-color": "#fafafa"},
+                               "icon": {"color": "orange", "font-size": "25px"},
+                               "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
+                               "nav-link-selected": {"background-color": "purple"},
+    })
+    # Calendar functionality
     if selected == "Calendar":
         calendar_options = {
             "editable": "true",
             "navLinks": "true",
-            "initialView": "multiMonthYear"}
+            "initialView": "multiMonthYear"
+        }
 
-        # Assuming you define calendar() function somewhere
-        state = calendar(
-            options=calendar_options,
-            key="multiMonthYear",
-        )
+    # Assuming calendar() returns only the selected date
+    selected_date = calendar(
+        options=calendar_options,
+        key="multiMonthYear",
+    )
+
+    # Convert the first letter of client_username to lowercase
+    client_username = selected_client.get("Username", '')
+    client_username = client_username[0].lower() + client_username[1:]
+    # Construct the Excel file name
+    excel_file_name = f"{client_username}.xlsx"
+
+    # Reference the Firebase Storage bucket
+    bucket = storage.bucket('trading-app-caf8e.appspot.com')
+
+    # List all files in the bucket to verify if the client's Excel file exists
+    blobs = bucket.list_blobs()
+    file_exists = False
+    for blob in blobs:
+        if blob.name == excel_file_name:
+            file_exists = True
+            break
+
+    data = []  # List to store extracted data
+
+    # Proceed only if the file exists
+    if file_exists:
+        # Reference the specific blob (file) in the bucket
+        blob = bucket.blob(excel_file_name)
+
+        # Download the blob into an in-memory bytes object
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
+
+        # Load the Excel workbook from the bytes object
+        wb = openpyxl.load_workbook(byte_stream, data_only=True)
+
+        # Check if the "DTD" sheet exists in the workbook
+        if "DTD" in wb.sheetnames:
+            sheet = wb["DTD"]
+            print(f"Extracting data from sheet: DTD")
+
+            # Get column names and their indices from the first row
+            column_indices = {cell.value: idx for idx,
+                              cell in enumerate(sheet[1])}
+
+            # Loop through each row in the sheet to read specific columns
+            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
+                opening_balance = row[column_indices['Opening Balance']].value
+                mp_wizard = row[column_indices['MP Wizard']].value
+                date = row[column_indices['Date']].value.strftime(
+                    '%Y-%m-%d')  # Format date from Excel
+                amipy = row[column_indices['AmiPy']].value
+                zrm = row[column_indices['ZRM']].value
+                overnight_options = row[column_indices['Overnight Options']].value
+                gross_pnl = row[column_indices['Gross PnL']].value
+                tax = row[column_indices['Tax']].value
+                transaction_amount = row[column_indices['Transaction Amount']].value
+                deposit_withdrawal = row[column_indices['Deposit/Withdrawal']].value
+                # Check if the "Running Balance" column exists in the first row
+                if 'Running Balance' in column_indices:
+                    running_balance = row[column_indices['Running Balance']].value
+                    # Debug print
+                    print(
+                        f"Row {row[0].row}: Running Balance value from Excel: {running_balance}")
+                else:
+                    print("Running Balance column not found!")
+                    running_balance = None
+
+                data.append([date, opening_balance, mp_wizard, gross_pnl, tax,
+                            transaction_amount, deposit_withdrawal, running_balance])
+
+        def format_value(value):
+            print(f"Formatting value: {value}")  # Debug print
+            if value is None:
+                return "N/A"
+            if isinstance(value, str):
+                if value.startswith('='):
+                    return "Formula"
+                try:
+                    return f"₹ {float(value.replace('₹', '').replace(',', '')):,.2f}"
+                except ValueError:
+                    return value
+            else:
+                return f"₹ {value:,.2f}"
+
+        selected_date = st.date_input("Select a Date")
+
+        if selected_date:
+            filtered_data = [record for record in data if record[0]
+                             == selected_date.strftime('%Y-%m-%d')]
+            # Debug print
+            print(f"Filtered data for date {selected_date}: {filtered_data}")
+
+            if filtered_data:
+                st.write("Selected Date Data:")
+                for record in filtered_data:
+                    st.write(f"Opening Balance: {format_value(record[1])}")
+                    st.write(f"MP Wizard: {format_value(record[2])}")
+                    st.write(f"Gross PnL: {format_value(record[3])}")
+                    st.write(f"Tax: {format_value(record[4])}")
+                    st.write(f"Transaction Amount: {format_value(record[5])}")
+                    if record[6] is not None:
+                        st.write(
+                            f"Deposit/Withdrawal: {format_value(record[6])}")
+                    st.write(f"Running Balance: {format_value(record[7])}")
 
 
 def login():
