@@ -15,12 +15,12 @@ from telethon.sync import TelegramClient
 script_dir = os.path.dirname(os.path.realpath(__file__))
 json_dir = os.path.join(script_dir, "users")
 
-
 # Change the standard output encoding to UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-
 # Load user data from the JSON file
+
+
 def load_userdata():
     with open(os.path.join(script_dir, "broker.json")) as f:
         return json.load(f)
@@ -33,15 +33,17 @@ def aliceblue_invested_value(user_data):
     session_id = alice.get_session_id()
     holdings = alice.get_holding_positions()
 
-    if not isinstance(holdings, dict) or 'HoldingVal' not in holdings or not isinstance(holdings['HoldingVal'], list):
-        raise ValueError("Unexpected format for holdings data.")
+    # if not isinstance(holdings, dict) or 'HoldingVal' not in holdings or not isinstance(holdings['HoldingVal'], list):
+    #     raise ValueError("Unexpected format for holdings data.")
 
     invested_value = 0
-    for stock in holdings['HoldingVal']:
-        average_price = float(stock['Price'])
-        quantity = float(stock['HUqty'])
-        invested_value += average_price * quantity
-
+    if holdings.get("stat") == "Not_Ok":
+        invested_value = 0
+    else:
+        for stock in holdings['HoldingVal']:
+            average_price = float(stock['Price'])
+            quantity = float(stock['HUqty'])
+            invested_value += average_price * quantity
     return invested_value
 
 # Calculate invested value for Zerodha user
@@ -69,24 +71,31 @@ def get_invested_value(broker_data, broker, user):
 
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
-    return formatted.replace('₹', '₹ ')
+    return formatted.replace('₹', '₹')
 
 # Generate a morning report message for a user
 
 
 def generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital):
+    # Base message
     message = (
         f"Morning Report for {user} on {formatted_date}:\n\n"
         f"Yesterday's Capital: {custom_format(user_data['current_capital'])}\n"
         f"Yesterday's PnL: {custom_format(user_data['yesterday_PnL'])}\n\n"
         f"Cash Balance: {custom_format(cash_balance)}\n"
-        f"Stocks Invested: {custom_format(invested_value)}\n\n"
+    )
+
+    # Conditionally add the Stocks Invested line5
+    if invested_value and invested_value > 0:
+        message += f"Stocks Invested: {custom_format(invested_value)}\n\n"
+
+    # Continue with the rest of the message
+    message += (
         f"Current Capital: {custom_format(current_capital)}\n\n"
         "Best regards,\nSerendipity Trading Firm"
     )
-    print(message)
-    return message
 
+    return message
 
 
 # Main code execution
@@ -103,7 +112,6 @@ for broker, broker_data in userdata.items():
 
 # Iterate through each user and generate and send report
 for broker, user in user_list:
-    # print(user)
     user_data = userdata[broker][user]
 
     # Calculate investment values
@@ -120,19 +128,20 @@ for broker, user in user_list:
         user, formatted_date, user_data, cash_balance, invested_value, current_capital)
 
     # Print report for debugging purposes
-    # print(message)
+    print(message)
 
     # Load user-specific JSON data (assuming each user has a separate JSON)
     data = load_userdata()
     phone_number = data[broker][user]['mobile_number']
 
     # Save data to broker.json
-    data_to_store = {
-        'Current Capital': current_capital,
-    }
     user_details = data[broker][user]
     user_details["current_capital"] = current_capital
     data[broker][user] = user_details
+
+    # Update the broker.json file
+    with open(os.path.join(script_dir, "broker.json"), "w") as f:
+        json.dump(data, f, indent=4)
 
     # parent_file = os.path.abspath(os.path.join(script_dir, '..'))
     # filepath = os.path.join(parent_file, '+918618221715.session')
