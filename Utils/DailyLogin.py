@@ -66,8 +66,8 @@ user_details_path = os.path.join(script_dir, 'broker.json')
 
 #go outside the folder and then go inside MPWizard folder
 script_dir = os.path.dirname(script_dir)
-mpwizard_json_path = os.path.join(script_dir, 'MPWizard', 'MPWizard.json')
-amipy_json_path = os.path.join(script_dir, 'Amipy', 'AmiPy.json')
+mpwizard_json_path = os.path.join(script_dir, 'Strategies','MPWizard', 'MPWizard.json')
+amipy_json_path = os.path.join(script_dir, 'Strategies','Amipy', 'AmiPy.json')
 
 def calculate_quantity(capital, risk, prc_ref, lot_size):
     if prc_ref == 0:

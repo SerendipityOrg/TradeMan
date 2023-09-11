@@ -7,7 +7,7 @@ import requests
 import json
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-filepath = os.path.join(script_dir, '..', 'Amipy.json')
+filepath = os.path.join(script_dir, 'Amipy.json')
 
 with open(filepath, 'r') as file:
     params = json.load(file)
@@ -96,7 +96,7 @@ def get_option_tokens(base_symbol, expiry_date, strike_prc):
     instruments_df = pd.read_csv(os.path.join(script_dir, '..', '..', 'Utils', 'instruments.csv'))
 
     instruments_df = instruments_df[
-        ["instrument_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike"]
+        ["instrument_token", "exchange_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike"]
     ]
 
     nfo_ins_df = instruments_df[
@@ -108,9 +108,13 @@ def get_option_tokens(base_symbol, expiry_date, strike_prc):
 
     tokens = [256265]
     trading_symbol_list = []
+    exchange_token = []
 
     tokens.append(int(nfo_ins_df['instrument_token'].values[0]))  # CE token
     tokens.append(int(nfo_ins_df['instrument_token'].values[1]))  # PE token
+
+    exchange_token.append(int(nfo_ins_df['exchange_token'].values[0]))  # CE exchange token
+    exchange_token.append(int(nfo_ins_df['exchange_token'].values[1]))  # PE exchange token
 
     trading_symbol_list.append(nfo_ins_df['tradingsymbol'].values[0])  # CE trading symbol
     trading_symbol_list.append(nfo_ins_df['tradingsymbol'].values[1])  # PE trading symbol
@@ -132,6 +136,7 @@ def get_option_tokens(base_symbol, expiry_date, strike_prc):
         & (instruments_df["instrument_type"] == "CE")
     ]
     tokens.append(int(new_token_CE_df['instrument_token'].values[0]))
+    exchange_token.append(int(new_token_CE_df['exchange_token'].values[0]))
 
     # Get tokens for new_token_PE with instrument_type 'PE'
     new_token_PE_df = instruments_df[
@@ -139,17 +144,24 @@ def get_option_tokens(base_symbol, expiry_date, strike_prc):
         & (instruments_df["instrument_type"] == "PE")
     ]
     tokens.append(int(new_token_PE_df['instrument_token'].values[0]))
+    exchange_token.append(int(new_token_PE_df['exchange_token'].values[0]))
 
     trading_symbol_list.append(new_token_CE)  # CE trading symbol
     trading_symbol_list.append(new_token_PE)
     print("Trading symbol: ",trading_symbol_list)
+
+
     exchange = 'NFO'
 
     trading_symbol_aliceblue = []
-    for token, single_trading_symbol in zip(tokens, trading_symbol_list):
+    for token, single_trading_symbol in zip(exchange_token, trading_symbol_list):
         trading_symbol_aliceblue.append(Instrument(exchange, token, base_symbol, single_trading_symbol, expiry_date, 50))
 
     return tokens, trading_symbol_list, trading_symbol_aliceblue
+
+# tokens = get_option_tokens("NIFTY","2023-09-14",19800)
+# print(tokens[2])
+
 
 def callputmergeddf(hist_data,tokens):
     nf_hist_data = hist_data[tokens[0]]
@@ -298,7 +310,7 @@ def supertrend(ma_df):
     result = result[columns_order]
 
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    supertrend_path = os.path.join(script_dir,"..","LiveCSV","amipy_supertrend.csv")
+    supertrend_path = os.path.join(script_dir,"LiveCSV","amipy_supertrend.csv")
 
     # supertrend_path = os.path.join("Amipy/LiveCSV", "amipy_supertrend.csv")
     result.to_csv(supertrend_path, index=True)

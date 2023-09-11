@@ -17,15 +17,24 @@ def get_user_details(user):
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, avg_price, order_details, user_details,qty,strategy):
     user, json_path = get_user_details(order_details['user'])
+    if 'strike_price' in order_details:
+        strike_prc = order_details['strike_price']
+    else:
+        strike_prc = order_details['tradingsymbol'].name[-7:-2]
+
     order_dict = {
         "order_id": order_id,
         "trade_type": order_details['transaction_type'],
         "avg_prc": avg_price,
         "qty": order_details['qty'],
         "timestamp": str(dt.datetime.now().time()),
-        "strike_price": order_details['tradingsymbol'].name[-7:-2],
+        "strike_price": strike_prc,
         "tradingsymbol": order_details['tradingsymbol'].name
     }
+
+    if 'direction' in order_details:
+        order_dict['direction'] = order_details['direction']
+
     broker = list(user.keys())[0]
     broker = user_details.setdefault(broker, {})
     orders = broker.setdefault('orders', {})
@@ -36,7 +45,7 @@ def log_order(order_id, avg_price, order_details, user_details,qty,strategy):
     log_details = write_json_file(json_path, user_details)
     
 
-def get_quantity(user_data, strategy, tradingsymbol,broker):
+def get_quantity(user_data, broker, strategy, tradingsymbol=None):
     strategy_key = f"{strategy}_qty"
     user_data_specific = user_data[broker]  # Access the specific user's data
     

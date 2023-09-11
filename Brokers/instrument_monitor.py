@@ -12,11 +12,13 @@ sys.path.append(UTILS_DIR)
 from general_calc import *
 
 BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
-
 sys.path.append(BROKERS_DIR)
 import aliceblue.alice_place_orders as aliceblue
 import zerodha.kite_place_orders as zerodha
 import place_order as place_order
+
+sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
+import discordchannels as discord
 
 env_file_path = os.path.join(CURRENT_DIR, '.env')
 env_file_path = os.path.abspath(env_file_path)
@@ -36,7 +38,7 @@ class InstrumentMonitor:
     
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls._instance, cls):
-            cls._instance = super(InstrumentMonitor, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super(InstrumentMonitor, cls).__new__(cls)
         return cls._instance
     
     def __init__(self, callback=None):
@@ -112,6 +114,8 @@ class InstrumentMonitor:
                     place_order.modify_orders(token,monitor=self)
                     print(f"New target for token {token} is {token_data['target']}.")
                     print(f"New limit price for token {token} is {token_data['limit_prc']}.")
+                    message = f"Order modified! new target {token_data['target']}! and new stoploss is {token_data['limit_prc']} ."
+                    discord.discord_bot(message,token_data['strategy'])
 
                 # Check if the limit_prc is not None and if LTP has fallen below it
                 elif token_data['limit_prc'] is not None and ltp <= token_data['limit_prc']:

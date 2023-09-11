@@ -17,11 +17,11 @@ omkar_json = os.getenv('omkar_json_filepath')
 
 # Append paths to system path
 sys.path.append(BROKERS_DIR)
-from instrument_monitor import * #TODO add proper naming conventions during import
-import place_order 
+import instrument_monitor as instrument_monitor
+import place_order as place_order
 
 sys.path.append(UTILS_DIR)
-import general_calc #TODO add proper naming conventions during import
+import general_calc as general_calc    
 
 sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
 import discordchannels as discord
@@ -30,11 +30,10 @@ class OrderMonitor:
     """
     Class to monitor orders and handle trading signals.
     """
-    def __init__(self, users, instruments):
-        self.monitor = InstrumentMonitor()
+    def __init__(self, instruments):
+        self.monitor = instrument_monitor.InstrumentMonitor()
         self.omkar = self._load_json_data(omkar_json)
         self.mood_data = self._load_json_data(mpwizard_json)
-        self.users = users
         self.instruments = instruments
         self.orders_placed_today = 0
         self.max_orders_per_day = int(max_orders)
@@ -49,7 +48,7 @@ class OrderMonitor:
     @staticmethod
     def _load_json_data(filename):
         """Load JSON data from a given filename."""
-        return read_json_file(filename)
+        return general_calc.read_json_file(filename)
 
     def _reset_daily_counters(self):
         """Reset daily counters for orders."""
@@ -76,10 +75,6 @@ class OrderMonitor:
                 return "DownCross", level_name
         return None, None
 
-    def _alert_via_telegram(self, message):
-        """Send an alert via Telegram."""
-        discord.discord_bot(message,"MPWizard")
-
     def _process_instrument(self, ltp, instrument, prev_ltp, message_sent):
         """Process an instrument's data and handle trading signals."""
         if self.orders_placed_today >= self.max_orders_per_day:
@@ -101,20 +96,22 @@ class OrderMonitor:
                 return
             
             price_ref = self.get_weekday_price_ref()
+            strikeprc = general_calc.round_strike_prc(ltp,name)
             
             print(f"{cross_type} at {ltp} for {name}!")
             
             order_details = {
+                "transcation":"BUY",
                 "base_symbol" : name,
                 "option_type" : option_type,
-                "strike_prc" : ltp,
+                "strike_prc" : strikeprc,
                 "stoploss_points" : price_ref
             }
             
             place_order.place_order_for_broker("MPWizard", order_details, monitor=self.monitor)
             
             message = f"{cross_type} at {ltp} for {name}!"
-            self._alert_via_telegram(message) # TODO change this to discord
+            discord.discord_bot(message,"MPWizard") 
             self.orders_placed_today += 1
             self.message_sent[name][level_name] = True
         prev_ltp[name] = ltp
@@ -152,13 +149,13 @@ class OrderMonitor:
         message_sent = {
             instrument.get_name(): {level: False for level in instrument.get_trigger_points()}
             for instrument in self.instruments
-        } # TODO ADD comments for this block
+        } # This is will check if the message/ signal has been triggered for that level or not.
 
         tokens = [str(instrument.get_token()) for instrument in self.instruments]
-        monitor = self.monitor
+        ltp_monitor = self.monitor
         for token in tokens:
-            monitor.add_token(token)
-        monitor.callback = process_ltps
+            ltp_monitor.add_token(token)
+        ltp_monitor.callback = process_ltps
 
         while True:
             if dt.date.today() != self.today_date:
@@ -167,5 +164,5 @@ class OrderMonitor:
                     instrument.get_name(): {level: False for level in instrument.get_trigger_points()}
                     for instrument in self.instruments
                 }
-            monitor.monitor()      
+            ltp_monitor.monitor()      
             sleep(10)

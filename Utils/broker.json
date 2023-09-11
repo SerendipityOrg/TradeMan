@@ -10,7 +10,7 @@
             "mobile_number": "+919902106162",
             "percentageRisk": {
                 "AmiPy": 250000,
-                
+                "MPWizard": 0.01,
                 "ZRM": 0.01,
                 "overnight_option": 200000
             },
@@ -57,8 +57,7 @@
             "totp_access": "DTGZGSGONNQWEGFXSTGKKZMHJUVFFYPX",
             "session_id": "MGQ99M2yoMOY7t2UUGzeXkd85338B6e1TAq9iH9KdyFzuOSSfJ4X1iyO4xNYtHG4WGDHoReUgLdFaDWlrl31cVlyRH5IzFyVHVUu8zFECysb7Cis8CgpeHGLCzaX3MenF2dfsCMSYXqEXQqLDyeDj2bc1kT2UQCqK8kXIu0gmGfJPofW9i6xLaX6xMtceSFvctknVXjSFeu7u3jSuxMu0bvmx0u49slcLBjSsxT6JnKxUngOLakPKo8b8xYjJtJ2",
             "percentageRisk": {
-                "Siri": 100000,
-                "MPWizard": 0.025
+                "Siri": 100000
             },
             "current_capital": 47345.41
         },
@@ -163,12 +162,25 @@
             },
             "current_capital": 90548.36
         },
+        "amol": {
+            "username": "AB068818",
+            "password": "K@nnada333",
+            "twoFA": "1995",
+            "api_secret": "pyhfGRbPJJx6BaB2mNfCxMnmWWn7OqMkioVeSn31ujhyxhfGx3C3FTaqZ7RYU6gmC9mx1BNZ3BtHRW83zR86n6agpgDGU0j5g5Ur",
+            "app_code": "2ks6EmUzV12vAOz",
+            "api_key": "CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y",
+            "totp_access": "ARIAHUQYKPMKAASEOVNVZXCKOZGXBHPK829355",
+            "session_id": "yia7Z9oak0r1ayUjvJO6ix5a9xgXTpQaRjaCaMXaIhuouleUjcBulrPePLaMyVVeuMWcga57vpp3EP6VfvJq8W4VQJlb2V7BW3mUEvZy3ZkR3zjvPh5QBilv5b5itBtTvAVyW8XulngmXDdpx6oOMCidYqTIf4R8YlmkVrJ7b3aeylqseDsWheJmehcyKS8NHPJSLfbyrg9TtjM5N6PR7KLQPofSvxQ1MWveja9RJW7FALqfY1AXK1sP9LddEzW8",
+            "percentageRisk": {
+                "AmiPy": 250000,
+                "MPWizard": 0.01,
+                "Siri": 0.01,
+                "overnight_option": 200000
+            },
+            "current_capital": 90548.36
+        },
         "accounts_to_trade": [
-            "brijesh",
-            "vinay",
-            "vinod",
-            "sridhar",
-            "venkatesh"
+            "amol"
         ]
     }
 }

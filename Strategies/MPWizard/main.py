@@ -1,5 +1,5 @@
 # Import necessary libraries and modules
-from monitor import OrderMonitor
+from MPWizard_monitor import OrderMonitor
 import os,sys
 from dotenv import load_dotenv
 from MPWizard_calc import get_high_low_range_and_update_json, get_average_range_and_update_json
@@ -23,11 +23,10 @@ UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'Utils')
 sys.path.append(UTILS_DIR)
 
 # Import utility functions and classes
-from general_calc import *  #TODO change naming convention
+import general_calc as general_calc
 from instrument import Instrument as instru
 
 # Fetch the list of users to trade with the strategy
-users_to_trade = get_strategy_users('MPWizard')
 
 def main():
     """
@@ -49,13 +48,13 @@ def main():
     get_high_low_range_and_update_json()
     
     # Read the levels data from the JSON file
-    levels_data = read_json_file(mpwizard_json)
+    levels_data = general_calc.read_json_file(mpwizard_json)
     
     # Create a list of Instrument objects from the levels data
     instruments = [instru(data) for data in levels_data["indices"]]
     
     # Initialize the OrderMonitor with the users and instruments, then start monitoring
-    order_monitor = OrderMonitor(users=users_to_trade, instruments=instruments) #TODO Remove users to trade param)
+    order_monitor = OrderMonitor(instruments=instruments) 
     order_monitor.monitor_index()
 
 

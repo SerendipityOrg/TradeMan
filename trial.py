@@ -75,12 +75,14 @@
 
 # print(avg_prc)
 
-from pyflowchart import Flowchart
-with open('/Users/amolkittur/Documents/Dev/Strategies/MPWizard/main.py') as f:
-   code = f.read()
- 
-fc = Flowchart.from_code(code)
-print(fc.flowchart())
 
 # output flowchart code.
 
+
+from kiteconnect import KiteConnect
+from pprint import pprint
+kite = KiteConnect(api_key='6b0dp5ussukmo67h')
+kite.set_access_token('8eNVAA7XVfuRJJcHG1Oqm15eYYHs7nxS')
+
+order_history = kite.order_history(order_id='230911500362923')
+pprint(order_history)

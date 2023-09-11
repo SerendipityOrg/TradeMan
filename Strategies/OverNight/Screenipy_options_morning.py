@@ -1,80 +1,74 @@
-import os, sys
-import urllib
-import numpy as np
-import keras
-import yfinance as yf
-import joblib
-import requests
-from Utils.place_orders import *
-from Utils.calculations import *
-from kiteconnect import KiteConnect
-import time
+import os
+import sys
+from dotenv import load_dotenv
 
-def load_credentials(filepath):
-    with open(filepath, 'r') as file:
-        return json.load(file)
+# Set up paths and import modules
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BROKERS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'Brokers')
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-broker_filepath = os.path.join(script_dir, '..', 'Utils', 'broker.json')
-users_to_trade = get_overnight_users(broker_filepath)
-future_expiry = get_future_expiry_date()
-expiry = get_expiry_date()
+sys.path.append(os.path.join(CURRENT_DIR, '..', '..', 'Utils'))
+import general_calc as gc
 
-for broker, user in users_to_trade:
-    print(f"Trading for {user} on {broker}")
-    user_filepath = os.path.join(script_dir, '..', 'Utils','users', f'{user}.json')
-    order_details = load_credentials(user_filepath)
-    trade_details = order_details[broker]["orders"]["Overnight_Options"]["Afternoon"]
+sys.path.append(BROKERS_DIR)
+import place_order
+import place_order_calc as place_order_calc
 
-    for item in trade_details:      
-        if item['direction'] == 'BEARISH':
-            direction = "BEARISH"
-            strike_prc = item["strike_price"]
-            qty = item["qty"]
-            if strike_prc == "0":
-                future_tokens, future_trading_symbol, future_trading_symbol_aliceblue = get_future_tokens(future_expiry)
-            else:
-                option_tokens, option_trading_symbol, option_trading_symbol_aliceblue = get_option_tokens(base_symbol='NIFTY', expiry_date=expiry, option_type='CE',strike_prc=strike_prc)
-        elif item['direction'] == 'BULLISH':
-            direction = "BULLISH"
-            strike_prc = item["strike_price"]
-            qty = item["qty"]
-            if strike_prc == "0":
-                future_tokens, future_trading_symbol, future_trading_symbol_aliceblue = get_future_tokens(future_expiry)
-            else:
-                option_tokens, option_trading_symbol, option_trading_symbol_aliceblue = get_option_tokens(base_symbol='NIFTY', expiry_date=expiry, option_type='PE',strike_prc=strike_prc)
-        
-    if direction == "BEARISH":
-        if broker == 'aliceblue':
-                future_avgprc = place_aliceblue_order(future_trading_symbol_aliceblue[0],'BUY',"Morning","0",user,direction,qty)
-                option_avgprc = place_aliceblue_order(option_trading_symbol_aliceblue[0],'SELL','Morning',strike_prc,user,direction,qty)
-        elif broker == 'zerodha':
-                future_avgprc = place_zerodha_order(future_trading_symbol[0],'BUY',"Morning","0",user,direction,qty)
-                option_avgprc = place_zerodha_order(option_trading_symbol[0],'SELL','Morning',strike_prc,user,direction,qty)
-    elif direction == "BULLISH":
-        if broker == 'aliceblue':
-                future_avgprc = place_aliceblue_order(future_trading_symbol_aliceblue[0],'SELL','Morning',"0",user,direction,qty)
-                option_avgprc = place_aliceblue_order(option_trading_symbol_aliceblue[0],'SELL','Morning',strike_prc,user,direction,qty)
-        elif broker == 'zerodha':
-                future_avgprc = place_zerodha_order(future_trading_symbol[0],'SELL','Morning',"0",user,direction,qty)
-                option_avgprc = place_zerodha_order(option_trading_symbol[0],'SELL','Morning',strike_prc,user,direction,qty)
-         
+dotenv_path = os.path.join(BROKERS_DIR, '.env')
+load_dotenv(dotenv_path)
 
+index = os.getenv('overnight_index')
 
-        
-            
+def determine_option_and_transaction(direction, strike_price):
+    """Determine the option type and transaction type based on direction and strike price."""
+    if direction == 'BEARISH':
+        option_type = 'CE' if strike_price != 0 else 'FUT'
+        transaction = "SELL" if strike_price != 0 else "BUY"
+    elif direction == 'BULLISH':
+        option_type = 'PE' if strike_price != 0 else 'FUT'
+        transaction = "SELL"
     
+    return option_type, transaction
+
+def fetch_order_details_for_user(user, broker):
+    """Get order details for given user and broker."""
+    json_data, _ = place_order_calc.get_user_details(user)
+    trade_details = json_data[broker]["orders"]["overnight_option"]["BUY"]
+
+    order_details_opt, order_details_future = None, None
+    for trade in trade_details:
+        strike_price = trade["strike_price"]
+        direction = trade['direction']
+        option_type, transaction_type = determine_option_and_transaction(direction, strike_price)
+
+        if option_type != 'FUT':
+            order_details_opt = {
+                "direction": direction,
+                "base_symbol": index,
+                "option_type": option_type,
+                "strike_prc": strike_price,
+                "transcation": transaction_type
+            }
+        else:
+            order_details_future = {
+                "direction": direction,
+                "base_symbol": index,
+                "option_type": 'FUT',
+                "strike_prc": 0,
+                "transcation": transaction_type
+            }
+
+    return order_details_opt, order_details_future
+
+def main():
+    # Taking the first user and broker
+    broker, user = gc.get_strategy_users("overnight_option")[0]
     
+    order_details_opt, order_details_future = fetch_order_details_for_user(user, broker)
+    print("Option Details:", order_details_opt)
+    print("Future Details:", order_details_future)
 
+    place_order.place_order_for_broker("overnight_option", order_details_future)
+    place_order.place_order_for_broker("overnight_option", order_details_opt)
 
-
-
-    
-    
-
-        
-
-
-    
-
-    
+if __name__ == "__main__":
+    main()

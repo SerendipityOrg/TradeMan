@@ -5,39 +5,29 @@ import keras
 import yfinance as yf
 import joblib
 import requests
-from Utils.place_orders import *
-from Utils.calculations import *
 from kiteconnect import KiteConnect
 import time
+from dotenv import load_dotenv
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-broker_filepath = os.path.join(script_dir, '..', 'Utils', 'broker.json')
 
-users_to_trade = get_overnight_users(broker_filepath)
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-zerodha_omkar_filepath = os.path.join(script_dir, '..', 'Utils', 'users/omkar.json')
+# Get the directory of the current script
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-with open(zerodha_omkar_filepath, 'r') as file:
-            omkar = json.load(file) 
+# Navigate to the Brokers and Utils directories relative to the current script's location
+BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
 
-def get_strikeprc():
-    zerodha_account = omkar.get('zerodha', {})
-    api_key = zerodha_account.get('api_key')
-    access_token = zerodha_account.get('access_token')
-    kite = KiteConnect(api_key=api_key)
-    kite.set_access_token(access_token)
-    ltp_data = kite.ltp(str(256265))  # Convert token to string
-    ltp = ltp_data[str(256265)]['last_price']
-    strike_prc = round(ltp / 50) * 50 
-    return strike_prc
+dotenv_path = os.path.join(BROKERS_DIR, '.env')
+load_dotenv(dotenv_path)
 
-future_expiry = get_future_expiry_date()
-expiry = get_expiry_date()
-strikeprc = get_strikeprc()
+# Import necessary modules
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'Utils'))
+import general_calc as gc
 
-bull_strikeprc = strikeprc - 150
-bear_strikeprc = strikeprc + 150
+
+sys.path.append(BROKERS_DIR)
+import place_order 
+
 
 class SuppressOutput: 
     def __init__(self,suppress_stdout=False,suppress_stderr=False): 
@@ -59,13 +49,22 @@ class SuppressOutput:
         if self.suppress_stderr: 
             sys.stderr = self._stderr
 
-try:
-    proxyServer = urllib.request.getproxies()['http']
-except KeyError:
-    proxyServer = ""
+
+index = os.getenv('overnight_index')
+
+
+def get_strikeprc():
+    file_path = os.getenv('omkar_json_filepath')
+    omkar_details = gc.read_json_file(file_path)
+    kite = KiteConnect(api_key=omkar_details['zerodha']['api_key'])
+    kite.set_access_token(omkar_details['zerodha']['access_token'])
+    token = os.getenv('nifty_token')
+    ltp_data = kite.ltp(token)  # Convert token to string
+    ltp = ltp_data[token]['last_price']
+    return gc.round_strike_prc(ltp,index)
 
 def fetchLatestNiftyDaily(proxyServer=None):
-    data = yf.download(
+    return yf.download(
             tickers="^NSEI",
             period='5d',
             interval='1d',
@@ -73,7 +72,6 @@ def fetchLatestNiftyDaily(proxyServer=None):
             progress=False,
             timeout=10
         )
-    return data
 
 def getNiftyModel(proxyServer=None):
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -147,34 +145,44 @@ def getNiftyPrediction(data, proxyServer):
         sug = "Stay Bullish!"
     return out
 
+
+strikeprc = get_strikeprc()
+
+bull_strikeprc = strikeprc - 150
+bear_strikeprc = strikeprc + 150
+
+try:
+    proxyServer = urllib.request.getproxies()['http']
+except KeyError:
+    proxyServer = ""
+
 prediction = getNiftyPrediction(
                 data=fetchLatestNiftyDaily(proxyServer=proxyServer), 
                 proxyServer=proxyServer
             )
+option_type = 'CE' if prediction == 'BEARISH' else 'PE'
+strikeprc = bear_strikeprc if prediction == 'BEARISH' else bull_strikeprc
+transaction_type = 'SELL' if prediction == 'BEARISH' else 'BUY'
 
-for broker,user in users_to_trade:
-    print(f"Trading for {broker} user {user}")
-    if prediction == 'BEARISH':
-        future_tokens, future_trading_symbol, future_trading_symbol_aliceblue = get_future_tokens(future_expiry)
-        option_tokens, option_trading_symbol, option_trading_symbol_aliceblue = get_option_tokens(base_symbol='NIFTY', expiry_date=expiry, option_type='CE',strike_prc=bear_strikeprc)
-        if broker == 'aliceblue':
-            future_avgprc = place_aliceblue_order(future_trading_symbol_aliceblue[0],'SELL',"Afternoon","0",user,"BEARISH")
-            option_avgprc = place_aliceblue_order(option_trading_symbol_aliceblue[0],'BUY','Afternoon',bear_strikeprc,user,"BEARISH")
-        elif broker == 'zerodha':
-            future_avgprc = place_zerodha_order(future_trading_symbol[0],'SELL',"Afternoon","0",user,"BEARISH")
-            option_avgprc = place_zerodha_order(option_trading_symbol[0],'BUY','Afternoon',bear_strikeprc,user,"BEARISH")
-        print("[-] Nifty is predicted to be Bearish!")
-    elif prediction == 'BULLISH':
-        future_tokens, future_trading_symbol, future_trading_symbol_aliceblue = get_future_tokens(future_expiry)
-        option_tokens, option_trading_symbol, option_trading_symbol_aliceblue = get_option_tokens(base_symbol='NIFTY', expiry_date=expiry, option_type='PE',strike_prc=bull_strikeprc)
-        if broker == 'aliceblue':
-            future_avgprc = place_aliceblue_order(future_trading_symbol_aliceblue[0],'BUY','Afternoon',"0",user,"BULLISH")
-            option_avgprc = place_aliceblue_order(option_trading_symbol_aliceblue[0],'BUY','Afternoon',bull_strikeprc,user,"BULLISH")
-        elif broker == 'zerodha':
-            future_avgprc = place_zerodha_order(future_trading_symbol[0],'BUY','Afternoon',"0",user,"BULLISH")
-            option_avgprc = place_zerodha_order(option_trading_symbol[0],'BUY','Afternoon',bull_strikeprc,user,"BULLISH")
-        print("[+] Nifty is predicted to be Bullish!")
+order_details_opt = {
+    "base_symbol": index,
+    "option_type": option_type,
+    "strike_prc": strikeprc,
+    "transcation":"BUY",
+    "direction": prediction
+}
+order_details_future = {
+    "base_symbol": index,
+    "option_type": 'FUT',
+    "strike_prc": 0,
+    "transcation": transaction_type,
+    "direction": prediction
+}
 
+orders_to_place = [
+    ('overnight_option', order_details_future),
+    ('overnight_option', order_details_opt)
+]
 
-#####things to do
-#log the orders
+for strategy, order_details in orders_to_place:
+    place_order.place_order_for_broker(strategy, order_details)

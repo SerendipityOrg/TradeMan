@@ -1,6 +1,5 @@
 import logging
 from kiteconnect import KiteConnect
-from place_order_calc import log_order, get_user_details, get_quantity
 import sys,os
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..','Utils')
@@ -8,9 +7,16 @@ UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..','Utils')
 sys.path.append(UTILS_DIR)
 from general_calc import *
 
+FILE_DIR = os.path.join(CURRENT_DIR,'..',)
+sys.path.append(FILE_DIR)
+from place_order_calc import *
+
+sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
+import discordchannels as discord
+
 kite = None
 
-def place_order(kite, order_details, qty):
+def place_order(kite, strategy, order_details, qty):
 
     """
     Place an order with Zerodha broker.
@@ -43,22 +49,29 @@ def place_order(kite, order_details, qty):
     else:
         raise ValueError("Invalid order_type in order_details")
     
+    if strategy == 'overnight_option':
+        product_type = kite.PRODUCT_NRML
+    else:
+        product_type = kite.PRODUCT_MIS
+    
     avg_prc = 0.0
     limit_prc = order_details.get('limit_prc', 0.0)
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
-    
+    print(strategy, order_details, qty)
+    print("type",type(qty))
     try:
         order_id = kite.place_order(
             variety=kite.VARIETY_REGULAR,
             exchange=kite.EXCHANGE_NFO,
-            price=float(limit_prc),
+            price=limit_prc,
             tradingsymbol=order_details['tradingsymbol'],
             transaction_type=transaction_type, 
-            quantity=qty,
+            quantity=int(qty),
             trigger_price=trigger_price,
-            product=kite.PRODUCT_MIS,
+            product=product_type,
             order_type=order_type
         )
+
         logging.info(f"Order placed. ID is: {order_id}")
         
         # Safely fetch the order history.
@@ -69,11 +82,18 @@ def place_order(kite, order_details, qty):
                 break  # Exit the loop once you find the completed order
         if avg_prc == 0.0:
             raise Exception("Order completed but average price not found.")
+        
+        if strategy == 'Siri':
+            try:
+                msg = f"Avgprc is {avg_prc}"
+                discord.discord_bot(msg,"siri")
+            except Exception as e:
+                print(f"Discord bot failed: {e}") 
 
         return order_id, avg_prc
     
     except Exception as e:
-        message = f"Order placement failed: {e}"
+        message = f"Order placement failed: {e} for {order_details['user']}"
         print(message)
         # general_calc.discord_bot(message)
         return None
@@ -100,11 +120,11 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
     kite.set_access_token(user_details['zerodha']['access_token'])
 
     if qty is None:
-        qty = get_quantity(user_details, strategy, order_details['tradingsymbol'],'zerodha')
+        qty = get_quantity(user_details, 'zerodha', strategy, order_details['tradingsymbol'])
     
     order_details['qty'] = qty
     try:
-        order_id, avg_price = place_order(kite, order_details, qty)
+        order_id, avg_price = place_order(kite, strategy, order_details, qty)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
         # You can set default or fallback values if needed
@@ -119,12 +139,19 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
     return order_id, avg_price
         
         
-def update_stoploss(order_id,trading_symbol, new_stoploss):
+def update_stoploss(monitor_order_func):
     global kite
     
-    new_stoploss = round(float(new_stoploss),1)
+    order_id = retrieve_order_id(
+            monitor_order_func.get('user'),
+            monitor_order_func.get('broker'),
+            monitor_order_func.get('strategy'),
+            monitor_order_func.get('trade_type'),
+            monitor_order_func.get('token').name
+        )
+
+    new_stoploss = round(float(monitor_order_func.get('target')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
-    
     
     order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
                                 order_id=order_id, 

@@ -3,6 +3,7 @@ import zerodha.kite_place_orders as zerodha
 import os
 import sys,threading
 from functools import partial
+from datetime import datetime
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,22 +19,33 @@ def start_monitoring(monitor):
     monitor_thread.start()
 
 #TODO: write documentation
-def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
+def place_order_for_broker( strategy, order_details=None, qty =None,monitor = None, trading_symbol = None):
     from instrument_monitor import InstrumentMonitor
-    
-           
-    weeklyexpiry, _ = get_expiry_dates(order_details['base_symbol']) # TODO: Process before 10:15 at the start of the script
-    
-    strike_prc = round_strike_prc(order_details['strike_prc'],order_details['base_symbol'])
-    
-    # Fetch tokens and trading symbols
-    token, trading_symbol_list, trading_symbol_aliceblue = get_tokens(
-        order_details['base_symbol'], 
-        weeklyexpiry, 
-        order_details['option_type'], 
-        strike_prc
-    )
-    
+
+    if trading_symbol is not None:
+        trading_symbol_list, trading_symbol_aliceblue = trading_symbol
+    else:
+        weeklyexpiry, monthlyexpiry = get_expiry_dates(order_details['base_symbol']) # TODO: Process before 10:15 at the start of the script
+
+        today_is_thursday = datetime.now().weekday() == 3  # 0 is Monday, 3 is Thursday
+        if today_is_thursday:
+            next_week_expiry = get_next_week_expiry()
+        
+        if strategy == "overnight_option" and order_details['strike_prc'] == 0:
+            expiry = monthlyexpiry
+        elif strategy == "overnight_option" and datetime.now().weekday() == 3 and order_details['strike_prc'] != 0:
+            expiry = next_week_expiry
+        else:
+            expiry = weeklyexpiry
+
+        token, trading_symbol_list, trading_symbol_aliceblue = get_tokens(
+                                                                order_details['base_symbol'], 
+                                                                expiry, 
+                                                                order_details['option_type'], 
+                                                                order_details['strike_prc']
+                                                            )
+        
+
     users_to_trade = get_strategy_users(strategy)
     token_added = False
     
@@ -47,12 +59,20 @@ def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
         else:
             print(f"Unknown broker: {broker}")
             return
-        avg_prc = place_order_func(strategy, {
-            'transaction_type': 'BUY',
+        
+        details = {
+            'transaction_type': order_details['transcation'],
             'tradingsymbol': trading_symbol,
             'user': user,
-            'order_type': 'Market'
-        }, qty=qty)
+            'order_type': 'Market'}
+
+        if 'direction' in order_details:
+            details['direction'] = order_details['direction']
+
+        if 'strike_prc' in order_details:
+            details['strike_price'] = order_details['strike_prc']
+        
+        avg_prc = place_order_func(strategy, details, qty=qty)
         
         #######################price ref can be none 
         
@@ -77,11 +97,12 @@ def place_order_for_broker( strategy, order_details, qty =None,monitor = None):
             if not token_added:
                 monitor.add_token(token, target, limit_prc, order_func)
                 token_added = True  # Update the flag to indicate the token was added
-                            
-    if not monitor:
-        monitor = InstrumentMonitor(callback=partial(modify_orders, monitor=monitor))
-    start_monitoring(monitor)                
-    sleep(10)
+    if strategy == 'MPWizard' or strategy == 'Siri':
+        if not monitor:
+            monitor = InstrumentMonitor(callback=partial(modify_orders,monitor=monitor))
+        start_monitoring(monitor) 
+               
+    
 
 def modify_orders(token,monitor=None):
     

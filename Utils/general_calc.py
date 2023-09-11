@@ -61,7 +61,7 @@ def get_next_weekday(d, weekday):
         days_ahead += 7
     next_date = d + dt.timedelta(days_ahead)
     while next_date in holidays:
-        next_date += dt.timedelta(1)
+        next_date -= dt.timedelta(1)
     return next_date
 
 def last_weekday_of_month(year, month, weekday):
@@ -96,6 +96,19 @@ def get_expiry_dates(base_symbol):
 
     return weekly_expiry, monthly_expiry
 
+def get_next_week_expiry(base_symbol):
+    # First, get the weekly expiry for the current week
+    weekly_expiry, _ = get_expiry_dates(base_symbol)
+    
+    # Now calculate the weekly expiry for the next week
+    next_week_expiry = weekly_expiry + dt.timedelta(days=7)
+
+    # If the next week expiry falls on a holiday or weekend, find the previous valid working day
+    while next_week_expiry in holidays:  # Checking if it's a holiday or weekend
+        next_week_expiry -= dt.timedelta(days=1)  # Decrement by one day
+    
+    return next_week_expiry
+
 #token calculation
 from pya3 import *
 def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
@@ -103,7 +116,7 @@ def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
     instruments_df = pd.read_csv(os.path.join(script_dir, 'instruments.csv'))
 
     instruments_df = instruments_df[
-        ["instrument_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike", "segment"]
+        ["instrument_token","exchange_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike", "segment"]
     ]
 
     #if option_type is other than CE or PE the segement should be futures
@@ -123,9 +136,10 @@ def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
     ]
 
     tokens = int(nfo_ins_df["instrument_token"].values[0])
+    exchange_token = int(nfo_ins_df["exchange_token"].values[0])
     trading_symbols = nfo_ins_df["tradingsymbol"].values[0]
     trading_symbols_aliceblue = []
-    trading_symbols_aliceblue = Instrument("NFO", tokens, base_symbol, trading_symbols, expiry_date, 50) #TODO: generalize exchange values
+    trading_symbols_aliceblue = Instrument("NFO", exchange_token, base_symbol, trading_symbols, expiry_date, 50) #TODO: generalize exchange values
     return tokens, trading_symbols, trading_symbols_aliceblue
 
 ##########################append the lot_size to env file ############
@@ -138,10 +152,10 @@ def round_qty(qty, base_symbol):
         lot_size = 40
     return int(qty / lot_size) * lot_size
 
-def round_strike_prc(strike_prc, base_symbol):
+def round_strike_prc(ltp, base_symbol):
     if base_symbol == 'NIFTY' or base_symbol == 'FINNIFTY':
-        return round(strike_prc / 50) * 50
+        return round(ltp / 50) * 50
     if base_symbol == 'BANKNIFTY':
-        return round(strike_prc / 100) * 100
+        return round(ltp / 100) * 100
 
 

@@ -3,7 +3,7 @@ from kiteconnect import KiteConnect
 from pya3 import *
 import logging
 import os
-from Utilities.straddlecalculation import amipy_discord_bot
+from straddlecalculation import amipy_discord_bot
 
 def get_amipy_users(filepath):
     with open(filepath, 'r') as f:

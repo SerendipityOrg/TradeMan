@@ -11,10 +11,12 @@ FILE_DIR = os.path.join(CURRENT_DIR,'..',)
 sys.path.append(FILE_DIR)
 from place_order_calc import *
 
+sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
+import discordchannels as discord
+
 alice = None
 
-def place_order(alice, order_details, qty):
-
+def alice_place_order(alice, strategy, order_details, qty):
     """
     Place an order with Aliceblue broker.
 
@@ -29,7 +31,6 @@ def place_order(alice, order_details, qty):
     Raises:
         Exception: If the order placement fails.
     """             
-    
     transaction_type = order_details.get('transaction_type')
     if transaction_type == 'BUY':
         transaction_type = TransactionType.Buy
@@ -45,44 +46,56 @@ def place_order(alice, order_details, qty):
         order_type = OrderType.Market
     else:
         raise ValueError("Invalid order_type in order_details")
-        
+    
+    if strategy == 'overnight_option':
+        product_type = ProductType.Normal
+    else:
+        product_type = ProductType.Intraday
+    
     avg_prc = 0.0
     limit_prc = order_details.get('limit_prc', 0.0)
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
-
+    print("here",order_details['tradingsymbol'],qty)
     try:
         order_id = alice.place_order(transaction_type = transaction_type, 
                                         instrument = order_details['tradingsymbol'],
                                         quantity = qty ,
                                         order_type = order_type,
-                                        product_type = ProductType.Intraday,
-                                        price = float(limit_prc),
+                                        product_type = product_type,
+                                        price = limit_prc,
                                         trigger_price = trigger_price,
                                         stop_loss = None,
                                         square_off = None,
                                         trailing_sl = None,
                                         is_amo = False)
+        print("order_id",order_id)
         logging.info(f"Order placed. ID is: {order_id}")
-        
-        order_id_value = order_id.get('NOrdNo')
+        order_id_value = order_id['NOrdNo']
         if not order_id_value:
-            raise Exception("Order placement failed")
+            raise Exception("Order_id not found")
         
         avg_prc_data = alice.get_order_history(order_id_value)
-        avg_prc = avg_prc_data.get('AvgPrice')
+        avg_prc = avg_prc_data.get('Avgprc')
+
+        if strategy == 'Siri':
+            try:
+                msg = f"Avgprc is {avg_prc}"
+                discord.discord_bot(msg,"siri")
+            except Exception as e:
+                print(f"Discord bot failed: {e}") 
+
         if avg_prc is None:
-            raise Exception("Order placement failed")
+            raise Exception("Avgprc not found")
         
-        return order_id, avg_prc # Merge place_order
+        return order_id_value, avg_prc # Merge place_order
   
     except Exception as e:
-        message = f"Order placement failed: {e}"
+        message = f"Order placement failed: {e} for {order_details['user']}"
         print(message)
         # general_calc.discord_bot(message)
         return None
 
 def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
-
     """
     Place an order with Aliceblue broker.
 
@@ -105,11 +118,10 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
     session_id = alice.get_session_id()
     
     if qty is None:
-        qty = get_quantity(user_details, strategy, order_details['tradingsymbol'],'aliceblue')
-    
+        qty = get_quantity(user_details, 'aliceblue', strategy, order_details['tradingsymbol'])
     order_details['qty'] = qty
     try:
-        order_id, avg_price = place_order(alice, order_details, qty)
+        order_id, avg_price = alice_place_order(alice, strategy, order_details, qty)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
         # You can set default or fallback values if needed
@@ -135,7 +147,6 @@ def update_stoploss(monitor_order_func):
     
     new_stoploss = round(float(monitor_order_func.get('target')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
-    print(order_id,new_stoploss,trigger_price)
     modify_order =  alice.modify_order(transaction_type = TransactionType.Sell,
                     order_id=str(order_id),
                     instrument = monitor_order_func.get('token'),
@@ -144,6 +155,3 @@ def update_stoploss(monitor_order_func):
                     product_type = ProductType.Intraday,
                     price=new_stoploss,
                     trigger_price = trigger_price)
-    
-    #TODO update using discord when sl is modified
-    
