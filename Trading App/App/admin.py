@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 import tempfile
 import os
+import re
 import io
 from PIL import Image
 import datetime
@@ -64,6 +65,7 @@ if not firebase_admin._apps:
 data = []  # This will hold the Excel data
 
 
+
 def login_admin(username, password):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
@@ -81,6 +83,23 @@ def login_admin(username, password):
                 return True
         return False
 
+def get_weeks_for_month(month_number, year):
+    first_day_of_month = datetime.date(year, month_number, 1)
+    last_day_of_month = datetime.date(year, month_number + 1, 1) - datetime.timedelta(days=1)
+    
+    # Find the first Saturday of the month
+    while first_day_of_month.weekday() != 5:
+        first_day_of_month += datetime.timedelta(days=1)
+    
+    weeks = []
+    while first_day_of_month <= last_day_of_month:
+        end_day = first_day_of_month + datetime.timedelta(days=6)
+        if end_day > last_day_of_month:
+            end_day = last_day_of_month
+        weeks.append((first_day_of_month.day, end_day.day))
+        first_day_of_month += datetime.timedelta(days=7)
+    
+    return weeks
 
 def update_client_data(client_name, updated_data):
     # Get a reference to the selected client's database
@@ -512,7 +531,7 @@ def display_profile(selected_client, selected_client_name):
 
 # Function to display performance dashboard
 def display_performance_dashboard(selected_client):
-   # CSS style definitions
+    # CSS style definitions for the option menu
     selected = option_menu(None, ["Calendar", "Statistics", "Graph"],
                            icons=['calendar', 'file-bar-graph', 'graph-up'],
                            menu_icon="cast", default_index=0, orientation="horizontal",
@@ -521,31 +540,17 @@ def display_performance_dashboard(selected_client):
                                "icon": {"color": "orange", "font-size": "25px"},
                                "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
                                "nav-link-selected": {"background-color": "purple"},
-    })
-    # Calendar functionality
-    if selected == "Calendar":
-        calendar_options = {
-            "editable": "true",
-            "navLinks": "true",
-            "initialView": "multiMonthYear"
-        }
+                           })
 
-    # Assuming calendar() returns only the selected date
-    selected_date = calendar(
-        options=calendar_options,
-        key="multiMonthYear",
-    )
-
-    # Convert the first letter of client_username to lowercase
+    # Convert the first letter of client_username to lowercase for file naming
     client_username = selected_client.get("Username", '')
     client_username = client_username[0].lower() + client_username[1:]
-    # Construct the Excel file name
-    excel_file_name = f"{client_username}.xlsx"
+    excel_file_name = f"{client_username}.xlsx"  # Construct the Excel file name based on client's username
 
     # Reference the Firebase Storage bucket
     bucket = storage.bucket('trading-app-caf8e.appspot.com')
 
-    # List all files in the bucket to verify if the client's Excel file exists
+    # Check if the client's Excel file exists in the Firebase Storage bucket
     blobs = bucket.list_blobs()
     file_exists = False
     for blob in blobs:
@@ -553,9 +558,9 @@ def display_performance_dashboard(selected_client):
             file_exists = True
             break
 
-    data = []  # List to store extracted data
+    data = []  # List to store extracted data from Excel
 
-    # Proceed only if the file exists
+    # If the client's Excel file exists, proceed to extract data
     if file_exists:
         # Reference the specific blob (file) in the bucket
         blob = bucket.blob(excel_file_name)
@@ -568,40 +573,48 @@ def display_performance_dashboard(selected_client):
         # Load the Excel workbook from the bytes object
         wb = openpyxl.load_workbook(byte_stream, data_only=True)
 
-        # Check if the "DTD" sheet exists in the workbook
+        # Extract data if the "DTD" sheet exists in the workbook
         if "DTD" in wb.sheetnames:
             sheet = wb["DTD"]
             print(f"Extracting data from sheet: DTD")
 
             # Get column names and their indices from the first row
-            column_indices = {cell.value: idx for idx,
-                              cell in enumerate(sheet[1])}
+            column_indices = {cell.value: idx for idx, cell in enumerate(sheet[1])}
 
             # Loop through each row in the sheet to read specific columns
             for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
                 opening_balance = row[column_indices['Opening Balance']].value
                 mp_wizard = row[column_indices['MP Wizard']].value
-                date = row[column_indices['Date']].value.strftime(
-                    '%Y-%m-%d')  # Format date from Excel
+                date_value = row[column_indices['Date']].value
+                date = date_value.strftime('%Y-%m-%d') if date_value else None
                 amipy = row[column_indices['AmiPy']].value
-                zrm = row[column_indices['ZRM']].value
-                overnight_options = row[column_indices['Overnight Options']].value
-                gross_pnl = row[column_indices['Gross PnL']].value
-                tax = row[column_indices['Tax']].value
+                zrm = row [column_indices['ZRM']].value
+                overnight_options = row [column_indices['Overnight Options']].value
+                gross_pnl = row [column_indices['Gross PnL']].value
+                tax = row [column_indices['Tax']].value
                 transaction_amount = row[column_indices['Transaction Amount']].value
                 deposit_withdrawal = row[column_indices['Deposit/Withdrawal']].value
                 # Check if the "Running Balance" column exists in the first row
                 if 'Running Balance' in column_indices:
-                    running_balance = row[column_indices['Running Balance']].value
-                    # Debug print
-                    print(
-                        f"Row {row[0].row}: Running Balance value from Excel: {running_balance}")
+                        running_balance = row[column_indices['Running Balance']].value
+                        print(f"Row {row[0].row}: Running Balance value from Excel: {running_balance}")  # Debug print
                 else:
-                    print("Running Balance column not found!")
-                    running_balance = None
+                        print("Running Balance column not found!")
+                        running_balance = None
 
-                data.append([date, opening_balance, mp_wizard, gross_pnl, tax,
-                            transaction_amount, deposit_withdrawal, running_balance])
+                data.append([date, opening_balance, mp_wizard, amipy, zrm, overnight_options, gross_pnl, tax, transaction_amount, deposit_withdrawal, running_balance])
+
+        def indian_format(n):
+            s = str(abs(n))  # Take the absolute value for formatting
+            l = len(s)
+            if l <= 3:
+                return s
+            else:
+                last_three = s[-3:]
+                rest = s[:-3]
+                formatted = ','.join([rest[i:i+2] for i in range(0, len(rest), 2)][::-1])
+                return ('-' if n < 0 else '') + formatted + ',' + last_three  # Add negative sign back if needed
+
 
         def format_value(value):
             print(f"Formatting value: {value}")  # Debug print
@@ -611,33 +624,163 @@ def display_performance_dashboard(selected_client):
                 if value.startswith('='):
                     return "Formula"
                 try:
-                    return f"₹ {float(value.replace('₹', '').replace(',', '')):,.2f}"
+                    num = float(value.replace('₹', '').replace(',', ''))
+                    formatted_value = "₹ " + indian_format(int(num)) + '.' + '{:.2f}'.format(num).split('.')[1]
+                    # Add CSS class based on the value
+                    if num > 0:
+                        return f'<span class="positive-value">{formatted_value}</span>'
+                    elif num < 0:
+                        return f'<span class="negative-value">{formatted_value}</span>'
+                    else:
+                        return formatted_value
                 except ValueError:
                     return value
             else:
-                return f"₹ {value:,.2f}"
+                formatted_value = "₹ " + indian_format(int(value)) + '.' + '{:.2f}'.format(value).split('.')[1]
+                # Add CSS class based on the value
+                if value > 0:
+                    return f'<span class="positive-value">{formatted_value}</span>'
+                elif value < 0:
+                    return f'<span class="negative-value">{formatted_value}</span>'
+                else:
+                    return formatted_value
+
+        # Add custom CSS for the table and value colors
+        st.markdown("""
+    <style>
+    .custom-table {
+        background-color: #E6E6FA;  # Table background color
+        width: 100%;  # Make the table broader
+        font-size: 20px;  # Increase font size for a bigger table
+    }
+    .custom-table td {
+        padding: 15px;  # Increase padding for larger cells
+        border: 1px solid #ddd;  # Add borders to the cells
+    }
+    .positive-value {
+        color: green;
+    }
+    .negative-value {
+        color: red;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+        # Calendar functionality
+    if selected == "Calendar":
+        calendar_options = {
+        "editable": "true",
+        "navLinks": "true",
+        "initialView": "multiMonthYear"
+    }
+        selected_date = calendar(
+        options=calendar_options,
+        key="multiMonthYear",
+    )
+
 
         selected_date = st.date_input("Select a Date")
 
         if selected_date:
-            filtered_data = [record for record in data if record[0]
-                             == selected_date.strftime('%Y-%m-%d')]
-            # Debug print
-            print(f"Filtered data for date {selected_date}: {filtered_data}")
+            filtered_data = [record for record in data if record[0] == selected_date.strftime('%Y-%m-%d')]
+            print(f"Filtered data for date {selected_date}: {filtered_data}")  # Debug print
 
             if filtered_data:
-                st.write("Selected Date Data:")
+            # Define the field names excluding the "Date"
+                field_names = ["Opening Balance", "MP Wizard", "AmiPy", "ZRM", "Overnight Options", "Gross PnL", "Tax", "Transaction Amount", "Deposit/Withdrawal", "Running Balance"]
+                
+                # Format the filtered data
+                table_data = []
                 for record in filtered_data:
-                    st.write(f"Opening Balance: {format_value(record[1])}")
-                    st.write(f"MP Wizard: {format_value(record[2])}")
-                    st.write(f"Gross PnL: {format_value(record[3])}")
-                    st.write(f"Tax: {format_value(record[4])}")
-                    st.write(f"Transaction Amount: {format_value(record[5])}")
-                    if record[6] is not None:
-                        st.write(
-                            f"Deposit/Withdrawal: {format_value(record[6])}")
-                    st.write(f"Running Balance: {format_value(record[7])}")
+                    # Start from index 1 to skip the "Date"
+                    for idx, field in enumerate(field_names, start=1):
+                        value = format_value(record[idx])
+                        if value != "N/A":
+                            table_data.append([field, value])
 
+
+                # Display the table without header
+                st.write(pd.DataFrame(table_data, columns=None).to_html(classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
+
+    
+    if selected == "Statistics":
+    # Allow user to select a year (from 2020 to current year for example)
+        current_year = datetime.datetime.now().year
+        years = list(range(2020, current_year + 1))
+        selected_year = st.selectbox("Select Year", years, index=len(years)-1)  # Default to current year
+
+        month = st.selectbox("Select Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+        
+        if month:  # Ensure a month is selected
+            month_number = datetime.datetime.strptime(month, "%B").month
+            
+            weeks = get_weeks_for_month(month_number, selected_year)
+            week_options = ["Entire Month"] + [f"Week {i+1} ({start}-{end})" for i, (start, end) in enumerate(weeks)]
+            
+            timeframe = st.selectbox("Select Time Frame", week_options)
+            
+            if timeframe == "Entire Month":
+                filtered_data = [record for record in data if record[0] is not None and int(record[0].split('-')[1]) == month_number and int(record[0].split('-')[0]) == selected_year]
+            else:
+                week_index = week_options.index(timeframe) - 1  # Subtract 1 for "Entire Month" option
+                start_date, end_date = weeks[week_index]
+                filtered_data = [record for record in data if record[0] is not None and start_date <= int(record[0].split('-')[2]) <= end_date and int(record[0].split('-')[0]) == selected_year]
+
+
+
+                    # Extract relevant data from filtered_data
+                opening_balances = [record[1] for record in filtered_data]
+                running_balances = [record[10] for record in filtered_data] 
+                gross_pnls = [record[6] for record in filtered_data]
+                transaction_amounts = [record[8] for record in filtered_data]
+                deposit_withdrawals = [record[9] for record in filtered_data]
+
+                    # Calculate statistics
+                initial_capital = opening_balances[0] if opening_balances else 0
+                ending_capital = running_balances[-1] if running_balances else 0
+                if initial_capital is not None and ending_capital is not None:
+                    net_profit = ending_capital - initial_capital
+                else:
+                    net_profit = 0  # or some default value or handle this case differently
+
+                net_profit_percent = (net_profit / initial_capital) * 100 if initial_capital != 0 else 0
+                total_profit = sum(gross_pnls)
+                avg_profit = total_profit / len(gross_pnls) if gross_pnls else 0
+                avg_profit_percent = (avg_profit / initial_capital) * 100 if initial_capital != 0 else 0
+                total_commission = sum(transaction_amounts)/2
+                total_deposits = sum([amount for amount in deposit_withdrawals if amount is not None and amount > 0])
+                total_withdrawal = sum([amount for amount in deposit_withdrawals if amount is not None and amount < 0])
+
+
+                def format_stat_value(value):
+                    if value is None:
+                        return "N/A"
+                    elif isinstance(value, str):
+                        if "₹" in value and "-" in value:  # Check if it's a negative monetary value
+                            return f'<span class="negative-value">{value}</span>'
+                        elif "₹" in value:  # Check if it's a positive monetary value
+                            return f'<span class="positive-value">{value}</span>'
+                        elif "%" in value and "-" in value:  # Check if it's a negative percentage
+                            return f'<span class="negative-value">{value}</span>'
+                        elif "%" in value:  # Check if it's a positive percentage
+                            return f'<span class="positive-value">{value}</span>'
+                        else:
+                            return value
+                    elif value < 0:
+                        return f'<span class="negative-value">₹ {value:,.2f}</span>'
+                    else:
+                        return f'<span class="positive-value">₹ {value:,.2f}</span>'
+
+                # Create a DataFrame for the statistics
+                stats_data = {
+                    "Metric": ["Initial Capital", "Ending Capital", "Net Profit", "Net Profit %", "Total Profit", "Avg. Profit", "Avg. Profit %", "Total Commission", "Total Deposits", "Total Withdrawal"],
+                    "Value": [format_stat_value(initial_capital), format_stat_value(ending_capital), format_stat_value(net_profit), format_stat_value(f"{net_profit_percent:.2f}%"), format_stat_value(total_profit), format_stat_value(avg_profit), format_stat_value(f"{avg_profit_percent:.2f}%"), format_stat_value(total_commission), format_stat_value(total_deposits), format_stat_value(total_withdrawal)]
+                }
+
+                stats_df = pd.DataFrame(stats_data)
+
+                # Display the table without index and without column headers, and with custom styles
+                st.write(stats_df.to_html(index=False, header=False, classes='custom-table', escape=False), unsafe_allow_html=True)
 
 def login():
 
