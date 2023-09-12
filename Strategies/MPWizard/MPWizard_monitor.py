@@ -56,13 +56,13 @@ class OrderMonitor:
         self.orders_placed_today = 0
         self.done_for_the_day = False
 
-    def get_weekday_price_ref(self):
+    def get_weekday_price_ref(self,name):
         """Get the price reference for the current weekday."""
         today = dt.date.today().strftime('%A')[:3]
         for index_data in self.mood_data["indices"]:
             index_name = index_data["name"]
-            weekday_price_ref = index_data["WeekdayPrcRef"].get(today)
-        return weekday_price_ref
+            if index_name == name:
+                return index_data["WeekdayPrcRef"].get(today)
 
     def _check_price_crossing(self, prev_ltp, ltp, levels):
         """Check if the price has crossed a certain level."""
@@ -95,7 +95,7 @@ class OrderMonitor:
             if not option_type:
                 return
             
-            price_ref = self.get_weekday_price_ref()
+            price_ref = self.get_weekday_price_ref(name)
             strikeprc = general_calc.round_strike_prc(ltp,name)
             
             print(f"{cross_type} at {ltp} for {name}!")

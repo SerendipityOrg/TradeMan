@@ -89,13 +89,13 @@ def place_order_for_broker( strategy, order_details=None, qty =None,monitor = No
                     }
             place_order_func(strategy, order_func , qty=qty)
         #calculate the target based on the priceref
-            target = round((float(avg_prc[1]) + (order_details['stoploss_points']/2)))
+            target = order_details.get('target', round(float(avg_prc[1]) + (order_details['stoploss_points'] / 2)))
             print(f"Target is {target}")
             print(f"Limit price is {limit_prc}")
             
              # Add token only if it's not added yet
             if not token_added:
-                monitor.add_token(token, target, limit_prc, order_func)
+                monitor.add_token(token, target, limit_prc, order_func, strategy)
                 token_added = True  # Update the flag to indicate the token was added
     if strategy == 'MPWizard' or strategy == 'Siri':
         if not monitor:

@@ -57,8 +57,6 @@ def place_order(kite, strategy, order_details, qty):
     avg_prc = 0.0
     limit_prc = order_details.get('limit_prc', 0.0)
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
-    print(strategy, order_details, qty)
-    print("type",type(qty))
     try:
         order_id = kite.place_order(
             variety=kite.VARIETY_REGULAR,
@@ -137,8 +135,8 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
         print(f"Failed to log the order: {e}")
         
     return order_id, avg_price
-        
-        
+
+
 def update_stoploss(monitor_order_func):
     global kite
     

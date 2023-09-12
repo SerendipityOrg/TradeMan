@@ -56,6 +56,8 @@ def get_previous_dates(num_dates):
     return dates
 
 def get_next_weekday(d, weekday):
+    if d.weekday() == weekday:  # Check if today is already the desired weekday
+        return d
     days_ahead = weekday - d.weekday()
     if days_ahead <= 0:  
         days_ahead += 7

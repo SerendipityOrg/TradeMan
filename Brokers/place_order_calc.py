@@ -7,11 +7,11 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 UTILS_DIR = os.path.join(CURRENT_DIR, '..','Utils')
 
 sys.path.append(UTILS_DIR)
-from general_calc import *
+import general_calc as general_calc
 
 def get_user_details(user):
     user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'Json', f'{user}.json')
-    json_data =read_json_file(user_json_path)
+    json_data = general_calc.read_json_file(user_json_path)
     return json_data, user_json_path
 
 # 1. Renamed the function to avoid clash with the logging module
@@ -42,28 +42,28 @@ def log_order(order_id, avg_price, order_details, user_details,qty,strategy):
     order_type_list = strategy_orders.setdefault(order_details['transaction_type'], [])
     order_type_list.append(order_dict)
 
-    log_details = write_json_file(json_path, user_details)
+    log_details = general_calc.write_json_file(json_path, user_details)
     
-
 def get_quantity(user_data, broker, strategy, tradingsymbol=None):
     strategy_key = f"{strategy}_qty"
     user_data_specific = user_data[broker]  # Access the specific user's data
     
     if strategy_key not in user_data_specific:
         return None
-
+    
     quantity_data = user_data_specific[strategy_key]
-    if strategy == 'MPWizard':
-        if len(tradingsymbol) >= 3:
-            tradingsymbol = tradingsymbol[2]
-        elif len(tradingsymbol) == 1:
-            tradingsymbol = tradingsymbol
-                    
-        if isinstance(tradingsymbol, str):
-            ma = re.match(r"(NIFTY|BANKNIFTY|FINNIFTY)", tradingsymbol)
-            return ma and quantity_data.get(f"{ma.group(1)}_qty")
 
+    if strategy == 'MPWizard':
+        if broker == 'aliceblue':
+            tradesymbol = tradingsymbol.name
+        else:
+            tradesymbol = tradingsymbol
+
+        if isinstance(tradesymbol, str):
+            ma = re.match(r"(NIFTY|BANKNIFTY|FINNIFTY)", tradesymbol)
+            return ma and quantity_data.get(f"{ma.group(1)}_qty")
     return quantity_data if isinstance(quantity_data, dict) else quantity_data
+
 
 def retrieve_order_id(user, broker,strategy, trade_type, tradingsymbol):
 

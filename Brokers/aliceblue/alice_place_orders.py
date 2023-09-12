@@ -119,6 +119,7 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
     
     if qty is None:
         qty = get_quantity(user_details, 'aliceblue', strategy, order_details['tradingsymbol'])
+
     order_details['qty'] = qty
     try:
         order_id, avg_price = alice_place_order(alice, strategy, order_details, qty)

@@ -78,7 +78,7 @@ def extract_values_from_message(message_content, keywords):
 
     target_matches = re.findall(r'target(?:\s+\d)?\s+(\d+)', message_content_lower)
     if target_matches:
-        order_details['target'] = target_matches[0]
+        order_details['target'] = float(target_matches[0])
 
     if 'entry' in order_details and 'stoploss' in order_details:
         order_details['stoploss_points'] = float(order_details['entry']) - float(order_details['stoploss'])

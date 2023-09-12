@@ -79,10 +79,10 @@
 # output flowchart code.
 
 
-from kiteconnect import KiteConnect
-from pprint import pprint
-kite = KiteConnect(api_key='6b0dp5ussukmo67h')
-kite.set_access_token('8eNVAA7XVfuRJJcHG1Oqm15eYYHs7nxS')
+from pya3 import *
 
-order_history = kite.order_history(order_id='230911500362923')
-pprint(order_history)
+alice = Aliceblue("AB068818","CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y")
+
+alice.get_session_id()
+
+print(alice.get_instrument_for_fno(exch="NFO",symbol='BANKNIFTY', expiry_date="2023-09-13", is_fut=False,strike=44500, is_CE=False))

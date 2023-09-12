@@ -16,7 +16,6 @@ from dash.dependencies import Input, Output
 from dash import html, dcc
 import plotly.graph_objs as go
 
-from place_orders import *
 from straddlecalculation import *
 from chart import plotly_plot
 
@@ -31,6 +30,9 @@ load_dotenv(dotenv_path)
 
 sys.path.append(os.path.join(CURRENT_DIR, '..', '..', 'Utils'))
 import general_calc as gc
+
+sys.path.append(os.path.join(CURRENT_DIR, '..', '..', 'Utils', 'Discord'))
+import discordchannels as discord_bot
 
 sys.path.append(BROKERS_DIR)
 import place_order as place_order
@@ -125,8 +127,6 @@ print("Today's Strike Price:",strike_prc)
 
 trading_tokens,zerodha_list,alice_list = get_option_tokens(base_symbol,str(expiry_date),strike_prc)
 
-tokens = trading_tokens
-
 for token in trading_tokens:
     # hist_data[token] = read_data_from_timescaleDB(token)
     hist_data[token] =  pd.DataFrame(kite.historical_data(token, from_date, to_date, interval))
@@ -162,7 +162,7 @@ def genSignals(resultdf):
     signals = []
     trade_no = 1
     current_position = None
-    global last_signal_minute, tokens,trade_state_df, strike_prc
+    global last_signal_minute, trading_tokens,trade_state_df, strike_prc
     trade_state = {'in_trade': False, 'strike_price':strike_prc, 'trade_type': None, 'trade_points': 0, 'TrendSL': 0, 'close': 0, 'TradeEntryPrice': 0, 'SL_points': 0}
     
     # trade_state_path = os.path.join("LiveCSV","trade_state.csv")
@@ -408,8 +408,8 @@ def on_ticks(ws, ticks):
         
         hist_data[token]
         
-    resampleddf = callputmergeddf(hist_data,tokens)
-    # resampleddf.to_csv(f'resample_ohlc_{tokens[0]}.csv', index=True)
+    resampleddf = callputmergeddf(hist_data,trading_tokens)
+    # resampleddf.to_csv(f'resample_ohlc_{trading_tokens[0]}.csv', index=True)
     ma_df = moving_average(resampleddf)
     # ma_df.to_csv(f'Dataframescsv/amipy_madf.csv', index=True)
     resultdf = supertrend(ma_df)
@@ -432,13 +432,12 @@ def on_ticks(ws, ticks):
     # updateSignalDf(signalsdf, trade_state)
 
 def on_connect(ws, response):  # noqa
-    global tokens
+    global trading_tokens
     # Callback on successful connect.
-    # Subscribe to a list of instrument_tokens (RELIANCE and ACC here).
-    ws.subscribe(tokens)
+    ws.subscribe(trading_tokens)
 
-    # Set tokens to tick in `full` mode.
-    ws.set_mode(ws.MODE_LTP, tokens)
+    # Set trading_tokens to tick in `full` mode.
+    ws.set_mode(ws.MODE_LTP, trading_tokens)
 
 # Initialise
 kws = KiteTicker(kite_api_key, kite_access_token)
