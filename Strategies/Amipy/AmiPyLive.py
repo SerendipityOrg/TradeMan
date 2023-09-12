@@ -375,7 +375,7 @@ def updateSignalDf(last_signal,users_to_trade):
             signal_prc = str(last_signal['close'])
             message = f"Signal: {trade_type}\nStrikePrc: {strike_prc} \nDate: {trade_date}\nTime: {trade_time}\nClose: {signal_prc}"
             print(message)
-            amipy_discord_bot(message)
+            discord_bot.discord_bot(message,"Amipy")
     except Exception as e:
         print(f"Error in sending telegram message: {e}")
 
