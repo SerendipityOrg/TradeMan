@@ -582,7 +582,7 @@ def display_performance_dashboard(selected_client):
             column_indices = {cell.value: idx for idx, cell in enumerate(sheet[1])}
 
             # Loop through each row in the sheet to read specific columns
-            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
+            for row in sheet.iter_rows(min_row=3, max_row=sheet.max_row):
                 opening_balance = row[column_indices['Opening Balance']].value
                 mp_wizard = row[column_indices['MP Wizard']].value
                 date_value = row[column_indices['Date']].value
@@ -603,69 +603,62 @@ def display_performance_dashboard(selected_client):
                         running_balance = None
 
                 data.append([date, opening_balance, mp_wizard, amipy, zrm, overnight_options, gross_pnl, tax, transaction_amount, deposit_withdrawal, running_balance])
-
-        def indian_format(n):
-            s = str(abs(n))  # Take the absolute value for formatting
-            l = len(s)
-            if l <= 3:
-                return s
-            else:
-                last_three = s[-3:]
-                rest = s[:-3]
-                formatted = ','.join([rest[i:i+2] for i in range(0, len(rest), 2)][::-1])
-                return ('-' if n < 0 else '') + formatted + ',' + last_three  # Add negative sign back if needed
-
-
-        def format_value(value):
+        
+        def format_value(value, format_type="normal"):
             print(f"Formatting value: {value}")  # Debug print
+            formatted_value = ""
             if value is None:
-                return "N/A"
-            if isinstance(value, str):
+                formatted_value = "N/A"
+            elif isinstance(value, str):
                 if value.startswith('='):
-                    return "Formula"
-                try:
-                    num = float(value.replace('₹', '').replace(',', ''))
-                    formatted_value = "₹ " + indian_format(int(num)) + '.' + '{:.2f}'.format(num).split('.')[1]
-                    # Add CSS class based on the value
-                    if num > 0:
-                        return f'<span class="positive-value">{formatted_value}</span>'
-                    elif num < 0:
-                        return f'<span class="negative-value">{formatted_value}</span>'
-                    else:
-                        return formatted_value
-                except ValueError:
-                    return value
-            else:
-                formatted_value = "₹ " + indian_format(int(value)) + '.' + '{:.2f}'.format(value).split('.')[1]
-                # Add CSS class based on the value
-                if value > 0:
-                    return f'<span class="positive-value">{formatted_value}</span>'
-                elif value < 0:
-                    return f'<span class="negative-value">{formatted_value}</span>'
+                    formatted_value = "Formula"
                 else:
-                    return formatted_value
+                    try:
+                        float_value = float(value.replace('₹', '').replace(',', ''))
+                        if float_value < 0:
+                            formatted_value = f'<span class="negative-value">₹ {float_value:,.2f}</span>'
+                        else:
+                            formatted_value = f'<span class="positive-value">₹ {float_value:,.2f}</span>'
+                    except ValueError:
+                        formatted_value = value
+            else:
+                if value < 0:
+                    formatted_value = f'<span class="negative-value">₹ {value:,.2f}</span>'
+                else:
+                    formatted_value = f'<span class="positive-value">₹ {value:,.2f}</span>'
 
+            # Apply formatting based on format_type
+            if format_type == "bold":
+                return f"<b>{formatted_value}</b>"
+            elif format_type == "italic":
+                return f"<i>{formatted_value}</i>"
+            else:
+                return formatted_value
+
+            
         # Add custom CSS for the table and value colors
         st.markdown("""
-    <style>
-    .custom-table {
+        <style>
+        .custom-table {
         background-color: #E6E6FA;  # Table background color
-        width: 100%;  # Make the table broader
+        width: 80%;  # Set the table width
         font-size: 20px;  # Increase font size for a bigger table
-    }
-    .custom-table td {
+        margin-left: auto;  # Center the table horizontally
+        margin-right: auto;  # Center the table horizontally
+            }
+        .custom-table td {
         padding: 15px;  # Increase padding for larger cells
         border: 1px solid #ddd;  # Add borders to the cells
-    }
-    .positive-value {
-        color: green;
-    }
-    .negative-value {
-        color: red;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
+        }
+        .positive-value {
+            color: green;
+        }
+        .negative-value {
+            color: red;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
         # Calendar functionality
     if selected == "Calendar":
         calendar_options = {
@@ -678,7 +671,6 @@ def display_performance_dashboard(selected_client):
         key="multiMonthYear",
     )
 
-
         selected_date = st.date_input("Select a Date")
 
         if selected_date:
@@ -686,101 +678,95 @@ def display_performance_dashboard(selected_client):
             print(f"Filtered data for date {selected_date}: {filtered_data}")  # Debug print
 
             if filtered_data:
-            # Define the field names excluding the "Date"
-                field_names = ["Opening Balance", "MP Wizard", "AmiPy", "ZRM", "Overnight Options", "Gross PnL", "Tax", "Transaction Amount", "Deposit/Withdrawal", "Running Balance"]
-                
-                # Format the filtered data
-                table_data = []
                 for record in filtered_data:
-                    # Start from index 1 to skip the "Date"
-                    for idx, field in enumerate(field_names, start=1):
-                        value = format_value(record[idx])
-                        if value != "N/A":
-                            table_data.append([field, value])
-
-
-                # Display the table without header
-                st.write(pd.DataFrame(table_data, columns=None).to_html(classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
-
-    
-    if selected == "Statistics":
-    # Allow user to select a year (from 2020 to current year for example)
-        current_year = datetime.datetime.now().year
-        years = list(range(2020, current_year + 1))
-        selected_year = st.selectbox("Select Year", years, index=len(years)-1)  # Default to current year
-
-        month = st.selectbox("Select Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
-        
-        if month:  # Ensure a month is selected
-            month_number = datetime.datetime.strptime(month, "%B").month
-            
-            weeks = get_weeks_for_month(month_number, selected_year)
-            week_options = ["Entire Month"] + [f"Week {i+1} ({start}-{end})" for i, (start, end) in enumerate(weeks)]
-            
-            timeframe = st.selectbox("Select Time Frame", week_options)
-            
-            if timeframe == "Entire Month":
-                filtered_data = [record for record in data if record[0] is not None and int(record[0].split('-')[1]) == month_number and int(record[0].split('-')[0]) == selected_year]
-            else:
-                week_index = week_options.index(timeframe) - 1  # Subtract 1 for "Entire Month" option
-                start_date, end_date = weeks[week_index]
-                filtered_data = [record for record in data if record[0] is not None and start_date <= int(record[0].split('-')[2]) <= end_date and int(record[0].split('-')[0]) == selected_year]
-
-
-
-                    # Extract relevant data from filtered_data
-                opening_balances = [record[1] for record in filtered_data]
-                running_balances = [record[10] for record in filtered_data] 
-                gross_pnls = [record[6] for record in filtered_data]
-                transaction_amounts = [record[8] for record in filtered_data]
-                deposit_withdrawals = [record[9] for record in filtered_data]
-
-                    # Calculate statistics
-                initial_capital = opening_balances[0] if opening_balances else 0
-                ending_capital = running_balances[-1] if running_balances else 0
-                if initial_capital is not None and ending_capital is not None:
-                    net_profit = ending_capital - initial_capital
-                else:
-                    net_profit = 0  # or some default value or handle this case differently
-
-                net_profit_percent = (net_profit / initial_capital) * 100 if initial_capital != 0 else 0
-                total_profit = sum(gross_pnls)
-                avg_profit = total_profit / len(gross_pnls) if gross_pnls else 0
-                avg_profit_percent = (avg_profit / initial_capital) * 100 if initial_capital != 0 else 0
-                total_commission = sum(transaction_amounts)/2
-                total_deposits = sum([amount for amount in deposit_withdrawals if amount is not None and amount > 0])
-                total_withdrawal = sum([amount for amount in deposit_withdrawals if amount is not None and amount < 0])
-
-
-                def format_stat_value(value):
-                    if value is None:
-                        return "N/A"
-                    elif isinstance(value, str):
-                        if "₹" in value and "-" in value:  # Check if it's a negative monetary value
-                            return f'<span class="negative-value">{value}</span>'
-                        elif "₹" in value:  # Check if it's a positive monetary value
-                            return f'<span class="positive-value">{value}</span>'
-                        elif "%" in value and "-" in value:  # Check if it's a negative percentage
-                            return f'<span class="negative-value">{value}</span>'
-                        elif "%" in value:  # Check if it's a positive percentage
-                            return f'<span class="positive-value">{value}</span>'
-                        else:
-                            return value
-                    elif value < 0:
-                        return f'<span class="negative-value">₹ {value:,.2f}</span>'
-                    else:
-                        return f'<span class="positive-value">₹ {value:,.2f}</span>'
-
-                # Create a DataFrame for the statistics
-                stats_data = {
-                    "Metric": ["Initial Capital", "Ending Capital", "Net Profit", "Net Profit %", "Total Profit", "Avg. Profit", "Avg. Profit %", "Total Commission", "Total Deposits", "Total Withdrawal"],
-                    "Value": [format_stat_value(initial_capital), format_stat_value(ending_capital), format_stat_value(net_profit), format_stat_value(f"{net_profit_percent:.2f}%"), format_stat_value(total_profit), format_stat_value(avg_profit), format_stat_value(f"{avg_profit_percent:.2f}%"), format_stat_value(total_commission), format_stat_value(total_deposits), format_stat_value(total_withdrawal)]
+                    # Create a dictionary to store the labels and values
+                    field_names = {
+                    "Opening Balance": format_value(record[1], "bold"),
+                    "MP Wizard": format_value(record[2], "italic"),
+                    "AmiPy": format_value(record[3], "italic"),
+                    "ZRM": format_value(record[4], "italic"),
+                    "Overnight Options": format_value(record[5], "italic"),
+                    "Gross PnL": format_value(record[6], "bold"),
+                    "Tax": format_value(record[7]),
+                    "Net PnL": format_value(record[8]),
+                    "Deposit/Withdrawal": format_value(record[9]),
+                    "Running Balance": format_value(record[10], "bold")
                 }
 
-                stats_df = pd.DataFrame(stats_data)
+                    # Format the filtered data
+                    table_data = []
+                    for record in filtered_data:
+                        # Start from index 1 to skip the "Date"
+                        for idx, field in enumerate(field_names, start=1):
+                            value = format_value(record[idx])
+                            if value != "N/A":
+                                table_data.append([field, value])
+                    
 
-                # Display the table without index and without column headers, and with custom styles
-                st.write(stats_df.to_html(index=False, header=False, classes='custom-table', escape=False), unsafe_allow_html=True)
+                    # Display the table without header
+                    st.write(pd.DataFrame(table_data, columns=None).to_html(classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
+
+
+    if selected == "Statistics":
+        # Display date input fields for the user to select the start and end dates
+        start_date = st.date_input("Select Start Date", datetime.date(2023, 8, 4))
+        end_date = st.date_input("Select End Date")
+
+        # Filter the data based on the selected date range
+        filtered_data = [record for record in data if record[0] is not None and start_date.strftime('%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
+
+        # Extract relevant data from filtered_data
+        opening_balances = [record[1] for record in filtered_data]
+        running_balances = [record[10] for record in filtered_data]
+        gross_pnls = [record[6] for record in filtered_data]
+        transaction_amounts = [record[8] for record in filtered_data]
+        deposit_withdrawals = [record[9] for record in filtered_data]
+
+        # Calculate statistics
+        initial_capital = opening_balances[0] if opening_balances else 0
+        ending_capital = running_balances[-1] if running_balances else 0
+        if initial_capital is not None and ending_capital is not None:
+            net_profit = ending_capital - initial_capital
+        else:
+            net_profit = 0
+
+        net_profit_percent = (net_profit / initial_capital) * 100 if initial_capital != 0 else 0
+        total_profit = sum(gross_pnls)
+        avg_profit = total_profit / len(gross_pnls) if gross_pnls else 0
+        avg_profit_percent = (avg_profit / initial_capital) * 100 if initial_capital != 0 else 0
+        total_commission = sum(transaction_amounts)/2
+        total_deposits = sum([amount for amount in deposit_withdrawals if amount is not None and amount > 0])
+        total_withdrawal = sum([amount for amount in deposit_withdrawals if amount is not None and amount < 0])
+
+        def format_stat_value(value):
+            if value is None:
+                return "N/A"
+            elif isinstance(value, str):
+                if "₹" in value and "-" in value:
+                    return f'<span class="negative-value">{value}</span>'
+                elif "₹" in value:
+                    return f'<span class="positive-value">{value}</span>'
+                elif "%" in value and "-" in value:
+                    return f'<span class="negative-value">{value}</span>'
+                elif "%" in value:
+                    return f'<span class="positive-value">{value}</span>'
+                else:
+                    return value
+            elif value < 0:
+                return f'<span class="negative-value">₹ {value:,.2f}</span>'
+            else:
+                return f'<span class="positive-value">₹ {value:,.2f}</span>'
+
+        # Create a DataFrame for the statistics
+        stats_data = {
+            "Metric": ["Initial Capital", "Ending Capital", "Net Profit", "Net Profit %", "Total Profit", "Avg. Profit", "Avg. Profit %", "Total Commission", "Total Deposits", "Total Withdrawal"],
+            "Value": [format_stat_value(initial_capital), format_stat_value(ending_capital), format_stat_value(net_profit), format_stat_value(f"{net_profit_percent:.2f}%"), format_stat_value(total_profit), format_stat_value(avg_profit), format_stat_value(f"{avg_profit_percent:.2f}%"), format_stat_value(total_commission), format_stat_value(total_deposits), format_stat_value(total_withdrawal)]
+        }
+
+        stats_df = pd.DataFrame(stats_data)
+
+        # Display the table without index and without column headers, and with custom styles
+        st.write(stats_df.to_html(index=False, header=False, classes='custom-table', escape=False), unsafe_allow_html=True)
 
 def login():
 
