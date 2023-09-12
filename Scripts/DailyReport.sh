@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define maximum number of attempts
-max_attempts=5
+max_attempts=2
 
 # Counter for the number of attempts
 attempt=0
@@ -20,15 +20,15 @@ while true; do
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
 	conda activate tradingenv && \
     cd /Users/traderscafe/Desktop/Main/TradeMan/Utils && \
-	/Users/traderscafe/miniconda3/envs/tradingenv/bin/python DailyLogin.py && \
+	/Users/traderscafe/miniconda3/envs/tradingenv/bin/python morningmsg.py && \
 	echo "Program started successfully" && break
 
     # If the command failed and we've reached the maximum number of attempts, send a message and exit
     if ((attempt==max_attempts)); then
-        echo "Can't Login!!!"
+        echo "Daily Reports errors. Please Check !!!"
         
         # Send a message on Telegram
-        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Can't Login. Please Check !!!"
+        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Can't send daily report. Please Check !!!"
 
         exit 1
     fi

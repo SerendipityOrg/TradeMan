@@ -10,9 +10,11 @@ sys.path.append(UTILS_DIR)
 import general_calc as general_calc
 
 def get_user_details(user):
-    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'Json', f'{user}.json')
+    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'json', f'{user}.json')
     json_data = general_calc.read_json_file(user_json_path)
     return json_data, user_json_path
+
+
 
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, avg_price, order_details, user_details,qty,strategy):

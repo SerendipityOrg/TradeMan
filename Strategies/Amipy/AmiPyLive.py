@@ -53,7 +53,6 @@ interval = 'minute'
 script_dir = os.path.dirname(os.path.abspath(__file__))
 broker_filepath = os.path.join(script_dir, '..', '..', 'Utils', 'broker.json')
 
-users_to_trade = get_amipy_users(broker_filepath)
 omkar_zerodha = gc.read_json_file(omkar_filepath)
 
 kite_access_token = omkar_zerodha['zerodha']['access_token']
@@ -136,7 +135,7 @@ for token in trading_tokens:
     hist_data[token]['instrument_token'] = token
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
-with open('Strategies/Amipy/AmiPy.json' , 'r') as f:
+with open('TradeMan/Strategies/Amipy/AmiPy.json' , 'r') as f:
     parameters = json.load(f)
 
 entry = parameters['Nifty'][0]['entry_time']

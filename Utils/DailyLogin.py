@@ -110,7 +110,7 @@ def create_strategy_json(broker_name, user, lots, balance, user_details_path, mp
     with open(user_details_path, 'r') as json_file:
         broker = json.load(json_file)
 
-    user_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'users')
+    user_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..','UserProfile','json')
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
 
