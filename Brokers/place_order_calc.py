@@ -23,6 +23,13 @@ def log_order(order_id, avg_price, order_details, user_details,qty,strategy):
         strike_prc = order_details['strike_price']
     else:
         strike_prc = order_details['tradingsymbol'].name[-7:-2]
+    print(order_details['tradingsymbol'])
+
+    #check if order_details['tradingsymbol'] has order_details['tradingsymbol'].name else order_details['tradingsymbol']
+    if hasattr(order_details['tradingsymbol'], 'name'):
+        tradesymbol = order_details['tradingsymbol'].name
+    else:
+        tradesymbol = order_details['tradingsymbol']
 
     order_dict = {
         "order_id": order_id,
@@ -31,7 +38,7 @@ def log_order(order_id, avg_price, order_details, user_details,qty,strategy):
         "qty": order_details['qty'],
         "timestamp": str(dt.datetime.now().time()),
         "strike_price": strike_prc,
-        "tradingsymbol": order_details['tradingsymbol'].name
+        "tradingsymbol": tradesymbol
     }
 
     if 'direction' in order_details:

@@ -135,7 +135,7 @@ for token in trading_tokens:
     hist_data[token]['instrument_token'] = token
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
-with open('TradeMan/Strategies/Amipy/AmiPy.json' , 'r') as f:
+with open('/Users/traderscafe/Desktop/Main/TradeMan/Strategies/Amipy/AmiPy.json' , 'r') as f:
     parameters = json.load(f)
 
 entry = parameters['Nifty'][0]['entry_time']
@@ -280,7 +280,7 @@ def genSignals(resultdf):
 
 signals = []
 
-def updateSignalDf(last_signal,users_to_trade):
+def updateSignalDf(last_signal):
     print("updateSignalDf")
     global signalsdf, signals
 
@@ -355,7 +355,7 @@ def updateSignalDf(last_signal,users_to_trade):
                 "transcation":"SELL",
             }
             for zerodha,alice in zip(zerodha_list,alice_list):
-                place_order.place_order_for_broker("AmiPy",order_details_opt,tradingsymbol=(zerodha,alice))
+                place_order.place_order_for_broker("AmiPy",order_details_opt,trading_symbol=(zerodha,alice))
         elif trade_type == 'ShortCoverSignal':
             for zerodha,alice in zip(zerodha_list,alice_list):
                 # Extract the strike price from the token
@@ -368,7 +368,7 @@ def updateSignalDf(last_signal,users_to_trade):
                     transcation_type = 'SELL'
                 
                 # Call your place_order function here
-                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, tradingsymbol=(zerodha,alice))
+                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, trading_symbol=(zerodha,alice))
 
     try:
         if trade_type is not None:  # check that a signal was generated
@@ -426,7 +426,7 @@ def on_ticks(ws, ticks):
         new_signal = signalsdf[['LongSignal', 'ShortSignal', 'LongCoverSignal', 'ShortCoverSignal']].iloc[-1].any()
         if new_signal:
             last_signal = signalsdf.iloc[-1]
-            updateSignalDf(last_signal, users_to_trade)
+            updateSignalDf(last_signal)
 
     # updateSignalDf(signalsdf, trade_state)
 
