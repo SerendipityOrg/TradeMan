@@ -3,6 +3,7 @@ from pathlib import Path
 import tempfile
 import os
 import re
+import math
 import io
 from PIL import Image
 import datetime
@@ -13,6 +14,8 @@ from firebase_admin import credentials, storage
 import firebase_admin
 import hashlib
 import openpyxl
+import plotly.express as px
+import plotly.graph_objects as go
 from io import BytesIO
 import streamlit as st
 from streamlit_calendar import calendar
@@ -640,16 +643,18 @@ def display_performance_dashboard(selected_client):
         st.markdown("""
         <style>
         .custom-table {
-        background-color: #E6E6FA;  # Table background color
-        width: 80%;  # Set the table width
-        font-size: 20px;  # Increase font size for a bigger table
-        margin-left: auto;  # Center the table horizontally
-        margin-right: auto;  # Center the table horizontally
+            top: 3px;  /* Adjust the top value as needed */
+            right: 500px;
+            border: 2px solid #ccc;
+            overflow: hidden;
+            background-color: #E6E6FA;
+            font-size: 19px;
+            width: 100%;
             }
-        .custom-table td {
-        padding: 15px;  # Increase padding for larger cells
-        border: 1px solid #ddd;  # Add borders to the cells
-        }
+            .custom-table td {
+            padding: 15px;  # Increase padding for larger cells
+            border: 1px solid #ddd;  # Add borders to the cells
+            }
         .positive-value {
             color: green;
         }
@@ -676,35 +681,42 @@ def display_performance_dashboard(selected_client):
         if selected_date:
             filtered_data = [record for record in data if record[0] == selected_date.strftime('%Y-%m-%d')]
             print(f"Filtered data for date {selected_date}: {filtered_data}")  # Debug print
-
-            if filtered_data:
-                for record in filtered_data:
-                    # Create a dictionary to store the labels and values
-                    field_names = {
+        if filtered_data:
+            table_data = []
+            for record in filtered_data:
+                # Create a dictionary to store the labels and formatted values
+                field_names = {
                     "Opening Balance": format_value(record[1], "bold"),
                     "MP Wizard": format_value(record[2], "italic"),
-                    "AmiPy": format_value(record[3], "italic"),
-                    "ZRM": format_value(record[4], "italic"),
-                    "Overnight Options": format_value(record[5], "italic"),
-                    "Gross PnL": format_value(record[6], "bold"),
-                    "Tax": format_value(record[7]),
-                    "Net PnL": format_value(record[8]),
-                    "Deposit/Withdrawal": format_value(record[9]),
-                    "Running Balance": format_value(record[10], "bold")
                 }
 
-                    # Format the filtered data
-                    table_data = []
-                    for record in filtered_data:
-                        # Start from index 1 to skip the "Date"
-                        for idx, field in enumerate(field_names, start=1):
-                            value = format_value(record[idx])
-                            if value != "N/A":
-                                table_data.append([field, value])
-                    
+                # Add fields conditionally
+                if record[3] is not None:  # AmiPy
+                    field_names["AmiPy"] = format_value(record[3], "italic")
+                if record[4] is not None:  # ZRM
+                    field_names["ZRM"] = format_value(record[4], "italic")
+                if record[5] is not None:  # Overnight Options
+                    field_names["Overnight Options"] = format_value(record[5], "italic")
 
-                    # Display the table without header
-                    st.write(pd.DataFrame(table_data, columns=None).to_html(classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
+                # Add the remaining fields
+                field_names.update({
+                    "Gross PnL": format_value(record[6], "bold"),
+                    "Tax": format_value(record[7]),
+                    "Net PnL": format_value(record[8], "bold"),
+                    "Deposit/Withdrawal": format_value(record[9]),
+                    "Running Balance": format_value(record[10], "bold")
+                })
+
+                # Format the filtered data
+                formatted_data = []
+                for field, value in field_names.items():
+                    if value != "N/A":
+                        formatted_data.append([field, value])
+
+                table_data.extend(formatted_data)
+
+            # Display the table without header
+            st.write(pd.DataFrame(table_data, columns=None).to_html(classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
 
 
     if selected == "Statistics":
@@ -734,7 +746,7 @@ def display_performance_dashboard(selected_client):
         total_profit = sum(gross_pnls)
         avg_profit = total_profit / len(gross_pnls) if gross_pnls else 0
         avg_profit_percent = (avg_profit / initial_capital) * 100 if initial_capital != 0 else 0
-        total_commission = sum(transaction_amounts)/2
+        total_commission = sum(transaction_amounts)
         total_deposits = sum([amount for amount in deposit_withdrawals if amount is not None and amount > 0])
         total_withdrawal = sum([amount for amount in deposit_withdrawals if amount is not None and amount < 0])
 
@@ -767,6 +779,99 @@ def display_performance_dashboard(selected_client):
 
         # Display the table without index and without column headers, and with custom styles
         st.write(stats_df.to_html(index=False, header=False, classes='custom-table', escape=False), unsafe_allow_html=True)
+    
+    def indian_format(num):
+        """Format number in Indian style"""
+        x = round(num)
+        if x < 1e5:
+            return str(x)
+        x = round(x / 1e5)
+        if x < 100:
+            return '{} Lakh'.format(x)
+        x = round(x / 100)
+        return '{} Crore'.format(x)
+    
+    if selected == 'Graph':
+    # If filtered_data is not defined, set it with a default date range
+        try:
+            filtered_data
+        except NameError:
+            start_date = datetime.date(2023, 8, 4)
+            end_date = datetime.date.today()
+            filtered_data = [record for record in data if record[0] is not None and start_date.strftime('%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
+
+        graph_option = option_menu(None, ["Net PnL", "Running Balance"],
+                        icons=['line-chart', 'line-chart'],  # Assuming these are the icons you want
+                        menu_icon="chart-bar",  # Placeholder icon
+                        default_index=0, 
+                        orientation="horizontal",
+                        styles={
+                            "container": {"padding": "0!important", "background-color": "#fafafa"},
+                            "icon": {"color": "orange", "font-size": "18px"},
+                            "nav-link": {"font-size": "18px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
+                            "nav-link-selected": {"background-color": "orange"},
+                        })
+
+        if graph_option == "Net PnL":
+            # Calculate net PnL for each record in filtered_data
+            net_pnls = [record[6] - (record[8]/2) for record in filtered_data]  # Assuming gross_pnl - (transaction_amount/2) gives net PnL
+
+            # Create a Plotly figure
+            fig = go.Figure()
+
+            # Add traces for each segment of the line with the determined color
+            for i in range(1, len(net_pnls)):
+                color = 'green' if net_pnls[i] > net_pnls[i-1] else 'red'
+                fig.add_trace(go.Scatter(x=[filtered_data[i-1][0], filtered_data[i][0]], 
+                                        y=[net_pnls[i-1], net_pnls[i]], 
+                                        mode='lines', 
+                                        line=dict(color=color, width=2),
+                                        showlegend=False))  # Hide legend for each trace
+
+            # Update the layout to hide the overall legend
+            fig.update_layout(showlegend=False)
+
+            # Display the graph using Streamlit's plotly_chart function
+            st.plotly_chart(fig)
+
+            def indian_format_decimal(num):
+                """Format decimal number in Indian style with commas"""
+                s = '{:,.2f}'.format(num)
+                l, r = s.split('.')
+                l = re.sub(r'(?<=\d)(?=(\d\d)+\d(?!\d))', ',', l)
+                return l + '.' + r
+
+
+        elif graph_option == "Running Balance":
+            # Extract running balances from filtered_data
+            running_balances = [record[10] for record in filtered_data]
+
+            # Create a Plotly figure for Running Balance
+            fig = go.Figure()
+
+            # Add the running balances data to the figure
+            fig.add_trace(go.Scatter(x=[record[0] for record in filtered_data], 
+                                    y=running_balances, 
+                                    mode='lines', 
+                                    line=dict(color='forestgreen', width=2),
+                                    hovertemplate='%{y:,.2f}'))
+
+            # Get the range of y-values for custom tick formatting
+            y_max = max(running_balances)
+            y_min = min(running_balances)
+            tickvals = list(range(int(math.floor(y_min / 1e5) * 1e5), int(math.ceil(y_max / 1e5) * 1e5), int(1e5)))
+            ticktext = [indian_format(val) for val in tickvals]
+
+            # Update y-axis to display values in Indian rupees with custom formatting
+            fig.update_layout(
+                yaxis_title="Amount (₹)",
+                yaxis_tickvals=tickvals,
+                yaxis_ticktext=ticktext
+            )
+
+            # Display the Running Balance graph using Streamlit's plotly_chart function
+            st.plotly_chart(fig)
+
 
 def login():
 
