@@ -27,14 +27,14 @@ def place_order_for_broker( strategy, order_details=None, qty =None,monitor = No
     else:
         weeklyexpiry, monthlyexpiry = get_expiry_dates(order_details['base_symbol']) # TODO: Process before 10:15 at the start of the script
 
-        today_is_thursday = datetime.now().weekday() == 3  # 0 is Monday, 3 is Thursday
-        if today_is_thursday:
-            next_week_expiry = get_next_week_expiry()
+        # today_is_thursday = datetime.now().weekday() == 3  # 0 is Monday, 3 is Thursday
+        # if today_is_thursday:
+        #     next_week_expiry = get_next_week_expiry()
         
         if strategy == "overnight_option" and order_details['strike_prc'] == 0:
             expiry = monthlyexpiry
         elif strategy == "overnight_option" and datetime.now().weekday() == 3 and order_details['strike_prc'] != 0:
-            expiry = next_week_expiry
+            expiry = get_next_week_expiry(order_details['base_symbol'])
         else:
             expiry = weeklyexpiry
 
@@ -121,6 +121,8 @@ def modify_orders(token,monitor=None):
             }
     
     if order_details['broker'] == 'aliceblue':
+        print("Updating stoploss for Aliceblue")
         aliceblue.update_stoploss(monitor_order_func)
     elif order_details['broker'] == 'zerodha':
+        print("Updating stoploss for Zerodha")
         zerodha.update_stoploss(monitor_order_func)

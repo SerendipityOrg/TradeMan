@@ -61,7 +61,7 @@ def place_order(kite, strategy, order_details, qty):
         order_id = kite.place_order(
             variety=kite.VARIETY_REGULAR,
             exchange=kite.EXCHANGE_NFO,
-            price=limit_prc,
+            price=round(limit_prc,1),
             tradingsymbol=order_details['tradingsymbol'],
             transaction_type=transaction_type, 
             quantity=int(qty),
@@ -145,15 +145,16 @@ def update_stoploss(monitor_order_func):
             monitor_order_func.get('broker'),
             monitor_order_func.get('strategy'),
             monitor_order_func.get('trade_type'),
-            monitor_order_func.get('token').name
+            monitor_order_func.get('token')
         )
 
     new_stoploss = round(float(monitor_order_func.get('target')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
     
-    order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
+    modify_order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
                                 order_id=order_id, 
                                 price = new_stoploss,
                                 trigger_price = trigger_price)
+    print("zerodha order modified",modify_order)
 
     
