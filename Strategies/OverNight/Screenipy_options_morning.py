@@ -67,8 +67,8 @@ def main():
     print("Option Details:", order_details_opt)
     print("Future Details:", order_details_future)
 
-    place_order.place_order_for_broker("overnight_option", order_details_future)
-    place_order.place_order_for_broker("overnight_option", order_details_opt)
+    place_order.place_order_for_broker("overnight_option", order_details_future,trade_type='Morning')
+    place_order.place_order_for_broker("overnight_option", order_details_opt,trade_type='Morning')
 
 if __name__ == "__main__":
     main()

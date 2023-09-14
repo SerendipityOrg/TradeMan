@@ -33,9 +33,6 @@ def aliceblue_invested_value(user_data):
     session_id = alice.get_session_id()
     holdings = alice.get_holding_positions()
 
-    # if not isinstance(holdings, dict) or 'HoldingVal' not in holdings or not isinstance(holdings['HoldingVal'], list):
-    #     raise ValueError("Unexpected format for holdings data.")
-
     invested_value = 0
     if holdings.get("stat") == "Not_Ok":
         invested_value = 0
@@ -71,13 +68,12 @@ def get_invested_value(broker_data, broker, user):
 
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
-    return formatted.replace('₹', '₹')
+    return formatted.replace('₹', '₹ ')
 
 # Generate a morning report message for a user
 
 
 def generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital):
-    # Base message
     message = (
         f"Morning Report for {user} on {formatted_date}:\n\n"
         f"Yesterday's Capital: {custom_format(user_data['current_capital'])}\n"

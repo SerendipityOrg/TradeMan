@@ -29,9 +29,7 @@
                 "MPWizard": 0.025
             }
         },
-        "accounts_to_trade": [
-            "omkar"
-        ]
+        "accounts_to_trade": []
     },
     "aliceblue": {
         "omkar": {
@@ -80,7 +78,7 @@
                 "overnight_option": 200000
             },
             "current_capital": 640497.23,
-            "yesterday_PnL": -2890.999999999999,
+            "yesterday_PnL": -2891.00,
             "expected_morning_balance": 637606.23
         },
         "venkatesh": {
@@ -171,14 +169,16 @@
             "app_code": "2ks6EmUzV12vAOz",
             "api_key": "CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y",
             "totp_access": "ARIAHUQYKPMKAASEOVNVZXCKOZGXBHPK",
-            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ1NzMwNTYsImlhdCI6MTY5NDQ4NjY1NiwianRpIjoiYjQxODdlMjEtYTBmZC00MDcwLThiMWYtMTc1ZjJkNWYwZWQxIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIwNWUzMmFlLTk2ZmEtNGU3Ni1hYTU3LTJlMGViY2E0OWZlMiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImU5MmQwZWIxLWViNzMtNGFlNC04Y2U2LTVlZTdlMzE0YzEwOCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiZTkyZDBlYjEtZWI3My00YWU0LThjZTYtNWVlN2UzMTRjMTA4IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IkFCMDY4ODE4IiwiY2xpZW50Um9sZSI6WyJHVUVTVF9VU0VSIiwiQUNUSVZFX1VTRVIiXSwibmFtZSI6IkFNT0wgS0lUVFVSIiwibW9iaWxlIjoiODE5NzEzNzAwNyIsInByZWZlcnJlZF91c2VybmFtZSI6ImFiMDY4ODE4IiwiZ2l2ZW5fbmFtZSI6IkFNT0wiLCJmYW1pbHlfbmFtZSI6IktJVFRVUiIsImVtYWlsIjoiYW1vbGtpdHR1cjFAZ21haWwuY29tIn0.UWZy2jbTCQIvnRwy1lPjoSdHIcs1dKahnoRJlTjlO62n_KctcFcd4Tf5UyAZlbZUzRVBKRKfacRz47AMsn7zMjNvEOEn65uOwJIXzLyyv38HCAiz74yYn56Nqc0qBTX1QXjTLXZS859kYMhY5arKUWc2DmpeZ3h9i-iLicVH3qfo1LMv5MkgzcLjKxFWd8YwRtHmRgV87u-BY9y1-SGpj_LveQVbsjPpZdOvTQaQDicKf82xtbtpfzyG_XjRMcWNOvTrhLSAHs16hvkzcLs-TXYccWO8bRXXDXeLHH9rrLf9prdezUeM95xYZWbBNDNzkSfNq-GtDvlt_V5Ws7eoNw",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDkyODcsImlhdCI6MTY5NDY2Mjg4NywianRpIjoiNTc1NTM5ZGUtMDAxYi00OGU5LTkzZjktZjliNzUzOTIxOWU4IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIwNWUzMmFlLTk2ZmEtNGU3Ni1hYTU3LTJlMGViY2E0OWZlMiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjUzODdmMmE5LWIxY2QtNDBmMC1iNjUxLWIwYTRhZGU3Njk1NSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNTM4N2YyYTktYjFjZC00MGYwLWI2NTEtYjBhNGFkZTc2OTU1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IkFCMDY4ODE4IiwiY2xpZW50Um9sZSI6WyJHVUVTVF9VU0VSIiwiQUNUSVZFX1VTRVIiXSwibmFtZSI6IkFNT0wgS0lUVFVSIiwibW9iaWxlIjoiODE5NzEzNzAwNyIsInByZWZlcnJlZF91c2VybmFtZSI6ImFiMDY4ODE4IiwiZ2l2ZW5fbmFtZSI6IkFNT0wiLCJmYW1pbHlfbmFtZSI6IktJVFRVUiIsImVtYWlsIjoiYW1vbGtpdHR1cjFAZ21haWwuY29tIn0.XlySCXf6iXfzLHVU-bkUXPn4XA2GGIi-U82PdUIDq1cgmTHotaB1q4CD7sRM2LuAbMH-IGyWk-lyO4ZS8ny21W1eQX7tipXDWdgflV_gLbMOQp1VNIajaZrv9J6YblmcCdBu6WkdKcazgZGcWyKqu770eJFdDQT9Ts05IFjxAx79HG8JD5WDLRu9rSDzhGZZrHhMxlUPrLAEUsd4b-AU00hfnT2rXINzo9girhbYj3tOv3zH0FVdwBTkjJYUlAY4fyE3WHNrnR1wjA9p0F5uZkiaF5i2OPm4EWvHslGn0e9hsWeSlN3tzPWlBvMeFIPGJOB9tshV_vC8UFe0vJUTmQ",
             "percentageRisk": {
                 "AmiPy": 250000,
                 "MPWizard": 0.01,
                 "Siri": 0.01,
                 "overnight_option": 200000
             },
-            "current_capital": 90548.36
+            "current_capital": 500000,
+            "yesterday_PnL": 6870.07,
+            "expected_morning_balance": 460087.07
         },
         "accounts_to_trade": [
             "brijesh",
