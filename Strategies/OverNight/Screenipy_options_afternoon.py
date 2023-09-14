@@ -185,4 +185,4 @@ orders_to_place = [
 ]
 
 for strategy, order_details in orders_to_place:
-    place_order.place_order_for_broker(strategy, order_details)
+    place_order.place_order_for_broker(strategy, order_details,trade_type='Afternoon')

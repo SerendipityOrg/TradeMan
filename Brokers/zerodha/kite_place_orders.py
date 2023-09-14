@@ -16,7 +16,7 @@ import discordchannels as discord
 
 kite = None
 
-def place_order(kite, strategy, order_details, qty):
+def place_order(kite, strategy, order_details, qty, user_details):
 
     """
     Place an order with Zerodha broker.
@@ -78,7 +78,13 @@ def place_order(kite, strategy, order_details, qty):
             if order.get('status') == 'COMPLETE':
                 avg_prc = order.get('average_price', 0.0)
                 break  # Exit the loop once you find the completed order
+            
         if avg_prc == 0.0:
+            try:
+                log_order(order_id, avg_prc, order_details, user_details, strategy)
+            except Exception as e:
+                print(f"Failed to log the order with zero avg_prc: {e}")
+            
             raise Exception("Order completed but average price not found.")
         
         if strategy == 'Siri':
@@ -122,7 +128,7 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
     
     order_details['qty'] = qty
     try:
-        order_id, avg_price = place_order(kite, strategy, order_details, qty)
+        order_id, avg_price = place_order(kite, strategy, order_details, qty, user_details)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
         # You can set default or fallback values if needed
@@ -130,7 +136,7 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
         avg_price = 0.0
     
     try:
-        log_order(order_id, avg_price, order_details, user_details,qty, strategy)
+        log_order(order_id, avg_price, order_details, user_details, strategy)
     except Exception as e:
         print(f"Failed to log the order: {e}")
         
@@ -145,7 +151,7 @@ def update_stoploss(monitor_order_func):
             monitor_order_func.get('broker'),
             monitor_order_func.get('strategy'),
             monitor_order_func.get('trade_type'),
-            monitor_order_func.get('token').name
+            monitor_order_func.get('token')
         )
 
     new_stoploss = round(float(monitor_order_func.get('target')),1)

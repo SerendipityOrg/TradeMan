@@ -16,7 +16,7 @@ import discordchannels as discord
 
 alice = None
 
-def alice_place_order(alice, strategy, order_details, qty):
+def alice_place_order(alice, strategy, order_details, qty, user_details):
     """
     Place an order with Aliceblue broker.
 
@@ -77,15 +77,21 @@ def alice_place_order(alice, strategy, order_details, qty):
         avg_prc_data = alice.get_order_history(order_id_value)
         avg_prc = avg_prc_data.get('Avgprc')
 
+        if avg_prc is None:
+            try:
+
+                log_order(order_id_value, 0.0, order_details, user_details, strategy)
+            except Exception as e:
+                print(f"Failed to log the order with zero avg_prc: {e}")
+            
+            raise Exception("Order completed but average price not found.")
+        
         if strategy == 'Siri':
             try:
                 msg = f"Avgprc is {avg_prc}"
                 discord.discord_bot(msg,"siri")
             except Exception as e:
                 print(f"Discord bot failed: {e}") 
-
-        if avg_prc is None:
-            raise Exception("Avgprc not found")
         
         return order_id_value, avg_prc # Merge place_order
   
@@ -122,14 +128,14 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
 
     order_details['qty'] = qty
     try:
-        order_id, avg_price = alice_place_order(alice, strategy, order_details, qty)
+        order_id, avg_price = alice_place_order(alice, strategy, order_details, qty, user_details)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
         # You can set default or fallback values if needed
         order_id = None
         avg_price = 0.0
     try:
-        log_order(order_id, avg_price, order_details, user_details,qty, strategy)
+        log_order(order_id, avg_price, order_details, user_details, strategy)
     except Exception as e:
         print(f"Failed to log the order: {e}")
         
@@ -156,3 +162,4 @@ def update_stoploss(monitor_order_func):
                     product_type = ProductType.Intraday,
                     price=new_stoploss,
                     trigger_price = trigger_price)
+    print("modify_order",modify_order)

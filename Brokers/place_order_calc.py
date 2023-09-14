@@ -15,7 +15,7 @@ def get_user_details(user):
     return json_data, user_json_path
 
 # 1. Renamed the function to avoid clash with the logging module
-def log_order(order_id, avg_price, order_details, user_details,qty,strategy):
+def log_order(order_id, avg_price, order_details, user_details,strategy):
     user, json_path = get_user_details(order_details['user'])
     if 'strike_price' in order_details:
         strike_prc = order_details['strike_price']
@@ -34,12 +34,21 @@ def log_order(order_id, avg_price, order_details, user_details,qty,strategy):
 
     if 'direction' in order_details:
         order_dict['direction'] = order_details['direction']
+    
+    if 'trade_type' in order_details:
+        order_dict['trade_type'] = order_details['trade_type']
 
     broker = list(user.keys())[0]
     broker = user_details.setdefault(broker, {})
     orders = broker.setdefault('orders', {})
     strategy_orders = orders.setdefault(strategy, {})
-    order_type_list = strategy_orders.setdefault(order_details['transaction_type'], [])
+
+    #if trade_type is present in order_dict it should setdefault to that else it should setdefault to order_details['transaction_type']
+
+    if 'trade_type' in order_dict:
+        order_type_list = strategy_orders.setdefault(order_dict['trade_type'], [])
+    else:
+        order_type_list = strategy_orders.setdefault(order_details['transaction_type'], [])
     order_type_list.append(order_dict)
 
     log_details = general_calc.write_json_file(json_path, user_details)

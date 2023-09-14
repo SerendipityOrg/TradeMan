@@ -80,11 +80,10 @@ def calculate_quantity(capital, risk, prc_ref, lot_size):
 
 def calculate_lots(user_details, strategy_percentage, mpwizard_json):
     lots = {}
-    current_capital = user_details.get('current_capital', 0)
+    current_capital = user_details.get('expected_morning_balance', 0)
     percentage_risk = user_details.get('percentageRisk', {})
     weekday = datetime.now().strftime('%a')
     indices_lot_sizes = {"NIFTY": 50, "BANKNIFTY": 15, "FINNIFTY": 40}
-
     with open(mpwizard_json, 'r') as file:
         data = json.load(file)
         indices_data = data.get('indices', [])
@@ -107,10 +106,7 @@ def calculate_lots(user_details, strategy_percentage, mpwizard_json):
 
 
 def create_strategy_json(broker_name, user, lots, balance, user_details_path, mpwizard_json_path):
-    with open(user_details_path, 'r') as json_file:
-        broker = json.load(json_file)
-
-    user_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'users')
+    user_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),  '..','UserProfile','json')
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
 
@@ -134,7 +130,6 @@ def create_strategy_json(broker_name, user, lots, balance, user_details_path, mp
         data[broker_name]['access_token'] = user_details['access_token']
     else:
         print("Broker not supported")
-    data[broker_name]["Current_Capital"] = balance
 
     for strategy, qty in lots.items():
         if strategy == 'AmiPy':
@@ -297,16 +292,13 @@ def login_in_zerodha(user_details):
 with open(user_details_path) as f:
     broker = json.load(f)
 
-# Define the strategies and their respective percentages here
-amt_per_lot = {'AmiPy': 250000}
-
 # Get the accounts to trade for aliceblue
 aliceblue_accounts_to_trade = broker['aliceblue']['accounts_to_trade']
 
 for user in aliceblue_accounts_to_trade:
     user_details = broker['aliceblue'][user]
     user_details = login_in_aliceblue(user_details)
-    balance = float(alice.get_balance()[0]['cashmarginavailable'])
+    balance = user_details.get('expected_morning_balance')
     # Updated logic to use strategy percentage
     strategy_percentage = user_details.get('percentageRisk', {})
     # user_details['current_capital'] = balance
@@ -323,10 +315,9 @@ zerodha_accounts_to_trade = broker['zerodha']['accounts_to_trade']
 for user in zerodha_accounts_to_trade:
     user_details = broker['zerodha'][user]
     kite, user_details = login_in_zerodha(user_details)
-    balance = kite.margins(segment = 'equity')['available']['opening_balance']
+    balance = user_details.get('expected_morning_balance')
     # Updated logic to use strategy percentage
     strategy_percentage = user_details.get('percentageRisk', {})
-    # user_details['current_capital'] = balance
 
     broker['zerodha'][user] = user_details  # persist the changes
     lots = calculate_lots(user_details, strategy_percentage,mpwizard_json_path)
