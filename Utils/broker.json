@@ -181,12 +181,7 @@
             "expected_morning_balance": 460087.07
         },
         "accounts_to_trade": [
-            "brijesh",
-            "venkatesh",
-            "vinay",
-            "vinod",
-            "sridhar",
-            "vimala"
+            "amol"
         ]
     }
 }

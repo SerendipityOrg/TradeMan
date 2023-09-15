@@ -21,12 +21,11 @@ index = os.getenv('overnight_index')
 def determine_option_and_transaction(direction, strike_price):
     """Determine the option type and transaction type based on direction and strike price."""
     if direction == 'BEARISH':
-        option_type = 'CE' if strike_price != "0" else 'FUT'
-        transaction = "SELL" if strike_price != '0' else "BUY"
+        option_type = 'CE' if strike_price != 0 else 'FUT'
+        transaction = "SELL" if strike_price != 0 else "BUY"
     elif direction == 'BULLISH':
-        option_type = 'PE' if strike_price != "0" else 'FUT'
+        option_type = 'PE' if strike_price != 0 else 'FUT'
         transaction = "SELL"
-    
     return option_type, transaction
 
 def fetch_order_details_for_user(user, broker):
