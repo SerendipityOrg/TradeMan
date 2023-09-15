@@ -4,7 +4,7 @@ import os,sys
 from dotenv import load_dotenv
 from MPWizard_calc import get_high_low_range_and_update_json, get_average_range_and_update_json
 import datetime as dt
-import time
+from time import sleep
 
 # Define the current directory and paths for JSON and environment files
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))

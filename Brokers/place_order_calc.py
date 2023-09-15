@@ -10,9 +10,11 @@ sys.path.append(UTILS_DIR)
 import general_calc as general_calc
 
 def get_user_details(user):
-    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'Json', f'{user}.json')
+    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'json', f'{user}.json')
     json_data = general_calc.read_json_file(user_json_path)
     return json_data, user_json_path
+
+
 
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, avg_price, order_details, user_details,strategy):
@@ -21,6 +23,13 @@ def log_order(order_id, avg_price, order_details, user_details,strategy):
         strike_prc = order_details['strike_price']
     else:
         strike_prc = order_details['tradingsymbol'].name[-7:-2]
+    print(order_details['tradingsymbol'])
+
+    #check if order_details['tradingsymbol'] has order_details['tradingsymbol'].name else order_details['tradingsymbol']
+    if hasattr(order_details['tradingsymbol'], 'name'):
+        tradesymbol = order_details['tradingsymbol'].name
+    else:
+        tradesymbol = order_details['tradingsymbol']
 
     order_dict = {
         "order_id": order_id,
@@ -28,6 +37,7 @@ def log_order(order_id, avg_price, order_details, user_details,strategy):
         "qty": order_details['qty'],
         "timestamp": str(dt.datetime.now()),
         "strike_price": strike_prc,
+        "tradingsymbol": tradesymbol
     }
 
     if hasattr(order_details['tradingsymbol'], 'name'):

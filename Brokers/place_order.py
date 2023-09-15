@@ -121,6 +121,8 @@ def modify_orders(token,monitor=None):
             }
     
     if order_details['broker'] == 'aliceblue':
+        print("Updating stoploss for Aliceblue")
         aliceblue.update_stoploss(monitor_order_func)
     elif order_details['broker'] == 'zerodha':
+        print("Updating stoploss for Zerodha")
         zerodha.update_stoploss(monitor_order_func)

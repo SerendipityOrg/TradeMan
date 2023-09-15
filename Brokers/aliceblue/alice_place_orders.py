@@ -62,7 +62,7 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
                                         quantity = qty ,
                                         order_type = order_type,
                                         product_type = product_type,
-                                        price = limit_prc,
+                                        price = round(limit_prc,1),
                                         trigger_price = trigger_price,
                                         stop_loss = None,
                                         square_off = None,
@@ -162,4 +162,4 @@ def update_stoploss(monitor_order_func):
                     product_type = ProductType.Intraday,
                     price=new_stoploss,
                     trigger_price = trigger_price)
-    print("modify_order",modify_order)
+    print("alice modify_order",modify_order)

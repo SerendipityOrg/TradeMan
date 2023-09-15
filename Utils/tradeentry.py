@@ -198,8 +198,8 @@ def process_overnight_options_trades(overnight_options_trades):
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 broker_filepath = os.path.join(script_dir, "broker.json")
-json_dir = os.path.join(script_dir, "users")
-excel_dir = os.path.join(script_dir, "excel")
+json_dir = os.path.join(script_dir, '..','UserProfile',"json")
+excel_dir = os.path.join(script_dir, '..','UserProfile',"excel")
 
 with open(broker_filepath) as file:
     data = json.load(file)
@@ -329,7 +329,7 @@ for broker, user in user_list:
 
     # send discord message
     script_dir = os.path.dirname(os.path.abspath(__file__))   
-    parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
+    parent_dir = os.path.abspath(os.path.join(script_dir, '..','..'))
     filepath = os.path.join(parent_dir, '+918618221715.session')
     
     with TelegramClient(filepath, api_id, api_hash) as client:

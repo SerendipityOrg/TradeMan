@@ -19,16 +19,16 @@ while true; do
     # Source conda, activate the environment and run the script
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
 	conda activate tradingenv && \
-    cd /Users/traderscafe/Desktop/Main/TradeMan/Utils && \
-	/Users/traderscafe/miniconda3/envs/tradingenv/bin/python DailyLogin.py && \
+    cd /Users/traderscafe/Desktop/Main/TradeMan/Strategies/OverNight && \
+	/Users/traderscafe/miniconda3/envs/tradingenv/bin/python Screenipy_options_afternoon.py && \
 	echo "Program started successfully" && break
 
     # If the command failed and we've reached the maximum number of attempts, send a message and exit
     if ((attempt==max_attempts)); then
-        echo "Can't Login!!!"
+        echo "The script has some errors. Please Check !!!"
         
         # Send a message on Telegram
-        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Can't Login. Please Check !!!"
+        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Overnight Entry Error. Please Check !!!"
 
         exit 1
     fi
