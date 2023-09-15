@@ -81,8 +81,11 @@
 
 from pya3 import *
 
-alice = Aliceblue("AB068818","CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y")
+alice = Aliceblue("929016","NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f")
 
 alice.get_session_id()
 
-print(alice.get_instrument_for_fno(exch="NFO",symbol='BANKNIFTY', expiry_date="2023-09-13", is_fut=False,strike=44500, is_CE=False))
+print(alice.get_order_history('230915000119824'))
+
+
+

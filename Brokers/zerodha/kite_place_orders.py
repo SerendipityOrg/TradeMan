@@ -17,7 +17,6 @@ import discordchannels as discord
 kite = None
 
 def place_order(kite, strategy, order_details, qty, user_details):
-
     """
     Place an order with Zerodha broker.
 
@@ -41,7 +40,7 @@ def place_order(kite, strategy, order_details, qty, user_details):
     else:
         raise ValueError("Invalid transaction_type in order_details")
 
-    order_type_value = order_details.get('order_type')
+    order_type_value = order_details.get('order_trade_type')
     if order_type_value == 'Stoploss':
         order_type = kite.ORDER_TYPE_SL
     elif order_type_value == 'Market':
@@ -49,7 +48,7 @@ def place_order(kite, strategy, order_details, qty, user_details):
     else:
         raise ValueError("Invalid order_type in order_details")
     
-    if strategy == 'overnight_option':
+    if strategy == 'Overnight_Options':
         product_type = kite.PRODUCT_NRML
     else:
         product_type = kite.PRODUCT_MIS
