@@ -61,7 +61,7 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             'transaction_type': order_details['transcation'],
             'tradingsymbol': trading_symbol,
             'user': user,
-            'order_type': 'Market'}
+            'order_trade_type': 'Market'}
 
         if 'direction' in order_details:
             details['direction'] = order_details['direction']
@@ -83,7 +83,7 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
                         'tradingsymbol': trading_symbol,
                         'user': user,
                         'broker': broker,
-                        'order_type': 'Stoploss',
+                        'order_trade_type': 'Stoploss',
                         'limit_prc': round(limit_prc),
                         'price_ref' : order_details['stoploss_points']
                     }

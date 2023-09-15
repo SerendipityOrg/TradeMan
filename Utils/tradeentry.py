@@ -237,17 +237,17 @@ for broker, user in user_list:
         mpwizard_pnl = round(mpwizard_df["PnL"].sum(),2)
         mpwizard_tax = round(mpwizard_df["Tax"].sum(),2)
 
-    if "Amipy" in user_data[broker]["orders"]:
+    if "AmiPy" in user_data[broker]["orders"]:
         amipy_data_short = []
         amipy_data_long = []
-        if "ShortSignal" in user_data[broker]["orders"]["Amipy"]:
+        if "ShortSignal" in user_data[broker]["orders"]["AmiPy"]:
             # Process the AmiPy ShortSignal and ShortCoverSignal trades
-            amipy_data_short = process_short_trades(user_data[broker]["orders"]["Amipy"]["ShortSignal"], 
-                                                    user_data[broker]["orders"]["Amipy"]["ShortCoverSignal"])
-        if "LongSignal" in user_data[broker]["orders"]["Amipy"]:
+            amipy_data_short = process_short_trades(user_data[broker]["orders"]["AmiPy"]["ShortSignal"], 
+                                                    user_data[broker]["orders"]["AmiPy"]["ShortCoverSignal"])
+        if "LongSignal" in user_data[broker]["orders"]["AmiPy"]:
             # Process the AmiPy LongSignal and LongCoverSignal trades
-            amipy_data_long = process_long_trades(user_data[broker]["orders"]["Amipy"]["LongSignal"], 
-                                                user_data[broker]["orders"]["Amipy"]["LongCoverSignal"])
+            amipy_data_long = process_long_trades(user_data[broker]["orders"]["AmiPy"]["LongSignal"], 
+                                                user_data[broker]["orders"]["AmiPy"]["LongCoverSignal"])
 
         # Combine short and long trades into a single DataFrame
         amipy_data = amipy_data_short + amipy_data_long
@@ -292,7 +292,7 @@ for broker, user in user_list:
     if "MPWizard" in user_data[broker]["orders"]:
         message_parts.append(f"MPWizard: {custom_format(mpwizard_pnl)}")
 
-    if "Amipy" in user_data[broker]["orders"]:
+    if "AmiPy" in user_data[broker]["orders"]:
         message_parts.append(f"AmiPy: {custom_format(amipy_pnl)}")
 
     if "Overnight_Options" in user_data[broker]["orders"]:

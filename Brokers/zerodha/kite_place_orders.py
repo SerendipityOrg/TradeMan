@@ -41,7 +41,7 @@ def place_order(kite, strategy, order_details, qty, user_details):
     else:
         raise ValueError("Invalid transaction_type in order_details")
 
-    order_type_value = order_details.get('order_type')
+    order_type_value = order_details.get('order_trade_type')
     if order_type_value == 'Stoploss':
         order_type = kite.ORDER_TYPE_SL
     elif order_type_value == 'Market':
