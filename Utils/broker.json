@@ -1,0 +1,184 @@
+{
+    "zerodha": {
+        "omkar": {
+            "username": "YY0222",
+            "password": "K@nnada444",
+            "api_key": "6b0dp5ussukmo67h",
+            "api_secret": "eln2qrqob5neowjuedmbv0f0hzq6lhby",
+            "totp": "3GN2DNUD35FZQDIIWJUK6CSUIWBPXSYJ",
+            "access_token": "mnjPA1a5tUdWH1gcCvsL56tyfEQPluWY",
+            "mobile_number": "+919902106162",
+            "percentageRisk": {
+                "AmiPy": 250000,
+                "MPWizard": 0.01,
+                "ZRM": 0.01,
+                "overnight_option": 200000
+            },
+            "current_capital": 2305266.99,
+            "yesterday_PnL": 119046.04,
+            "expected_morning_balance": 2424313.03
+        },
+        "user2": {
+            "username": "def",
+            "password": "456",
+            "api_key": "zerodha_api_key_2",
+            "api_secret": "zerodha_api_secret_2",
+            "totp": "zerodha_totp_2",
+            "access_token": "zerodha_access_token_2",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            }
+        },
+        "accounts_to_trade": []
+    },
+    "aliceblue": {
+        "omkar": {
+            "username": "KH364",
+            "password": "K@nnada333",
+            "twoFA": "1990",
+            "api_secret": "XbUmH3toe7eD2GCXcoKoFiQkBQMtdebs4GeqGVH0phEGVPFD9ZKeiGFSOs79pSi7DO1WffZFobvqopu124rXWoNRRc3Qhba6yz6g",
+            "app_code": "QORxCzYeJAxafrn",
+            "api_key": "ejuSHTAmjA5SQvIRRdjx2rjQN6U0V7j80Ljp64L5tnsMN7PnQ1S5PGrebVo9peb13WLUtblSTbBmexCTFVHKgLu81UE3yrrsvKbkX4AQGbOpd08MPepMq4cMbCiOzKip",
+            "totp_access": "KOYCAJWOEAKDQUYFQQCFOZHXOMQCIOCZ",
+            "session_id": "UVsl4fIVhRATIIKcqukKxrX0vp99kC0UZCzBkyyzgVBaGEkuMaaF30isi5bfn7TCY7hFGLll7HEl4SSHZOg1paOeUFCxUI7jxHpYOCVWiGbnVM6tXjKGOeH9YyFouq3XnFuDkzTt1Sh2rZsKgUCXB4O25FdXu2BmziWe3Ma1p3xU5DzmiDx07HSQx8oHIWcHYPsUnkRdVYhPJUIbe0TsM8SThnpnlj21gNEx5LgfSb9onRRfE10lryKxifGr7Byf",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            }
+        },
+        "vimala": {
+            "username": "BY1424",
+            "password": "K@nnada333",
+            "twoFA": "1963",
+            "api_secret": "a9bkSpfZn6x24iWvh1L8epG464l2OqZJIpc4gzWOOmKSacMCtmZtTn8W328rqd1KVzDBPP3M50Frhy0cCnCk272E1z1CrosIAlTD",
+            "app_code": "mqTi31aA56ylUKh",
+            "api_key": "yn6YMylMSOa7Qmp9OPYhtFWSE4OL7hTMTIptvx1Odl1DkVOxqCFuboLnTCJiEd2IoEQolWY7G1JlABIkPxsvDL81hcAcOa08zszFj7DFgqPkNKGJAll3tP3OZjvmIYH6",
+            "totp_access": "DTGZGSGONNQWEGFXSTGKKZMHJUVFFYPX",
+            "session_id": "MGQ99M2yoMOY7t2UUGzeXkd85338B6e1TAq9iH9KdyFzuOSSfJ4X1iyO4xNYtHG4WGDHoReUgLdFaDWlrl31cVlyRH5IzFyVHVUu8zFECysb7Cis8CgpeHGLCzaX3MenF2dfsCMSYXqEXQqLDyeDj2bc1kT2UQCqK8kXIu0gmGfJPofW9i6xLaX6xMtceSFvctknVXjSFeu7u3jSuxMu0bvmx0u49slcLBjSsxT6JnKxUngOLakPKo8b8xYjJtJ2",
+            "percentageRisk": {
+                "Siri": 100000
+            },
+            "current_capital": 47345.41
+        },
+        "brijesh": {
+            "username": "929016",
+            "password": "K@nnada222",
+            "twoFA": "1979",
+            "api_secret": "dkOINUeJELkqeHSuFWaqUMjNjAHarRQiAHpmiPOednLBCNCJzDlSLIAuJuGRHReOOpTkGGiLXaHHRGuPZEEYfvUYoLsLodjIJIlY",
+            "app_code": "JWbhBFJXIBlHpAd",
+            "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
+            "totp_access": "VFULKSAJCRMTSNRLEQDYVWBBFKHXOJQR",
+            "session_id": "eKLp5kIXs8zvjzLk59ZDm8x6lF1qMBv1KgkST6m7OeTpm9OPpMU8P4Az8FV2Y8vYxMGdMFvLAyiDb0KxeONsCEHKmWNLeJV64bohIBd6kpd0OjSRCX8Yglj7z4gXNsZ9icfnSYt0BaQuYKffaWmIcpokNxAuHZnQTjPi0BzC6DVApaXxzzKy7iN47ptqjrudT1vBXrjrtRM8CMCr74htKcObrhmY8E8robCVvpXz3erpykctMIalIY47jkCvJqqD",
+            "mobile_number": "+918762152111",
+            "percentageRisk": {
+                "AmiPy": 250000,
+                "MPWizard": 0.015,
+                "overnight_option": 200000
+            },
+            "current_capital": 548213.41,
+            "yesterday_PnL": 41036.700000000004,
+            "expected_morning_balance": 589250.11
+        },
+        "venkatesh": {
+            "username": "924446",
+            "password": "K@nnada444",
+            "twoFA": "1991",
+            "api_secret": "pyNZQITYOntcNgJfybPnjnzLCSWySWekJyIdWArllibJodoOUAZguBKBlmBZIhclcunfktVvuUpFsSGqoppQjPRiHVFRXMlfJPMx",
+            "app_code": "RPMGgKDNcqpdXtM",
+            "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
+            "totp_access": "JDPHMIKEPJERXYLFKDNFBVLIEKOTIQYX",
+            "session_id": "veMY1dH9AYE8sSZgiDU3pFbPquCiI54LuGiGaDWsY3STIxcAJ706cKS4QUUChpNS7og8FzAXStCMIPGsW7hq4uUzQ665KVpXC09I6m49KYbigJl8kjUfiCLS8jQz2ZRVjAJ29YKS7RsKiMqCB8do7TtDgqbhrTXBeLWcbogjdTL4sdPpq5SAgKjBk2LTtUamLgbd5rneOa8T4hYisi3418sa1o9xLOq6NCDMkLRvixQHaHTjol6snFhTOYxemxln",
+            "mobile_number": "+918147039490",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            },
+            "current_capital": 64782.31,
+            "yesterday_PnL": 5973.79,
+            "expected_morning_balance": 70756.1
+        },
+        "sridhar": {
+            "username": "935347",
+            "password": "K@nnada333",
+            "twoFA": "1990",
+            "api_secret": "zmOAKJMzMpTKtuNNvPeRKHIWVKFFidIjyMcWxQgAgQVofznoPQzfZtzakSYIiWZmhyhtONSfTsUfmHAcRxVayQUymMLkrqfvGRdd",
+            "app_code": "HaRYaumJCQuFiEy",
+            "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
+            "totp_access": "IPPRNKIUJHSRLEADIQKUPEXNPKIKOBEP",
+            "session_id": "6yhzLhoJ6s7BqcCKTtRXh3SmxqWUervgkQloV5cQRUfsdNRXe1nbEN2gRY6MAJ3GKsUbh5vqhtzeOCxL7NfXkjvBgDs3G2XpU5sq1oj2i7z5NXtxSVy6zPaZjcXgmO24jC9QB7EChg96Eduz7c16K1HeWh4AGUZmdEXQy4kFZTWhv64WLJuKj2rIsk8TT48ZGb8fyISODPGNnfsx3EkT2vEXQ5ZgOvGQNCTiKrHxc92zqZUn5khEmYzB3fRFcW5u",
+            "mobile_number": "+919741371527",
+            "percentageRisk": {
+                "MPWizard": 0.05
+            },
+            "current_capital": 25640.91,
+            "yesterday_PnL": 5946.84,
+            "expected_morning_balance": 31587.75
+        },
+        "vinay": {
+            "username": "935325",
+            "password": "K@nnada333",
+            "twoFA": "1987",
+            "api_secret": "GaHGHkoJMHOmclfFtBpsxFfCmftNaUbHhVWPrZZbeYIvarcIaTVhYJVZTRCAEcyCqbOTBdENgzENdtOWgrmJDPoevURyNISZeRaE",
+            "app_code": "kKThxMchucTIuEs",
+            "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
+            "totp_access": "HYUHYOKAUBPEVZNNIHJLICGHSQNBQQDR",
+            "session_id": "jNqCuxz2dYX35Bti5vZLNbcZ7Fm3lYCVr9Xq7Ruhrqyx8jbrxPUHZ8GIc9BuMYXq1gEIvtGdD54zNGnngqBnDROjjAxVLk8PCkoRLE5CU9ApQeghsvy8hqlFNB22uyBaTTlJCc8MyxNySgXBNaJj8dnbbUMAslD3DyooyxG9a3xQlnv6Hb48fYxvqCTKJnCNYRO15Q93X1pb2eceGepN1ccnpTNOo6jP3Aa9lC5EnXXfCCZC72pNLMeHDSm2rYFp",
+            "mobile_number": "+919916838919",
+            "percentageRisk": {
+                "MPWizard": 0.03
+            },
+            "current_capital": 33142.03,
+            "yesterday_PnL": 6024.8,
+            "expected_morning_balance": 39166.83
+        },
+        "vinod": {
+            "username": "1008309",
+            "password": "K@nnada333",
+            "twoFA": "1990",
+            "api_secret": "qLgKKmriOmDfoxErfNttajTQoTjzjnuXzzsFmJFSWeczJYYvSBGVFyFGppMiYmUmEyLKbWSdTnAqYXjoTqNEKMMBDgInOgpVQzJV",
+            "app_code": "UcBJnUXcaGKCNjg",
+            "api_key": "a5FhPC3QX0KebQlOBPjBzpt621T8lEAAyN7bduK3Qn9fUIhuTZXzM4AOkS4Yp5hRLKBZl4Ji5UiCG9qD4Gjnf1GesVGPyjUurODdBVJjo9AhptVlZ2cfU6pbldOo56fS",
+            "totp_access": "OIRGHCBGHVIXRETMMZYCNJNYHYFMMTYJ",
+            "session_id": "RQHuqyIrbGUiVCcMFW2G2tbR72trID52ocqIS32vdi0OUF1ueVZvaGGdtbxHiKdYup3AiH9N4ryMXmvti6JmRGT8rqQQ3QvezpaGfMcd8vlM7GIMk08iSuay6bp9oPfUDNaEFlsKOb6RLWMVFj1FsZiqZeYzzyRxoVXJDnunXHK35az5HeZOoaGXO4zq4hDuAq8BBgqBVf7jGvEtiXGZ8IPVvziDAiUvoQgpHtEMyMREv4o0yydAjQ8CuIoCUNgm",
+            "mobile_number": "+919686357376",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            },
+            "current_capital": 50000,
+            "yesterday_PnL": 687.0699999999999,
+            "expected_morning_balance": 50687.07
+        },
+        "veena": {
+            "username": "AB117607",
+            "password": "Veena@999",
+            "twoFA": "1971",
+            "api_secret": "jftQLCPu1NXtGDjYgTnJSa90oiOPPZ4QGoPX7HyzNxVCJsQnSlG0vyvOBXIOd0Cx2J0s738juZPhngxUm0oRD3O3PZfs6p84S6Ns",
+            "app_code": "8J7vxnsxrQ8Qpo0",
+            "api_key": "KZ2gGEyfvKC2x7KN4m1EMRU0aOQyNq2X1hcPKsdZoI8FgbjzLfLQva3IdJRmzntJyGH1f7sCsgvzLiKCE5l80iLVrRIGjBn7bn8vPe03BgmEYsLpsr2cMVYOYeX6LWNs",
+            "totp_access": "NAMPXPILOZZKQXECENDFRGGRTXDHAXNI",
+            "session_id": "yia7Z9oak0r1ayUjvJO6ix5a9xgXTpQaRjaCaMXaIhuouleUjcBulrPePLaMyVVeuMWcga57vpp3EP6VfvJq8W4VQJlb2V7BW3mUEvZy3ZkR3zjvPh5QBilv5b5itBtTvAVyW8XulngmXDdpx6oOMCidYqTIf4R8YlmkVrJ7b3aeylqseDsWheJmehcyKS8NHPJSLfbyrg9TtjM5N6PR7KLQPofSvxQ1MWveja9RJW7FALqfY1AXK1sP9LddEzW8",
+            "percentageRisk": {},
+            "current_capital": 90548.36
+        },
+        "amol": {
+            "username": "AB068818",
+            "password": "K@nnada333",
+            "twoFA": "1995",
+            "api_secret": "pyhfGRbPJJx6BaB2mNfCxMnmWWn7OqMkioVeSn31ujhyxhfGx3C3FTaqZ7RYU6gmC9mx1BNZ3BtHRW83zR86n6agpgDGU0j5g5Ur",
+            "app_code": "2ks6EmUzV12vAOz",
+            "api_key": "CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y",
+            "totp_access": "ARIAHUQYKPMKAASEOVNVZXCKOZGXBHPK",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDkyODcsImlhdCI6MTY5NDY2Mjg4NywianRpIjoiNTc1NTM5ZGUtMDAxYi00OGU5LTkzZjktZjliNzUzOTIxOWU4IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIwNWUzMmFlLTk2ZmEtNGU3Ni1hYTU3LTJlMGViY2E0OWZlMiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjUzODdmMmE5LWIxY2QtNDBmMC1iNjUxLWIwYTRhZGU3Njk1NSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNTM4N2YyYTktYjFjZC00MGYwLWI2NTEtYjBhNGFkZTc2OTU1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IkFCMDY4ODE4IiwiY2xpZW50Um9sZSI6WyJHVUVTVF9VU0VSIiwiQUNUSVZFX1VTRVIiXSwibmFtZSI6IkFNT0wgS0lUVFVSIiwibW9iaWxlIjoiODE5NzEzNzAwNyIsInByZWZlcnJlZF91c2VybmFtZSI6ImFiMDY4ODE4IiwiZ2l2ZW5fbmFtZSI6IkFNT0wiLCJmYW1pbHlfbmFtZSI6IktJVFRVUiIsImVtYWlsIjoiYW1vbGtpdHR1cjFAZ21haWwuY29tIn0.XlySCXf6iXfzLHVU-bkUXPn4XA2GGIi-U82PdUIDq1cgmTHotaB1q4CD7sRM2LuAbMH-IGyWk-lyO4ZS8ny21W1eQX7tipXDWdgflV_gLbMOQp1VNIajaZrv9J6YblmcCdBu6WkdKcazgZGcWyKqu770eJFdDQT9Ts05IFjxAx79HG8JD5WDLRu9rSDzhGZZrHhMxlUPrLAEUsd4b-AU00hfnT2rXINzo9girhbYj3tOv3zH0FVdwBTkjJYUlAY4fyE3WHNrnR1wjA9p0F5uZkiaF5i2OPm4EWvHslGn0e9hsWeSlN3tzPWlBvMeFIPGJOB9tshV_vC8UFe0vJUTmQ",
+            "percentageRisk": {
+                "AmiPy": 250000,
+                "MPWizard": 0.01,
+                "Siri": 0.01,
+                "overnight_option": 200000
+            },
+            "current_capital": 500000,
+            "yesterday_PnL": 6870.07,
+            "expected_morning_balance": 460087.07
+        },
+        "accounts_to_trade": [
+            "amol"
+        ]
+    }
+}

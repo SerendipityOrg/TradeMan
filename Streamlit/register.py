@@ -2,14 +2,18 @@ import streamlit as st
 from datetime import date
 from PIL import Image
 import io
+<<<<<<< HEAD
 import os
 from dotenv import load_dotenv
+=======
+>>>>>>> Dev
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import storage
 import base64
 
+<<<<<<< HEAD
 # Load the .env file
 load_dotenv()
 
@@ -22,6 +26,15 @@ if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_credentials_path)
     firebase_admin.initialize_app(cred, {
         'databaseURL': database_url
+=======
+# Check if Firebase app is already initialized
+if not firebase_admin._apps:
+    # Initialize Firebase app
+    # Replace with your service account key file
+    cred = credentials.Certificate("credentials.json")
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
+>>>>>>> Dev
     })
 
 

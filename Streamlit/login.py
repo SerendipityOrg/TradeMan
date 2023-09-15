@@ -7,6 +7,7 @@ from PIL import Image
 import io
 import os
 import base64
+<<<<<<< HEAD
 import datetime
 from dotenv import load_dotenv
 from streamlit_calendar import calendar
@@ -29,6 +30,47 @@ if not firebase_admin._apps:
     })
 
 # Create a SessionState class to manage session state variables
+=======
+
+table_style = """
+<style>
+table.dataframe {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.dataframe th,
+table.dataframe td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left; /* Align text to the left */
+}
+
+table.dataframe th {
+    background-color: #f2f2f2;
+}
+
+table.dataframe tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table.dataframe tr:hover {
+    background-color: #ddd;
+}
+</style>
+"""
+# Check if Firebase app is already initialized
+if not firebase_admin._apps:
+    # Initialize Firebase app
+    cred = credentials.Certificate("credentials.json")
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
+    })
+
+# Create a SessionState class to manage session state variables
+
+
+>>>>>>> Dev
 class SessionState:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -290,6 +332,7 @@ def logout():
 
 
 def show_performance_dashboard():
+<<<<<<< HEAD
     selected = option_menu(None, ["Calendar", "Statistics",  "Graph"],
         icons=['calendar', 'file-bar-graph', 'graph-up'],
         menu_icon="cast", default_index=0, orientation="horizontal",
@@ -343,3 +386,8 @@ table.dataframe tr:hover {
 }
 </style>
 """
+=======
+    # Set the title for the Streamlit app
+    st.markdown("<h3 style='color: darkblue'>Performance Dashboard</h3>",
+                unsafe_allow_html=True)
+>>>>>>> Dev

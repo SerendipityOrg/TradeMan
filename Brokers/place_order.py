@@ -19,7 +19,7 @@ def start_monitoring(monitor):
     monitor_thread.start()
 
 #TODO: write documentation
-def place_order_for_broker( strategy, order_details=None, qty =None,monitor = None, trading_symbol = None):
+def place_order_for_broker(strategy, order_details=None, qty =None,monitor = None, trading_symbol = None, trade_type = None):
     from instrument_monitor import InstrumentMonitor
 
     if trading_symbol is not None:
@@ -27,14 +27,11 @@ def place_order_for_broker( strategy, order_details=None, qty =None,monitor = No
     else:
         weeklyexpiry, monthlyexpiry = get_expiry_dates(order_details['base_symbol']) # TODO: Process before 10:15 at the start of the script
 
-        today_is_thursday = datetime.now().weekday() == 3  # 0 is Monday, 3 is Thursday
-        if today_is_thursday:
-            next_week_expiry = get_next_week_expiry()
         
         if strategy == "overnight_option" and order_details['strike_prc'] == 0:
             expiry = monthlyexpiry
-        elif strategy == "overnight_option" and datetime.now().weekday() == 3 and order_details['strike_prc'] != 0:
-            expiry = next_week_expiry
+        elif strategy == "overnight_option" and datetime.now().weekday() == 3 and order_details['strike_prc'] != 0 and trade_type=='Afternoon':
+            expiry = get_next_week_expiry(order_details['base_symbol'])
         else:
             expiry = weeklyexpiry
 
@@ -72,6 +69,9 @@ def place_order_for_broker( strategy, order_details=None, qty =None,monitor = No
         if 'strike_prc' in order_details:
             details['strike_price'] = order_details['strike_prc']
         
+        if trade_type is not None:
+            details['order_type'] = trade_type
+            
         avg_prc = place_order_func(strategy, details, qty=qty)
         
         #######################price ref can be none 
@@ -84,7 +84,7 @@ def place_order_for_broker( strategy, order_details=None, qty =None,monitor = No
                         'user': user,
                         'broker': broker,
                         'order_type': 'Stoploss',
-                        'limit_prc': limit_prc,
+                        'limit_prc': round(limit_prc),
                         'price_ref' : order_details['stoploss_points']
                     }
             place_order_func(strategy, order_func , qty=qty)
@@ -108,7 +108,7 @@ def modify_orders(token,monitor=None):
     
     token_data = monitor.tokens_to_monitor[token] #change monitor to intruMonitor
     order_details = token_data['order_details']
-    
+    print("in modify orders")
     monitor_order_func = {
                 'user': order_details['user'],
                 'broker': order_details['broker'],

@@ -28,7 +28,11 @@ def main():
 
     with st.sidebar:
         st.sidebar.header("")
+<<<<<<< HEAD
         tabs = on_hover_tabs(tabName=['Register', 'Login', 'Admin Login'],
+=======
+        tabs = on_hover_tabs(tabName=['Register', 'Login', 'Admin Dashboard'],
+>>>>>>> Dev
                              iconName=['R', 'L', 'A'],
                              styles={'navtab': {'background-color': '#708090',
                                                 'color': '#FFFFFF',
@@ -52,7 +56,11 @@ def main():
     elif tabs == "Login":
         login_page()
 
+<<<<<<< HEAD
     elif tabs == "Admin Login":
+=======
+    elif tabs == "Admin Dashboard":
+>>>>>>> Dev
         admin_main()
 
 

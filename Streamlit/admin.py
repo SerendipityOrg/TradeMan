@@ -2,15 +2,20 @@ import shutil
 from pathlib import Path
 import tempfile
 import os
+<<<<<<< HEAD
 import re
 import math
 import io
 from dotenv import load_dotenv
+=======
+import io
+>>>>>>> Dev
 from PIL import Image
 import datetime
 import base64
 import pandas as pd
 from firebase_admin import db
+<<<<<<< HEAD
 from firebase_admin import credentials, storage
 import firebase_admin
 import hashlib
@@ -48,6 +53,50 @@ data = []  # This will hold the Excel data
 
 
 
+=======
+from firebase_admin import credentials
+import firebase_admin
+import hashlib
+import streamlit as st
+
+table_style = """
+<style>
+table.dataframe {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.dataframe th,
+table.dataframe td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left; /* Align text to the left */
+}
+
+table.dataframe th {
+    background-color: #f2f2f2;
+}
+
+table.dataframe tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table.dataframe tr:hover {
+    background-color: #ddd;
+}
+</style>
+"""
+
+# Initialize Firebase app
+if not firebase_admin._apps:
+    # Initialize Firebase app
+    cred = credentials.Certificate("credentials.json")
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
+    })
+
+
+>>>>>>> Dev
 def login_admin(username, password):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
@@ -65,6 +114,7 @@ def login_admin(username, password):
                 return True
         return False
 
+<<<<<<< HEAD
 def get_weeks_for_month(month_number, year):
     first_day_of_month = datetime.date(year, month_number, 1)
     last_day_of_month = datetime.date(year, month_number + 1, 1) - datetime.timedelta(days=1)
@@ -82,6 +132,8 @@ def get_weeks_for_month(month_number, year):
         first_day_of_month += datetime.timedelta(days=7)
     
     return weeks
+=======
+>>>>>>> Dev
 
 def update_client_data(client_name, updated_data):
     # Get a reference to the selected client's database
@@ -138,7 +190,11 @@ def select_client():
     # Create a list of client names for the select box
     client_names = ['Select'] + list(client_data.keys())
 
+<<<<<<< HEAD
     # Modify client names: replace underscores with spaces and capitalize the first letter of each word
+=======
+    # Modify client names: replace underscores with spaces and capitalize first letter of each word
+>>>>>>> Dev
     formatted_client_names = [client_name.replace(
         '_', ' ').title() for client_name in client_names]
 
@@ -161,6 +217,7 @@ def select_client():
     # Find the selected client's data
     selected_client = client_data[original_selected_client_name]
 
+<<<<<<< HEAD
     # After client is selected, show the next selectbox
     next_selection = st.sidebar.selectbox(
         'Client Details', ['Profile', 'Performance Dashboard'])
@@ -175,6 +232,8 @@ def select_client():
 
 
 def display_profile(selected_client, selected_client_name):
+=======
+>>>>>>> Dev
     profile_picture = selected_client.get("Profile Picture")
     # Display the profile picture if available
     if profile_picture is not None:
@@ -511,6 +570,7 @@ def display_profile(selected_client, selected_client_name):
                 st.session_state.edit_mode = False  # Switch out of edit mode
 
 
+<<<<<<< HEAD
 # Function to display performance dashboard
 def display_performance_dashboard(selected_client):
     # CSS style definitions for the option menu
@@ -832,6 +892,8 @@ def display_performance_dashboard(selected_client):
             # Display the Running Balance graph using Streamlit's plotly_chart function
             st.plotly_chart(fig)
 
+=======
+>>>>>>> Dev
 def login():
 
     username = st.text_input('Admin Username')
@@ -848,6 +910,7 @@ def login():
 def logout():
     st.session_state.login_successful = False
 
+<<<<<<< HEAD
 table_style = """
 <style>
 table.dataframe {
@@ -875,6 +938,8 @@ table.dataframe tr:hover {
 }
 </style>
 """
+=======
+>>>>>>> Dev
 
 def main():
     if st.session_state.get('login_successful', False):
@@ -888,4 +953,8 @@ def main():
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     main()
+=======
+    main()
+>>>>>>> Dev
