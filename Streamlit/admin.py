@@ -2,20 +2,14 @@ import shutil
 from pathlib import Path
 import tempfile
 import os
-<<<<<<< HEAD
 import re
 import math
 import io
-from dotenv import load_dotenv
-=======
-import io
->>>>>>> Dev
 from PIL import Image
 import datetime
 import base64
 import pandas as pd
 from firebase_admin import db
-<<<<<<< HEAD
 from firebase_admin import credentials, storage
 import firebase_admin
 import hashlib
@@ -24,79 +18,34 @@ import plotly.express as px
 import plotly.graph_objects as go
 from io import BytesIO
 import streamlit as st
-from streamlit_calendar import calendar
+from formats import format_value, format_stat_value, indian_format
+from dotenv import load_dotenv
 from streamlit_option_menu import option_menu
+from script import display_performance_dashboard, table_style
 
 
 # Initialize session_state if it doesn't exist
 if 'client_data' not in st.session_state:
     st.session_state.client_data = {}
 
-# Load the .env file
+# Load environment variables from .env file
 load_dotenv()
 
 # Retrieve values from .env
 firebase_credentials_path = os.getenv('FIREBASE_CREDENTIALS_PATH')
 database_url = os.getenv('DATABASE_URL')
-firebase_storage_bucket =os.getenv('firebase_storage_bucket')
-
-# Use the retrieved values to initialize Firebase
-if not firebase_admin._apps:
-    cred = credentials.Certificate(firebase_credentials_path)
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': database_url
-    })
-
-
-    # Initialize variables
-data = []  # This will hold the Excel data
-
-
-
-=======
-from firebase_admin import credentials
-import firebase_admin
-import hashlib
-import streamlit as st
-
-table_style = """
-<style>
-table.dataframe {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-table.dataframe th,
-table.dataframe td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left; /* Align text to the left */
-}
-
-table.dataframe th {
-    background-color: #f2f2f2;
-}
-
-table.dataframe tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-table.dataframe tr:hover {
-    background-color: #ddd;
-}
-</style>
-"""
+storage_bucket = os.getenv('STORAGE_BUCKET')
 
 # Initialize Firebase app
 if not firebase_admin._apps:
-    # Initialize Firebase app
-    cred = credentials.Certificate("credentials.json")
+    cred = credentials.Certificate(firebase_credentials_path)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
+        'databaseURL': database_url,
+        'storageBucket': storage_bucket
     })
+    # Initialize variables
+data = []  # This will hold the Excel data
 
-
->>>>>>> Dev
 def login_admin(username, password):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
@@ -114,7 +63,6 @@ def login_admin(username, password):
                 return True
         return False
 
-<<<<<<< HEAD
 def get_weeks_for_month(month_number, year):
     first_day_of_month = datetime.date(year, month_number, 1)
     last_day_of_month = datetime.date(year, month_number + 1, 1) - datetime.timedelta(days=1)
@@ -132,8 +80,6 @@ def get_weeks_for_month(month_number, year):
         first_day_of_month += datetime.timedelta(days=7)
     
     return weeks
-=======
->>>>>>> Dev
 
 def update_client_data(client_name, updated_data):
     # Get a reference to the selected client's database
@@ -184,56 +130,58 @@ def update_profile_picture(selected_client_name, new_profile_picture):
 
 
 def select_client():
-    client_ref = db.reference('/clients')  # Reference to the client database
-    client_data = client_ref.get()  # Retrieve the client data
+    # Get a reference to the clients in the Firebase database
+    client_ref = db.reference('/clients')
+    
+    # Retrieve the client data from the database
+    client_data = client_ref.get()
+    
+    # If there's no client data, show a warning message
+    if not client_data:
+        st.sidebar.warning("No client data found.")
+        return
 
-    # Create a list of client names for the select box
+    # Construct a list of client names, with a default 'Select' option
     client_names = ['Select'] + list(client_data.keys())
 
-<<<<<<< HEAD
-    # Modify client names: replace underscores with spaces and capitalize the first letter of each word
-=======
-    # Modify client names: replace underscores with spaces and capitalize first letter of each word
->>>>>>> Dev
-    formatted_client_names = [client_name.replace(
-        '_', ' ').title() for client_name in client_names]
+    # Modify the client names for display:
+    # Replace underscores with spaces and capitalize each word
+    formatted_client_names = [client_name.replace('_', ' ').title() for client_name in client_names]
 
-    # Select box to choose a client
-    selected_client_name = st.sidebar.selectbox(
-        'Select a client', formatted_client_names)
+    # Create a select box in the Streamlit sidebar to choose a client
+    selected_client_name = st.sidebar.selectbox('Select a client', formatted_client_names)
 
+    # If no client is selected, exit the function early
     if selected_client_name == 'Select':
-        return  # Return early if no client is selected
+        return
 
-    # Convert selected_client_name back to original format (with underscores)
-    original_selected_client_name = selected_client_name.replace(
-        ' ', '_').lower()
+    # Convert the formatted client name back to its original format (with underscores and lowercase)
+    original_selected_client_name = selected_client_name.replace(' ', '_').lower()
 
-    # Check if the selected client name is a valid key in client_data
+    # Check if the selected client name is a valid key in the retrieved client data
     if original_selected_client_name not in client_data:
         st.sidebar.warning("Selected client data not found.")
         return
 
-    # Find the selected client's data
+    # Extract the data for the selected client
     selected_client = client_data[original_selected_client_name]
 
-<<<<<<< HEAD
-    # After client is selected, show the next selectbox
-    next_selection = st.sidebar.selectbox(
-        'Client Details', ['Profile', 'Performance Dashboard'])
+    # Show another select box for the user to choose between 'Profile' and 'Performance Dashboard'
+    next_selection = st.sidebar.selectbox('Client Details', ['Profile', 'Performance Dashboard'])
 
-    # If 'Profile' is selected, proceed with displaying profile information
+    # Display the appropriate content based on the user's choice
     if next_selection == 'Profile':
-        display_profile(selected_client, selected_client_name)
+        show_profile(selected_client, selected_client_name)
 
-    # If 'Performance Dashboard' is selected, display the dashboard info and return
-    if next_selection == 'Performance Dashboard':
-        display_performance_dashboard(selected_client)
+    elif next_selection == 'Performance Dashboard':
+             # Convert the first letter of client_username to lowercase for file naming
+        client_username = selected_client.get("Username", '')
+        client_username = client_username[0].lower() + client_username[1:]
+        excel_file_name = f"{client_username}.xlsx"  # Construct the Excel file name based on client's username
+        # Call the function to display the performance dashboard, passing in both the client data and Excel file name
+        display_performance_dashboard(selected_client,client_username, excel_file_name)
 
-
-def display_profile(selected_client, selected_client_name):
-=======
->>>>>>> Dev
+def show_profile(selected_client, selected_client_name):
     profile_picture = selected_client.get("Profile Picture")
     # Display the profile picture if available
     if profile_picture is not None:
@@ -569,331 +517,6 @@ def display_profile(selected_client, selected_client_name):
                     st.success('Client details updated successfully.')
                 st.session_state.edit_mode = False  # Switch out of edit mode
 
-
-<<<<<<< HEAD
-# Function to display performance dashboard
-def display_performance_dashboard(selected_client):
-    # CSS style definitions for the option menu
-    selected = option_menu(None, ["Calendar", "Statistics", "Graph"],
-                           icons=['calendar', 'file-bar-graph', 'graph-up'],
-                           menu_icon="cast", default_index=0, orientation="horizontal",
-                           styles={
-                               "container": {"padding": "0!important", "background-color": "#fafafa"},
-                               "icon": {"color": "orange", "font-size": "25px"},
-                               "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
-                               "nav-link-selected": {"background-color": "purple"},
-                           })
-
-    # Convert the first letter of client_username to lowercase for file naming
-    client_username = selected_client.get("Username", '')
-    client_username = client_username[0].lower() + client_username[1:]
-    excel_file_name = f"{client_username}.xlsx"  # Construct the Excel file name based on client's username
-
-    # Reference the Firebase Storage bucket using the retrieved value
-    bucket = storage.bucket(firebase_storage_bucket)
-
-    # Check if the client's Excel file exists in the Firebase Storage bucket
-    blobs = bucket.list_blobs()
-    file_exists = False
-    for blob in blobs:
-        if blob.name == excel_file_name:
-            file_exists = True
-            break
-
-    data = []  # List to store extracted data from Excel
-
-    # If the client's Excel file exists, proceed to extract data
-    if file_exists:
-        # Reference the specific blob (file) in the bucket
-        blob = bucket.blob(excel_file_name)
-
-        # Download the blob into an in-memory bytes object
-        byte_stream = BytesIO()
-        blob.download_to_file(byte_stream)
-        byte_stream.seek(0)
-
-        # Load the Excel workbook from the bytes object
-        wb = openpyxl.load_workbook(byte_stream, data_only=True)
-
-        # Extract data if the "DTD" sheet exists in the workbook
-        if "DTD" in wb.sheetnames:
-            sheet = wb["DTD"]
-            print(f"Extracting data from sheet: DTD")
-
-            # Get column names and their indices from the first row
-            column_indices = {cell.value: idx for idx, cell in enumerate(sheet[1])}
-
-            # Loop through each row in the sheet to read specific columns
-            for row in sheet.iter_rows(min_row=3, max_row=sheet.max_row):
-                opening_balance = row[column_indices['Opening Balance']].value
-                mp_wizard = row[column_indices['MP Wizard']].value
-                date_value = row[column_indices['Date']].value
-                date = date_value.strftime('%Y-%m-%d') if date_value else None
-                amipy = row[column_indices['AmiPy']].value
-                zrm = row [column_indices['ZRM']].value
-                overnight_options = row [column_indices['Overnight Options']].value
-                gross_pnl = row [column_indices['Gross PnL']].value
-                tax = row [column_indices['Tax']].value
-                transaction_amount = row[column_indices['Transaction Amount']].value
-                deposit_withdrawal = row[column_indices['Deposit/Withdrawal']].value
-                # Check if the "Running Balance" column exists in the first row
-                if 'Running Balance' in column_indices:
-                        running_balance = row[column_indices['Running Balance']].value
-                        print(f"Row {row[0].row}: Running Balance value from Excel: {running_balance}")  # Debug print
-                else:
-                        print("Running Balance column not found!")
-                        running_balance = None
-
-                data.append([date, opening_balance, mp_wizard, amipy, zrm, overnight_options, gross_pnl, tax, transaction_amount, deposit_withdrawal, running_balance])
-        
-        def format_value(value, format_type="normal"):
-            print(f"Formatting value: {value}")  # Debug print
-            formatted_value = ""
-            if value is None:
-                formatted_value = "N/A"
-            elif isinstance(value, str):
-                if value.startswith('='):
-                    formatted_value = "Formula"
-                else:
-                    try:
-                        float_value = float(value.replace('₹', '').replace(',', ''))
-                        if float_value < 0:
-                            formatted_value = f'<span class="negative-value">₹ {float_value:,.2f}</span>'
-                        else:
-                            formatted_value = f'<span class="positive-value">₹ {float_value:,.2f}</span>'
-                    except ValueError:
-                        formatted_value = value
-            else:
-                if value < 0:
-                    formatted_value = f'<span class="negative-value">₹ {value:,.2f}</span>'
-                else:
-                    formatted_value = f'<span class="positive-value">₹ {value:,.2f}</span>'
-
-            # Apply formatting based on format_type
-            if format_type == "bold":
-                return f"<b>{formatted_value}</b>"
-            elif format_type == "italic":
-                return f"<i>{formatted_value}</i>"
-            else:
-                return formatted_value
-
-            
-        # Add custom CSS for the table and value colors
-        st.markdown("""
-        <style>
-        .custom-table {
-            top: 3px;  /* Adjust the top value as needed */
-            right: 500px;
-            border: 2px solid #ccc;
-            overflow: hidden;
-            background-color: #E6E6FA;
-            font-size: 19px;
-            width: 100%;
-            }
-            .custom-table td {
-            padding: 15px;  # Increase padding for larger cells
-            border: 1px solid #ddd;  # Add borders to the cells
-            }
-        .positive-value {
-            color: green;
-        }
-        .negative-value {
-            color: red;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        
-        # Calendar functionality
-    if selected == "Calendar":
-        selected_date = st.date_input("Select a Date")
-
-        if selected_date:
-            filtered_data = [record for record in data if record[0] == selected_date.strftime('%Y-%m-%d')]
-            print(f"Filtered data for date {selected_date}: {filtered_data}")  # Debug print
-        if filtered_data:
-            table_data = []
-            for record in filtered_data:
-                # Create a dictionary to store the labels and formatted values
-                field_names = {
-                    "Opening Balance": format_value(record[1], "bold"),
-                    "MP Wizard": format_value(record[2], "italic"),
-                }
-
-                # Add fields conditionally
-                if record[3] is not None:  # AmiPy
-                    field_names["AmiPy"] = format_value(record[3], "italic")
-                if record[4] is not None:  # ZRM
-                    field_names["ZRM"] = format_value(record[4], "italic")
-                if record[5] is not None:  # Overnight Options
-                    field_names["Overnight Options"] = format_value(record[5], "italic")
-
-                # Add the remaining fields
-                field_names.update({
-                    "Gross PnL": format_value(record[6], "bold"),
-                    "Tax": format_value(record[7]),
-                    "Net PnL": format_value(record[8], "bold"),
-                    "Deposit/Withdrawal": format_value(record[9]),
-                    "Running Balance": format_value(record[10], "bold")
-                })
-
-                # Format the filtered data
-                formatted_data = []
-                for field, value in field_names.items():
-                    if value != "N/A":
-                        formatted_data.append([field, value])
-
-                table_data.extend(formatted_data)
-
-            # Display the table without header
-            st.write(pd.DataFrame(table_data, columns=None).to_html(classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
-
-
-    if selected == "Statistics":
-        # Display date input fields for the user to select the start and end dates
-        start_date = st.date_input("Select Start Date", datetime.date(2023, 8, 4))
-        end_date = st.date_input("Select End Date")
-
-        # Filter the data based on the selected date range
-        filtered_data = [record for record in data if record[0] is not None and start_date.strftime('%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
-
-        # Extract relevant data from filtered_data
-        opening_balances = [record[1] for record in filtered_data]
-        running_balances = [record[10] for record in filtered_data]
-        gross_pnls = [record[6] for record in filtered_data]
-        net_pnls = [record[8] for record in filtered_data]
-        transaction_amounts = [record[8] for record in filtered_data]
-        deposit_withdrawals = [record[9] for record in filtered_data]
-        tax=[record[7]for record in filtered_data]
-
-        # Calculate statistics
-        initial_capital = opening_balances[0] if opening_balances else 0
-        ending_capital = running_balances[-1] if running_balances else 0
-        total_profit = sum(gross_pnls)
-        tax_amount = sum(tax)
-        net_profit = total_profit - tax_amount
-        net_profit_percent = (net_profit / initial_capital) * 100 if initial_capital != 0 else 0
-        avg_profit = total_profit / len(gross_pnls) if gross_pnls else 0
-        avg_profit_percent = (avg_profit / initial_capital) * 100 if initial_capital != 0 else 0
-        total_deposits = sum([amount for amount in deposit_withdrawals if amount is not None and amount > 0])
-        total_withdrawal = sum([amount for amount in deposit_withdrawals if amount is not None and amount < 0])
-        total_commission = sum(transaction_amounts)
-
-        def format_stat_value(value):
-            if value is None:
-                return "N/A"
-            elif isinstance(value, str):
-                if "₹" in value and "-" in value:
-                    return f'<span class="negative-value">{value}</span>'
-                elif "₹" in value:
-                    return f'<span class="positive-value">{value}</span>'
-                elif "%" in value and "-" in value:
-                    return f'<span class="negative-value">{value}</span>'
-                elif "%" in value:
-                    return f'<span class="positive-value">{value}</span>'
-                else:
-                    return value
-            elif value < 0:
-                return f'<span class="negative-value">₹ {value:,.2f}</span>'
-            else:
-                return f'<span class="positive-value">₹ {value:,.2f}</span>'
-
-        # Create a DataFrame for the statistics
-        stats_data = {
-            "Metric": ["Initial Capital", "Ending Capital", "Total Profit","Tax","Net Profit", "Net Profit %",  "Avg. Profit", "Avg. Profit %",  "Total Deposits", "Total Withdrawal","Total Commission"],
-            "Value": [format_stat_value(initial_capital), format_stat_value(ending_capital), format_stat_value(total_profit),format_stat_value(tax_amount),format_stat_value(net_profit), format_stat_value(f"{net_profit_percent:.2f}%"),  format_stat_value(avg_profit), format_stat_value(f"{avg_profit_percent:.2f}%"),  format_stat_value(total_deposits), format_stat_value(total_withdrawal), format_stat_value(total_commission)]
-        }
-
-        stats_df = pd.DataFrame(stats_data)
-
-        # Display the table without index and without column headers, and with custom styles
-        st.write(stats_df.to_html(index=False, header=False, classes='custom-table', escape=False), unsafe_allow_html=True)
-
-    def indian_format(num):
-        """Format number in Indian style"""
-        x = round(num)
-        if x < 1e5:
-            return str(x)
-        x = round(x / 1e5)
-        if x < 100:
-            return '{} Lakh'.format(x)
-        x = round(x / 100)
-        return '{} Crore'.format(x)
-    
-    if selected == 'Graph':
-    # If filtered_data is not defined, set it with a default date range
-        try:
-            filtered_data
-        except NameError:
-            start_date = datetime.date(2023, 8, 4)
-            end_date = datetime.date.today()
-            filtered_data = [record for record in data if record[0] is not None and start_date.strftime('%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
-
-        graph_option = option_menu(None, ["Net PnL", "Running Balance"],
-                        icons=['line-chart', 'line-chart'],  # Assuming these are the icons you want
-                        menu_icon="chart-bar",  # Placeholder icon
-                        default_index=0, 
-                        orientation="horizontal",
-                        styles={
-                            "container": {"padding": "0!important", "background-color": "#fafafa"},
-                            "icon": {"color": "orange", "font-size": "18px"},
-                            "nav-link": {"font-size": "18px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
-                            "nav-link-selected": {"background-color": "orange"},
-                        })
-
-        if graph_option == "Net PnL":
-            # Calculate net PnL for each record in filtered_data
-            net_pnls = [record[6] - (record[8]/2) for record in filtered_data]  # Assuming gross_pnl - (transaction_amount/2) gives net PnL
-
-            # Create a Plotly figure
-            fig = go.Figure()
-
-            # Add traces for each segment of the line with the determined color
-            for i in range(1, len(net_pnls)):
-                color = 'green' if net_pnls[i] > net_pnls[i-1] else 'red'
-                fig.add_trace(go.Scatter(x=[filtered_data[i-1][0], filtered_data[i][0]], 
-                                        y=[net_pnls[i-1], net_pnls[i]], 
-                                        mode='lines', 
-                                        line=dict(color=color, width=2),
-                                        showlegend=False))  # Hide legend for each trace
-
-            # Update the layout to hide the overall legend
-            fig.update_layout(showlegend=False)
-
-            # Display the graph using Streamlit's plotly_chart function
-            st.plotly_chart(fig)
-
-        elif graph_option == "Running Balance":
-            # Extract running balances from filtered_data
-            running_balances = [record[10] for record in filtered_data]
-
-            # Create a Plotly figure for Running Balance
-            fig = go.Figure()
-
-            # Add the running balances data to the figure
-            fig.add_trace(go.Scatter(x=[record[0] for record in filtered_data], 
-                                    y=running_balances, 
-                                    mode='lines', 
-                                    line=dict(color='forestgreen', width=2),
-                                    hovertemplate='%{y:,.2f}'))
-
-            # Get the range of y-values for custom tick formatting
-            y_max = max(running_balances)
-            y_min = min(running_balances)
-            tickvals = list(range(int(math.floor(y_min / 1e5) * 1e5), int(math.ceil(y_max / 1e5) * 1e5), int(1e5)))
-            ticktext = [indian_format(val) for val in tickvals]
-
-            # Update y-axis to display values in Indian rupees with custom formatting
-            fig.update_layout(
-                yaxis_title="Amount (₹)",
-                yaxis_tickvals=tickvals,
-                yaxis_ticktext=ticktext
-            )
-
-            # Display the Running Balance graph using Streamlit's plotly_chart function
-            st.plotly_chart(fig)
-
-=======
->>>>>>> Dev
 def login():
 
     username = st.text_input('Admin Username')
@@ -910,36 +533,6 @@ def login():
 def logout():
     st.session_state.login_successful = False
 
-<<<<<<< HEAD
-table_style = """
-<style>
-table.dataframe {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-table.dataframe th,
-table.dataframe td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left; /* Align text to the left */
-}
-
-table.dataframe th {
-    background-color: #f2f2f2;
-}
-
-table.dataframe tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-table.dataframe tr:hover {
-    background-color: #ddd;
-}
-</style>
-"""
-=======
->>>>>>> Dev
 
 def main():
     if st.session_state.get('login_successful', False):
@@ -953,8 +546,4 @@ def main():
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
     main()
-=======
-    main()
->>>>>>> Dev

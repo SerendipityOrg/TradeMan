@@ -2,41 +2,29 @@ import streamlit as st
 from datetime import date
 from PIL import Image
 import io
-<<<<<<< HEAD
 import os
-from dotenv import load_dotenv
-=======
->>>>>>> Dev
 import firebase_admin
+from dotenv import load_dotenv
 from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import storage
 import base64
 
-<<<<<<< HEAD
-# Load the .env file
+# Load environment variables from .env file
 load_dotenv()
 
 # Retrieve values from .env
 firebase_credentials_path = os.getenv('FIREBASE_CREDENTIALS_PATH')
 database_url = os.getenv('DATABASE_URL')
+storage_bucket = os.getenv('STORAGE_BUCKET')
 
-# Use the retrieved values to initialize Firebase
+# Initialize Firebase app
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_credentials_path)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': database_url
-=======
-# Check if Firebase app is already initialized
-if not firebase_admin._apps:
-    # Initialize Firebase app
-    # Replace with your service account key file
-    cred = credentials.Certificate("credentials.json")
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
->>>>>>> Dev
+        'databaseURL': database_url,
+        'storageBucket': storage_bucket
     })
-
 
 class SessionState:
     def __init__(self, **kwargs):
