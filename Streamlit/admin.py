@@ -2,53 +2,49 @@ import shutil
 from pathlib import Path
 import tempfile
 import os
+import re
+import math
 import io
 from PIL import Image
 import datetime
 import base64
 import pandas as pd
 from firebase_admin import db
-from firebase_admin import credentials
+from firebase_admin import credentials, storage
 import firebase_admin
 import hashlib
+import openpyxl
+import plotly.express as px
+import plotly.graph_objects as go
+from io import BytesIO
 import streamlit as st
+from formats import format_value, format_stat_value, indian_format
+from dotenv import load_dotenv
+from streamlit_option_menu import option_menu
+from script import display_performance_dashboard, table_style
 
-table_style = """
-<style>
-table.dataframe {
-    border-collapse: collapse;
-    width: 100%;
-}
 
-table.dataframe th,
-table.dataframe td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left; /* Align text to the left */
-}
+# Initialize session_state if it doesn't exist
+if 'client_data' not in st.session_state:
+    st.session_state.client_data = {}
 
-table.dataframe th {
-    background-color: #f2f2f2;
-}
+# Load environment variables from .env file
+load_dotenv()
 
-table.dataframe tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-table.dataframe tr:hover {
-    background-color: #ddd;
-}
-</style>
-"""
+# Retrieve values from .env
+firebase_credentials_path = os.getenv('FIREBASE_CREDENTIALS_PATH')
+database_url = os.getenv('DATABASE_URL')
+storage_bucket = os.getenv('STORAGE_BUCKET')
 
 # Initialize Firebase app
 if not firebase_admin._apps:
-    # Initialize Firebase app
-    cred = credentials.Certificate("credentials.json")
+    cred = credentials.Certificate(firebase_credentials_path)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
+        'databaseURL': database_url,
+        'storageBucket': storage_bucket
     })
-
+    # Initialize variables
+data = []  # This will hold the Excel data
 
 def login_admin(username, password):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -67,6 +63,23 @@ def login_admin(username, password):
                 return True
         return False
 
+def get_weeks_for_month(month_number, year):
+    first_day_of_month = datetime.date(year, month_number, 1)
+    last_day_of_month = datetime.date(year, month_number + 1, 1) - datetime.timedelta(days=1)
+    
+    # Find the first Saturday of the month
+    while first_day_of_month.weekday() != 5:
+        first_day_of_month += datetime.timedelta(days=1)
+    
+    weeks = []
+    while first_day_of_month <= last_day_of_month:
+        end_day = first_day_of_month + datetime.timedelta(days=6)
+        if end_day > last_day_of_month:
+            end_day = last_day_of_month
+        weeks.append((first_day_of_month.day, end_day.day))
+        first_day_of_month += datetime.timedelta(days=7)
+    
+    return weeks
 
 def update_client_data(client_name, updated_data):
     # Get a reference to the selected client's database
@@ -117,35 +130,58 @@ def update_profile_picture(selected_client_name, new_profile_picture):
 
 
 def select_client():
-    client_ref = db.reference('/clients')  # Reference to the client database
-    client_data = client_ref.get()  # Retrieve the client data
+    # Get a reference to the clients in the Firebase database
+    client_ref = db.reference('/clients')
+    
+    # Retrieve the client data from the database
+    client_data = client_ref.get()
+    
+    # If there's no client data, show a warning message
+    if not client_data:
+        st.sidebar.warning("No client data found.")
+        return
 
-    # Create a list of client names for the select box
+    # Construct a list of client names, with a default 'Select' option
     client_names = ['Select'] + list(client_data.keys())
 
-    # Modify client names: replace underscores with spaces and capitalize first letter of each word
-    formatted_client_names = [client_name.replace(
-        '_', ' ').title() for client_name in client_names]
+    # Modify the client names for display:
+    # Replace underscores with spaces and capitalize each word
+    formatted_client_names = [client_name.replace('_', ' ').title() for client_name in client_names]
 
-    # Select box to choose a client
-    selected_client_name = st.sidebar.selectbox(
-        'Select a client', formatted_client_names)
+    # Create a select box in the Streamlit sidebar to choose a client
+    selected_client_name = st.sidebar.selectbox('Select a client', formatted_client_names)
 
+    # If no client is selected, exit the function early
     if selected_client_name == 'Select':
-        return  # Return early if no client is selected
+        return
 
-    # Convert selected_client_name back to original format (with underscores)
-    original_selected_client_name = selected_client_name.replace(
-        ' ', '_').lower()
+    # Convert the formatted client name back to its original format (with underscores and lowercase)
+    original_selected_client_name = selected_client_name.replace(' ', '_').lower()
 
-    # Check if the selected client name is a valid key in client_data
+    # Check if the selected client name is a valid key in the retrieved client data
     if original_selected_client_name not in client_data:
         st.sidebar.warning("Selected client data not found.")
         return
 
-    # Find the selected client's data
+    # Extract the data for the selected client
     selected_client = client_data[original_selected_client_name]
 
+    # Show another select box for the user to choose between 'Profile' and 'Performance Dashboard'
+    next_selection = st.sidebar.selectbox('Client Details', ['Profile', 'Performance Dashboard'])
+
+    # Display the appropriate content based on the user's choice
+    if next_selection == 'Profile':
+        show_profile(selected_client, selected_client_name)
+
+    elif next_selection == 'Performance Dashboard':
+             # Convert the first letter of client_username to lowercase for file naming
+        client_username = selected_client.get("Username", '')
+        client_username = client_username[0].lower() + client_username[1:]
+        excel_file_name = f"{client_username}.xlsx"  # Construct the Excel file name based on client's username
+        # Call the function to display the performance dashboard, passing in both the client data and Excel file name
+        display_performance_dashboard(selected_client,client_username, excel_file_name)
+
+def show_profile(selected_client, selected_client_name):
     profile_picture = selected_client.get("Profile Picture")
     # Display the profile picture if available
     if profile_picture is not None:
@@ -480,7 +516,6 @@ def select_client():
 
                     st.success('Client details updated successfully.')
                 st.session_state.edit_mode = False  # Switch out of edit mode
-
 
 def login():
 
