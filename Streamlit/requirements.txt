@@ -7,6 +7,7 @@ openpyxl==3.0.9
 plotly==5.15.0
 pymongo==4.3.3
 pyotp==2.8.0
+python-dotenv==1.0.0
 python-telegram-bot==20.3
 Requests==2.31.0
 selenium==4.10.0
