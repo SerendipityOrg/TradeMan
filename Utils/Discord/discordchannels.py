@@ -25,10 +25,3 @@ def discord_bot(message, strategy):
         raise ValueError(f"Request to discord returned an error {response.status_code}, the response is:\n{response.text}")
     return response
 
-
-
-
-    
-    
-    
-

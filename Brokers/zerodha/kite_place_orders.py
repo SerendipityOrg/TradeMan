@@ -66,7 +66,8 @@ def place_order(kite, strategy, order_details, qty, user_details):
             quantity=int(qty),
             trigger_price=trigger_price,
             product=product_type,
-            order_type=order_type
+            order_type=order_type,
+            tag= strategy
         )
         print(f"Order placed. ID is: {order_id}")
         logging.info(f"Order placed. ID is: {order_id}")
@@ -141,9 +142,18 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
         
     return order_id, avg_price
 
+def create_kite(user_details):
+    global kite
+    kite = KiteConnect(api_key=user_details['zerodha']['api_key'])
+    kite.set_access_token(user_details['zerodha']['access_token'])
+    return kite
 
 def update_stoploss(monitor_order_func):
     global kite
+    if kite is None:
+        user_details,_ = get_user_details(monitor_order_func.get('user'))
+        kite = KiteConnect(api_key=user_details['zerodha']['api_key'])
+        kite.set_access_token(user_details['zerodha']['access_token'])
     
     order_id = retrieve_order_id(
             monitor_order_func.get('user'),
@@ -153,7 +163,7 @@ def update_stoploss(monitor_order_func):
             monitor_order_func.get('token')
         )
 
-    new_stoploss = round(float(monitor_order_func.get('target')),1)
+    new_stoploss = round(float(monitor_order_func.get('limit_prc')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
     
     modify_order = kite.modify_order(variety=kite.VARIETY_REGULAR, 

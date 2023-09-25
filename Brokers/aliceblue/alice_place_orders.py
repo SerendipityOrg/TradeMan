@@ -53,7 +53,6 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
     else:
         product_type = ProductType.Intraday
     
-    avg_prc = 0.0
     limit_prc = round(float(order_details.get('limit_prc', 0.0)),1)
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
     try:
@@ -67,7 +66,8 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
                                         stop_loss = None,
                                         square_off = None,
                                         trailing_sl = None,
-                                        is_amo = False)
+                                        is_amo = False,
+                                        order_tag = strategy)
         print("order_id",order_id)
 
         logging.info(f"Order placed. ID is: {order_id}")
@@ -141,9 +141,18 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
         
     return order_id, avg_price
 
+def create_alice(user_details):
+    global alice
+    alice = Aliceblue(user_id=user_details['aliceblue']['username'],api_key=user_details['aliceblue']['api_key'])
+    session_id = alice.get_session_id()
+    return alice
+
 def update_stoploss(monitor_order_func):
     global alice
-    
+    if alice is None:
+        user_details,_ = get_user_details(monitor_order_func.get('user'))
+        alice = create_alice(user_details)
+
     order_id = retrieve_order_id(
             monitor_order_func.get('user'),
             monitor_order_func.get('broker'),
@@ -151,8 +160,7 @@ def update_stoploss(monitor_order_func):
             monitor_order_func.get('trade_type'),
             monitor_order_func.get('token').name
         )
-    
-    new_stoploss = round(float(monitor_order_func.get('target')),1)
+    new_stoploss = round(float(monitor_order_func.get('limit_prc')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
     modify_order =  alice.modify_order(transaction_type = TransactionType.Sell,
                     order_id=str(order_id),

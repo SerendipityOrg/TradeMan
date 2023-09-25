@@ -15,15 +15,13 @@ def get_user_details(user):
     return json_data, user_json_path
 
 
-
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, avg_price, order_details, user_details,strategy):
     user, json_path = get_user_details(order_details['user'])
-    if 'strike_price' in order_details:
-        strike_prc = order_details['strike_price']
+    if 'strike_prc' in order_details:
+        strike_prc = order_details['strike_prc']
     else:
-        strike_prc = order_details['tradingsymbol'].name[-7:-2]
-    print(order_details['tradingsymbol'])
+        strike_prc = 0
 
     #check if order_details['tradingsymbol'] has order_details['tradingsymbol'].name else order_details['tradingsymbol']
     if hasattr(order_details['tradingsymbol'], 'name'):
@@ -84,7 +82,7 @@ def get_quantity(user_data, broker, strategy, tradingsymbol=None):
     
     quantity_data = user_data_specific[strategy_key]
 
-    if strategy == 'MPWizard':
+    if strategy == 'MPWizard' or strategy == 'Siri':
         if broker == 'aliceblue':
             tradesymbol = tradingsymbol.name
         else:

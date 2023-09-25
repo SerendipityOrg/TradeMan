@@ -39,16 +39,16 @@
 
 # asyncio.run(main())
 
-# from kiteconnect import KiteConnect
-# from pprint import pprint
+from kiteconnect import KiteConnect
+from pprint import pprint
+import pandas as pd
 
-# api_key = '6b0dp5ussukmo67h'
-# api_secret = 'eln2qrqob5neowjuedmbv0f0hzq6lhby'
-# kite = KiteConnect(api_key=api_key)
-# # print(kite.login_url())
-# data = kite.generate_session('dVSA80jTIZy8wQ4t90Sz2sDmELz9w2fL', api_secret=api_secret)
-# print(data)
-# print(kite.set_access_token(data["access_token"]))
+api_key = '6b0dp5ussukmo67h'
+api_secret = 'eln2qrqob5neowjuedmbv0f0hzq6lhby'
+kite = KiteConnect(api_key=api_key,access_token='TC68AN1oHPhxMeguRlhT6SBrtZ2S3zOZ')
+instrument_dump = kite.instruments()
+instrument_df = pd.DataFrame(instrument_dump)
+instrument_df.to_csv(r'kite.csv')
 
 
 #update ChromeDriver
@@ -78,14 +78,28 @@
 
 # output flowchart code.
 
+#this is my sample code
+#
 
 from pya3 import *
+import datetime
 
-alice = Aliceblue("929016","NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f")
+alice = Aliceblue("AB068818","CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y")
+
 
 alice.get_session_id()
+trade = Instrument(exchange='NFO', token=57640, symbol='FINNIFTY', name='FINNIFTY26SEP23P20300', expiry=datetime.date(2023, 9, 26), lot_size=50)
+# trading_symbol = Instrument(exchange='NFO', token=86000, symbol='BANKNIFTY', name='BANKNIFTY28SEP23P45000', expiry='', lot_size=15)
+# print(trading_symbol)
 
-print(alice.get_order_history('230915000119824'))
 
-
+print(
+   alice.place_order(transaction_type = TransactionType.Sell,
+                     instrument = trade,
+                     quantity = 15,
+                     order_type = OrderType.StopLossLimit,
+                     product_type = ProductType.Intraday,
+                     price=15.00,
+                     trigger_price = 16.0)
+)
 

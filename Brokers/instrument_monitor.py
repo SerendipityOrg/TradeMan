@@ -115,7 +115,7 @@ class InstrumentMonitor:
                     print(f"New target for token {token} is {token_data['target']}.")
                     print(f"New limit price for token {token} is {token_data['limit_prc']}.")
                     message = f"Order modified! new target {token_data['target']}! and new stoploss is {token_data['limit_prc']} ."
-                    discord.discord_bot(message,token_data['strategy'])
+                    # discord.discord_bot(message,token_data['strategy'])
 
                 # Check if the limit_prc is not None and if LTP has fallen below it
                 elif token_data['limit_prc'] is not None and ltp <= token_data['limit_prc']:

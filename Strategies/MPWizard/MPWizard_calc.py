@@ -80,3 +80,14 @@ def determine_ib_level(ratio):
         return "Medium"
     else:
         return "Big"
+
+
+def get_weekday_price_ref(base_symbol):
+    """Get the price reference for the current weekday."""
+    data = gc.read_json_file(mpwizard_file)
+    today = dt.date.today().strftime('%A')[:3]
+    for index_data in data["indices"]:
+        # index_name = index_data["name"]
+        if index_data["name"] == base_symbol:
+            return index_data["WeekdayPrcRef"].get(today)
+        
