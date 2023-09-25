@@ -12,8 +12,6 @@ with open(broker_filepath) as file:
     data = json.load(file)
 
 # Function to fetch orders from Zerodha
-
-
 def fetch_zerodha_orders(api_key, access_token):
     kite = KiteConnect(api_key=api_key)
     kite.set_access_token(access_token)
@@ -25,8 +23,6 @@ def fetch_zerodha_orders(api_key, access_token):
         return [f"Error fetching orders from Zerodha: {str(e)}"]
 
 # Function to find the first empty row in a worksheet
-
-
 def find_first_empty_row(sheet):
     for i, row in enumerate(sheet.iter_rows(values_only=True), 1):
         if all(cell is None for cell in row):
@@ -34,8 +30,6 @@ def find_first_empty_row(sheet):
     return sheet.max_row + 1
 
 # Function to check if an order is already in the worksheet
-
-
 def is_order_present(sheet, tradingsymbol, timestamp):
     for row in sheet.iter_rows(values_only=True):
         if row:
@@ -43,7 +37,6 @@ def is_order_present(sheet, tradingsymbol, timestamp):
             if row[1] == tradingsymbol and row[2] == timestamp:
                 return True
     return False
-
 
 # Populate user_list with accounts from each broker
 user_list = []
@@ -60,7 +53,6 @@ for broker, user in user_list:
         print(f"Fetching equity orders for {user} from Zerodha")
         orders = fetch_zerodha_orders(
             credentials["api_key"], credentials["access_token"])
-
         processed_orders = {}
         # Process the fetched orders
         for order in orders:

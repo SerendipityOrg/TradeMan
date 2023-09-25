@@ -1,6 +1,11 @@
 import pandas as pd
 import os
 
+def has_required_columns(df):
+    """Check if all required columns are present in a DataFrame."""
+    required_columns = ['Date', 'PnL', 'Tax']
+    return all(col in df.columns for col in required_columns)
+
 # Construct the path to the excel directory inside user profile
 script_dir = os.path.dirname(os.path.realpath(__file__))
 user_profile = os.path.join(script_dir, '..', 'UserProfile')
@@ -26,7 +31,11 @@ for user_file in os.listdir(excel_dir):
         # Loop through the sheet mappings and try to read each sheet
         for internal_name, actual_sheet_name in sheet_mappings.items():
             try:
-                data_mappings[internal_name] = pd.read_excel(file_name, sheet_name=actual_sheet_name)
+                temp_df = pd.read_excel(file_name, sheet_name=actual_sheet_name)
+                if not has_required_columns(temp_df):
+                    print(f"Sheet '{actual_sheet_name}' in {user_file} does not have all the required columns. Skipping...")
+                    continue
+                data_mappings[internal_name] = temp_df
             except ValueError as e:
                 print(f"Sheet '{actual_sheet_name}' not found in {user_file}. Skipping...")
 
@@ -89,9 +98,23 @@ for user_file in os.listdir(excel_dir):
         for col in currency_cols:
             dtd_df[col] = dtd_df[col].apply(lambda x: f'₹ {x:,.2f}' if pd.notna(x) else '')
 
-        # Compute Transaction Amount (Gross PnL - Tax).
-        dtd_df['Transaction Amount'] = dtd_df.apply(lambda row: float(row['Gross PnL'].replace('₹', '').replace(',', '')) - float(row['Tax'].replace('₹', '').replace(',', '')), axis=1)
-        dtd_df['Transaction Amount'] = dtd_df['Transaction Amount'].apply(lambda x: f'₹ {x:,.2f}' if pd.notna(x) else '')
+        # Compute 'Running Balance' (Running Balance = Opening Balance - Transaction Amount)
+        dtd_df['Transaction Amount'] = dtd_df['Transaction Amount'].apply(lambda x: float(x.replace('₹', '').replace(',', '')) if x != '' else 0)
+
+        # Convert 'Opening Balance' to float
+        dtd_df['Opening Balance'] = dtd_df['Opening Balance'].apply(lambda x: float(x.replace('₹', '').replace(',', '')) if x != '' else 0)
+
+        # Calculate Running Balance
+        dtd_df['Running Balance'] = dtd_df['Opening Balance'] - dtd_df['Transaction Amount']
+
+        # Making today's 'Running Balance' the next day's 'Opening Balance'
+        dtd_df['Opening Balance'] = dtd_df['Running Balance'].shift(1, fill_value=0)
+
+        # Convert the financial values back to currency notation
+        dtd_df['Transaction Amount'] = dtd_df['Transaction Amount'].apply(lambda x: f'₹ {x:,.2f}')
+        dtd_df['Opening Balance'] = dtd_df['Opening Balance'].apply(lambda x: f'₹ {x:,.2f}' if pd.notna(x) else '')
+        dtd_df['Running Balance'] = dtd_df['Running Balance'].apply(lambda x: f'₹ {x:,.2f}' if pd.notna(x) else '')
+
 
         # Compute 'Difference Amount' (difference between 'Running Balance' and 'Telegram Balance').
         dtd_df['Difference Amount'] = dtd_df.apply(lambda row: float(row['Running Balance'].replace('₹', '').replace(',', '')) - float(row['Telegram Balance'].replace('₹', '').replace(',', '')) if row['Telegram Balance'] != '' else None, axis=1)
