@@ -180,9 +180,9 @@ order_details_future = {
 }
 
 orders_to_place = [
-    ('overnight_option', order_details_future),
-    ('overnight_option', order_details_opt)
+    ('Overnight_Options', order_details_future),
+    ('Overnight_Options', order_details_opt)
 ]
 
 for strategy, order_details in orders_to_place:
-    place_order.place_order_for_broker(strategy, order_details,trade_type='Afternoon')
+    place_order.place_order_for_broker(strategy, order_details,signal='Afternoon')

@@ -30,7 +30,8 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
 
     Raises:
         Exception: If the order placement fails.
-    """             
+    """  
+
     transaction_type = order_details.get('transaction_type')
     if transaction_type == 'BUY':
         transaction_type = TransactionType.Buy
@@ -39,7 +40,7 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
     else:
         raise ValueError("Invalid transaction_type in order_details")
 
-    order_type_value = order_details.get('order_type')
+    order_type_value = order_details.get('order_trade_type')
     if order_type_value == 'Stoploss':
         order_type = OrderType.StopLossLimit
     elif order_type_value == 'Market':
@@ -47,29 +48,30 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
     else:
         raise ValueError("Invalid order_type in order_details")
     
-    if strategy == 'overnight_option':
+    if strategy == 'Overnight_Options':
         product_type = ProductType.Normal
     else:
         product_type = ProductType.Intraday
     
-    avg_prc = 0.0
-    limit_prc = order_details.get('limit_prc', 0.0)
+    limit_prc = round(float(order_details.get('limit_prc', 0.0)),1)
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
-    print("here",order_details['tradingsymbol'],qty)
     try:
         order_id = alice.place_order(transaction_type = transaction_type, 
                                         instrument = order_details['tradingsymbol'],
                                         quantity = qty ,
                                         order_type = order_type,
                                         product_type = product_type,
-                                        price = limit_prc,
+                                        price = round(limit_prc,1),
                                         trigger_price = trigger_price,
                                         stop_loss = None,
                                         square_off = None,
                                         trailing_sl = None,
-                                        is_amo = False)
+                                        is_amo = False,
+                                        order_tag = strategy)
         print("order_id",order_id)
+
         logging.info(f"Order placed. ID is: {order_id}")
+
         order_id_value = order_id['NOrdNo']
         if not order_id_value:
             raise Exception("Order_id not found")
@@ -77,9 +79,8 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
         avg_prc_data = alice.get_order_history(order_id_value)
         avg_prc = avg_prc_data.get('Avgprc')
 
-        if avg_prc is None:
+        if avg_prc == 0.0:
             try:
-
                 log_order(order_id_value, 0.0, order_details, user_details, strategy)
             except Exception as e:
                 print(f"Failed to log the order with zero avg_prc: {e}")
@@ -117,7 +118,6 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
         Exception: If the order placement fails.
 
     """
-    
     global alice
     user_details,_ = get_user_details(order_details['user'])
     alice = Aliceblue(user_id=user_details['aliceblue']['username'],api_key=user_details['aliceblue']['api_key'])
@@ -141,9 +141,18 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
         
     return order_id, avg_price
 
+def create_alice(user_details):
+    global alice
+    alice = Aliceblue(user_id=user_details['aliceblue']['username'],api_key=user_details['aliceblue']['api_key'])
+    session_id = alice.get_session_id()
+    return alice
+
 def update_stoploss(monitor_order_func):
     global alice
-    
+    if alice is None:
+        user_details,_ = get_user_details(monitor_order_func.get('user'))
+        alice = create_alice(user_details)
+
     order_id = retrieve_order_id(
             monitor_order_func.get('user'),
             monitor_order_func.get('broker'),
@@ -151,8 +160,7 @@ def update_stoploss(monitor_order_func):
             monitor_order_func.get('trade_type'),
             monitor_order_func.get('token').name
         )
-    
-    new_stoploss = round(float(monitor_order_func.get('target')),1)
+    new_stoploss = round(float(monitor_order_func.get('limit_prc')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
     modify_order =  alice.modify_order(transaction_type = TransactionType.Sell,
                     order_id=str(order_id),
@@ -162,4 +170,4 @@ def update_stoploss(monitor_order_func):
                     product_type = ProductType.Intraday,
                     price=new_stoploss,
                     trigger_price = trigger_price)
-    print("modify_order",modify_order)
+    print("alice modify_order",modify_order)

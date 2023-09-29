@@ -2,7 +2,6 @@
 import pandas as pd
 import json
 from openpyxl import load_workbook
-<<<<<<< HEAD
 import os
 import sys
 import io
@@ -39,13 +38,6 @@ def save_to_firebase(user, excel_path):
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
     return formatted.replace('₹', '₹ ')
-=======
-import os,io,sys
-from telethon.sync import TelegramClient
-from calculations.taxcalculation import *
-from babel.numbers import format_currency
-
->>>>>>> Dev
 
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -61,10 +53,6 @@ def process_mpwizard_trades(mpwizard_trades):
         buy_trade = mpwizard_trades["BUY"][i]
         sell_trade = mpwizard_trades["SELL"][i]
 
-<<<<<<< HEAD
-=======
-        
->>>>>>> Dev
         if broker == "zerodha":
             charges = zerodha_taxes(
                 buy_trade["qty"], buy_trade["avg_prc"], sell_trade["avg_prc"], 1)
@@ -89,12 +77,9 @@ def process_mpwizard_trades(mpwizard_trades):
         result.append(trade_data)
     return result
 
-<<<<<<< HEAD
-=======
 def custom_format(amount):
     formatted = format_currency(amount,'INR', locale='en_IN')
     return formatted.replace('₹','₹')
->>>>>>> Dev
 
 def process_short_trades(short_signals, short_cover_signals):
     if len(short_signals) != len(short_cover_signals):
@@ -117,11 +102,7 @@ def process_short_trades(short_signals, short_cover_signals):
             trade["avg_prc"]) for trade in short_cover_signal_group if trade["trade_type"] == "ShortCoverSignal")
         hedge_price = hedge_exit - hedge_entry
         trade_points = (entry_price - exit_price) + hedge_price
-<<<<<<< HEAD
-        # print(trade_points, hedge_price)
-=======
         
->>>>>>> Dev
 
         if broker == "zerodha":
             charges = zerodha_taxes(
@@ -210,32 +191,6 @@ def process_overnight_options_trades(overnight_options_trades):
     afternoon_trades = overnight_options_trades.get("Afternoon", [])
     morning_trades = overnight_options_trades.get("Morning", [])
     qty = afternoon_trades[0]["qty"]
-<<<<<<< HEAD
-
-    if afternoon_trades[0]["direction"] == "BULLISH":
-        # Extracting BULLISH trades with strike_price = 0 for both Afternoon and Morning
-        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction']
-                            == 'BULLISH' and trade['strike_price'] == "0"), None)
-        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction']
-                           == 'BULLISH' and trade['strike_price'] == "0"), None)
-    # Extracting BULLISH trades with strike_price != 0 for both Afternoon and Morning
-        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction']
-                            == 'BULLISH' and trade['strike_price'] != "0"), None)
-        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction']
-                           == 'BULLISH' and trade['strike_price'] != "0"), None)
-    elif afternoon_trades[0]["direction"] == "BEARISH":
-        # Extracting BEARISH trades with strike_price = 0 for both Afternoon and Morning
-        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction']
-                            == 'BEARISH' and trade['strike_price'] == "0"), None)
-        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction']
-                           == 'BEARISH' and trade['strike_price'] == "0"), None)
-    # Extracting BEARISH trades with strike_price != 0 for both Afternoon and Morning
-        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction']
-                            == 'BEARISH' and trade['strike_price'] != "0"), None)
-        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction']
-                           == 'BEARISH' and trade['strike_price'] != "0"), None)
-
-=======
     
     if afternoon_trades[0]["direction"] == "BULLISH":
     # Extracting BULLISH trades with strike_price = 0 for both Afternoon and Morning
@@ -253,7 +208,6 @@ def process_overnight_options_trades(overnight_options_trades):
         option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
     
     
->>>>>>> Dev
     if broker == "zerodha":
         future_tax = zerodha_futures_taxes(qty, future_entry, future_exit, 1)
         option_tax = zerodha_taxes(qty, option_entry, option_exit, 1)
@@ -266,20 +220,11 @@ def process_overnight_options_trades(overnight_options_trades):
     # Calculating trade points based on direction
     direction = afternoon_trades[0]["direction"]
     if direction == "BULLISH":
-<<<<<<< HEAD
-        trade_points = (future_exit - future_entry) + \
-            (option_exit - option_entry)
-    else:  # Assuming BEARISH
-        trade_points = (future_entry - future_exit) + \
-            (option_exit - option_entry)
-    PnL = trade_points * qty
-=======
         trade_points = (future_exit - future_entry) + (option_exit - option_entry)
     elif direction == "BEARISH":  # Assuming BEARISH
         trade_points = (future_entry - future_exit) + (option_exit - option_entry)
     PnL = trade_points * qty
 
->>>>>>> Dev
     # Appending to result list
     trade_data = {
         "Trade_Type": direction,
@@ -376,12 +321,7 @@ for broker, user in user_list:
     # # Append new data
     mpwizard_final_df = pd.concat([mpwizard_existing_df, mpwizard_df])
     amipy_final_df = pd.concat([amipy_existing_df, amipy_df])
-<<<<<<< HEAD
     # overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
-=======
-    overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
-    # overnight_final_df = pd.concat([overnight_existing_df])
->>>>>>> Dev
 
     gross_pnl = mpwizard_pnl + amipy_pnl + overnight_options_pnl
     # gross_pnl = mpwizard_pnl + amipy_pnl 
@@ -395,12 +335,7 @@ for broker, user in user_list:
     else:
         expected_capital = current_capital - abs(net_pnl)
 
-<<<<<<< HEAD
-    message_parts = [
-        f"Hello {user},We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"]
-=======
     message_parts = [f"Hello {user},We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"]
->>>>>>> Dev
 
     if "MPWizard" in user_data[broker]["orders"]:
         message_parts.append(f"MPWizard: {custom_format(mpwizard_pnl)}")
@@ -409,21 +344,11 @@ for broker, user in user_list:
         message_parts.append(f"AmiPy: {custom_format(amipy_pnl)}")
 
     if "Overnight_Options" in user_data[broker]["orders"]:
-<<<<<<< HEAD
-        message_parts.append(
-            f"Overnight Options: {custom_format(overnight_options_pnl)}")
-
-    message_parts.append(f"\n**Gross PnL: {custom_format(gross_pnl)}**")
-    message_parts.append(f"**Expected Tax: {custom_format(tax)}**")
-    message_parts.append(
-        f"**Current Capital: {custom_format(current_capital)}**")
-=======
         message_parts.append(f"Overnight Options: {custom_format(overnight_options_pnl)}")
 
     message_parts.append(f"\n**Gross PnL: {custom_format(gross_pnl)}**")
     message_parts.append(f"**Expected Tax: {custom_format(tax)}**")
     message_parts.append(f"**Current Capital: {custom_format(current_capital)}**")
->>>>>>> Dev
     message_parts.append(
         f"**Expected Morning Balance : {custom_format(expected_capital)}**")
     message_parts.append("\nBest Regards,\nSerendipity Trading Firm")
@@ -431,10 +356,6 @@ for broker, user in user_list:
     message = "\n".join(message_parts)
     message = message.replace('\u20b9', 'INR')
 
-<<<<<<< HEAD
-=======
-
->>>>>>> Dev
     message = "\n".join(message_parts)
     print(message)
 
@@ -446,7 +367,6 @@ for broker, user in user_list:
     }
     user_details = data[broker][user]
     user_details["yesterday_PnL"] = net_pnl
-<<<<<<< HEAD
     user_details["expected_morning_balance"] = round(expected_capital, 2)
     data[broker][user] = user_details
 
@@ -474,23 +394,6 @@ for broker, user in user_list:
     # with TelegramClient(filepath, api_id, api_hash) as client:
     #     client.send_message(phone_number, message, parse_mode='md')
 
-=======
-    user_details["expected_morning_balance"] = round(expected_capital,2)
-    data[broker][user] = user_details
-
-
-    with open(broker_filepath, 'w') as json_file:
-        json.dump(data, json_file, indent=4)
-
-    # send discord message
-    script_dir = os.path.dirname(os.path.abspath(__file__))   
-    parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
-    filepath = os.path.join(parent_dir, '+918618221715.session')
-    
-    with TelegramClient(filepath, api_id, api_hash) as client:
-        client.send_message(phone_number, message, parse_mode='md')
-
->>>>>>> Dev
     # Load existing workbook
     excel_path = os.path.join(excel_dir, f"{user}.xlsx")
     book = load_workbook(excel_path)

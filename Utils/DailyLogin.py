@@ -142,8 +142,8 @@ def create_strategy_json(broker_name, user, lots, balance, user_details_path, mp
         if strategy == 'AmiPy':
             qty = qty['AmiPy_qty']*50
         data[broker_name][f"{strategy}_qty"] = qty
-        if strategy == 'overnight_option':
-            qty = qty['overnight_option_qty']*50
+        if strategy == 'Overnight_Options':
+            qty = qty['Overnight_Options_qty']*50
         data[broker_name][f"{strategy}_qty"] = qty
 
     if 'orders' in data[broker_name]:

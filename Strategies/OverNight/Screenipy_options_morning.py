@@ -26,13 +26,12 @@ def determine_option_and_transaction(direction, strike_price):
     elif direction == 'BULLISH':
         option_type = 'PE' if strike_price != 0 else 'FUT'
         transaction = "SELL"
-    
     return option_type, transaction
 
 def fetch_order_details_for_user(user, broker):
     """Get order details for given user and broker."""
     json_data, _ = place_order_calc.get_user_details(user)
-    trade_details = json_data[broker]["orders"]["overnight_option"]["BUY"]
+    trade_details = json_data[broker]["orders"]["Overnight_Options"]["Afternoon"]
 
     order_details_opt, order_details_future = None, None
     for trade in trade_details:
@@ -61,14 +60,14 @@ def fetch_order_details_for_user(user, broker):
 
 def main():
     # Taking the first user and broker
-    broker, user = gc.get_strategy_users("overnight_option")[0]
+    broker, user = gc.get_strategy_users("Overnight_Options")[0]
     
     order_details_opt, order_details_future = fetch_order_details_for_user(user, broker)
     print("Option Details:", order_details_opt)
     print("Future Details:", order_details_future)
 
-    place_order.place_order_for_broker("overnight_option", order_details_future,trade_type='Morning')
-    place_order.place_order_for_broker("overnight_option", order_details_opt,trade_type='Morning')
+    place_order.place_order_for_broker("Overnight_Options", order_details_future,signal='Morning')
+    place_order.place_order_for_broker("Overnight_Options", order_details_opt,signal='Morning')
 
 if __name__ == "__main__":
     main()
