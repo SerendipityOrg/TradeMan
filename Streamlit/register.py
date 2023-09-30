@@ -9,6 +9,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import storage
 import base64
+import json
 
 # Load environment variables from .env file
 load_dotenv()
@@ -269,7 +270,72 @@ def register_page():
             error_message = "Please fill the following fields: " + \
                 ", ".join(unfilled_fields)
             st.error(error_message)
+                
+    # Function to save data to broker.json file
+    def save_to_json(data):
+        with open('broker.json', 'w') as file:
+            json.dump(data, file, indent=4)
+        st.success("Data saved successfully to broker.json!")
 
+    # Assuming you've already set up Streamlit and collected all the relevant inputs
+    # These inputs would include the details for brokers in broker_list_1 and broker_list_2
+
+    data_to_save = {}
+
+    # Processing Zerodha broker details
+    for broker_1 in broker_list_1:
+        if broker_1["broker_name"] == "Zerodha":
+            username = broker_1["user_name"]
+            data_to_save["zerodha"] = {
+                username: {
+                    "username": username,
+                    "password": broker_1["password"],
+                    "api_key": broker_1["api_key"],
+                    "api_secret": broker_1["api_secret"],
+                    "totp": broker_1.get("totp_auth", ""),
+                    "access_token": "",
+                    "mobile_number": phone,
+                    "percentageRisk": {
+                        "AmiPy": broker_1.get("AmiPy", 0),
+                        "MPWizard": broker_1.get("MPWizard", 0),
+                        "ZRM": broker_1.get("ZRM", 0),
+                        "overnight_option": broker_1.get("overnight_option", 0)
+                    },
+                    "current_capital": broker_1.get("capital", 0),
+                    "yesterday_PnL": 0,
+                    "expected_morning_balance": 0
+                }
+            }
+
+    # Processing AliceBlue broker details
+    for broker_2 in broker_list_2:
+        if broker_2["broker_name"] == "AliceBlue":
+            username = broker_2["user_name"]
+            data_to_save["aliceblue"] = {
+                username: {
+                    "username": username,
+                    "password": broker_2["password"],
+                    "twoFA": broker_2.get("two_fa", ""),
+                    "api_secret": broker_2["api_secret"],
+                    "app_code": "",
+                    "api_key": broker_2["api_key"],
+                    "totp_access": broker_2.get("totp_auth", ""),
+                    "session_id": "",
+                    "mobile_number": phone,
+                    "percentageRisk": {
+                        "AmiPy": broker_2.get("AmiPy", 0),
+                        "MPWizard": broker_2.get("MPWizard", 0),
+                        "overnight_option": broker_2.get("overnight_option", 0)
+                    },
+                    "current_capital": broker_2.get("capital", 0),
+                    "yesterday_PnL": 0,
+                    "expected_morning_balance": 0
+                }
+            }
+
+    # Save the formatted data to broker.json when the user clicks the save button
+    if st.button("Save to broker.json"):
+        save_to_json(data_to_save)
 
 if __name__ == "__main__":
     register_page()
