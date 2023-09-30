@@ -49,7 +49,7 @@ def place_order(kite, strategy, order_details, qty, user_details):
     else:
         raise ValueError("Invalid order_type in order_details")
     
-    if strategy == 'overnight_option':
+    if strategy == 'Overnight_Options':
         product_type = kite.PRODUCT_NRML
     else:
         product_type = kite.PRODUCT_MIS
@@ -144,6 +144,8 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
 
 
 def update_stoploss(monitor_order_func):
+    print("in update stoploss")
+    print(monitor_order_func)
     global kite
     
     order_id = retrieve_order_id(
@@ -154,7 +156,7 @@ def update_stoploss(monitor_order_func):
             monitor_order_func.get('token')
         )
 
-    new_stoploss = round(float(monitor_order_func.get('target')),1)
+    new_stoploss = round(float(monitor_order_func.get('limit_prc')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
     
     modify_order = kite.modify_order(variety=kite.VARIETY_REGULAR, 

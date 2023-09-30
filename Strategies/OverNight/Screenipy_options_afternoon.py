@@ -160,6 +160,7 @@ prediction = getNiftyPrediction(
                 data=fetchLatestNiftyDaily(proxyServer=proxyServer), 
                 proxyServer=proxyServer
             )
+print(prediction)
 option_type = 'CE' if prediction == 'BEARISH' else 'PE'
 strikeprc = bear_strikeprc if prediction == 'BEARISH' else bull_strikeprc
 transaction_type = 'SELL' if prediction == 'BEARISH' else 'BUY'
@@ -180,8 +181,8 @@ order_details_future = {
 }
 
 orders_to_place = [
-    ('overnight_option', order_details_future),
-    ('overnight_option', order_details_opt)
+    ('Overnight_Options', order_details_future),
+    ('Overnight_Options', order_details_opt)
 ]
 
 for strategy, order_details in orders_to_place:

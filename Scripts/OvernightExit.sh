@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define maximum number of attempts
-max_attempts=5
+max_attempts=2
 
 # Counter for the number of attempts
 attempt=0

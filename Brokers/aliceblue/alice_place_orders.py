@@ -47,13 +47,13 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
     else:
         raise ValueError("Invalid order_type in order_details")
     
-    if strategy == 'overnight_option':
+    if strategy == 'Overnight_Options':
         product_type = ProductType.Normal
     else:
         product_type = ProductType.Intraday
     
     avg_prc = 0.0
-    limit_prc = order_details.get('limit_prc', 0.0)
+    limit_prc = float(order_details.get('limit_prc', 0.0))
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
     print("here",order_details['tradingsymbol'],qty)
     try:
@@ -142,6 +142,7 @@ def place_aliceblue_order(strategy: str, order_details: dict, qty=None):
     return order_id, avg_price
 
 def update_stoploss(monitor_order_func):
+    print("in update stoploss")
     global alice
     
     order_id = retrieve_order_id(
@@ -152,7 +153,7 @@ def update_stoploss(monitor_order_func):
             monitor_order_func.get('token').name
         )
     
-    new_stoploss = round(float(monitor_order_func.get('target')),1)
+    new_stoploss = round(float(monitor_order_func.get('limit_prc')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
     modify_order =  alice.modify_order(transaction_type = TransactionType.Sell,
                     order_id=str(order_id),

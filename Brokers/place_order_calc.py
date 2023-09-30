@@ -19,17 +19,26 @@ def get_user_details(user):
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, avg_price, order_details, user_details,strategy):
     user, json_path = get_user_details(order_details['user'])
+
+    print("in log orders",order_details['tradingsymbol'])
+
     if 'strike_price' in order_details:
         strike_prc = order_details['strike_price']
     else:
-        strike_prc = order_details['tradingsymbol'].name[-7:-2]
-    print(order_details['tradingsymbol'])
+        strike_prc = int(order_details['tradingsymbol'].name[-7:-2])
 
-    #check if order_details['tradingsymbol'] has order_details['tradingsymbol'].name else order_details['tradingsymbol']
-    if hasattr(order_details['tradingsymbol'], 'name'):
-        tradesymbol = order_details['tradingsymbol'].name
-    else:
+    #check if order_details['tradingsymbol'] is a string or a dict, if dict then get the name attribute
+    if isinstance(order_details['tradingsymbol'], str):
         tradesymbol = order_details['tradingsymbol']
+    else:
+        tradesymbol = order_details['tradingsymbol'].name
+
+    print("in log orders",tradesymbol)
+
+    # if hasattr(order_details['tradingsymbol'], 'name'):
+    #     tradesymbol = order_details['tradingsymbol'].name
+    # else:
+    #     tradesymbol = order_details['tradingsymbol']
 
     order_dict = {
         "order_id": order_id,

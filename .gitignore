@@ -1,9 +1,10 @@
+.env
 *.pyc
 *.csv
 *.log
 *.json
-*.env
 *.xlsx
+
 
 Amipy/.DS_Store
 Scripts/Logs/Amipy_NF.log

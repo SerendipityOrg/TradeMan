@@ -32,7 +32,7 @@ class OrderMonitor:
     """
     def __init__(self, instruments):
         self.monitor = instrument_monitor.InstrumentMonitor()
-        self.omkar = self._load_json_data(omkar_json)
+        # self.omkar = self._load_json_data(omkar_json)
         self.mood_data = self._load_json_data(mpwizard_json)
         self.instruments = instruments
         self.orders_placed_today = 0

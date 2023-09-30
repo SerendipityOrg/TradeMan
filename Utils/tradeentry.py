@@ -150,19 +150,18 @@ def process_overnight_options_trades(overnight_options_trades):
     
     if afternoon_trades[0]["direction"] == "BULLISH":
     # Extracting BULLISH trades with strike_price = 0 for both Afternoon and Morning
-        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == "0"), None)
-        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == "0"), None)    
+        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == 0), None)
+        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == 0), None)    
     # Extracting BULLISH trades with strike_price != 0 for both Afternoon and Morning
-        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != "0"), None)
-        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != "0"), None)
+        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != 0), None)
+        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != 0), None)
     elif afternoon_trades[0]["direction"] == "BEARISH":
     # Extracting BEARISH trades with strike_price = 0 for both Afternoon and Morning
-        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == "0"), None)
-        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == "0"), None)
+        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == 0), None)
+        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == 0), None)
     # Extracting BEARISH trades with strike_price != 0 for both Afternoon and Morning
-        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
-        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
-    
+        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != 0), None)
+        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != 0), None)
     
     if broker == "zerodha":
         future_tax = zerodha_futures_taxes(qty, future_entry, future_exit, 1)
@@ -180,7 +179,6 @@ def process_overnight_options_trades(overnight_options_trades):
     elif direction == "BEARISH":  # Assuming BEARISH
         trade_points = (future_entry - future_exit) + (option_exit - option_entry)
     PnL = trade_points * qty
-
     # Appending to result list
     trade_data = {
         "Trade_Type": direction,
@@ -272,8 +270,8 @@ for broker, user in user_list:
     # # Append new data
     mpwizard_final_df = pd.concat([mpwizard_existing_df, mpwizard_df])
     amipy_final_df = pd.concat([amipy_existing_df, amipy_df])
-    overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
-    # overnight_final_df = pd.concat([overnight_existing_df])
+    # overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
+    overnight_final_df = pd.concat([overnight_existing_df])
 
     gross_pnl = mpwizard_pnl + amipy_pnl + overnight_options_pnl
     # gross_pnl = mpwizard_pnl + amipy_pnl 
@@ -307,7 +305,6 @@ for broker, user in user_list:
 
     message = "\n".join(message_parts)
     message = message.replace('\u20b9', 'INR')
-
 
     message = "\n".join(message_parts)
     print(message)
