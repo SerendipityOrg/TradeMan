@@ -16,7 +16,6 @@ env_file_path = os.path.abspath(os.path.join(BROKERS_DIR,'.env'))
 load_dotenv(env_file_path)
 
 token = os.getenv('telegram_bot_token')
-print(token)
 
 mpwizard = os.path.abspath(os.path.join(CURRENT_DIR, '..','..','Strategies','MPWizard'))
 sys.path.append(mpwizard)
@@ -138,7 +137,6 @@ def trade_callback(update: Update, context: CallbackContext) -> None:
     "transcation": trade_type
     }
 
-    print("coming here")
     order_details['stoploss_points'] = mpw.get_weekday_price_ref(order_details['base_symbol'])
     if context.user_data['action'] == 'Place Order':
         place_order.place_order_for_broker("MPWizard", order_details, monitor=monitor)

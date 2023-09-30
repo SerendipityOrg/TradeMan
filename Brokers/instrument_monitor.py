@@ -1,4 +1,4 @@
-import time
+from datetime import datetime
 from dotenv import load_dotenv
 import os 
 import threading
@@ -121,6 +121,12 @@ class InstrumentMonitor:
                 elif token_data['limit_prc'] is not None and ltp <= token_data['limit_prc']:
                     print(f"Limit price reached for token {token}! LTP is {ltp}.") # TODO: send discord msg after sl
                     #remove the token from the list
+                    self.remove_token(token)
+                
+                #check if the time is 3:10 pm and if yes then remove the token from the list
+                elif datetime.now().strftime("%H:%M:%S") >= "15:57:00":
+                    print("Time is 3:10 pm")
+                    place_order.exit_order_details(token,monitor=self)
                     self.remove_token(token)
                     
                 # TODO: Check if there any open orders for the token at 3:10 pm if yes then cancel the order and sqaure off that order

@@ -1,9 +1,11 @@
+.env
 *.pyc
 *.csv
 *.log
-*.env
 *.json
-/Users/amolkittur/Desktop/main/Streamlit/.venv
+*.xlsx
+
 Amipy/.DS_Store
 Scripts/Logs/Amipy_NF.log
-*.log
+Brokers/.env
+Utils/broker.json

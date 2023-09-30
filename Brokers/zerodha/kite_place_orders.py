@@ -172,4 +172,14 @@ def update_stoploss(monitor_order_func):
                                 trigger_price = trigger_price)
     print("zerodha order modified",modify_order)
 
+def exit_order(exit_order_func):
+    print("exit_order_func",exit_order_func)
+    order_id = retrieve_order_id(
+        exit_order_func.get('user'),
+        exit_order_func.get('broker'),
+        exit_order_func.get('strategy'),
+        exit_order_func.get('trade_type'),
+        exit_order_func.get('token')
+    )
+    print("order_id",order_id)
     

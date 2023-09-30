@@ -335,47 +335,30 @@ calculate_and_print_tax_from_excel(file_path)
 #         order_tax = zerodha_taxes(qty, entry_prc, exit_prc, 2)
 #         # futures_tax = aliceblue_futures_taxes(qty, orders, entry_prc, exit_prc)
 
-#         # print(futures_tax)
-#         Tax = order_tax + hedge_tax
-#         print(Tax)
+# from pya3 import *
+# import datetime
 
-#         # # Print the calculated tax values for each row
-#         # print(f"Row {index + 1}: Tax = {Tax:.2f}")
+# alice = Aliceblue("AB068818","CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y")
 
 
-# # Sample usage:
-# file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\omkar.xlsx"
-# calculate_and_print_tax_from_excel(file_path)
+# alice.get_session_id()
+# # trade = Instrument(exchange='NFO', token=57640, symbol='FINNIFTY', name='FINNIFTY26SEP23P20300', expiry=datetime.date(2023, 9, 26), lot_size=50)
+# # trading_symbol = Instrument(exchange='NFO', token=86000, symbol='BANKNIFTY', name='BANKNIFTY28SEP23P45000', expiry='', lot_size=15)
+# # print(trading_symbol)
+# print(alice.get_scrip_info(alice.get_instrument_by_token('NSE', 11536)))
 
+# # print(
+# #    alice.place_order(transaction_type = TransactionType.Sell,
+# #                      instrument = trade,
+# #                      quantity = 15,
+# #                      order_type = OrderType.StopLossLimit,
+# #                      product_type = ProductType.Intraday,
+# #                      price=15.00,
+# #                      trigger_price = 16.0)
+# # )
 
-# def calculate_and_print_tax_from_excel(file_path):
-#     columns = ["Trade ID", "Strategy", "Trade_Type", "Date", "Entry Time", "Exit Time",
-#                "Future_Entry", "Future_Exit", "Option_Entry", "Option_Exit", "Trade_Points", "Qty", "PnL", "Tax"]
+from Brokers import instrument_monitor
 
-#     # Read the excel file
-#     df = pd.read_excel(
-#         file_path, sheet_name='Overnight_options', names=columns)
+monitor = instrument_monitor.InstrumentMonitor()
 
-#     # Calculate and print the 'Tax' column
-#     for index, row in df.iterrows():
-#         qty = row["Qty"]
-#         entry_prc = row["Future_Entry"]
-#         exit_prc = row["Future_Exit"]
-#         orders = 1
-#         option_entry = row["Option_Entry"]
-#         option_exit = row["Option_Exit"]
-
-#         # Calculate tax using aliceblue_taxes
-#         tax = zerodha_taxes(qty, option_entry, option_exit, orders)
-#         futures_tax = zerodha_futures_taxes(qty, entry_prc, exit_prc, orders)
-
-#         print(futures_tax)
-#         Taxes = tax + futures_tax
-
-#         # Print the calculated tax values for each row
-#         print(f"Row {index + 1}: Taxes = {Taxes:.2f}")
-
-
-# # Sample usage:
-# file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\omkar.xlsx"
-# calculate_and_print_tax_from_excel(file_path)
+ltp = monitor._fetch_ltp_for_token(11536)

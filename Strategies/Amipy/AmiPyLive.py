@@ -122,7 +122,6 @@ else:
 
 print("Today's Strike Price:",strike_prc)
 
-# holidays = ['2023-05-01', '2023-06-16','2023-06-29']  # Add all trading holidays here
 
 trading_tokens,zerodha_list,alice_list = get_option_tokens(base_symbol,str(expiry_date),strike_prc)
 
@@ -135,7 +134,7 @@ for token in trading_tokens:
     hist_data[token]['instrument_token'] = token
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
-with open('/Users/traderscafe/Desktop/Main/TradeMan/Strategies/Amipy/AmiPy.json' , 'r') as f:
+with open('Strategies/Amipy/AmiPy.json' , 'r') as f:
     parameters = json.load(f)
 
 entry = parameters['Nifty'][0]['entry_time']
