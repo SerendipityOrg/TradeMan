@@ -15,17 +15,13 @@ def get_user_details(user):
     return json_data, user_json_path
 
 
-
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, avg_price, order_details, user_details,strategy):
     user, json_path = get_user_details(order_details['user'])
-
-    print("in log orders",order_details['tradingsymbol'])
-
-    if 'strike_price' in order_details:
-        strike_prc = order_details['strike_price']
+    if 'strike_prc' in order_details:
+        strike_prc = order_details['strike_prc']
     else:
-        strike_prc = int(order_details['tradingsymbol'].name[-7:-2])
+        strike_prc = 0
 
     #check if order_details['tradingsymbol'] is a string or a dict, if dict then get the name attribute
     if isinstance(order_details['tradingsymbol'], str):
@@ -42,29 +38,42 @@ def log_order(order_id, avg_price, order_details, user_details,strategy):
 
     order_dict = {
         "order_id": order_id,
-        "trade_type": order_details['transaction_type'],
         "avg_prc": avg_price,
         "qty": order_details['qty'],
-        "timestamp": str(dt.datetime.now().time()),
+        "timestamp": str(dt.datetime.now()),
         "strike_price": strike_prc,
         "tradingsymbol": tradesymbol
     }
 
+    if hasattr(order_details['tradingsymbol'], 'name'):
+        order_dict['tradingsymbol'] = order_details['tradingsymbol'].name
+    else:
+        order_dict['tradingsymbol'] = order_details['tradingsymbol']
+
+    if 'signal' in order_details and strategy == "AmiPy":
+        print(type(strike_prc))
+        print(order_details['tradingsymbol'].name[-7:-2])
+        if str(strike_prc) == order_details['tradingsymbol'].name[-7:-2] or str(strike_prc) == order_details['tradingsymbol'][-7:-2]:
+            order_dict['trade_type'] = order_details['signal']
+        else:
+            order_dict['trade_type'] = "HedgeOrder"
+    else:
+        order_dict['trade_type'] = order_details['transaction_type']
+
     if 'direction' in order_details:
         order_dict['direction'] = order_details['direction']
     
-    if 'trade_type' in order_details:
-        order_dict['trade_type'] = order_details['trade_type']
-
+    if 'signal' in order_details:
+        order_dict['signal'] = order_details['signal']
+    
     broker = list(user.keys())[0]
     broker = user_details.setdefault(broker, {})
     orders = broker.setdefault('orders', {})
     strategy_orders = orders.setdefault(strategy, {})
 
     #if trade_type is present in order_dict it should setdefault to that else it should setdefault to order_details['transaction_type']
-
-    if 'trade_type' in order_dict:
-        order_type_list = strategy_orders.setdefault(order_dict['trade_type'], [])
+    if 'signal' in order_dict:
+        order_type_list = strategy_orders.setdefault(order_dict['signal'], [])
     else:
         order_type_list = strategy_orders.setdefault(order_details['transaction_type'], [])
     order_type_list.append(order_dict)
@@ -80,7 +89,7 @@ def get_quantity(user_data, broker, strategy, tradingsymbol=None):
     
     quantity_data = user_data_specific[strategy_key]
 
-    if strategy == 'MPWizard':
+    if strategy == 'MPWizard' or strategy == 'Siri':
         if broker == 'aliceblue':
             tradesymbol = tradingsymbol.name
         else:

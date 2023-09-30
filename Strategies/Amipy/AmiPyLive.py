@@ -122,7 +122,6 @@ else:
 
 print("Today's Strike Price:",strike_prc)
 
-# holidays = ['2023-05-01', '2023-06-16','2023-06-29']  # Add all trading holidays here
 
 trading_tokens,zerodha_list,alice_list = get_option_tokens(base_symbol,str(expiry_date),strike_prc)
 
@@ -135,7 +134,7 @@ for token in trading_tokens:
     hist_data[token]['instrument_token'] = token
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
-with open('/Users/traderscafe/Desktop/Main/TradeMan/Strategies/Amipy/AmiPy.json' , 'r') as f:
+with open('Strategies/Amipy/AmiPy.json' , 'r') as f:
     parameters = json.load(f)
 
 entry = parameters['Nifty'][0]['entry_time']
@@ -323,7 +322,7 @@ def updateSignalDf(last_signal):
                 "transcation":"BUY",
             }
             for zerodha,alice in zip(zerodha_list,alice_list):
-                place_order.place_order_for_broker("AmiPy",order_details_opt,trading_symbol=(zerodha,alice),trade_type='LongSignal')
+                place_order.place_order_for_broker("AmiPy",order_details_opt,trading_symbol=(zerodha,alice),signal='LongSignal')
         elif trade_type == 'ShortSignal':
             for zerodha,alice in zip(zerodha_list,alice_list):
                 # Extract the strike price from the token
@@ -334,7 +333,7 @@ def updateSignalDf(last_signal):
                 else:
                     transcation_type = 'BUY'
                 # Call your place_order function here
-                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, trading_symbol=(zerodha,alice),trade_type='ShortSignal')
+                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, trading_symbol=(zerodha,alice),signal='ShortSignal')
 
     elif trade_type == 'LongCoverSignal' or trade_type == 'ShortCoverSignal':
         signal = signals.pop()  # Retrieve the last signal
@@ -355,7 +354,7 @@ def updateSignalDf(last_signal):
                 "transcation":"SELL",
             }
             for zerodha,alice in zip(zerodha_list,alice_list):
-                place_order.place_order_for_broker("AmiPy",order_details_opt,trading_symbol=(zerodha,alice),trade_type='LongCoverSignal')
+                place_order.place_order_for_broker("AmiPy",order_details_opt,tradingsymbol=(zerodha,alice),signal='LongCoverSignal')
         elif trade_type == 'ShortCoverSignal':
             for zerodha,alice in zip(zerodha_list,alice_list):
                 # Extract the strike price from the token
@@ -368,7 +367,7 @@ def updateSignalDf(last_signal):
                     transcation_type = 'SELL'
                 
                 # Call your place_order function here
-                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, trading_symbol=(zerodha,alice),trade_type='ShortCoverSignal')
+                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, tradingsymbol=(zerodha,alice),signal='ShortCoverSignal')
 
     try:
         if trade_type is not None:  # check that a signal was generated

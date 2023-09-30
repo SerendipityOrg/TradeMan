@@ -15,12 +15,12 @@ api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
 script_dir = os.path.dirname(os.path.realpath(__file__))
 json_dir = os.path.join(script_dir, "users")
 
+
 # Change the standard output encoding to UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
+
 # Load user data from the JSON file
-
-
 def load_userdata():
     with open(os.path.join(script_dir, "broker.json")) as f:
         return json.load(f)
@@ -41,6 +41,7 @@ def aliceblue_invested_value(user_data):
             average_price = float(stock['Price'])
             quantity = float(stock['HUqty'])
             invested_value += average_price * quantity
+
     return invested_value
 
 # Calculate invested value for Zerodha user
@@ -74,6 +75,7 @@ def custom_format(amount):
 
 
 def generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital):
+    # Base message
     message = (
         f"Morning Report for {user} on {formatted_date}:\n\n"
         f"Yesterday's Capital: {custom_format(user_data['current_capital'])}\n"
@@ -94,6 +96,7 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
     return message
 
 
+
 # Main code execution
 userdata = load_userdata()
 
@@ -108,6 +111,7 @@ for broker, broker_data in userdata.items():
 
 # Iterate through each user and generate and send report
 for broker, user in user_list:
+    # print(user)
     user_data = userdata[broker][user]
 
     # Calculate investment values
@@ -127,21 +131,23 @@ for broker, user in user_list:
     print(message)
 
     # # Load user-specific JSON data (assuming each user has a separate JSON)
-    data = load_userdata()
-    phone_number = data[broker][user]['mobile_number']
+    # data = load_userdata()
+    # phone_number = data[broker][user]['mobile_number']
 
-    # Save data to broker.json
-    user_details = data[broker][user]
-    user_details["current_capital"] = current_capital
-    data[broker][user] = user_details
+    # # Save data to broker.json
+    # data_to_store = {
+    #     'Current Capital': current_capital,
+    # }
+    # user_details = data[broker][user]
+    # user_details["current_capital"] = current_capital
+    # data[broker][user] = user_details
 
-    # Update the broker.json file
-    with open(os.path.join(script_dir, "broker.json"), "w") as f:
-        json.dump(data, f, indent=4)
+    # with open(os.path.join(script_dir, "broker.json"), 'w') as f:
+    #     json.dump(data, f, indent=4)
 
-    parent_file = os.path.abspath(os.path.join(script_dir, '..','..'))
-    filepath = os.path.join(parent_file, '+918618221715.session')
-    # # Send the report to the user via Telegram
-    # # Ensure you have `api_id` and `api_hash` defined elsewhere in your code
-    with TelegramClient(filepath, api_id, api_hash) as client:
-        client.send_message(phone_number, message, parse_mode='md')
+    # parent_file = os.path.abspath(os.path.join(script_dir, '..'))
+    # filepath = os.path.join(parent_file, '+918618221715.session')
+    # # # Send the report to the user via Telegram
+    # # # Ensure you have `api_id` and `api_hash` defined elsewhere in your code
+    # with TelegramClient(filepath, api_id, api_hash) as client:
+    #     client.send_message(phone_number, message, parse_mode='md')

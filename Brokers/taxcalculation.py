@@ -1,8 +1,8 @@
-def zerodha_taxes(qty, entry_prc, exit_prc,orders):
+def zerodha_taxes(qty, entry_prc, exit_prc, orders):
     if orders == 1:
-       instruments = 2
+        instruments = 2
     elif orders == 2:
-        instruments = 4 
+        instruments = 4
     # Brokerage
     brokerage = 20 * instruments  # Flat Rs. 20 per executed order
 
@@ -18,22 +18,25 @@ def zerodha_taxes(qty, entry_prc, exit_prc,orders):
     sebi_charges = 10 / 10000000 * exit_prc * qty  # Rs. 10 / crore
 
     # SEBI charges
-    gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)  # SEBI charges are Rs. 10 / crore
+    # SEBI charges are Rs. 10 / crore
+    gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)
 
     # Stamp charges
     stamp_charges = 0.003 / 100 * entry_prc * qty
 
-    total_charges = brokerage + stt_on_exercise + stt_on_sell + transaction_charges + gst + sebi_charges + stamp_charges
+    total_charges = brokerage + stt_on_exercise + stt_on_sell + \
+        transaction_charges + gst + sebi_charges + stamp_charges
 
     return total_charges
 
-def aliceblue_taxes(qty, entry_prc, exit_prc,orders):
+
+def aliceblue_taxes(qty, entry_prc, exit_prc, orders):
     if orders == 1:
-       instruments = 2
+        instruments = 2
     elif orders == 2:
         instruments = 4
     # Brokerage
-    brokerage = 15 * instruments # Flat Rs. 20 per executed order
+    brokerage = 15 * instruments  # Flat Rs. 20 per executed order
 
     # STT/CTT
     intrinsic_value = max(0, exit_prc - entry_prc) * qty
@@ -42,19 +45,22 @@ def aliceblue_taxes(qty, entry_prc, exit_prc,orders):
 
     # Transaction charges
     transaction_charges = 0.05 / 100 * exit_prc * qty
-    
+
     # SEBI charges
     sebi_charges = 10 / 10000000 * exit_prc * qty  # Rs. 10 / crore
 
     # GST
-    gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)  # SEBI charges are Rs. 10 / crore
+    # SEBI charges are Rs. 10 / crore
+    gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)
 
     # Stamp charges
     stamp_charges = 0.003 / 100 * exit_prc * qty
 
-    total_charges = brokerage + stt_on_exercise + stt_on_sell + transaction_charges + gst + sebi_charges + stamp_charges
+    total_charges = brokerage + stt_on_exercise + stt_on_sell + \
+        transaction_charges + gst + sebi_charges + stamp_charges
 
     return total_charges
+
 
 def zerodha_futures_taxes(qty, entry_prc, exit_prc, orders):
     if orders == 1:
@@ -86,9 +92,11 @@ def zerodha_futures_taxes(qty, entry_prc, exit_prc, orders):
     stamp_charges_rate = 0.002 / 100
     stamp_charges = max(stamp_charges_rate * entry_prc * qty, 200)
 
-    total_charges = brokerage + stt_ctt + transaction_charges + gst + sebi_charges + stamp_charges
+    total_charges = brokerage + stt_ctt + \
+        transaction_charges + gst + sebi_charges + stamp_charges
 
     return total_charges
+
 
 def aliceblue_futures_taxes(qty, entry_prc, exit_prc, orders):
     if orders == 1:
@@ -120,7 +128,7 @@ def aliceblue_futures_taxes(qty, entry_prc, exit_prc, orders):
     stamp_charges_rate = 0.002 / 100
     stamp_charges = max(stamp_charges_rate * entry_prc * qty, 200)
 
-    total_charges = brokerage + stt_ctt + transaction_charges + gst + sebi_charges + stamp_charges
+    total_charges = brokerage + stt_ctt + \
+        transaction_charges + gst + sebi_charges + stamp_charges
 
     return total_charges
-
