@@ -106,14 +106,7 @@ def calculate_lots(user_details, strategy_percentage, mpwizard_json):
 
 
 def create_strategy_json(broker_name, user, lots, balance, user_details_path, mpwizard_json_path):
-<<<<<<< HEAD
-    with open(user_details_path, 'r') as json_file:
-        broker = json.load(json_file)
-
-    user_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..','UserProfile','json')
-=======
     user_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),  '..','UserProfile','json')
->>>>>>> Dev
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
 
@@ -325,10 +318,7 @@ for user in zerodha_accounts_to_trade:
     balance = user_details.get('expected_morning_balance')
     # Updated logic to use strategy percentage
     strategy_percentage = user_details.get('percentageRisk', {})
-<<<<<<< HEAD
     # user_details['current_capital'] = balance
-=======
->>>>>>> Dev
 
     broker['zerodha'][user] = user_details  # persist the changes
     lots = calculate_lots(user_details, strategy_percentage,mpwizard_json_path)

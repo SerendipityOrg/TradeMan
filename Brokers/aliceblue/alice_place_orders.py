@@ -174,7 +174,6 @@ def update_stoploss(monitor_order_func):
     print("alice modify_order",modify_order)
 
 def exit_order(exit_order_func):
-    print("exit_order_func",exit_order_func)
     order_id = retrieve_order_id(
         exit_order_func.get('user'),
         exit_order_func.get('broker'),

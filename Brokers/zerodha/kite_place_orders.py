@@ -150,7 +150,6 @@ def create_kite(user_details):
 
 def update_stoploss(monitor_order_func):
     print("in update stoploss")
-    print(monitor_order_func)
     global kite
     if kite is None:
         user_details,_ = get_user_details(monitor_order_func.get('user'))
@@ -167,15 +166,16 @@ def update_stoploss(monitor_order_func):
 
     new_stoploss = round(float(monitor_order_func.get('limit_prc')),1)
     trigger_price = round((float(new_stoploss)+1.00),1)
-    
-    modify_order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
-                                order_id=order_id, 
-                                price = new_stoploss,
-                                trigger_price = trigger_price)
-    print("zerodha order modified",modify_order)
+    try:
+        modify_order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
+                                    order_id=order_id, 
+                                    price = new_stoploss,
+                                    trigger_price = trigger_price)
+    except Exception as e:
+        print(f"Failed to modify the order: {e}")
+    print("zerodha order modified")
 
 def exit_order(exit_order_func):
-    print("exit_order_func",exit_order_func)
     order_id = retrieve_order_id(
         exit_order_func.get('user'),
         exit_order_func.get('broker'),

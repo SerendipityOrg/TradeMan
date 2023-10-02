@@ -36,7 +36,6 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             expiry = gc.get_next_week_expiry(order_details['base_symbol'])
         else:
             expiry = weeklyexpiry
-
         token, trading_symbol_list, trading_symbol_aliceblue = gc.get_tokens(
                                                                 order_details['base_symbol'], 
                                                                 expiry, 
@@ -62,10 +61,12 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             'transaction_type': order_details['transcation'],
             'base_symbol': order_details['base_symbol'],
             'strike_prc': order_details['strike_prc'],
-            'option_type': order_details['option_type'],
             'tradingsymbol': trading_symbol,
             'user': user,
             'order_trade_type': 'Market'}
+        
+        if 'option_type' in order_details:
+            details['option_type'] = order_details['option_type']
 
         if 'direction' in order_details:
             details['direction'] = order_details['direction']
@@ -76,14 +77,14 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
         if signal is not None:
             details['signal'] = signal
             
-        avg_prc = place_order_func(strategy, details, qty=qty)
-        
+        _,avg_prc = place_order_func(strategy, details, qty=qty)
         #######################price ref can be none 
         
         if strategy == 'MPWizard' or strategy == 'Siri':
-            price = InstrumentMonitor._fetch_ltp_for_token(monitor, token)
-            limit_prc = float(price) - order_details['stoploss_points']
-            print(f"Limit price is {limit_prc}")
+            option_ltp = InstrumentMonitor._fetch_ltp_for_token(monitor, token)
+            if 'target' not in order_details:
+                order_details['target'] = round(float(option_ltp) + (order_details['stoploss_points'] / 2))
+            limit_prc = float(option_ltp) - order_details['stoploss_points']
             if limit_prc < 0:
                 limit_prc = 1.0
             order_func ={
@@ -100,7 +101,7 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
                     }
             place_order_func(strategy, order_func , qty=qty)
         #calculate the target based on the priceref
-            target = order_details.get('target', round(float(avg_prc[1]) + (order_details['stoploss_points'] / 2)))
+            target = order_details.get('target', round(float(avg_prc) + (order_details['stoploss_points'] / 2)))
             print(f"Target is {target}")
             print(f"Limit price is {limit_prc}")
             

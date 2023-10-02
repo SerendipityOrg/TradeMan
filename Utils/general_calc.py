@@ -149,6 +149,11 @@ def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
     # Reading NFO.csv
     nfo_df = pd.read_csv(os.path.join(script_dir, 'NFO.csv'))
 
+    if option_type == 'FUT':
+        option_type = 'XX'
+    if strike_prc == 0:
+        strike_prc = -1
+        
     # Filtering using NFO.csv
     nfo_trading_symbols_df = nfo_df[
         (nfo_df["Exch"] == "NFO")
@@ -157,7 +162,6 @@ def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
         & (nfo_df["Strike Price"] == int(strike_prc))
         & (nfo_df["Option Type"] == str(option_type))
     ]
-
     trading_symbols_aliceblue = nfo_trading_symbols_df["Trading Symbol"].values[0]
     
     # Assuming Instrument is a class or function. If it's different, modify accordingly.
