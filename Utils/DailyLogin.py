@@ -329,12 +329,22 @@ for user in zerodha_accounts_to_trade:
 with open(user_details_path, 'w') as f:
     json.dump(broker, f, indent=4)
 
-if datetime.today().weekday() == 4:
+def get_csv_kite():
     kite = KiteConnect(api_key=broker['zerodha']['omkar']['api_key'])
     kite.set_access_token(broker['zerodha']['omkar']['access_token'])
     instrument_dump = kite.instruments()
     instrument_df = pd.DataFrame(instrument_dump)
     instrument_df.to_csv(r'instruments.csv')
+
+def get_csv_alice():
+    alice = Aliceblue(user_id=broker['aliceblue']['brijesh']['username'], api_key=broker['aliceblue']['brijesh']['api_key'])
+    alice.get_session_id()
+    alice.get_contract_master("NFO")
+
+
+if datetime.today().weekday() == 4:
+    get_csv_kite()
+    get_csv_alice()
 
 with open(mpwizard_json_path) as f:
     mpwizard_data = json.load(f)
