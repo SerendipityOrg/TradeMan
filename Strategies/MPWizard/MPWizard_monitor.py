@@ -32,7 +32,7 @@ class OrderMonitor:
     """
     def __init__(self, instruments):
         self.monitor = instrument_monitor.InstrumentMonitor()
-        self.omkar = self._load_json_data(omkar_json)
+        # self.omkar = self._load_json_data(omkar_json)
         self.mood_data = self._load_json_data(mpwizard_json)
         self.instruments = instruments
         self.orders_placed_today = 0
@@ -40,6 +40,7 @@ class OrderMonitor:
         self.today_date = dt.date.today()
         self.done_for_the_day = False
         self.order_details_dict = {}
+        self.indices_triggered_today = set() 
         self.message_sent = {
             instrument.get_name(): {level: False for level in instrument.get_trigger_points()}
             for instrument in self.instruments
@@ -55,6 +56,7 @@ class OrderMonitor:
         self.today_date = dt.now().date()
         self.orders_placed_today = 0
         self.done_for_the_day = False
+        self.indices_triggered_today = set()
 
     def get_weekday_price_ref(self,name):
         """Get the price reference for the current weekday."""
@@ -84,6 +86,10 @@ class OrderMonitor:
         token = instrument.get_token()
         levels = instrument.get_trigger_points()
         name = instrument.get_name()
+
+        #check if the index has been triggered today
+        if name in self.indices_triggered_today:
+            return
         
         cross_type, level_name = self._check_price_crossing(prev_ltp[name], ltp, levels)
         if cross_type and not self.message_sent[name][level_name]:
@@ -109,6 +115,7 @@ class OrderMonitor:
             }
             
             place_order.place_order_for_broker("MPWizard", order_details, monitor=self.monitor)
+            self.indices_triggered_today.add(name) 
             
             message = f"{cross_type} at {ltp} for {name}!"
             discord.discord_bot(message,"MPWizard") 

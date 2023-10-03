@@ -52,7 +52,8 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
         product_type = ProductType.Normal
     else:
         product_type = ProductType.Intraday
-    
+
+    avg_prc = 0.0
     limit_prc = round(float(order_details.get('limit_prc', 0.0)),1)
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
     try:
@@ -69,7 +70,6 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
                                         is_amo = False,
                                         order_tag = strategy)
         print("order_id",order_id)
-
         logging.info(f"Order placed. ID is: {order_id}")
 
         order_id_value = order_id['NOrdNo']
@@ -171,3 +171,15 @@ def update_stoploss(monitor_order_func):
                     price=new_stoploss,
                     trigger_price = trigger_price)
     print("alice modify_order",modify_order)
+
+def exit_order(exit_order_func):
+    print("exit_order_func",exit_order_func)
+    order_id = retrieve_order_id(
+        exit_order_func.get('user'),
+        exit_order_func.get('broker'),
+        exit_order_func.get('strategy'),
+        exit_order_func.get('trade_type'),
+        exit_order_func.get('token')
+    )
+    print("order_id",order_id)
+
