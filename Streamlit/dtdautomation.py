@@ -27,10 +27,10 @@ def fetch_data_from_excel(file_name, sheet_mappings):
                 f"Sheet '{actual_sheet_name}' not found in {file_name}. Skipping...")
     return data_mappings
 
-# Create and return the DTD DataFrame.
+# Create and return the DTD DataFrame with correct running balance calculation and formatted columns.
 
 
-def create_dtd_dataframe(data_mappings, opening_balance):
+def create_dtd_dataframe_updated_v3(data_mappings, opening_balance):
     if not data_mappings:
         print("No valid DataFrames found!")
         return pd.DataFrame(), 0
@@ -41,19 +41,20 @@ def create_dtd_dataframe(data_mappings, opening_balance):
 
     rows = []
     default_details = ['MP Wizard', 'AmiPy', 'ZRM', 'Overnight Options']
-    si_no = 1
+    sl_no = 1
 
+    # Initialize the running balance with the opening balance
     running_balance = opening_balance
     rows.append({
-        'SI NO': si_no,
-        'Date': '08-Jul-23',
+        'Sl NO': sl_no,
+        'Date': '07-Jul-23',
         'Day': 'Friday',
         'Trade ID': '',
         'Details': 'Opening Balance',
-        'Amount': '0',
+        'Amount': f'₹ {0:,.2f}',
         'Running Balance': f'₹ {running_balance:,.2f}'
     })
-    si_no += 1
+    sl_no += 1
 
     start_date = pd.Timestamp('2023-07-10')
     for date in all_dates_sorted:
@@ -72,59 +73,57 @@ def create_dtd_dataframe(data_mappings, opening_balance):
                     for _, row in sub_df.iterrows():
                         trade_id = row['Trade ID']
                         pnl = row['Net PnL']
-                        running_balance += pnl  # Update running balance
+                        amount = pnl
+                        running_balance += amount  # Update running balance BEFORE appending
                         rows.append({
-                            'SI NO': si_no,
+                            'Sl NO': sl_no,
                             'Date': date_str,
                             'Day': day_str,
                             'Trade ID': trade_id,
                             'Details': transaction_id,
-                            'Amount': f'₹ {pnl:,.2f}',
+                            'Amount': f'₹ {amount:,.2f}',
                             'Running Balance': f'₹ {running_balance:,.2f}'
                         })
-                        si_no += 1
+                        sl_no += 1
                 else:
                     aggregated_pnl = sub_df['Net PnL'].sum()
                     aggregated_trade_ids = ' '.join(
                         sub_df['Trade ID'].dropna())
-                    if transaction_id == "Overnight Options" and aggregated_pnl == 0.00:
-                        continue
-                    running_balance += aggregated_pnl  # Update running balance
-                    rows.append({
-                        'SI NO': si_no,
-                        'Date': date_str,
-                        'Day': day_str,
-                        'Trade ID': aggregated_trade_ids,
-                        'Details': transaction_id,
-                        'Amount': f'₹ {aggregated_pnl:,.2f}',
-                        'Running Balance': f'₹ {running_balance:,.2f}'
-                    })
-                    si_no += 1
+                    amount = aggregated_pnl
+                    if not (transaction_id == 'Overnight Options' and amount == 0.00):
+                        running_balance += amount  # Update running balance BEFORE appending
+                        rows.append({
+                            'Sl NO': sl_no,
+                            'Date': date_str,
+                            'Day': day_str,
+                            'Trade ID': aggregated_trade_ids,
+                            'Details': transaction_id,
+                            'Amount': f'₹ {amount:,.2f}',
+                            'Running Balance': f'₹ {running_balance:,.2f}'
+                        })
+                        sl_no += 1
 
     dtd_df = pd.DataFrame(rows)
     return dtd_df, running_balance
 
-
-# Retrieve existing 'Opening Balance' from the DTD sheet
+# Retrieve existing 'Opening Balance' from the DTD sheet.
 
 
 def get_existing_opening_balance(file_name):
     if 'DTD' in pd.ExcelFile(file_name).sheet_names:
         existing_dtd = pd.read_excel(file_name, sheet_name='DTD')
         details_column = existing_dtd.get('Details')
-
         if details_column is not None and 'Opening Balance' in details_column.values:
             running_balance_str = existing_dtd[details_column ==
                                                'Opening Balance']['Running Balance'].iloc[0]
-            if isinstance(running_balance_str, str):
-                return float(running_balance_str.replace('₹', '').replace(',', ''))
+            if isinstance(running_balance_str, (str, int, float)):
+                return float(str(running_balance_str).replace('₹', '').replace(',', '').strip())
     return None
 
 # Append new data to the existing DTD sheet or create a new one.
 
 
 def check_and_update_dtd_sheet(file_name, new_dtd_df, default_opening_balance):
-    # Check if 'Details' column exists in the dataframe
     if 'Details' not in new_dtd_df.columns:
         print(
             f"'Details' column missing in the new data for {file_name}. Skipping this file.")
@@ -140,7 +139,6 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df, default_opening_balance):
         if 'DTD' in writer.book.sheetnames:
             existing_dtd = pd.read_excel(file_name, sheet_name='DTD')
 
-            # Safe check for 'Date' column in both dataframes
             if 'Date' in existing_dtd.columns and 'Date' in new_dtd_df.columns:
                 last_existing_date = pd.to_datetime(
                     existing_dtd['Date'].iloc[-1])
@@ -148,13 +146,13 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df, default_opening_balance):
                     new_dtd_df['Date']) > last_existing_date]
                 updated_dtd_df = pd.concat(
                     [existing_dtd, new_dtd_df], ignore_index=True)
+
+                std = writer.book['DTD']
+                writer.book.remove(std)
             else:
                 print(
                     f"'Date' column not found in DTD sheet or new data of {file_name}. Skipping update for this file.")
                 return
-
-            std = writer.book['DTD']
-            writer.book.remove(std)
         else:
             updated_dtd_df = new_dtd_df
 
@@ -180,7 +178,7 @@ if __name__ == "__main__":
         if user_file.endswith('.xlsx') and user_file != "signal.xlsx":
             file_name = os.path.join(excel_dir, user_file)
             data_mappings = fetch_data_from_excel(file_name, sheet_mappings)
-            dtd_df, _ = create_dtd_dataframe(
+            dtd_df, _ = create_dtd_dataframe_updated_v3(
                 data_mappings, default_opening_balance)
             check_and_update_dtd_sheet(
                 file_name, dtd_df, default_opening_balance)
