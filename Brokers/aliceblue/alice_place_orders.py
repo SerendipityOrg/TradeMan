@@ -57,6 +57,7 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
     limit_prc = round(float(order_details.get('limit_prc', 0.0)),1)
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
     try:
+        print("order_details",order_details.get('order_tag', None))
         order_id = alice.place_order(transaction_type = transaction_type, 
                                         instrument = order_details['tradingsymbol'],
                                         quantity = qty ,
@@ -68,7 +69,7 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
                                         square_off = None,
                                         trailing_sl = None,
                                         is_amo = False,
-                                        order_tag = strategy)
+                                        order_tag = order_details.get('order_tag', None))
         print("order_id",order_id)
         logging.info(f"Order placed. ID is: {order_id}")
 

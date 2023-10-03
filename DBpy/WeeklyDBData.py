@@ -5,10 +5,11 @@ import psycopg2
 from kiteconnect import KiteConnect
 from collections import namedtuple
 from datetime import timedelta
+import datetime
 
 # Constants and Configurations
 API_KEY = '6b0dp5ussukmo67h'
-ACCESS_TOKEN = 'jiYp2ITa3ZMw0yjGY1hzqFpeR4lC1IKZ'
+ACCESS_TOKEN = 'nQu5hHgMjQGoft2uQTTARFBLy4BzmKKH'
 kite = KiteConnect(api_key=API_KEY)
 kite.set_access_token(ACCESS_TOKEN)
 
@@ -37,7 +38,7 @@ holidays = [datetime.date(2023, i, j) for i, j in [
 def get_strikeprc(token):
     ltp_data = kite.ltp(token)
     ltp = ltp_data[token]['last_price']
-    return round(ltp / 50) * 50
+    return round(ltp / 100) * 100
 
 Instrument = namedtuple("Instrument", ['exchange', 'token', 'symbol', 'name', 'expiry', 'lot_size'])
 
@@ -47,8 +48,12 @@ def get_option_tokens(base_symbol, expiry_date, option_type, strike_prc):
     instruments_df = instruments_df[
         ["instrument_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike"]
     ]
+    if base_symbol == "SENSEX":
+        exchange = "BFO"
+    else:
+        exchange = "NFO"
     nfo_ins_df = instruments_df[
-        (instruments_df["exchange"] == "NFO")
+        (instruments_df["exchange"] == "BFO")
         & (instruments_df["name"] == str(base_symbol))
         & (instruments_df["expiry"] == str(expiry_date))
         & (instruments_df["strike"] == int(strike_prc))
@@ -62,7 +67,6 @@ def get_option_tokens(base_symbol, expiry_date, option_type, strike_prc):
 
     # Extract the token from the trading symbol
     token_CE = nfo_ins_df['tradingsymbol'].values[0]
-    exchange = 'NFO'
     trading_symbol_aliceblue = []
 
     for token, single_trading_symbol in zip(tokens, trading_symbol_list):
@@ -93,14 +97,15 @@ def get_expiry_dates(base_symbol):
     # Based on the base_symbol, determine the weekday of the expiry
     if base_symbol == "MIDCPNIFTY":
         weekly_expiry = get_next_weekday(today, 0)  # Monday
-    elif base_symbol == "FINNIFTY":
-        weekly_expiry = get_next_weekday(today, 1)  # Tuesday
-    elif base_symbol == "NIFTY" or base_symbol == "BANKNIFTY":
+    if base_symbol == "FINNIFTY":
+        weekly_expiry = get_next_weekday(today,1)  # Tuesday
+    elif base_symbol == "BANKNIFTY":
+        weekly_expiry = get_next_weekday(today, 2)  # Tuesday    
+    elif base_symbol == "NIFTY" :
         weekly_expiry = get_next_weekday(today, 3)  # Thursday
     elif base_symbol == "SENSEX":
         weekly_expiry = get_next_weekday(today, 4)  # Friday
-    else:
-        raise ValueError(f"Invalid base_symbol: {base_symbol}")
+
     
     # Monthly expiry calculations
     # Get the last day of the month
@@ -160,12 +165,12 @@ def store_data_in_postgres(trading_symbol_list, all_data, cursor):
     cursor.connection.commit()
 
 def fetch_and_store_historical_data(token,base_symbol, expiry_date,future_expiry, start_date, end_date, cursor):
-    strike_prc = get_strikeprc(token)
-
     if base_symbol == 'NIFTY' or base_symbol == 'FINNIFTY' or base_symbol == 'MIDCPNIFTY' :
-        upper_strikes = [(strike_prc + i*50) for i in range(1, 9)]
+        strike_prc = get_strikeprc(token)
+        upper_strikes = [(strike_prc  + i*50) for i in range(1, 9)]
         lower_strikes = [(strike_prc - i*50) for i in range(1, 9)]
     elif base_symbol == 'BANKNIFTY' or base_symbol == 'SENSEX':
+        strike_prc = get_strikeprc(token)
         upper_strikes = [(strike_prc + i*100) for i in range(1, 9)]
         lower_strikes = [(strike_prc - i*100) for i in range(1, 9)]
     all_strikes = lower_strikes + [strike_prc] + upper_strikes

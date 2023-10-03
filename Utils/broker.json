@@ -6,7 +6,7 @@
             "api_key": "6b0dp5ussukmo67h",
             "api_secret": "eln2qrqob5neowjuedmbv0f0hzq6lhby",
             "totp": "3GN2DNUD35FZQDIIWJUK6CSUIWBPXSYJ",
-            "access_token": "llj3yvtbtC4X0VCKcaHPZJxF1C62wqAg",
+            "access_token": "8VH1MoZbO8k0AqS3SUU71C3OoFLMNFgH",
             "mobile_number": "+919902106162",
             "percentageRisk": {
                 "AmiPy": 250000,
@@ -29,7 +29,8 @@
                 "MPWizard": 0.025
             }
         },
-        "accounts_to_trade": []
+        "accounts_to_trade": [
+        ]
     },
     "aliceblue": {
         "omkar": {
@@ -56,7 +57,8 @@
             "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDgzMTIsImlhdCI6MTY5NDY2MTkxMiwianRpIjoiNjAzM2ZmZTUtNmZlYy00NzQ2LWE3YjUtZTQzZTEyYjhkZGYxIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImMxOTAxOTk5LTIxNTQtNDU4MS04NzRjLTY5M2YyZTFkNWUyNCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjJlN2UzZTc5LWNkYzgtNDVkOS1iZDQ4LTU4NGNiMzY3Yzg0MSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMmU3ZTNlNzktY2RjOC00NWQ5LWJkNDgtNTg0Y2IzNjdjODQxIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IkJZMTQyNCIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJWSU1BTEEgTkFHQVJBSiBIRUdERSIsIm1vYmlsZSI6Ijk0NDg5NTUzNzAiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJieTE0MjQiLCJnaXZlbl9uYW1lIjoiVklNQUxBIE5BR0FSQUogSEVHREUiLCJlbWFpbCI6Im5pZ2h0c2t5a2tAZ21haWwuY29tIn0.gFI_l81ZCbK_AdIrZZLjuHlkXjtpUiyiIYOWw9BtAFynlWijXC7Ywgh2yuswcNkelauKnsewpBCuQqia1GTEdltW2oSX9NMmCY92oy9WM2n0inJyTUvnR4ljdOLkOX0sgTBEcdx0y9uyt41O5zKWICLYJjUaZr730MDe9X3b_EwMlu_EDu13KGhhVZFgiGu_7gJ92fu2P9_a3xDskhoKDEKISYWTsAespzcSdB1M3xf6XgyHHxF8UD99BImk-P9-VS5-lPDGe3OoJcTOe6ph-R4nZVqYhK4ZshLx8sbJU27pas6VxNZrjJiPlvRiPKlA0JqiwT25SvB6_tiajc8ehQ",
             "mobile_number": "+918618221715",
             "percentageRisk": {
-                "Siri": 100000
+                "Siri": 100000,
+                "MPWizard": 0.025
             },
             "current_capital": 640497.23,
             "yesterday_PnL": -2687.15,
@@ -182,6 +184,7 @@
         },
         "accounts_to_trade": [
             "amol"
+
         ]
     }
 }

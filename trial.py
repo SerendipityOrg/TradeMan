@@ -54,10 +54,11 @@
 # #update ChromeDriver
 
 
-# # from pya3 import *
+# from pya3 import *
 
-# # alice = Aliceblue("929016",'NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
-# # alice.get_session_id()
+# alice = Aliceblue("929016",'NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
+# alice.get_session_id()
+# print(alice.get_order_history(''))
 
 # # order_id = alice.place_order(transaction_type = TransactionType.Buy,
 # #                     instrument =alice.get_instrument_for_fno(exch="NFO",symbol='BANKNIFTY', expiry_date="2023-09-13", is_fut=False,strike=44500, is_CE=False),
@@ -79,261 +80,8 @@
 # # output flowchart code.
 
 
-# from pya3 import *
 
-# alice = Aliceblue("AB068818","CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y")
 
-# alice.get_session_id()
-
-# print(alice.get_instrument_for_fno(exch="NFO",symbol='BANKNIFTY', expiry_date="2023-09-13", is_fut=False,strike=44500, is_CE=False))
-
-
-import pandas as pd
-
-# def zerodha_taxes(qty, option_entry, option_exit, orders):
-#     instruments = 0
-#     if orders == 1:
-#         instruments = 2
-#     elif orders == 2:
-#         instruments = 4
-
-#     # Brokerage
-#     brokerage = 20 * instruments  # Flat Rs. 20 per executed order
-
-#     # STT/CTT
-#     intrinsic_value = max(0, option_exit - option_entry) * qty
-#     stt_on_exercise = 0.125 / 100 * intrinsic_value
-#     stt_on_sell = 0.0625 / 100 * option_exit * qty
-
-#     # Transaction charges
-#     transaction_charges = 0.05 / 100 * option_exit * qty
-
-#     # GST
-#     sebi_charges = 10 / 10000000 * option_exit * qty  # Rs. 10 / crore
-
-#     # SEBI charges
-#     # SEBI charges are Rs. 10 / crore
-#     gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)
-
-#     # Stamp charges
-#     stamp_charges = 0.003 / 100 * option_entry * qty
-
-#     total_charges = brokerage + stt_on_exercise + stt_on_sell + \
-#         transaction_charges + gst + sebi_charges + stamp_charges
-
-#     return round(total_charges, 2)
-
-
-def zerodha_taxes(qty, entry_prc, exit_prc, orders):
-    print(qty)
-    print(entry_prc)
-    print(exit_prc)
-
-    instruments = 0
-    if orders == 1:
-        instruments = 2
-    elif orders == 2:
-        instruments = 4
-
-    # Brokerage
-    brokerage = 20 * instruments  # Flat Rs. 20 per executed order
-
-    # STT/CTT
-    intrinsic_value = max(0, exit_prc - entry_prc) * qty
-    stt_on_exercise = 0.125 / 100 * intrinsic_value
-    stt_on_sell = 0.0625 / 100 * exit_prc * qty
-
-    # Transaction charges
-    transaction_charges = 0.05 / 100 * exit_prc * qty
-
-    # GST
-    sebi_charges = 10 / 10000000 * exit_prc * qty  # Rs. 10 / crore
-
-    # SEBI charges
-    # SEBI charges are Rs. 10 / crore
-    gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)
-
-    # Stamp charges
-    stamp_charges = 0.003 / 100 * entry_prc * qty
-
-    total_charges = brokerage + stt_on_exercise + stt_on_sell + \
-        transaction_charges + gst + sebi_charges + stamp_charges
-
-    return round(total_charges, 2)
-
-
-def aliceblue_taxes(qty, entry_prc, exit_prc, orders):
-    instruments = 0
-    if orders == 1:
-        instruments = 2
-    elif orders == 2:
-        instruments = 4
-    # Brokerage
-    brokerage = 15 * instruments  # Flat Rs. 20 per executed order
-
-    # STT/CTT
-    intrinsic_value = max(0, exit_prc - entry_prc) * qty
-    stt_on_exercise = 0.125 / 100 * intrinsic_value
-    stt_on_sell = 0.0625 / 100 * exit_prc * qty
-
-    # Transaction charges
-    transaction_charges = 0.05 / 100 * exit_prc * qty
-
-    # SEBI charges
-    sebi_charges = 10 / 10000000 * exit_prc * qty  # Rs. 10 / crore
-
-    # GST
-    # SEBI charges are Rs. 10 / crore
-    gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)
-
-    # Stamp charges
-    stamp_charges = 0.003 / 100 * exit_prc * qty
-
-    total_charges = brokerage + stt_on_exercise + stt_on_sell + \
-        transaction_charges + gst + sebi_charges + stamp_charges
-
-    return round(total_charges, 2)
-
-
-def zerodha_futures_taxes(qty, entry_prc, exit_prc, orders):
-    instruments = 0
-    if orders == 1:
-        instruments = 2
-    elif orders == 2:
-        instruments = 4
-
-    # Brokerage
-    brokerage_rate = 0.03 / 100
-    brokerage = min(entry_prc * qty * brokerage_rate, 20) * instruments
-
-    # STT/CTT
-    stt_ctt_rate = 0.0125 / 100
-    stt_ctt = stt_ctt_rate * exit_prc * qty
-
-    # Transaction charges
-    transaction_charges_rate = 0.0019 / 100
-    transaction_charges = transaction_charges_rate * exit_prc * qty
-
-    # SEBI charges
-    sebi_charges_rate = 10 / 100000000
-    sebi_charges = sebi_charges_rate * exit_prc * qty
-
-    # GST
-    gst_rate = 18 / 100
-    gst = gst_rate * (brokerage + sebi_charges + transaction_charges)
-
-    # Stamp charges
-    stamp_charges_rate = 0.002 / 100
-    stamp_charges = max(stamp_charges_rate * entry_prc * qty, 200)
-
-    total_charges = brokerage + stt_ctt + \
-        transaction_charges + gst + sebi_charges + stamp_charges
-
-    return round(total_charges, 2)
-
-
-def aliceblue_futures_taxes(qty, entry_prc, exit_prc, orders):
-    instruments = 0
-    if orders == 1:
-        instruments = 2
-    elif orders == 2:
-        instruments = 4
-
-    # Brokerage
-    brokerage_rate = 0.03 / 100
-    brokerage = min(entry_prc * qty * brokerage_rate, 20) * instruments
-
-    # STT/CTT
-    stt_ctt_rate = 0.0125 / 100
-    stt_ctt = stt_ctt_rate * exit_prc * qty
-
-    # Transaction charges
-    transaction_charges_rate = 0.0019 / 100
-    transaction_charges = transaction_charges_rate * exit_prc * qty
-
-    # SEBI charges
-    sebi_charges_rate = 10 / 100000000
-    sebi_charges = sebi_charges_rate * exit_prc * qty
-
-    # GST
-    gst_rate = 18 / 100
-    gst = gst_rate * (brokerage + sebi_charges + transaction_charges)
-
-    # Stamp charges
-    stamp_charges_rate = 0.002 / 100
-    stamp_charges = max(stamp_charges_rate * entry_prc * qty, 200)
-
-    total_charges = brokerage + stt_ctt + \
-        transaction_charges + gst + sebi_charges + stamp_charges
-
-    return round(total_charges, 2)
-
-
-def calculate_and_print_tax_from_excel(file_path):
-    columns = ["Trade_ID", "Strategy", "Index", "Strike Price", "Option Type", "Date", "Entry Time", "Exit Time",
-               "Entry Price", "Exit Price", "Trade points", "Qty", "PnL", "Tax", "Net PnL"]
-    df = pd.read_excel(file_path, sheet_name='MPWizard',
-                       names=columns, header=1)
-
-    tax_values = []
-
-    for index, row in df.iterrows():
-        qty = row["Qty"]
-        entry_prc = row["Entry Price"]
-        exit_prc = row["Exit Price"]
-        orders = 1
-
-        # Default to aliceblue tax calculation as we don't have broker name
-        tax = aliceblue_taxes(qty, entry_prc, exit_prc, orders)
-        tax_values.append(tax)
-        print(tax)
-
-        # # Print the calculated tax values for each row
-        # print(f"Row {index + 1}: Tax = {tax:.2f}")
-
-# def update_tax_in_excel(file_path):
-#     columns = ["Strategy", "Index", "Strike Price", "Option Type", "Date", "Entry Time", "Exit Time",
-#                "Entry Price", "Exit Price", "Trade points", "Qty", "PnL", "Tax"]
-#     df = pd.read_excel(file_path, sheet_name='MPWizard',
-#                        names=columns, skiprows=1)
-
-#     for index, row in df.iterrows():
-#         qty = row["Qty"]
-#         entry_prc = row["Entry Price"]
-#         exit_prc = row["Exit Price"]
-#         orders = 1
-#         tax = aliceblue_taxes(qty, entry_prc, exit_prc, orders)
-#         df.at[index, 'Tax'] = tax
-
-#     df.to_excel(file_path, sheet_name='MPWizard', index=False)
-
-
-# # Sample usage:
-file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\omkar.xlsx"
-calculate_and_print_tax_from_excel(file_path)
-# update_tax_in_excel(file_path)
-
-
-# def calculate_and_print_tax_from_excel(file_path):
-#     columns = ["Trade ID", "Strategy", "Index", "Trade Type", "Strike Prc", "Date", "Entry Time", "Exit Time",
-#                "Entry Price", "Exit Price", "Hedge Entry", "Hedge Exit",  "Trade points", "Qty", "PnL", "Tax"]
-
-#     # Read the excel file
-#     df = pd.read_excel(file_path, sheet_name='AmiPy', names=columns)
-
-#     # Calculate and print the 'Tax' column
-#     for index, row in df.iterrows():
-#         qty = row["Qty"]
-#         entry_prc = row["Entry Price"]
-#         exit_prc = row["Exit Price"]
-#         orders = 2
-#         hedge_entry = row["Hedge Entry"]
-#         hedge_exit = row["Hedge Exit"]
-
-#         #  Calculate tax using aliceblue_taxes
-#         hedge_tax = zerodha_taxes(qty, hedge_entry, hedge_exit, 2)
-#         order_tax = zerodha_taxes(qty, entry_prc, exit_prc, 2)
-#         # futures_tax = aliceblue_futures_taxes(qty, orders, entry_prc, exit_prc)
 
 # from pya3 import *
 # import datetime
@@ -357,8 +105,8 @@ calculate_and_print_tax_from_excel(file_path)
 # #                      trigger_price = 16.0)
 # # )
 
-from Brokers import instrument_monitor
+# from Brokers import instrument_monitor
 
-monitor = instrument_monitor.InstrumentMonitor()
+# monitor = instrument_monitor.InstrumentMonitor()
 
-ltp = monitor._fetch_ltp_for_token(11536)
+# ltp = monitor._fetch_ltp_for_token(11536)

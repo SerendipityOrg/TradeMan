@@ -47,6 +47,16 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
 
     users_to_trade = gc.get_strategy_users(strategy)
     token_added = False
+
+    #if order_details is present then pass it to the function get_trade_id also if signal is present then pass it to get_trade_id
+    if order_details is not None:
+        try:
+            order_tag = place_order_calc.get_trade_id(strategy, signal=signal, order_details=order_details)
+        except Exception as e:
+            order_tag = strategy
+            print("Exception in get_trade_id",e)
+            return
+    
     
     for broker,user in users_to_trade:
         if broker == 'zerodha':
@@ -66,7 +76,8 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             'option_type': order_details['option_type'],
             'tradingsymbol': trading_symbol,
             'user': user,
-            'order_trade_type': 'Market'}
+            'order_trade_type': 'Market',
+            'order_tag':order_tag}
 
         if 'direction' in order_details:
             details['direction'] = order_details['direction']
