@@ -1,6 +1,33 @@
 import pandas as pd
 import os
 
+# Function to format numbers according to the Indian numbering system.
+
+
+def format_indian(number):
+    s = '%.2f' % number
+    integer_part, fractional_part = s.split('.')
+    integer_part = int(integer_part)
+
+    # Create the formatted integer part
+    thousands = integer_part % 1000
+    integer_part //= 1000
+
+    lakhs = integer_part % 100
+    integer_part //= 100
+
+    crores = integer_part
+
+    if crores:
+        result = '{}, {:02d}, {:03d}'.format(crores, lakhs, thousands)
+    elif lakhs:
+        result = '{:02d}, {:03d}'.format(lakhs, thousands)
+    else:
+        result = '{:03d}'.format(thousands)
+
+    return result + '.' + fractional_part
+
+
 # Check if the DataFrame contains the required columns.
 
 
@@ -45,14 +72,16 @@ def create_dtd_dataframe_updated_v3(data_mappings, opening_balance):
 
     # Initialize the running balance with the opening balance
     running_balance = opening_balance
+
+    # Add the Opening Balance row
     rows.append({
         'Sl NO': sl_no,
         'Date': '07-Jul-23',
         'Day': 'Friday',
         'Trade ID': '',
         'Details': 'Opening Balance',
-        'Amount': f'₹ {0:,.2f}',
-        'Running Balance': f'₹ {running_balance:,.2f}'
+        'Amount': '₹ ' + format_indian(opening_balance),
+        'Running Balance': '₹ ' + format_indian(running_balance)
     })
     sl_no += 1
 
@@ -81,8 +110,8 @@ def create_dtd_dataframe_updated_v3(data_mappings, opening_balance):
                             'Day': day_str,
                             'Trade ID': trade_id,
                             'Details': transaction_id,
-                            'Amount': f'₹ {amount:,.2f}',
-                            'Running Balance': f'₹ {running_balance:,.2f}'
+                            'Amount': '₹ ' + format_indian(amount),
+                            'Running Balance': '₹ ' + format_indian(running_balance)
                         })
                         sl_no += 1
                 else:
@@ -98,8 +127,8 @@ def create_dtd_dataframe_updated_v3(data_mappings, opening_balance):
                             'Day': day_str,
                             'Trade ID': aggregated_trade_ids,
                             'Details': transaction_id,
-                            'Amount': f'₹ {amount:,.2f}',
-                            'Running Balance': f'₹ {running_balance:,.2f}'
+                            'Amount': '₹ ' + format_indian(amount),
+                            'Running Balance': '₹ ' + format_indian(running_balance)
                         })
                         sl_no += 1
 
@@ -123,7 +152,7 @@ def get_existing_opening_balance(file_name):
 # Append new data to the existing DTD sheet or create a new one.
 
 
-def check_and_update_dtd_sheet(file_name, new_dtd_df, default_opening_balance):
+def check_and_update_dtd_sheet(file_name, new_dtd_df):
     if 'Details' not in new_dtd_df.columns:
         print(
             f"'Details' column missing in the new data for {file_name}. Skipping this file.")
@@ -134,7 +163,7 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df, default_opening_balance):
     with pd.ExcelWriter(file_name, engine='openpyxl', mode='a') as writer:
         if existing_opening_balance is not None:
             new_dtd_df.loc[new_dtd_df['Details'] == 'Opening Balance',
-                           'Running Balance'] = f'₹ {existing_opening_balance:,.2f}'
+                           'Running Balance'] = '₹ ' + format_indian(existing_opening_balance)
 
         if 'DTD' in writer.book.sheetnames:
             existing_dtd = pd.read_excel(file_name, sheet_name='DTD')
@@ -172,13 +201,16 @@ if __name__ == "__main__":
         'Overnight Options': 'Overnight_options'
     }
 
-    default_opening_balance = 0.0
-
     for user_file in os.listdir(excel_dir):
         if user_file.endswith('.xlsx') and user_file != "signal.xlsx":
             file_name = os.path.join(excel_dir, user_file)
             data_mappings = fetch_data_from_excel(file_name, sheet_mappings)
+
+            # Get the existing opening balance
+            existing_opening_balance = get_existing_opening_balance(file_name)
+            if existing_opening_balance is None:
+                existing_opening_balance = 0.0  # Default value if no opening balance exists
+
             dtd_df, _ = create_dtd_dataframe_updated_v3(
-                data_mappings, default_opening_balance)
-            check_and_update_dtd_sheet(
-                file_name, dtd_df, default_opening_balance)
+                data_mappings, existing_opening_balance)
+            check_and_update_dtd_sheet(file_name, dtd_df)
