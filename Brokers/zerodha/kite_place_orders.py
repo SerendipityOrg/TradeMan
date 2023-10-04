@@ -67,7 +67,7 @@ def place_order(kite, strategy, order_details, qty, user_details):
             trigger_price=trigger_price,
             product=product_type,
             order_type=order_type,
-            tag= strategy
+            tag= order_details.get('order_tag', None)
         )
         print(f"Order placed. ID is: {order_id}")
         logging.info(f"Order placed. ID is: {order_id}")
