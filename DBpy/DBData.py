@@ -9,7 +9,7 @@ import datetime
 
 # Constants and Configurations
 API_KEY = '6b0dp5ussukmo67h'
-ACCESS_TOKEN = '8Dswz5kycR5YWo17NDHm54rN7vo66L2s'
+ACCESS_TOKEN = 'lF8hXyXYILNB0TQm7aZkNtWCVqSdp8Er'
 kite = KiteConnect(api_key=API_KEY)
 kite.set_access_token(ACCESS_TOKEN)
 
@@ -31,7 +31,7 @@ TOKEN_MAP = {
 
 holidays = [datetime.date(2023, i, j) for i, j in [
     (1, 26), (3, 7), (3, 30), (4, 4), (4, 7), (4, 14),
-    (4, 22), (5, 1), (6, 28), (8, 15), (9, 19), (10, 2),
+    (4, 22), (5, 1), (6, 28), (8, 15), (9, 19), (10, 4),
     (10, 24), (11, 14), (11, 27), (12, 25)]
 ]
 
@@ -91,43 +91,62 @@ def get_next_weekday(d, weekday):
         next_date += datetime.timedelta(1)
     return next_date
 
-
-def get_expiry_dates(base_symbol):
+def get_weekly_expiry(base_symbol):
     # Get the current date
     today = datetime.date.today()
     
     # Based on the base_symbol, determine the weekday of the expiry
     if base_symbol == "MIDCPNIFTY":
         weekly_expiry = get_next_weekday(today, 0)  # Monday
-    if base_symbol == "FINNIFTY":
-        weekly_expiry = get_next_weekday(today,1)  # Tuesday
+    elif base_symbol == "FINNIFTY":
+        weekly_expiry = get_next_weekday(today, 1)  # Tuesday
     elif base_symbol == "BANKNIFTY":
         weekly_expiry = get_next_weekday(today, 2)  # Wednesday    
-    elif base_symbol == "NIFTY" :
+    elif base_symbol == "NIFTY":
         weekly_expiry = get_next_weekday(today, 3)  # Thursday
     elif base_symbol == "SENSEX":
         weekly_expiry = get_next_weekday(today, 4)  # Friday
 
-    # Check if tomorrow is a holiday or if today is Friday, check if Monday is a holiday
-    if today.weekday() == 4:  # If today is Friday
-        check_day = today + timedelta(days=3)  # Check for Monday
-    else:
-        check_day = today + timedelta(days=1)  # Check for the next day
+    # Check if tomorrow is a holiday
+    tomorrow = today + datetime.timedelta(days=1)
+    # If tomorrow is a holiday, prepond the weekly expiry to today
+    if tomorrow in holidays:
+        weekly_expiry = today
 
-    if check_day in holidays:
-        return today, today
+    return weekly_expiry
+
+def get_monthly_expiry(base_symbol):
+    # Get the current date
+    today = datetime.date.today()
     
-    # Monthly expiry calculations
+    # Determine the original weekday of the expiry based on the base_symbol
+    if base_symbol == "MIDCPNIFTY":
+        expiry_weekday = 0  # Monday
+    elif base_symbol == "FINNIFTY":
+        expiry_weekday = 1  # Tuesday
+    elif base_symbol == "BANKNIFTY":
+        expiry_weekday = 2  # Wednesday    
+    elif base_symbol == "NIFTY":
+        expiry_weekday = 3  # Thursday
+    elif base_symbol == "SENSEX":
+        expiry_weekday = 4  # Friday
+
     # Get the last day of the month
     last_day = datetime.date(today.year, today.month+1, 1) - datetime.timedelta(1)
     
-    # Find the last weekday of the month for the given base_symbol
-    while last_day.weekday() != weekly_expiry.weekday() or last_day in holidays:
+    # Find the last weekday of the month that matches the regular expiry weekday
+    while last_day.weekday() != expiry_weekday or last_day in holidays:
         last_day -= datetime.timedelta(1)
     
-    monthly_expiry = "2023-10-26"
+    return last_day
 
+
+def get_expiry_dates(base_symbol):
+    weekly_expiry = get_weekly_expiry(base_symbol)
+    monthly_expiry = get_monthly_expiry(base_symbol)
     return weekly_expiry, monthly_expiry
+
+
 
 def connect_to_db(base_symbol):
     print(f"Connecting to database {base_symbol.lower()}...")
@@ -200,10 +219,15 @@ def main():
     current_day = datetime.datetime.now().weekday()
     base_symbols = base_symbol_map.get(current_day, [])
     
-    # If today is Friday, check for Monday's base_symbol as well
-    if current_day == 4:
-        monday_base_symbols = base_symbol_map.get(0, [])
-        base_symbols.extend(monday_base_symbols)
+    # Check if tomorrow is a holiday
+    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    if tomorrow in holidays:
+        # If today is Friday, we need to check for Monday's base_symbol
+        if current_day == 4:
+            next_day_base_symbols = base_symbol_map.get(0, [])
+        else:
+            next_day_base_symbols = base_symbol_map.get(current_day + 1, [])
+        base_symbols.extend(next_day_base_symbols)
 
     for base_symbol in base_symbols:
         conn = connect_to_db(base_symbol)
@@ -214,7 +238,6 @@ def main():
         end_date = datetime.datetime.now().strftime('%Y-%m-%d')
 
         expiry_date, future_expiry = get_expiry_dates(base_symbol)
-        print(expiry_date, future_expiry)
         fetch_and_store_historical_data(token, base_symbol, expiry_date, future_expiry, start_date, end_date, cursor)
 
         cursor.close()
@@ -222,3 +245,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
