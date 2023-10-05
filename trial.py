@@ -54,11 +54,10 @@
 # #update ChromeDriver
 
 
-# from pya3 import *
+# # from pya3 import *
 
-# alice = Aliceblue("929016",'NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
-# alice.get_session_id()
-# print(alice.get_order_history(''))
+# # alice = Aliceblue("929016",'NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
+# # alice.get_session_id()
 
 # # order_id = alice.place_order(transaction_type = TransactionType.Buy,
 # #                     instrument =alice.get_instrument_for_fno(exch="NFO",symbol='BANKNIFTY', expiry_date="2023-09-13", is_fut=False,strike=44500, is_CE=False),
@@ -81,230 +80,53 @@
 
 
 # from pya3 import *
-# import datetime
 
 # alice = Aliceblue("AB068818","CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y")
 
-
 # alice.get_session_id()
-# # trade = Instrument(exchange='NFO', token=57640, symbol='FINNIFTY', name='FINNIFTY26SEP23P20300', expiry=datetime.date(2023, 9, 26), lot_size=50)
-# # trading_symbol = Instrument(exchange='NFO', token=86000, symbol='BANKNIFTY', name='BANKNIFTY28SEP23P45000', expiry='', lot_size=15)
-# # print(trading_symbol)
-# print(alice.get_scrip_info(alice.get_instrument_by_token('NSE', 11536)))
 
-# # print(
-# #    alice.place_order(transaction_type = TransactionType.Sell,
-# #                      instrument = trade,
-# #                      quantity = 15,
-# #                      order_type = OrderType.StopLossLimit,
-# #                      product_type = ProductType.Intraday,
-# #                      price=15.00,
-# #                      trigger_price = 16.0)
-# # )
+# print(alice.get_instrument_for_fno(exch="NFO",symbol='BANKNIFTY', expiry_date="2023-09-13", is_fut=False,strike=44500, is_CE=False))
 
-# from Brokers import instrument_monitor
-
-# monitor = instrument_monitor.InstrumentMonitor()
-
-# ltp = monitor._fetch_ltp_for_token(11536)
 
 import pandas as pd
 
+# def zerodha_taxes(qty, option_entry, option_exit, orders):
+#     instruments = 0
+#     if orders == 1:
+#         instruments = 2
+#     elif orders == 2:
+#         instruments = 4
 
-def zerodha_taxes(qty, entry_prc, exit_prc, orders):
-    print(qty)
-    print(entry_prc)
-    print(exit_prc)
+#     # Brokerage
+#     brokerage = 20 * instruments  # Flat Rs. 20 per executed order
 
-    instruments = 0
-    if orders == 1:
-        instruments = 2
-    elif orders == 2:
-        instruments = 4
+#     # STT/CTT
+#     intrinsic_value = max(0, option_exit - option_entry) * qty
+#     stt_on_exercise = 0.125 / 100 * intrinsic_value
+#     stt_on_sell = 0.0625 / 100 * option_exit * qty
 
-    # Brokerage
-    brokerage = 20 * instruments  # Flat Rs. 20 per executed order
+#     # Transaction charges
+#     transaction_charges = 0.05 / 100 * option_exit * qty
 
-    # STT/CTT
-    intrinsic_value = max(0, exit_prc - entry_prc) * qty
-    stt_on_exercise = 0.125 / 100 * intrinsic_value
-    stt_on_sell = 0.0625 / 100 * exit_prc * qty
+#     # GST
+#     sebi_charges = 10 / 10000000 * option_exit * qty  # Rs. 10 / crore
 
-    # Transaction charges
-    transaction_charges = 0.05 / 100 * exit_prc * qty
+#     # SEBI charges
+#     # SEBI charges are Rs. 10 / crore
+#     gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)
 
-    # GST
-    sebi_charges = 10 / 10000000 * exit_prc * qty  # Rs. 10 / crore
+#     # Stamp charges
+#     stamp_charges = 0.003 / 100 * option_entry * qty
 
-    # SEBI charges
-    # SEBI charges are Rs. 10 / crore
-    gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)
+#     total_charges = brokerage + stt_on_exercise + stt_on_sell + \
+#         transaction_charges + gst + sebi_charges + stamp_charges
 
-    # Stamp charges
-    stamp_charges = 0.003 / 100 * entry_prc * qty
-
-    total_charges = brokerage + stt_on_exercise + stt_on_sell + \
-        transaction_charges + gst + sebi_charges + stamp_charges
-
-    return round(total_charges, 2)
+#     return round(total_charges, 2)
 
 
-def aliceblue_taxes(qty, entry_prc, exit_prc, orders):
-    # print(qty)
-    # print(entry_prc)
-    # print(exit_prc)
 
-    instruments = 0
-    if orders == 1:
-        instruments = 2
-    elif orders == 2:
-        instruments = 4
-    # Brokerage
-    brokerage = 15 * instruments  # Flat Rs. 20 per executed order
-
-    # STT/CTT
-    intrinsic_value = max(0, exit_prc - entry_prc) * qty
-    stt_on_exercise = 0.125 / 100 * intrinsic_value
-    stt_on_sell = 0.0625 / 100 * exit_prc * qty
-
-    # Transaction charges
-    transaction_charges = 0.05 / 100 * exit_prc * qty
-
-    # SEBI charges
-    sebi_charges = 10 / 10000000 * exit_prc * qty  # Rs. 10 / crore
-
-    # GST
-    # SEBI charges are Rs. 10 / crore
-    gst = 18 / 100 * (brokerage + sebi_charges + transaction_charges)
-
-    # Stamp charges
-    stamp_charges = 0.003 / 100 * exit_prc * qty
-
-    total_charges = brokerage + stt_on_exercise + stt_on_sell + \
-        transaction_charges + gst + sebi_charges + stamp_charges
-
-    return round(total_charges, 2)
-
-
-def zerodha_futures_taxes(qty, entry_prc, exit_prc, orders):
-    instruments = 0
-    if orders == 1:
-        instruments = 2
-    elif orders == 2:
-        instruments = 4
-
-    # Brokerage
-    brokerage_rate = 0.03 / 100
-    brokerage = min(entry_prc * qty * brokerage_rate, 20) * instruments
-
-    # STT/CTT
-    stt_ctt_rate = 0.0125 / 100
-    stt_ctt = stt_ctt_rate * exit_prc * qty
-
-    # Transaction charges
-    transaction_charges_rate = 0.0019 / 100
-    transaction_charges = transaction_charges_rate * exit_prc * qty
-
-    # SEBI charges
-    sebi_charges_rate = 10 / 100000000
-    sebi_charges = sebi_charges_rate * exit_prc * qty
-
-    # GST
-    gst_rate = 18 / 100
-    gst = gst_rate * (brokerage + sebi_charges + transaction_charges)
-
-    # Stamp charges
-    stamp_charges_rate = 0.002 / 100
-    stamp_charges = max(stamp_charges_rate * entry_prc * qty, 200)
-
-    total_charges = brokerage + stt_ctt + \
-        transaction_charges + gst + sebi_charges + stamp_charges
-
-    return round(total_charges, 2)
-
-
-def aliceblue_futures_taxes(qty, entry_prc, exit_prc, orders):
-    instruments = 0
-    if orders == 1:
-        instruments = 2
-    elif orders == 2:
-        instruments = 4
-
-    # Brokerage
-    brokerage_rate = 0.03 / 100
-    brokerage = min(entry_prc * qty * brokerage_rate, 20) * instruments
-
-    # STT/CTT
-    stt_ctt_rate = 0.0125 / 100
-    stt_ctt = stt_ctt_rate * exit_prc * qty
-
-    # Transaction charges
-    transaction_charges_rate = 0.0019 / 100
-    transaction_charges = transaction_charges_rate * exit_prc * qty
-
-    # SEBI charges
-    sebi_charges_rate = 10 / 100000000
-    sebi_charges = sebi_charges_rate * exit_prc * qty
-
-    # GST
-    gst_rate = 18 / 100
-    gst = gst_rate * (brokerage + sebi_charges + transaction_charges)
-
-    # Stamp charges
-    stamp_charges_rate = 0.002 / 100
-    stamp_charges = max(stamp_charges_rate * entry_prc * qty, 200)
-
-    total_charges = brokerage + stt_ctt + \
-        transaction_charges + gst + sebi_charges + stamp_charges
-
-    return round(total_charges, 2)
-
-
-def calculate_tax_from_excel(file_path):
-    columns = ["Tr no", "Strategy", "Index", "Strike Price", "Option Type", "Date", "Entry Time", "Exit Time",
-               "Entry Price", "Exit Price", "Trade points", "Qty", "PnL", "Tax", "Net PnL"]
-    df = pd.read_excel(file_path, sheet_name='MPWizard',
-                       names=columns, header=1)
-
-    for index, row in df.iterrows():
-        qty = row["Qty"]
-        entry_prc = row["Entry Price"]
-        exit_prc = row["Exit Price"]
-        orders = 1
-
-        # Default to aliceblue tax calculation as we don't have broker name
-        tax = aliceblue_taxes(qty, entry_prc, exit_prc, orders)
-        # Added +2 to account for 0-indexing and header row
-        # print(f"Tax for row {index + 2}: {tax}")
-        print(tax)
-
-
-# Sample usage remains the same
-file_path = r"C:\Users\vanis\Downloads\venkatesh (2).xlsx"
-calculate_tax_from_excel(file_path)
-
-
-# def calculate_and_print_tax_from_excel(file_path):
-#     columns = ["Tr no", "Strategy", "Index", "Strike Price", "Option Type", "Date", "Entry Time", "Exit Time",
-#                "Entry Price", "Exit Price", "Trade points", "Qty", "PnL", "Tax", "Net PnL"]
-#     df = pd.read_excel(file_path, sheet_name='MPWizard',
-#                        names=columns, header=1)
-
-#     tax_values = []
-
-#     for index, row in df.iterrows():
-#         qty = row["Qty"]
-#         entry_prc = row["Entry Price"]
-#         exit_prc = row["Exit Price"]
-#         orders = 1
-
-#         # Default to aliceblue tax calculation as we don't have broker name
-#         tax = aliceblue_taxes(qty, entry_prc, exit_prc, orders)
-#         tax_values.append(tax)
-#         print(tax)
-
-# # Print the calculated tax values for each row
-# print(f"Row {index + 1}: Tax = {tax:.2f}")
+        # # Print the calculated tax values for each row
+        # print(f"Row {index + 1}: Tax = {tax:.2f}")
 
 # def update_tax_in_excel(file_path):
 #     columns = ["Strategy", "Index", "Strike Price", "Option Type", "Date", "Entry Time", "Exit Time",
@@ -324,7 +146,7 @@ calculate_tax_from_excel(file_path)
 
 
 # # Sample usage:
-# file_path = r"C:\Users\vanis\Downloads\venkatesh (2).xlsx"
+# file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\omkar.xlsx"
 # calculate_and_print_tax_from_excel(file_path)
 # update_tax_in_excel(file_path)
 
@@ -349,3 +171,26 @@ calculate_tax_from_excel(file_path)
 #         hedge_tax = zerodha_taxes(qty, hedge_entry, hedge_exit, 2)
 #         order_tax = zerodha_taxes(qty, entry_prc, exit_prc, 2)
 #         # futures_tax = aliceblue_futures_taxes(qty, orders, entry_prc, exit_prc)
+
+from pya3 import *
+import datetime
+
+alice = Aliceblue("AB068818","CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y")
+alice.get_contract_master("NFO")
+
+# alice.get_session_id()
+# # trade = Instrument(exchange='NFO', token=57640, symbol='FINNIFTY', name='FINNIFTY26SEP23P20300', expiry=datetime.date(2023, 9, 26), lot_size=50)
+# # trading_symbol = Instrument(exchange='NFO', token=86000, symbol='BANKNIFTY', name='BANKNIFTY28SEP23P45000', expiry='', lot_size=15)
+# # print(trading_symbol)
+# print(alice.get_scrip_info(alice.get_instrument_by_token('NSE', 11536)))
+
+# # print(
+# #    alice.place_order(transaction_type = TransactionType.Sell,
+# #                      instrument = trade,
+# #                      quantity = 15,
+# #                      order_type = OrderType.StopLossLimit,
+# #                      product_type = ProductType.Intraday,
+# #                      price=15.00,
+# #                      trigger_price = 16.0)
+# # )
+

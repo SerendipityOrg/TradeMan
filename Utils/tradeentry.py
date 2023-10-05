@@ -194,19 +194,18 @@ def process_overnight_options_trades(overnight_options_trades):
     
     if afternoon_trades[0]["direction"] == "BULLISH":
     # Extracting BULLISH trades with strike_price = 0 for both Afternoon and Morning
-        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == "0"), None)
-        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == "0"), None)    
+        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == 0), None)
+        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == 0), None)    
     # Extracting BULLISH trades with strike_price != 0 for both Afternoon and Morning
-        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != "0"), None)
-        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != "0"), None)
+        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != 0), None)
+        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != 0), None)
     elif afternoon_trades[0]["direction"] == "BEARISH":
     # Extracting BEARISH trades with strike_price = 0 for both Afternoon and Morning
-        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == "0"), None)
-        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == "0"), None)
+        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == 0), None)
+        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == 0), None)
     # Extracting BEARISH trades with strike_price != 0 for both Afternoon and Morning
-        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
-        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
-    
+        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != 0), None)
+        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != 0), None)
     
     if broker == "zerodha":
         future_tax = zerodha_futures_taxes(qty, future_entry, future_exit, 1)
@@ -224,7 +223,6 @@ def process_overnight_options_trades(overnight_options_trades):
     elif direction == "BEARISH":  # Assuming BEARISH
         trade_points = (future_entry - future_exit) + (option_exit - option_entry)
     PnL = trade_points * qty
-
     # Appending to result list
     trade_data = {
         "Trade_Type": direction,
@@ -283,17 +281,17 @@ for broker, user in user_list:
         mpwizard_pnl = round(mpwizard_df["PnL"].sum(), 2)
         mpwizard_tax = round(mpwizard_df["Tax"].sum(), 2)
 
-    if "Amipy" in user_data[broker]["orders"]:
+    if "AmiPy" in user_data[broker]["orders"]:
         amipy_data_short = []
         amipy_data_long = []
-        if "ShortSignal" in user_data[broker]["orders"]["Amipy"]:
+        if "ShortSignal" in user_data[broker]["orders"]["AmiPy"]:
             # Process the AmiPy ShortSignal and ShortCoverSignal trades
-            amipy_data_short = process_short_trades(user_data[broker]["orders"]["Amipy"]["ShortSignal"],
-                                                    user_data[broker]["orders"]["Amipy"]["ShortCoverSignal"])
-        if "LongSignal" in user_data[broker]["orders"]["Amipy"]:
+            amipy_data_short = process_short_trades(user_data[broker]["orders"]["AmiPy"]["ShortSignal"], 
+                                                    user_data[broker]["orders"]["AmiPy"]["ShortCoverSignal"])
+        if "LongSignal" in user_data[broker]["orders"]["AmiPy"]:
             # Process the AmiPy LongSignal and LongCoverSignal trades
-            amipy_data_long = process_long_trades(user_data[broker]["orders"]["Amipy"]["LongSignal"],
-                                                  user_data[broker]["orders"]["Amipy"]["LongCoverSignal"])
+            amipy_data_long = process_long_trades(user_data[broker]["orders"]["AmiPy"]["LongSignal"], 
+                                                user_data[broker]["orders"]["AmiPy"]["LongCoverSignal"])
 
         # Combine short and long trades into a single DataFrame
         amipy_data = amipy_data_short + amipy_data_long
@@ -316,12 +314,13 @@ for broker, user in user_list:
         excel_dir, f"{user}.xlsx"), sheet_name="MPWizard")
     amipy_existing_df = pd.read_excel(os.path.join(
         excel_dir, f"{user}.xlsx"), sheet_name="AmiPy")
-    # overnight_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="Overnight_options")
+    overnight_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="Overnight_options")
 
     # # Append new data
     mpwizard_final_df = pd.concat([mpwizard_existing_df, mpwizard_df])
     amipy_final_df = pd.concat([amipy_existing_df, amipy_df])
     # overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
+    overnight_final_df = pd.concat([overnight_existing_df])
 
     gross_pnl = mpwizard_pnl + amipy_pnl + overnight_options_pnl
     # gross_pnl = mpwizard_pnl + amipy_pnl 
@@ -340,7 +339,7 @@ for broker, user in user_list:
     if "MPWizard" in user_data[broker]["orders"]:
         message_parts.append(f"MPWizard: {custom_format(mpwizard_pnl)}")
 
-    if "Amipy" in user_data[broker]["orders"]:
+    if "AmiPy" in user_data[broker]["orders"]:
         message_parts.append(f"AmiPy: {custom_format(amipy_pnl)}")
 
     if "Overnight_Options" in user_data[broker]["orders"]:

@@ -51,6 +51,7 @@ to_date = date.today()
 interval = 'minute'
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
+amipy_json = os.path.join(script_dir, 'AmiPy.json')
 broker_filepath = os.path.join(script_dir, '..', '..', 'Utils', 'broker.json')
 
 omkar_zerodha = gc.read_json_file(omkar_filepath)
@@ -89,8 +90,9 @@ def job():
     global strike_prc , nifty_token
     from_date = datetime.datetime.strptime(f'{date.today()} 09:18:59', '%Y-%m-%d %H:%M:%S')
     to_date = datetime.datetime.strptime(f'{date.today()} 09:19:59', '%Y-%m-%d %H:%M:%S')
-    nifty_data = kite.historical_data(instrument_token=nifty_token,from_date=from_date,to_date=to_date,interval='minute', oi=True)[0]['close']
-    strike_prc = round(nifty_data/100)*100
+    # nifty_data = kite.historical_data(instrument_token=nifty_token,from_date=from_date,to_date=to_date,interval='minute', oi=True)[0]['close']
+    # strike_prc = round(nifty_data/100)*100
+    strike_prc = 19800
     return strike_prc
 
 def get_ltp():
@@ -134,7 +136,7 @@ for token in trading_tokens:
     hist_data[token]['instrument_token'] = token
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
-with open('Strategies/Amipy/AmiPy.json' , 'r') as f:
+with open(amipy_json , 'r') as f:
     parameters = json.load(f)
 
 entry = parameters['Nifty'][0]['entry_time']
@@ -319,6 +321,7 @@ def updateSignalDf(last_signal):
         if trade_type == 'LongSignal':
             order_details_opt = {
                 "strike_prc": strike_prc,
+                "base_symbol": base_symbol,
                 "transcation":"BUY",
             }
             for zerodha,alice in zip(zerodha_list,alice_list):
@@ -332,8 +335,13 @@ def updateSignalDf(last_signal):
                     transcation_type = 'SELL'
                 else:
                     transcation_type = 'BUY'
+                order_details_opt = {
+                    "strike_prc": strike_prc,
+                    "base_symbol": base_symbol,
+                    "transcation": transcation_type,
+                }
                 # Call your place_order function here
-                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, trading_symbol=(zerodha,alice),signal='ShortSignal')
+                place_order.place_order_for_broker("AmiPy",order_details_opt , trading_symbol=(zerodha,alice),signal='ShortSignal')
 
     elif trade_type == 'LongCoverSignal' or trade_type == 'ShortCoverSignal':
         signal = signals.pop()  # Retrieve the last signal
@@ -351,6 +359,7 @@ def updateSignalDf(last_signal):
         if trade_type == 'LongCoverSignal':
             order_details_opt = {
                 "strike_prc": strike_prc,
+                "base_symbol": base_symbol,
                 "transcation":"SELL",
             }
             for zerodha,alice in zip(zerodha_list,alice_list):
@@ -365,9 +374,13 @@ def updateSignalDf(last_signal):
                     transcation_type = 'BUY'
                 else:
                     transcation_type = 'SELL'
-                
+                order_details_opt = {
+                    "strike_prc": strike_prc,
+                    "base_symbol": base_symbol,
+                    "transcation": transcation_type,
+                }                
                 # Call your place_order function here
-                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, tradingsymbol=(zerodha,alice),signal='ShortCoverSignal')
+                place_order.place_order_for_broker("AmiPy", order_details_opt , tradingsymbol=(zerodha,alice),signal='ShortCoverSignal')
 
     try:
         if trade_type is not None:  # check that a signal was generated
