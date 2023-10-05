@@ -53,7 +53,6 @@ interval = 'minute'
 script_dir = os.path.dirname(os.path.abspath(__file__))
 broker_filepath = os.path.join(script_dir, '..', '..', 'Utils', 'broker.json')
 
-users_to_trade = get_amipy_users(broker_filepath)
 omkar_zerodha = gc.read_json_file(omkar_filepath)
 
 kite_access_token = omkar_zerodha['zerodha']['access_token']
@@ -123,7 +122,6 @@ else:
 
 print("Today's Strike Price:",strike_prc)
 
-# holidays = ['2023-05-01', '2023-06-16','2023-06-29']  # Add all trading holidays here
 
 trading_tokens,zerodha_list,alice_list = get_option_tokens(base_symbol,str(expiry_date),strike_prc)
 
@@ -281,7 +279,7 @@ def genSignals(resultdf):
 
 signals = []
 
-def updateSignalDf(last_signal,users_to_trade):
+def updateSignalDf(last_signal):
     print("updateSignalDf")
     global signalsdf, signals
 
@@ -324,7 +322,7 @@ def updateSignalDf(last_signal,users_to_trade):
                 "transcation":"BUY",
             }
             for zerodha,alice in zip(zerodha_list,alice_list):
-                place_order.place_order_for_broker("AmiPy",order_details_opt,trading_symbol=(zerodha,alice))
+                place_order.place_order_for_broker("AmiPy",order_details_opt,trading_symbol=(zerodha,alice),signal='LongSignal')
         elif trade_type == 'ShortSignal':
             for zerodha,alice in zip(zerodha_list,alice_list):
                 # Extract the strike price from the token
@@ -335,7 +333,7 @@ def updateSignalDf(last_signal,users_to_trade):
                 else:
                     transcation_type = 'BUY'
                 # Call your place_order function here
-                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, trading_symbol=(zerodha,alice))
+                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, trading_symbol=(zerodha,alice),signal='ShortSignal')
 
     elif trade_type == 'LongCoverSignal' or trade_type == 'ShortCoverSignal':
         signal = signals.pop()  # Retrieve the last signal
@@ -356,7 +354,7 @@ def updateSignalDf(last_signal,users_to_trade):
                 "transcation":"SELL",
             }
             for zerodha,alice in zip(zerodha_list,alice_list):
-                place_order.place_order_for_broker("AmiPy",order_details_opt,tradingsymbol=(zerodha,alice))
+                place_order.place_order_for_broker("AmiPy",order_details_opt,tradingsymbol=(zerodha,alice),signal='LongCoverSignal')
         elif trade_type == 'ShortCoverSignal':
             for zerodha,alice in zip(zerodha_list,alice_list):
                 # Extract the strike price from the token
@@ -369,14 +367,14 @@ def updateSignalDf(last_signal,users_to_trade):
                     transcation_type = 'SELL'
                 
                 # Call your place_order function here
-                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, tradingsymbol=(zerodha,alice))
+                place_order.place_order_for_broker("AmiPy", {"strike_prc": strike_prc, "transcation": transcation_type}, tradingsymbol=(zerodha,alice),signal='ShortCoverSignal')
 
     try:
         if trade_type is not None:  # check that a signal was generated
             signal_prc = str(last_signal['close'])
             message = f"Signal: {trade_type}\nStrikePrc: {strike_prc} \nDate: {trade_date}\nTime: {trade_time}\nClose: {signal_prc}"
             print(message)
-            amipy_discord_bot(message)
+            discord_bot.discord_bot(message, "AmiPy")
     except Exception as e:
         print(f"Error in sending telegram message: {e}")
 
@@ -427,7 +425,7 @@ def on_ticks(ws, ticks):
         new_signal = signalsdf[['LongSignal', 'ShortSignal', 'LongCoverSignal', 'ShortCoverSignal']].iloc[-1].any()
         if new_signal:
             last_signal = signalsdf.iloc[-1]
-            updateSignalDf(last_signal, users_to_trade)
+            updateSignalDf(last_signal)
 
     # updateSignalDf(signalsdf, trade_state)
 

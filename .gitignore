@@ -1,9 +1,11 @@
+.env
 *.pyc
 *.csv
 *.log
-
-.env
-Amipy/.DS_Store
 *.json
+*.xlsx
+
+Amipy/.DS_Store
 Scripts/Logs/Amipy_NF.log
-*.log
+Brokers/.env
+Utils/broker.json

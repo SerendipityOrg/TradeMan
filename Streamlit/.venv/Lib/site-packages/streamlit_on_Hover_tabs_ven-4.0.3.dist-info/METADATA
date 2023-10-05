@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: streamlit-on-Hover-tabs-ven
+Version: 4.0.3
+Home-page: 
+Author: venrup
+Author-email: development@venrup.com
+Requires-Python: >=3.6
+Description-Content-Type: text/plain
+License-File: LICENSE
+Requires-Dist: streamlit (>=0.63)
+

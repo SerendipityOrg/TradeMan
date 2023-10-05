@@ -113,21 +113,26 @@ def get_next_week_expiry(base_symbol):
 
 #token calculation
 from pya3 import *
+import os
+import pandas as pd
+
 def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    instruments_df = pd.read_csv(os.path.join(script_dir, 'instruments.csv'))
 
+    # Reading instruments.csv
+    instruments_df = pd.read_csv(os.path.join(script_dir, 'instruments.csv'))
     instruments_df = instruments_df[
         ["instrument_token","exchange_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike", "segment"]
     ]
 
-    #if option_type is other than CE or PE the segement should be futures
+    # Check for option_type
     if option_type != 'CE' and option_type != 'PE':
         option_type = 'FUT'
         segment = 'NFO-FUT'
     else:
         segment = 'NFO-OPT'
-    
+
+    # Filter using instruments.csv
     nfo_ins_df = instruments_df[
         (instruments_df["exchange"] == "NFO")
         & (instruments_df["name"] == str(base_symbol))
@@ -140,8 +145,24 @@ def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
     tokens = int(nfo_ins_df["instrument_token"].values[0])
     exchange_token = int(nfo_ins_df["exchange_token"].values[0])
     trading_symbols = nfo_ins_df["tradingsymbol"].values[0]
-    trading_symbols_aliceblue = []
-    trading_symbols_aliceblue = Instrument("NFO", exchange_token, base_symbol, trading_symbols, expiry_date, 50) #TODO: generalize exchange values
+
+    # Reading NFO.csv
+    nfo_df = pd.read_csv(os.path.join(script_dir, 'NFO.csv'))
+
+    # Filtering using NFO.csv
+    nfo_trading_symbols_df = nfo_df[
+        (nfo_df["Exch"] == "NFO")
+        & (nfo_df["Symbol"] == str(base_symbol))
+        & (nfo_df["Expiry Date"] == str(expiry_date))
+        & (nfo_df["Strike Price"] == int(strike_prc))
+        & (nfo_df["Option Type"] == str(option_type))
+    ]
+
+    trading_symbols_aliceblue = nfo_trading_symbols_df["Trading Symbol"].values[0]
+    
+    # Assuming Instrument is a class or function. If it's different, modify accordingly.
+    trading_symbols_aliceblue = Instrument("NFO", exchange_token, base_symbol, trading_symbols_aliceblue, expiry_date, 50)
+
     return tokens, trading_symbols, trading_symbols_aliceblue
 
 ##########################append the lot_size to env file ############

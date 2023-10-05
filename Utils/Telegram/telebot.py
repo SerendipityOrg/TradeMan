@@ -1,13 +1,33 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, CallbackContext
-from MPWizard_calc import *
-from mpw_place_orders import * 
+import os,sys 
+from dotenv import load_dotenv
 
-token = '807232387:AAF5OgaGJuUPV8xwDUxYFRHaOWJSU5pIAic'
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-broker_filepath = os.path.join(script_dir, '..', 'Utils', 'broker.json')
-users_to_trade = get_mpwizard_users(broker_filepath)
+sys.path.append(BROKERS_DIR)
+import place_order as place_order
+from instrument_monitor import InstrumentMonitor
+
+env_file_path = os.path.abspath(os.path.join(BROKERS_DIR,'.env'))
+
+# Load environment variables from .env file
+load_dotenv(env_file_path)
+
+token = os.getenv('telegram_bot_token')
+
+mpwizard = os.path.abspath(os.path.join(CURRENT_DIR, '..','..','Strategies','MPWizard'))
+sys.path.append(mpwizard)
+import MPWizard_calc as mpw
+# token = '807232387:AAF5OgaGJuUPV8xwDUxYFRHaOWJSU5pIAic'
+
+UTILS_DIR = os.path.join(CURRENT_DIR, '..')
+
+sys.path.append(UTILS_DIR)
+import general_calc as gc
+
+# Navigate to the Brokers and Utils directories relative to the current script's location
 
 def start(update: Update, context: CallbackContext) -> None:
     keyboard = [
@@ -28,6 +48,8 @@ def action_callback(update: Update, context: CallbackContext) -> None:
     if action == 'Place Order':
         start_place_order(update, context)
     elif action == 'Place Stoploss Order':
+        start_stoploss_order(update, context)
+    elif action == 'Modify Stoploss Order':
         start_stoploss_order(update, context)
 
 # Starts the bot and asks the user to select the index
@@ -86,6 +108,8 @@ def option_callback(update: Update, context: CallbackContext) -> None:
         context.bot.send_message(chat_id=query.message.chat_id, text="Select the trade type:", reply_markup=reply_markup)
     elif context.user_data['action'] == 'Place Stoploss Order':
         context.bot.send_message(chat_id=update.effective_chat.id, text="Enter the limit price:")
+    elif context.user_data['action'] == 'Modify Stoploss Order':
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Enter the limit price:")
 
 def limit_callback(update: Update, context: CallbackContext) -> None:
     print('limit_callback')
@@ -103,48 +127,54 @@ def limit_callback(update: Update, context: CallbackContext) -> None:
 def trade_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     query.answer()
-    
+    monitor = InstrumentMonitor()
     trade_type = query.data
-    context.user_data['trade_type'] = trade_type
-    
-    index = context.user_data['index']
-    strike_price = context.user_data['strike_price']
-    option_type = context.user_data['option_type']
-    trade_type = context.user_data['trade_type']
 
-    if index == 'FINNIFTY':
-        expiry = str(get_expiry_dates()[1])
-    else:
-        expiry = str(get_expiry_dates()[0])
+    order_details = {
+    "base_symbol": context.user_data['index'],
+    "option_type": context.user_data['option_type'],
+    "strike_prc": context.user_data['strike_price'],
+    "transcation": trade_type
+    }
 
-    # Get tokens and trading symbols
-    tokens, trading_symbol_list, trading_symbol_aliceblue = get_option_tokens(index, expiry, option_type, strike_price)
-    print(tokens, trading_symbol_list, trading_symbol_aliceblue)
-    if context.user_data['action'] == 'Place Stoploss Order':
-        limit_price = context.user_data['limit_price']
-        trigger_price = context.user_data['trigger_price']
+    order_details['stoploss_points'] = mpw.get_weekday_price_ref(order_details['base_symbol'])
+    if context.user_data['action'] == 'Place Order':
+        place_order.place_order_for_broker("MPWizard", order_details, monitor=monitor)
+
+
+
+    if context.user_data['action'] == 'Modify Stoploss Order':
+        order_details['limit_prc'] = context.user_data['limit_price']
+        order_details['trigger_price'] = context.user_data['trigger_price']
+        order_details['strategy'] = 'MPWizard'
+
+        place_order.modify_orders(order_details=order_details)
+
+
         # place_stoploss_order(index, strike_price, option_type, limit_price, trigger_price, trade_type)
-        for broker,user in users_to_trade:
-            print(broker)
-            if broker == 'zerodha':
-                place_stoploss_zerodha(trading_symbol_list[0], trade_type, trade_type, strike_price, index, limit_price, user, broker='zerodha')
+    #     for broker,user in users_to_trade:
+    #         print(broker)
+    #         if broker == 'zerodha':
+    #             place_stoploss_zerodha(trading_symbol_list[0], trade_type, trade_type, strike_price, index, limit_price, user, broker='zerodha')
 
-            elif broker == 'aliceblue':
-                place_stoploss_aliceblue(trading_symbol_aliceblue[0], trade_type, trade_type, strike_price, index,limit_price, user, broker='aliceblue')
+    #         elif broker == 'aliceblue':
+    #             place_stoploss_aliceblue(trading_symbol_aliceblue[0], trade_type, trade_type, strike_price, index,limit_price, user, broker='aliceblue')
 
-    else:
-        for broker,user in users_to_trade:
-            if broker == 'zerodha':
-                place_zerodha_order(trading_symbol_list[0], trade_type, trade_type, strike_price, index, user, broker='zerodha')
+    # # else:
+    #     for broker,user in users_to_trade:
+    #         if broker == 'zerodha':
+    #             place_zerodha_order(trading_symbol_list[0], trade_type, trade_type, strike_price, index, user, broker='zerodha')
 
-            elif broker == 'aliceblue':
-                place_aliceblue_order(trading_symbol_aliceblue[0], trade_type, trade_type, strike_price, index, user, broker='aliceblue')
+    #         elif broker == 'aliceblue':
+    #             place_aliceblue_order(trading_symbol_aliceblue[0], trade_type, trade_type, strike_price, index, user, broker='aliceblue')
 
 
-    reply_text = f"You selected:\nIndex: {index}\nStrike Price: {strike_price}\nOption Type: {option_type}\nTrade Type: {trade_type}"
+    reply_text = f"You selected:\nIndex: {context.user_data['index']}\nStrike Price: {context.user_data['strike_price']}\nOption Type: {context.user_data['option_type']}\nTrade Type: {trade_type}"
     
     if context.user_data['action'] == 'Place Stoploss Order':
-        reply_text += f"\nLimit Price: {limit_price}\nTrigger Price: {trigger_price}"
+        reply_text += f"\nLimit Price: {order_details['limit_prc']}\nTrigger Price: {order_details['trigger_price']}"
+    if context.user_data['action'] == 'Modify Stoploss Order':
+        reply_text += f"\nLimit Price: {order_details['limit_prc']}\nTrigger Price: {order_details['trigger_price']}"
     
     context.bot.send_message(chat_id=query.message.chat_id, text=reply_text)
 

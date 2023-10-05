@@ -9,7 +9,7 @@ import datetime
 
 # Constants and Configurations
 API_KEY = '6b0dp5ussukmo67h'
-ACCESS_TOKEN = '8Dswz5kycR5YWo17NDHm54rN7vo66L2s'
+ACCESS_TOKEN = 'jJ06HG6ot2EaWnwFyb3iRv060K3y305r'
 kite = KiteConnect(api_key=API_KEY)
 kite.set_access_token(ACCESS_TOKEN)
 

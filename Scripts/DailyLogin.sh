@@ -19,14 +19,13 @@ while true; do
     # Source conda, activate the environment and run the script
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
 	conda activate tradingenv && \
-    cd /Users/traderscafe/Documents/TradeMan/Utils/ && \
-	# cd /Users/traderscafe/Documents/NiftyStrategy/Brokers/ && \
+    cd /Users/traderscafe/Desktop/Main/TradeMan/Utils && \
 	/Users/traderscafe/miniconda3/envs/tradingenv/bin/python DailyLogin.py && \
 	echo "Program started successfully" && break
 
     # If the command failed and we've reached the maximum number of attempts, send a message and exit
     if ((attempt==max_attempts)); then
-        echo "The script has some errors. Please Check !!!"
+        echo "Can't Login!!!"
         
         # Send a message on Telegram
         curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Can't Login. Please Check !!!"
