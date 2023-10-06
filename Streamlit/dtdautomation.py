@@ -131,6 +131,25 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
                             'Running Balance': custom_format(running_balance)
                         })
                         sl_no += 1
+                elif transaction_id == "AmiPy":
+                    aggregated_pnl = sub_df['Net PnL'].sum()
+                    if aggregated_pnl != 0.00:
+                        aggregated_trade_ids = ' '.join(
+                            sub_df['Trade ID'].dropna())
+                        amount = aggregated_pnl
+                        running_balance += amount  # Update running balance BEFORE appending
+                        rows.append({
+                            'Sl NO': sl_no,
+                            'Date': date_str,
+                            'Day': day_str,
+                            'Trade ID': aggregated_trade_ids,
+                            'Details': transaction_id,
+                            # Format the amount
+                            'Amount': custom_format(amount),
+                            # Format the running balance
+                            'Running Balance': custom_format(running_balance)
+                        })
+                        sl_no += 1
                 else:
                     aggregated_pnl = sub_df['Net PnL'].sum()
                     aggregated_trade_ids = ' '.join(
