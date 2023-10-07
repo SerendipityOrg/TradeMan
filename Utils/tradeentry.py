@@ -12,14 +12,14 @@ import firebase_admin
 from firebase_admin import credentials, storage, db
 
 
-# api_id = '22941664'
-# api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
+api_id = '22941664'
+api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
 
 # Change the standard output encoding to UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Initialize Firebase app
-cred = credentials.Certificate("credentials.json")
+cred = credentials.Certificate("TradeMan/Utils/credentials.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
 })
@@ -40,7 +40,6 @@ def custom_format(amount):
     return formatted.replace('₹', '₹ ')
 
 
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def process_mpwizard_trades(mpwizard_trades):
     if not mpwizard_trades:
@@ -56,14 +55,20 @@ def process_mpwizard_trades(mpwizard_trades):
         if broker == "zerodha":
             charges = zerodha_taxes(
                 buy_trade["qty"], buy_trade["avg_prc"], sell_trade["avg_prc"], 1)
+            index = buy_trade["tradingsymbol"][:-12]
+            strike_price = buy_trade["tradingsymbol"][-7:-2]
         elif broker == "aliceblue":
             charges = aliceblue_taxes(buy_trade["qty"], float(
                 buy_trade["avg_prc"]), float(sell_trade["avg_prc"]), 1)
+            index = buy_trade["tradingsymbol"][:-13]
+            strike_price = buy_trade["tradingsymbol"][-5::]
+
+        
 
         trade_data = {
             "Strategy": "MPWizard",
-            "Index": buy_trade["tradingsymbol"][:-12],
-            "Strike Prc": buy_trade["tradingsymbol"][-7:-2],
+            "Index": index,
+            "Strike Prc": strike_price,
             "Date": pd.to_datetime(buy_trade["timestamp"]).date(),
             "Entry Time": pd.to_datetime(buy_trade["timestamp"]).strftime('%H:%M'),
             "Exit Time": pd.to_datetime(sell_trade["timestamp"]).strftime('%H:%M'),
@@ -194,19 +199,18 @@ def process_overnight_options_trades(overnight_options_trades):
     
     if afternoon_trades[0]["direction"] == "BULLISH":
     # Extracting BULLISH trades with strike_price = 0 for both Afternoon and Morning
-        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == "0"), None)
-        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == "0"), None)    
+        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == 0), None)
+        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] == 0), None)    
     # Extracting BULLISH trades with strike_price != 0 for both Afternoon and Morning
-        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != "0"), None)
-        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != "0"), None)
+        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != 0), None)
+        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BULLISH' and trade['strike_price'] != 0), None)
     elif afternoon_trades[0]["direction"] == "BEARISH":
     # Extracting BEARISH trades with strike_price = 0 for both Afternoon and Morning
-        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == "0"), None)
-        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == "0"), None)
+        future_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == 0), None)
+        future_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] == 0), None)
     # Extracting BEARISH trades with strike_price != 0 for both Afternoon and Morning
-        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
-        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != "0"), None)
-    
+        option_entry = next((float(trade['avg_prc']) for trade in afternoon_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != 0), None)
+        option_exit = next((float(trade['avg_prc']) for trade in morning_trades if trade['direction'] == 'BEARISH' and trade['strike_price'] != 0), None)
     
     if broker == "zerodha":
         future_tax = zerodha_futures_taxes(qty, future_entry, future_exit, 1)
@@ -224,7 +228,6 @@ def process_overnight_options_trades(overnight_options_trades):
     elif direction == "BEARISH":  # Assuming BEARISH
         trade_points = (future_entry - future_exit) + (option_exit - option_entry)
     PnL = trade_points * qty
-
     # Appending to result list
     trade_data = {
         "Trade_Type": direction,
@@ -243,8 +246,8 @@ def process_overnight_options_trades(overnight_options_trades):
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 broker_filepath = os.path.join(script_dir, "broker.json")
-json_dir = os.path.join(script_dir, "users")
-excel_dir = os.path.join(script_dir, "excel")
+json_dir = os.path.join(script_dir,'..','UserProfile', "json")
+excel_dir = os.path.join(script_dir,'..','UserProfile', "excel")
 
 with open(broker_filepath) as file:
     data = json.load(file)
@@ -283,17 +286,17 @@ for broker, user in user_list:
         mpwizard_pnl = round(mpwizard_df["PnL"].sum(), 2)
         mpwizard_tax = round(mpwizard_df["Tax"].sum(), 2)
 
-    if "Amipy" in user_data[broker]["orders"]:
+    if "AmiPy" in user_data[broker]["orders"]:
         amipy_data_short = []
         amipy_data_long = []
-        if "ShortSignal" in user_data[broker]["orders"]["Amipy"]:
+        if "ShortSignal" in user_data[broker]["orders"]["AmiPy"]:
             # Process the AmiPy ShortSignal and ShortCoverSignal trades
-            amipy_data_short = process_short_trades(user_data[broker]["orders"]["Amipy"]["ShortSignal"],
-                                                    user_data[broker]["orders"]["Amipy"]["ShortCoverSignal"])
-        if "LongSignal" in user_data[broker]["orders"]["Amipy"]:
+            amipy_data_short = process_short_trades(user_data[broker]["orders"]["AmiPy"]["ShortSignal"], 
+                                                    user_data[broker]["orders"]["AmiPy"]["ShortCoverSignal"])
+        if "LongSignal" in user_data[broker]["orders"]["AmiPy"]:
             # Process the AmiPy LongSignal and LongCoverSignal trades
-            amipy_data_long = process_long_trades(user_data[broker]["orders"]["Amipy"]["LongSignal"],
-                                                  user_data[broker]["orders"]["Amipy"]["LongCoverSignal"])
+            amipy_data_long = process_long_trades(user_data[broker]["orders"]["AmiPy"]["LongSignal"], 
+                                                user_data[broker]["orders"]["AmiPy"]["LongCoverSignal"])
 
         # Combine short and long trades into a single DataFrame
         amipy_data = amipy_data_short + amipy_data_long
@@ -316,17 +319,20 @@ for broker, user in user_list:
         excel_dir, f"{user}.xlsx"), sheet_name="MPWizard")
     amipy_existing_df = pd.read_excel(os.path.join(
         excel_dir, f"{user}.xlsx"), sheet_name="AmiPy")
-    # overnight_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="Overnight_options")
+    overnight_existing_df = pd.read_excel(os.path.join(excel_dir, f"{user}.xlsx"), sheet_name="Overnight_options")
 
     # # Append new data
     mpwizard_final_df = pd.concat([mpwizard_existing_df, mpwizard_df])
+    # mpwizard_final_df = pd.concat([mpwizard_existing_df])
     amipy_final_df = pd.concat([amipy_existing_df, amipy_df])
-    # overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
+    overnight_final_df = pd.concat([overnight_existing_df, overnight_options_df])
+    # overnight_final_df = pd.concat([overnight_existing_df])
 
     gross_pnl = mpwizard_pnl + amipy_pnl + overnight_options_pnl
+    # gross_pnl = amipy_pnl
     # gross_pnl = mpwizard_pnl + amipy_pnl 
     tax = mpwizard_tax + amipy_tax + overnight_options_tax
-    # tax = mpwizard_tax + amipy_tax
+    # tax = amipy_tax
     net_pnl = gross_pnl - tax
 
     current_capital = data[broker][user]['current_capital']
@@ -340,7 +346,7 @@ for broker, user in user_list:
     if "MPWizard" in user_data[broker]["orders"]:
         message_parts.append(f"MPWizard: {custom_format(mpwizard_pnl)}")
 
-    if "Amipy" in user_data[broker]["orders"]:
+    if "AmiPy" in user_data[broker]["orders"]:
         message_parts.append(f"AmiPy: {custom_format(amipy_pnl)}")
 
     if "Overnight_Options" in user_data[broker]["orders"]:
@@ -378,21 +384,20 @@ for broker, user in user_list:
         excel_filename = f"{user}.xlsx"
         excel_path = os.path.join(excel_dir, excel_filename)
         with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-            mpwizard_final_df.to_excel(
-                writer, sheet_name='MPWizard', index=False)
+            mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
             amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
-            # overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
+            overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
 
         # Save the Excel file to Firebase
         save_to_firebase(user, excel_path)
 
     # # send discord message
-    # script_dir = os.path.dirname(os.path.abspath(__file__))
-    # parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
-    # filepath = os.path.join(parent_dir, '+918618221715.session')
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.abspath(os.path.join(script_dir, '..'))
+    filepath = os.path.join(parent_dir, '+918618221715.session')
 
-    # with TelegramClient(filepath, api_id, api_hash) as client:
-    #     client.send_message(phone_number, message, parse_mode='md')
+    with TelegramClient(filepath, api_id, api_hash) as client:
+        client.send_message(phone_number, message, parse_mode='md')
 
     # Load existing workbook
     excel_path = os.path.join(excel_dir, f"{user}.xlsx")
@@ -415,7 +420,7 @@ for broker, user in user_list:
         # Write new sheets
         mpwizard_final_df.to_excel(writer, sheet_name='MPWizard', index=False)
         amipy_final_df.to_excel(writer, sheet_name='AmiPy', index=False)
-        # overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
+        overnight_final_df.to_excel(writer, sheet_name='Overnight_options', index=False)
 
     # Delete the old file and rename the new one
     os.remove(excel_path)

@@ -130,24 +130,24 @@ for broker, user in user_list:
     # Print report for debugging purposes
     print(message)
 
-    # # Load user-specific JSON data (assuming each user has a separate JSON)
-    # data = load_userdata()
-    # phone_number = data[broker][user]['mobile_number']
+    # Load user-specific JSON data (assuming each user has a separate JSON)
+    data = load_userdata()
+    phone_number = data[broker][user]['mobile_number']
 
-    # # Save data to broker.json
-    # data_to_store = {
-    #     'Current Capital': current_capital,
-    # }
-    # user_details = data[broker][user]
-    # user_details["current_capital"] = current_capital
-    # data[broker][user] = user_details
+    # Save data to broker.json
+    data_to_store = {
+        'Current Capital': current_capital,
+    }
+    user_details = data[broker][user]
+    user_details["current_capital"] = current_capital
+    data[broker][user] = user_details
 
-    # with open(os.path.join(script_dir, "broker.json"), 'w') as f:
-    #     json.dump(data, f, indent=4)
+    with open(os.path.join(script_dir, "broker.json"), 'w') as f:
+        json.dump(data, f, indent=4)
 
-    # parent_file = os.path.abspath(os.path.join(script_dir, '..'))
-    # filepath = os.path.join(parent_file, '+918618221715.session')
-    # # # Send the report to the user via Telegram
-    # # # Ensure you have `api_id` and `api_hash` defined elsewhere in your code
-    # with TelegramClient(filepath, api_id, api_hash) as client:
-    #     client.send_message(phone_number, message, parse_mode='md')
+    parent_file = os.path.abspath(os.path.join(script_dir, '..'))
+    filepath = os.path.join(parent_file, '+918618221715.session')
+    # # Send the report to the user via Telegram
+    # # Ensure you have `api_id` and `api_hash` defined elsewhere in your code
+    with TelegramClient(filepath, api_id, api_hash) as client:
+        client.send_message(phone_number, message, parse_mode='md')
