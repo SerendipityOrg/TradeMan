@@ -49,7 +49,7 @@ def custom_format(amount):
         # Return the value as is (not formatted)
         return amount
 
-# Function to create and return the DTD DataFrame with correct running balance calculation and formatted columns
+# Function to create and return the DTD DataFrame with individual transactions and formatted columns
 
 
 def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
@@ -58,7 +58,7 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
         return pd.DataFrame(), 0
 
     all_dates = pd.concat([df['Date']
-                          for df in data_mappings.values()]).unique()
+                           for df in data_mappings.values()]).unique()
     all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
 
     rows = []
@@ -71,17 +71,16 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
     # Add the Opening Balance row
     rows.append({
         'Sl NO': sl_no,
-        'Date': '07-Jul-23',
-        'Day': 'Friday',
+        'Date': '01-Jul-23',
+        'Day': 'Saturday',
         'Trade ID': '',
         'Details': 'Opening Balance',
-        'Amount': custom_format(running_balance),  # Format the opening balance
-        # Format the running balance
+        'Amount': custom_format(running_balance),
         'Running Balance': custom_format(running_balance)
     })
     sl_no += 1
 
-    start_date = pd.Timestamp('2023-07-10')
+    start_date = pd.Timestamp('2023-07-1')
     for date in all_dates_sorted:
         if date < start_date:
             continue
@@ -94,59 +93,18 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
                 df = data_mappings[transaction_id]
                 sub_df = df[df['Date'] == date]
 
-                if transaction_id == "MP Wizard":
-                    for _, row in sub_df.iterrows():
-                        trade_id = row['Trade ID']
-                        pnl = row['Net PnL']
-                        amount = pnl
-                        running_balance += amount  # Update running balance BEFORE appending
+                for _, row in sub_df.iterrows():
+                    trade_id = row['Trade ID']
+                    amount = row['Net PnL']
+                    if amount != 0.00:
+                        running_balance += amount
                         rows.append({
                             'Sl NO': sl_no,
                             'Date': date_str,
                             'Day': day_str,
                             'Trade ID': trade_id,
                             'Details': transaction_id,
-                            # Format the amount
                             'Amount': custom_format(amount),
-                            # Format the running balance
-                            'Running Balance': custom_format(running_balance)
-                        })
-                        sl_no += 1
-                elif transaction_id == "ZRM":
-                    aggregated_pnl = sub_df['Net PnL'].sum()
-                    if aggregated_pnl != 0.00:
-                        aggregated_trade_ids = ' '.join(
-                            sub_df['Trade ID'].dropna())
-                        amount = aggregated_pnl
-                        running_balance += amount  # Update running balance BEFORE appending
-                        rows.append({
-                            'Sl NO': sl_no,
-                            'Date': date_str,
-                            'Day': day_str,
-                            'Trade ID': aggregated_trade_ids,
-                            'Details': transaction_id,
-                            # Format the amount
-                            'Amount': custom_format(amount),
-                            # Format the running balance
-                            'Running Balance': custom_format(running_balance)
-                        })
-                        sl_no += 1
-                else:
-                    aggregated_pnl = sub_df['Net PnL'].sum()
-                    aggregated_trade_ids = ' '.join(
-                        sub_df['Trade ID'].dropna())
-                    amount = aggregated_pnl
-                    if not (transaction_id == 'Overnight Options' and amount == 0.00):
-                        running_balance += amount  # Update running balance BEFORE appending
-                        rows.append({
-                            'Sl NO': sl_no,
-                            'Date': date_str,
-                            'Day': day_str,
-                            'Trade ID': aggregated_trade_ids,
-                            'Details': transaction_id,
-                            # Format the amount
-                            'Amount': custom_format(amount),
-                            # Format the running balance
                             'Running Balance': custom_format(running_balance)
                         })
                         sl_no += 1
@@ -182,12 +140,11 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df):
     with pd.ExcelWriter(file_name, engine='openpyxl', mode='a') as writer:
         if existing_opening_balance is not None:
             new_dtd_df.loc[new_dtd_df['Details'] == 'Opening Balance',
-                           'Running Balance'] = custom_format(existing_opening_balance)  # Format the existing opening balance
+                           'Running Balance'] = custom_format(existing_opening_balance)
 
         if 'DTD' in writer.book.sheetnames:
             existing_dtd = pd.read_excel(file_name, sheet_name='DTD')
-            existing_dtd = format_running_balance_column(
-                existing_dtd)  # Format the existing data
+            existing_dtd = format_running_balance_column(existing_dtd)
             if 'Date' in existing_dtd.columns and 'Date' in new_dtd_df.columns:
                 last_existing_date = pd.to_datetime(
                     existing_dtd['Date'].iloc[-1])
@@ -207,8 +164,9 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df):
 
         updated_dtd_df.to_excel(writer, sheet_name='DTD', index=False)
 
-
 # Function to read opening balances from useropeningbalance.txt and return as a dictionary
+
+
 def read_opening_balances(file_path):
     opening_balances = {}
     try:
@@ -245,9 +203,7 @@ if __name__ == "__main__":
         for file in files:
             if file.endswith(".xlsx"):
                 file_name = os.path.join(root, file)
-                # Extract user name from file name
                 user_name = os.path.splitext(file)[0]
-                # Get the opening balance for the user
                 opening_balance = opening_balances.get(user_name, 0.0)
                 data_mappings = fetch_data_from_excel(
                     file_name, sheet_mappings)
