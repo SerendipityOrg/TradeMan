@@ -85,11 +85,12 @@ def log_order(order_id, avg_price, order_details, user_details,strategy):
     else:
         strike_prc = 0
 
-    #check if order_details['tradingsymbol'] has order_details['tradingsymbol'].name else order_details['tradingsymbol']
-    if hasattr(order_details['tradingsymbol'], 'name'):
-        tradesymbol = order_details['tradingsymbol'].name
-    else:
+    #check if order_details['tradingsymbol'] is a string or a dict, if dict then get the name attribute
+    if isinstance(order_details['tradingsymbol'], str):
         tradesymbol = order_details['tradingsymbol']
+    else:
+        tradesymbol = order_details['tradingsymbol'].name
+
 
     order_dict = {
         "order_id": order_id,
@@ -99,11 +100,6 @@ def log_order(order_id, avg_price, order_details, user_details,strategy):
         "strike_price": strike_prc,
         "tradingsymbol": tradesymbol
     }
-
-    if hasattr(order_details['tradingsymbol'], 'name'):
-        order_dict['tradingsymbol'] = order_details['tradingsymbol'].name
-    else:
-        order_dict['tradingsymbol'] = order_details['tradingsymbol']
 
     if 'signal' in order_details and strategy == "AmiPy":
         print(type(strike_prc))

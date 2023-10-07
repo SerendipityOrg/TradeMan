@@ -6,17 +6,17 @@
             "api_key": "6b0dp5ussukmo67h",
             "api_secret": "eln2qrqob5neowjuedmbv0f0hzq6lhby",
             "totp": "3GN2DNUD35FZQDIIWJUK6CSUIWBPXSYJ",
-            "access_token": "8VH1MoZbO8k0AqS3SUU71C3OoFLMNFgH",
+            "access_token": "d2iYhC9pbWcy5wVtpwloxeitrRMIGbhs",
             "mobile_number": "+919902106162",
             "percentageRisk": {
                 "AmiPy": 250000,
                 "MPWizard": 0.01,
                 "ZRM": 0.01,
-                "overnight_option": 200000
+                "Overnight_Options": 200000
             },
-            "current_capital": 2518315.07,
-            "yesterday_PnL": 15347.380000000001,
-            "expected_morning_balance": 2533662.45
+            "current_capital": 2703562.04,
+            "yesterday_PnL": -1381.0,
+            "expected_morning_balance": 2703562.04
         },
         "user2": {
             "username": "def",
@@ -30,6 +30,7 @@
             }
         },
         "accounts_to_trade": [
+            "omkar"
         ]
     },
     "aliceblue": {
@@ -54,51 +55,50 @@
             "app_code": "mqTi31aA56ylUKh",
             "api_key": "yn6YMylMSOa7Qmp9OPYhtFWSE4OL7hTMTIptvx1Odl1DkVOxqCFuboLnTCJiEd2IoEQolWY7G1JlABIkPxsvDL81hcAcOa08zszFj7DFgqPkNKGJAll3tP3OZjvmIYH6",
             "totp_access": "DTGZGSGONNQWEGFXSTGKKZMHJUVFFYPX",
-            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDgzMTIsImlhdCI6MTY5NDY2MTkxMiwianRpIjoiNjAzM2ZmZTUtNmZlYy00NzQ2LWE3YjUtZTQzZTEyYjhkZGYxIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImMxOTAxOTk5LTIxNTQtNDU4MS04NzRjLTY5M2YyZTFkNWUyNCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjJlN2UzZTc5LWNkYzgtNDVkOS1iZDQ4LTU4NGNiMzY3Yzg0MSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMmU3ZTNlNzktY2RjOC00NWQ5LWJkNDgtNTg0Y2IzNjdjODQxIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IkJZMTQyNCIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJWSU1BTEEgTkFHQVJBSiBIRUdERSIsIm1vYmlsZSI6Ijk0NDg5NTUzNzAiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJieTE0MjQiLCJnaXZlbl9uYW1lIjoiVklNQUxBIE5BR0FSQUogSEVHREUiLCJlbWFpbCI6Im5pZ2h0c2t5a2tAZ21haWwuY29tIn0.gFI_l81ZCbK_AdIrZZLjuHlkXjtpUiyiIYOWw9BtAFynlWijXC7Ywgh2yuswcNkelauKnsewpBCuQqia1GTEdltW2oSX9NMmCY92oy9WM2n0inJyTUvnR4ljdOLkOX0sgTBEcdx0y9uyt41O5zKWICLYJjUaZr730MDe9X3b_EwMlu_EDu13KGhhVZFgiGu_7gJ92fu2P9_a3xDskhoKDEKISYWTsAespzcSdB1M3xf6XgyHHxF8UD99BImk-P9-VS5-lPDGe3OoJcTOe6ph-R4nZVqYhK4ZshLx8sbJU27pas6VxNZrjJiPlvRiPKlA0JqiwT25SvB6_tiajc8ehQ",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTYxMzA3MDYsImlhdCI6MTY5NjA0NDMwNiwianRpIjoiN2Q0ZjlmMzktNDkzYS00YzVhLThkNTYtNmZkMzk4ZWMxMzBiIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImMxOTAxOTk5LTIxNTQtNDU4MS04NzRjLTY5M2YyZTFkNWUyNCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjlhYTRkNjQ1LTk2Y2EtNDdmMy05OThjLWFmM2ZmNGU5MjZiNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiOWFhNGQ2NDUtOTZjYS00N2YzLTk5OGMtYWYzZmY0ZTkyNmI1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IkJZMTQyNCIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJWSU1BTEEgSEVHREUiLCJtb2JpbGUiOiI5NDQ4OTU1MzcwIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYnkxNDI0IiwiZ2l2ZW5fbmFtZSI6IlZJTUFMQSIsImZhbWlseV9uYW1lIjoiSEVHREUiLCJlbWFpbCI6Im5pZ2h0c2t5a2tAZ21haWwuY29tIn0.OOEMXHoqhCSnFvMMpjXcBoeSF_0fFUd9FA_qdD_ZYoCPzNv7kt_UwRsxJCHEKrXjMgWP5ZHE1CIGUq-_0fQ4nGYgv6MKh8EuAG8c5miI4SWQi7qAtE3k71nDrspC4o-zjGSjsnlyVKmHxj8TqOEcyxq_impiO18lpS_3iBs7aP--6g_Js9-iPE42GonoGvqZo66V67Hq-J4Q8NxsO6HqbgAcyjE5VSLblzyeNgkA2Mw8bNNM5Zg7dtgx7_AC8JtWXzeK98shNsOVvD_urLzR1m6tRfW-fzxYheRno45HJokU1lj2L993z6fq6MskkRZ1790Q2MYlrcZPxPtAAJteoA",
             "mobile_number": "+918618221715",
             "percentageRisk": {
-                "Siri": 100000,
-                "MPWizard": 0.025
+                "Siri": 100000
             },
-            "current_capital": 640497.23,
-            "yesterday_PnL": -2687.15,
-            "expected_morning_balance": 637810.08
+            "current_capital": 595575.07,
+            "yesterday_PnL": -237.22,
+            "expected_morning_balance": 595575.07
         },
         "brijesh": {
             "username": "929016",
-            "password": "K@nnada222",
+            "password": "K@nnada333",
             "twoFA": "1979",
             "api_secret": "dkOINUeJELkqeHSuFWaqUMjNjAHarRQiAHpmiPOednLBCNCJzDlSLIAuJuGRHReOOpTkGGiLXaHHRGuPZEEYfvUYoLsLodjIJIlY",
             "app_code": "JWbhBFJXIBlHpAd",
             "api_key": "NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f",
             "totp_access": "VFULKSAJCRMTSNRLEQDYVWBBFKHXOJQR",
-            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDgzMDUsImlhdCI6MTY5NDY2MTkwNSwianRpIjoiYTY0MTNkYjgtZTZjMy00YzY3LTg0YjgtMTA1ZWNjMTBkYjc2IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImU3NGU3MGJmLWY2NTAtNGQyNS04YzEwLWM1N2FmMDg4MzFmNSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImNlZTJmZjNkLWMwMTMtNDllOC1hZWVhLTZjYjgxMTAwMjI1MiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiY2VlMmZmM2QtYzAxMy00OWU4LWFlZWEtNmNiODExMDAyMjUyIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkyOTAxNiIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJCUklKRVNIIFNVQlJBWUEiLCJtb2JpbGUiOiI4NzYyMTUyMTExIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiOTI5MDE2IiwiZ2l2ZW5fbmFtZSI6IkJSSUpFU0ggU1VCUkFZQSIsImVtYWlsIjoiYnJpamVzaC5zMUBnbWFpbC5jb20ifQ.TpA49YZHEYbhji37FLOq9HKh7M2JUtw1qm-yyd3eSQBcQ-sOzlfsYsBd4q2bdUbLVDpvSMU_aQ9SdxqIM8vJQK7rpwEmRJbzr3NfTEY4qDL-MsGUfQAUOqg5DF6t4iNHRPDny1NbWh35iVshRqiHzUcwnljf4tSd6NHwaGIjc3S9kRWo2BjgRJpNo-nNUBtO4gLBMwe0JmoW4WwqNIz6wAnoNYyRo9h8tKWThXhDgHxeL3qQ3NT6pUxJa03ao0Vfv8gPR8u4JzMg9ux3Qr6L9XkoWLWxXAcdifm5L54Sm9Bhe_ccpKqsrVrPemBJ0HTakufNjx10XdmSnjfOIteSJA",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTYzMDc4NTEsImlhdCI6MTY5NjIyMTQ1MSwianRpIjoiYzAwYWQyY2QtOWE3My00MmQxLTg5YmUtMGRjOWY3OTVlYzY2IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImU3NGU3MGJmLWY2NTAtNGQyNS04YzEwLWM1N2FmMDg4MzFmNSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImMxYTQyYjAwLTQwODItNDRlZi1hOWQ5LTE5YjQxZTZiMDZjNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiYzFhNDJiMDAtNDA4Mi00NGVmLWE5ZDktMTliNDFlNmIwNmM1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkyOTAxNiIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJCUklKRVNIIFNVQlJBWUEiLCJtb2JpbGUiOiI4NzYyMTUyMTExIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiOTI5MDE2IiwiZ2l2ZW5fbmFtZSI6IkJSSUpFU0giLCJmYW1pbHlfbmFtZSI6IlNVQlJBWUEiLCJlbWFpbCI6InNlcmVuZGlwaXR5LmJyaWplc2hAZ21haWwuY29tIn0.JAMLoag-cPLIQ9CwVaJxz57H8_XT63_THU9YdBAw0tAhn7sa0isuJsONCnl_e459dMXDDIZZJ92WS9_HDP6aH4O66bXx6qKCof6AVetfJ3oBmD2jZ4INoSAN1uojdFQFPoo6hmFCbC5tuhvK9v9GjVRl1oa5Sj3w1vj8wxMJgToRSqrJrW5geX8JjYg6hY8B9UBALzsLi71lpA4zQbHZlibd6cehwLC2wOcKaChGKPz6ftJf_xlWXKeFteLc3A37BqUC1GIZd5plk0D_ouahRpG6KpDMHlLjnFbT74nIUzQd0UFA4QWJX59SE47d3YQDFwwfSMGvCNyaExaXpQwSFA",
             "mobile_number": "+918762152111",
             "percentageRisk": {
                 "AmiPy": 250000,
                 "MPWizard": 0.015,
-                "overnight_option": 200000
+                "Overnight_Options": 200000
             },
-            "current_capital": 640497.23,
-            "yesterday_PnL": -2891.00,
-            "expected_morning_balance": 637606.23
+            "current_capital": 591157.82,
+            "yesterday_PnL": -141.15,
+            "expected_morning_balance": 591157.82
         },
         "venkatesh": {
             "username": "924446",
-            "password": "K@nnada444",
+            "password": "K@nnada333",
             "twoFA": "1991",
             "api_secret": "pyNZQITYOntcNgJfybPnjnzLCSWySWekJyIdWArllibJodoOUAZguBKBlmBZIhclcunfktVvuUpFsSGqoppQjPRiHVFRXMlfJPMx",
             "app_code": "RPMGgKDNcqpdXtM",
             "api_key": "guei1IQcY13sT7gb4ofiTNHBsQ7pJrPuhmJEZXlRRKdMm6xpRWTCGAUGB0yDir7yWQI7aIendjvybuVzeWIzS5nP9JJKMQY1Q1XYzzPS8FCsb908VzPiihY1VnYeZHeV",
             "totp_access": "JDPHMIKEPJERXYLFKDNFBVLIEKOTIQYX",
-            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDgzMDYsImlhdCI6MTY5NDY2MTkwNiwianRpIjoiOTViOTE5NWQtMGU2Yy00ODBjLWIxMmQtOTFlNzgwMDA3MWZhIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjQzOTVmZWJjLThlOGMtNDVhMS1hOTliLTI0YzkyMTQzNjY3MSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjkwNDEwMzgzLWE3MDctNDc4ZC1hNGFiLThjNGIzZDgzOWM2ZiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiOTA0MTAzODMtYTcwNy00NzhkLWE0YWItOGM0YjNkODM5YzZmIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkyNDQ0NiIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJDSFRUSSBCQUJVIExPS0VTSFdBUkkgVkVOS0FURVNIIiwibW9iaWxlIjoiODE0NzAzOTQ5MCIsInByZWZlcnJlZF91c2VybmFtZSI6IjkyNDQ0NiIsImdpdmVuX25hbWUiOiJDSFRUSSBCQUJVIExPS0VTSFdBUkkgVkVOS0FURVNIIiwiZW1haWwiOiJzZXJlbmRpcGl0eS52ZW5rYXRlc2hAZ21haWwuY29tIn0.bObZGeqndhuVnykMTBzf5AQfX6Y9uq9Eta8WmYV_6hx1y5OOuhpR-yGXjlhdzx_AnUfyoJPkXZW3mEIOm1mTN_-IXl9WxoF1fQpVjL3Yi9trQevIXpy-x4A9tMpq8y5VBt9Pxp0fCtp-8n_Aty4P1A8P5ZR2kNYirE8Z2oRAWyVR-hGm17OfZLhvr0mVgKhwoBz-k6sC31fYStBrm0x8lWXRI4kOCPajfnCCwIK1FwXdtiJ5-T943w2GQOUOZ7JpgeMWxzxYZw6deFcFQc2fAtg0cKKM0AH5-hMyPPrs_t6it0-iI_jOfnL4nQHyRwQ1UUQgAD0yiSPQLn4Xpih5sw",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTYzMDc4NTQsImlhdCI6MTY5NjIyMTQ1NCwianRpIjoiNDgyM2FlNGUtZTZkMy00NzZjLTlmMzItNDNhYjk1ZTllNGZlIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjQzOTVmZWJjLThlOGMtNDVhMS1hOTliLTI0YzkyMTQzNjY3MSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImQ3NWUxMmEwLWFiMTAtNDIzOS1hZDU4LWM5YzU5ZTE5OTY0ZiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiZDc1ZTEyYTAtYWIxMC00MjM5LWFkNTgtYzljNTllMTk5NjRmIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkyNDQ0NiIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJDSFRUSSBCQUJVIFZFTktBVEVTSCIsIm1vYmlsZSI6IjgxNDcwMzk0OTAiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI5MjQ0NDYiLCJnaXZlbl9uYW1lIjoiQ0hUVEkgQkFCVSIsImZhbWlseV9uYW1lIjoiVkVOS0FURVNIIiwiZW1haWwiOiJzZXJlbmRpcGl0eS52ZW5rYXRlc2hAZ21haWwuY29tIn0.cSShH_wTxVzvRWdqjAZHBfSLP5NpV2UHZvjBUiXsKt3qRii0tGesaMk7yH_ivmYDk_gi6oN65Ds2YeE41_czq7kwsC5C3Sydm5Bv5I7v-riZ5VYy0Wf3iU7mx2Fneyr15Dds9be_nDvX2NUK40NYpAVfkrnKbEeBI4Bj-1T87A8VWDY41UCyb0pLr9hbQMzl0mxCfdjmSWfK34Nb1hVCbRMcOxg1zDlxXDtKr6R_2XsmQEhE2xNRUfoYn8OlKvkjRArHBo5CmqbGGbjP-oYoT-A4_l8G23NCLnYW8OtpmDTQTqgJRFYOTIrhg0EOSl28D0-4qU58Nrl9rkSnX84pig",
             "mobile_number": "+918147039490",
             "percentageRisk": {
                 "MPWizard": 0.025
             },
-            "current_capital": 79337.8,
-            "yesterday_PnL": -1680.43,
-            "expected_morning_balance": 77657.37
+            "current_capital": 82049.54,
+            "yesterday_PnL": -208.97,
+            "expected_morning_balance": 82049.54
         },
         "sridhar": {
             "username": "935347",
@@ -108,14 +108,14 @@
             "app_code": "HaRYaumJCQuFiEy",
             "api_key": "pjILfdi8AR80eKFImLVa7g6snJg1tRhsiIqj4BigYLNe4sdYBgsElQi2tj58Q9h84SlGtD1Vd1HVeD5V3FP0VQnlAbp0jfSrdcUsoLIDP8gTNLDuCucOOioysV50Dhxc",
             "totp_access": "IPPRNKIUJHSRLEADIQKUPEXNPKIKOBEP",
-            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDgzMTEsImlhdCI6MTY5NDY2MTkxMSwianRpIjoiYmY2NTFiMGQtOGU0Yy00Y2VkLTg0MTktZDM2OWMzZDI0MDg2IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIxZTA2NjY4LTA5YmYtNGY2Yi05MDYwLTljODkyYTQ0Mjk0YSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjczYmUxMDE4LWNmZWEtNGY5OC05M2U2LTA1N2QxY2E2MzQzMyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNzNiZTEwMTgtY2ZlYS00Zjk4LTkzZTYtMDU3ZDFjYTYzNDMzIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkzNTM0NyIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJLQU5BS0FSQUogU1JJREhBUiIsIm1vYmlsZSI6Ijk3NDEzNzE1MjciLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI5MzUzNDciLCJnaXZlbl9uYW1lIjoiS0FOQUtBUkFKIFNSSURIQVIiLCJlbWFpbCI6InNlcmVuZGlwaXR5LnNyaWRoYXJAZ21haWwuY29tIn0.FRT0baN7HUUwZ9DVQ5FyGsx30HF7uacR_XI35wG8U719pCRWIrIJaka6Vo--IC16kxn9vrkhsdadBZEbCZ7LWMwNNMgogFSvbkyTo5g0aiQrL2DDuhdXnjgCm-g-xB2Ug68hgQ72J1Vp0KRL1D1SbeWiQQygCNlAKNFFP4aG9h99zjEwepOTNgcnIlt2VWjOK1C6H-wGM_uliv5TrdwXmyXNWVWP1s0W0YxB7m96wKLTEaUbVOhcka8VYiiVE6H8PsfbweHvnNjW8AtSZV02xnZYe-cxWP3k6jhyRYXYD37tJ-Pbw-MLJg3QJXXon2VIu1XGt9w1WCRoHFWA16Vv_g",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTYzMDU3NTAsImlhdCI6MTY5NjIxOTM1MCwianRpIjoiZTdmNDZiNjctNmViYS00NDk4LWI5MjItNTgxMTJhZTUyMGIyIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIxZTA2NjY4LTA5YmYtNGY2Yi05MDYwLTljODkyYTQ0Mjk0YSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImZmYmU4MjJhLTBlNGUtNDA0MS04YTMwLWRhMTA3YjY5OGRlNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiZmZiZTgyMmEtMGU0ZS00MDQxLThhMzAtZGExMDdiNjk4ZGU1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkzNTM0NyIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJLQU5BS0FSQUogU1JJREhBUiIsIm1vYmlsZSI6Ijk3NDEzNzE1MjciLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI5MzUzNDciLCJnaXZlbl9uYW1lIjoiS0FOQUtBUkFKIiwiZmFtaWx5X25hbWUiOiJTUklESEFSIiwiZW1haWwiOiJzZXJlbmRpcGl0eS5zcmlkaGFyQGdtYWlsLmNvbSJ9.MZxVIuVey68eip2J1pEcSzo-fP4Fg0cXKYQU5hYaNwvH7AXEgeDGlSsrOtYg3wdSmSr264jyz3Xf-UT9hg1zlytQHgLM_C4_fS9_KCQlmZb_m-RlGONkKYfoj0AH0YSSFRMFfx6vRDKwQ1JIY6ozMFM80pfxJVyRqsge8L2Omqsqhs8Y89b6AM5xzLn0n-g-hrn9uyyrZBY_CjhMbB1OR6F16aJMpdaEdpLtMk4e9sZzrKRfEbT5B1HMpqh67w-8GzAzMwqyKc1UkaFP9nZ3GRnnVDpz6C6vkxis5Ij9zWtYDmxlBLPpc6utn1X4aHLzxwIH_9GCHdB8tZr9SNSFTA",
             "mobile_number": "+919741371527",
             "percentageRisk": {
                 "MPWizard": 0.05
             },
-            "current_capital": 53360.79,
-            "yesterday_PnL": -2687.15,
-            "expected_morning_balance": 50673.64
+            "current_capital": 49423.55,
+            "yesterday_PnL": -237.22,
+            "expected_morning_balance": 49423.55
         },
         "vinay": {
             "username": "935325",
@@ -125,14 +125,14 @@
             "app_code": "kKThxMchucTIuEs",
             "api_key": "xk0s3ZYuDK4K9hAlFErG68J5enGIEbajbmNxcYAJp0opPLofEFABilIh6LDn9oDtavhJ3NKarJLaVAmcIPZcxSCMMWITxBNFgPl1nNlQIUV7hqtnAzfbeife4DnZQHC7",
             "totp_access": "HYUHYOKAUBPEVZNNIHJLICGHSQNBQQDR",
-            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDgzMDgsImlhdCI6MTY5NDY2MTkwOCwianRpIjoiYjAxNDkyN2YtNTRjZS00YzE1LTliYzAtOWFiZjliOWQ4MTU4IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjMwNWNjYTNiLTFmYmQtNDQ1Yi1iNGZkLWU0ZTY0ZGVmNTI0NSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6Ijk1OTVhMzkxLWNkN2UtNDA2YS1iMWU1LTNlMTZjNDk3ZTdkMyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiOTU5NWEzOTEtY2Q3ZS00MDZhLWIxZTUtM2UxNmM0OTdlN2QzIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkzNTMyNSIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJESE9OREFMRSBKQU5BUkRIQU4gVklOQVkiLCJtb2JpbGUiOiI5OTE2ODM4OTE5IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiOTM1MzI1IiwiZ2l2ZW5fbmFtZSI6IkRIT05EQUxFIEpBTkFSREhBTiBWSU5BWSIsImVtYWlsIjoic2VyZW5kaXBpdHkudmluYXlAZ21haWwuY29tIn0.I6sZxIoZrxxrOyJli3YQsWNK5_LtO2Up-eRlo_CV9ulfEiOuudsTvagFxh05BCCg9f4lpvoJ8wOZI31Cdkkt4JdELWkz3Nv5t7FNIMryBoPgVeiecMdWOVi9FVZ-mEgVCvJKSzFF6KGr27yJzxBbJ38hn8vcktu63zYfYpSI5DGXgxp5LI9VrVlI8UI-mXnZGMh8WxPktIjhPzURm_gW2Z6bPFVQ0UKn5osvd8xH8HEzJWOOfimYYRI0vBL6TW0IBlX9IjF5citXYM63wweZsMryXKpfy6Sbr1uheI2hhI6jCeaT3Ih5m0Vnritd4N448GhxcqA_lPjp660MT4o_SQ",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTYzMDc4NTIsImlhdCI6MTY5NjIyMTQ1MiwianRpIjoiN2VlMGExZWMtNTcyNy00MmVhLTg4Y2ItNWQ1ODZmMWQzMzUzIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjMwNWNjYTNiLTFmYmQtNDQ1Yi1iNGZkLWU0ZTY0ZGVmNTI0NSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6Ijc2MTExOWEwLWQ4NzMtNDc1Ny1iOWNlLTFmNzE0ZjE2Njc4NCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNzYxMTE5YTAtZDg3My00NzU3LWI5Y2UtMWY3MTRmMTY2Nzg0IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjkzNTMyNSIsImNsaWVudFJvbGUiOlsiR1VFU1RfVVNFUiIsIkFDVElWRV9VU0VSIl0sIm5hbWUiOiJESE9OREFMRSBWSU5BWSIsIm1vYmlsZSI6Ijk5MTY4Mzg5MTkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI5MzUzMjUiLCJnaXZlbl9uYW1lIjoiREhPTkRBTEUiLCJmYW1pbHlfbmFtZSI6IlZJTkFZIiwiZW1haWwiOiJzZXJlbmRpcGl0eS52aW5heUBnbWFpbC5jb20ifQ.S4hjxQ3OxolJNpg4BXl8RBM_OqRy2hTPXjqzQva3ASv6XWHTSZu8qigdZ6eWdvAcayT2tBVNFwTCf4DWxi0HK8tqjwPUD59LG2XgEykbSXOxLD5YDjteUBOleE3C-tP9MqxsoXmlmM1FwpB8fOZducPaYrehHh2JaFSLmltfHwn-F--MKhofSgHiID7neHdL5iXx-TWIjG3Uqkf8NzLPLblhObzNp1HjWSw035Hnat3b7RK5BZLsQwu8JGa9n9xBrKHXEN9GdOtuzbCg2VN0gP-Y7pSn5UCrD-00cDXi7WZJj7HPAdl9ClThfKdqQtImAV61MXZkdR6OxlRkkyG_0w",
             "mobile_number": "+919916838919",
             "percentageRisk": {
                 "MPWizard": 0.03
             },
-            "current_capital": 45558.65,
-            "yesterday_PnL": -1697.24,
-            "expected_morning_balance": 43861.41
+            "current_capital": 39874.66,
+            "yesterday_PnL": -106.44,
+            "expected_morning_balance": 39874.66
         },
         "vinod": {
             "username": "1008309",
@@ -142,14 +142,14 @@
             "app_code": "UcBJnUXcaGKCNjg",
             "api_key": "a5FhPC3QX0KebQlOBPjBzpt621T8lEAAyN7bduK3Qn9fUIhuTZXzM4AOkS4Yp5hRLKBZl4Ji5UiCG9qD4Gjnf1GesVGPyjUurODdBVJjo9AhptVlZ2cfU6pbldOo56fS",
             "totp_access": "OIRGHCBGHVIXRETMMZYCNJNYHYFMMTYJ",
-            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ3NDgzMDksImlhdCI6MTY5NDY2MTkwOSwianRpIjoiZjAzYmI1ZjEtNmRmMC00YjlhLWE1ODMtODJiYmI5ZmZhZjRkIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjAwOGVkOGE3LTQ0NTEtNGNlMS1hNzU4LTU2YjgxNDBmNGJmYSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImY3MWQyODk1LTBkYTAtNGQ4Ny04OTNhLWNhMjJjZGE4NmRhOCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiZjcxZDI4OTUtMGRhMC00ZDg3LTg5M2EtY2EyMmNkYTg2ZGE4IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjEwMDgzMDkiLCJjbGllbnRSb2xlIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdLCJuYW1lIjoiVklOT0QgVkVOS0FURVNIQVBQQSBISVJFQkFMTEEiLCJtb2JpbGUiOiI5Njg2MzU3Mzc2IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiMTAwODMwOSIsImdpdmVuX25hbWUiOiJWSU5PRCBWRU5LQVRFU0hBUFBBIEhJUkVCQUxMQSIsImVtYWlsIjoic2FuZGVlcGt1bWFya3lzMzBAZ21haWwuY29tIn0.RjE3sWtmj1rCmi93kV3F1-ZSVbEMzQyw-vsXT_jTswtsB9sCgKycAgr_-Jzu2N0k-kq6umE_EsH3srx4yQxEt1CiulMU8VZyeu1hRElQbkGP7ES1hnbxENhga8EijHrwl8WBVvonJ5dgs-3HCZEF2AMp6feno9kqeY5GO2qibAMyg652jKVQLwAbwcM1qdObnI39C6B5jp9zteZrwcRgn51AsN4qD-nfEK2vOpf2tMrjErnXDNEbD53p4fbStHi3EdQYTvtegZE1XJnDXWGxcYTI4tCgs4K0FC2zfpm1itx3ga951zVwdgoXuNNjauUvFax05ojVbwofsUjWG0cYaw",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTYzMDc4NTMsImlhdCI6MTY5NjIyMTQ1MywianRpIjoiOWFiM2FiMTctMDBiNi00Mzg5LWFhYTgtNWQ3MGI2MjEwNmU2IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjAwOGVkOGE3LTQ0NTEtNGNlMS1hNzU4LTU2YjgxNDBmNGJmYSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjI0NTRmNDAzLTcxZmMtNGYxNy1hY2M5LTRjNmI1ZTBjMWE0MyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMjQ1NGY0MDMtNzFmYy00ZjE3LWFjYzktNGM2YjVlMGMxYTQzIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjEwMDgzMDkiLCJjbGllbnRSb2xlIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdLCJuYW1lIjoiVklOT0QgSElSRUJBTExBIiwibW9iaWxlIjoiOTY4NjM1NzM3NiIsInByZWZlcnJlZF91c2VybmFtZSI6IjEwMDgzMDkiLCJnaXZlbl9uYW1lIjoiVklOT0QiLCJmYW1pbHlfbmFtZSI6IkhJUkVCQUxMQSIsImVtYWlsIjoic2FuZGVlcGt1bWFya3lzMzBAZ21haWwuY29tIn0.RQ_kvmqZskr_ru4iFs4p8LG8RBrvgL3hqKGfGqDXXzmXVSaQpD1MdbxOQZCMRmItktWgeT9NFXIAxqQECowGFFvyImRs0p6dggEP9TnjrJCwhpFnuQb6LK-Dobks9TFsiTpVtTkvMkBYPm5TTEWK6UtlO8b4lArl2Pa5l5MAegVNaMh8LbhO2CjVtcIvp1E7ZfS4fKel1ezZeCUb25JtTBeXfecKunFGqkJGaS9Lt7Va2pZMGGaOcXxjwPNEI4uPN14CJmiYR1nqtXFlQbm4Q_LFaQs03cdTD_4KCq7gNCyQKHKaNbEqU06idx8Ki8-vRbhaGW3bRUTjojZTbM7-YQ",
             "mobile_number": "+919686357376",
             "percentageRisk": {
                 "MPWizard": 0.025
             },
-            "current_capital": 60158.19,
-            "yesterday_PnL": -1715.0,
-            "expected_morning_balance": 58443.19
+            "current_capital": 59187.92,
+            "yesterday_PnL": -156.06,
+            "expected_morning_balance": 59187.92
         },
         "veena": {
             "username": "AB117607",
@@ -183,8 +183,11 @@
             "expected_morning_balance": 460087.07
         },
         "accounts_to_trade": [
-            "amol"
-
+            "brijesh",
+            "sridhar",
+            "vinay",
+            "vinod",
+            "venkatesh"
         ]
     }
 }
