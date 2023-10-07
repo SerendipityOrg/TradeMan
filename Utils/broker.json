@@ -151,43 +151,57 @@
             "yesterday_PnL": -156.06,
             "expected_morning_balance": 59187.92
         },
-        "veena": {
-            "username": "AB117607",
-            "password": "Veena@999",
-            "twoFA": "1971",
-            "api_secret": "jftQLCPu1NXtGDjYgTnJSa90oiOPPZ4QGoPX7HyzNxVCJsQnSlG0vyvOBXIOd0Cx2J0s738juZPhngxUm0oRD3O3PZfs6p84S6Ns",
-            "app_code": "8J7vxnsxrQ8Qpo0",
-            "api_key": "KZ2gGEyfvKC2x7KN4m1EMRU0aOQyNq2X1hcPKsdZoI8FgbjzLfLQva3IdJRmzntJyGH1f7sCsgvzLiKCE5l80iLVrRIGjBn7bn8vPe03BgmEYsLpsr2cMVYOYeX6LWNs",
-            "totp_access": "NAMPXPILOZZKQXECENDFRGGRTXDHAXNI",
-            "session_id": "yia7Z9oak0r1ayUjvJO6ix5a9xgXTpQaRjaCaMXaIhuouleUjcBulrPePLaMyVVeuMWcga57vpp3EP6VfvJq8W4VQJlb2V7BW3mUEvZy3ZkR3zjvPh5QBilv5b5itBtTvAVyW8XulngmXDdpx6oOMCidYqTIf4R8YlmkVrJ7b3aeylqseDsWheJmehcyKS8NHPJSLfbyrg9TtjM5N6PR7KLQPofSvxQ1MWveja9RJW7FALqfY1AXK1sP9LddEzW8",
-            "percentageRisk": {},
-            "current_capital": 90548.36
-        },
-        "amol": {
-            "username": "AB068818",
+        "arjun": {
+            "username": "1048640",
             "password": "K@nnada333",
-            "twoFA": "1995",
-            "api_secret": "pyhfGRbPJJx6BaB2mNfCxMnmWWn7OqMkioVeSn31ujhyxhfGx3C3FTaqZ7RYU6gmC9mx1BNZ3BtHRW83zR86n6agpgDGU0j5g5Ur",
-            "app_code": "2ks6EmUzV12vAOz",
-            "api_key": "CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y",
-            "totp_access": "ARIAHUQYKPMKAASEOVNVZXCKOZGXBHPK",
-            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ4MzUxNTEsImlhdCI6MTY5NDc0ODc1MSwianRpIjoiZjE1NWU4MzMtMWIzOC00ZDU0LWIzZjMtZTMzZmQxY2U3ZmQwIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIwNWUzMmFlLTk2ZmEtNGU3Ni1hYTU3LTJlMGViY2E0OWZlMiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImVmOWJkYWZmLWFhNTctNGIzNi05Y2EzLWNkYTBkODEyODkyYiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiZWY5YmRhZmYtYWE1Ny00YjM2LTljYTMtY2RhMGQ4MTI4OTJiIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IkFCMDY4ODE4IiwiY2xpZW50Um9sZSI6WyJHVUVTVF9VU0VSIiwiQUNUSVZFX1VTRVIiXSwibmFtZSI6IkFNT0wgS0lUVFVSIiwibW9iaWxlIjoiODE5NzEzNzAwNyIsInByZWZlcnJlZF91c2VybmFtZSI6ImFiMDY4ODE4IiwiZ2l2ZW5fbmFtZSI6IkFNT0wiLCJmYW1pbHlfbmFtZSI6IktJVFRVUiIsImVtYWlsIjoiYW1vbGtpdHR1cjFAZ21haWwuY29tIn0.RImfdzNnHxTqINC6cWQw4qyv24OsmxyNameu60ak5eL3qApRsPkVio__fmgmf8M_JSastSGCOsV1BxmiQixtz_v6wS7uWLXz3ZOPV1S5Vm1t0CuJc5HVDyxcVnDLf10yWeu3bac0vAjDBl44JYIVSudUePM_AhTBIWmylbVBlAlCWc4ZKH5lHwVnmh7uogi5gSKW1cxxPRcLAEF2KK3y0QBQtg27zu9O9R8nH0OnjdTDLEXMRSgT2lqxYQ0mzN8mvvTInjVdilpdbqBeWaAghaRpolEGflyWeJI_MwQbT31NQhZh7HUdpGRDDle-Y8lR2xDoZEdkir5RdX4uzw4jMg",
+            "twoFA": "1994",
+            "api_secret": "vrATbBOLsXAWapOZDmDlbatBRmKQXRUWsRSUWXlpabLZaDCxXGptAOBjUUBReQXjUBVKtiJXNEkyhoLIhqMlEgQmlnzjqPmWqMmJ",
+            "app_code": "QOHICdmQbKsDFVn",
+            "api_key": "4p9dh49AEV34bzT272sh7r9PrCcd7QNlctNmHhP6jc7PU0TnObACHhLYrEouWVibX5pT2eGlq69KsExyWEiOCdm2zbRntEHYlkkGiceaRM5crZBUfQtVmz2jiRtaapcG",
+            "totp_access": "AZBOORFSLYOPVHXEVKSKFSKMGKVIUFIQ",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTYzMDc4NTMsImlhdCI6MTY5NjIyMTQ1MywianRpIjoiOWFiM2FiMTctMDBiNi00Mzg5LWFhYTgtNWQ3MGI2MjEwNmU2IiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjAwOGVkOGE3LTQ0NTEtNGNlMS1hNzU4LTU2YjgxNDBmNGJmYSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6IjI0NTRmNDAzLTcxZmMtNGYxNy1hY2M5LTRjNmI1ZTBjMWE0MyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMjQ1NGY0MDMtNzFmYy00ZjE3LWFjYzktNGM2YjVlMGMxYTQzIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IjEwMDgzMDkiLCJjbGllbnRSb2xlIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdLCJuYW1lIjoiVklOT0QgSElSRUJBTExBIiwibW9iaWxlIjoiOTY4NjM1NzM3NiIsInByZWZlcnJlZF91c2VybmFtZSI6IjEwMDgzMDkiLCJnaXZlbl9uYW1lIjoiVklOT0QiLCJmYW1pbHlfbmFtZSI6IkhJUkVCQUxMQSIsImVtYWlsIjoic2FuZGVlcGt1bWFya3lzMzBAZ21haWwuY29tIn0.RQ_kvmqZskr_ru4iFs4p8LG8RBrvgL3hqKGfGqDXXzmXVSaQpD1MdbxOQZCMRmItktWgeT9NFXIAxqQECowGFFvyImRs0p6dggEP9TnjrJCwhpFnuQb6LK-Dobks9TFsiTpVtTkvMkBYPm5TTEWK6UtlO8b4lArl2Pa5l5MAegVNaMh8LbhO2CjVtcIvp1E7ZfS4fKel1ezZeCUb25JtTBeXfecKunFGqkJGaS9Lt7Va2pZMGGaOcXxjwPNEI4uPN14CJmiYR1nqtXFlQbm4Q_LFaQs03cdTD_4KCq7gNCyQKHKaNbEqU06idx8Ki8-vRbhaGW3bRUTjojZTbM7-YQ",
+            "mobile_number": "+917411282101",
             "percentageRisk": {
-                "AmiPy": 250000,
-                "MPWizard": 0.01,
-                "Siri": 0.01,
-                "Overnight_Options": 200000
+                "MPWizard": 0.025
             },
-            "current_capital": 500000,
-            "yesterday_PnL": 6870.07,
-            "expected_morning_balance": 460087.07
-        },
-        "accounts_to_trade": [
-            "brijesh",
-            "sridhar",
-            "vinay",
-            "vinod",
-            "venkatesh"
-        ]
+            "veena": {
+                "username": "AB117607",
+                "password": "Veena@999",
+                "twoFA": "1971",
+                "api_secret": "jftQLCPu1NXtGDjYgTnJSa90oiOPPZ4QGoPX7HyzNxVCJsQnSlG0vyvOBXIOd0Cx2J0s738juZPhngxUm0oRD3O3PZfs6p84S6Ns",
+                "app_code": "8J7vxnsxrQ8Qpo0",
+                "api_key": "KZ2gGEyfvKC2x7KN4m1EMRU0aOQyNq2X1hcPKsdZoI8FgbjzLfLQva3IdJRmzntJyGH1f7sCsgvzLiKCE5l80iLVrRIGjBn7bn8vPe03BgmEYsLpsr2cMVYOYeX6LWNs",
+                "totp_access": "NAMPXPILOZZKQXECENDFRGGRTXDHAXNI",
+                "session_id": "yia7Z9oak0r1ayUjvJO6ix5a9xgXTpQaRjaCaMXaIhuouleUjcBulrPePLaMyVVeuMWcga57vpp3EP6VfvJq8W4VQJlb2V7BW3mUEvZy3ZkR3zjvPh5QBilv5b5itBtTvAVyW8XulngmXDdpx6oOMCidYqTIf4R8YlmkVrJ7b3aeylqseDsWheJmehcyKS8NHPJSLfbyrg9TtjM5N6PR7KLQPofSvxQ1MWveja9RJW7FALqfY1AXK1sP9LddEzW8",
+                "percentageRisk": {},
+                "current_capital": 90548.36
+            },
+            "amol": {
+                "username": "AB068818",
+                "password": "K@nnada333",
+                "twoFA": "1995",
+                "api_secret": "pyhfGRbPJJx6BaB2mNfCxMnmWWn7OqMkioVeSn31ujhyxhfGx3C3FTaqZ7RYU6gmC9mx1BNZ3BtHRW83zR86n6agpgDGU0j5g5Ur",
+                "app_code": "2ks6EmUzV12vAOz",
+                "api_key": "CBomUKElkhSmqOOIxSxeSMy49fANnfHmb5O85jkx9yTn6HhsPLlNBILrqqRQsrbaLTzK0MMFUHqOOOo2Ec5GllsLA3jdhkqHsjiEm0NqGFv7uRArn7r2gY5523Ur7M0y",
+                "totp_access": "ARIAHUQYKPMKAASEOVNVZXCKOZGXBHPK",
+                "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0.eyJleHAiOjE2OTQ4MzUxNTEsImlhdCI6MTY5NDc0ODc1MSwianRpIjoiZjE1NWU4MzMtMWIzOC00ZDU0LWIzZjMtZTMzZmQxY2U3ZmQwIiwiaXNzIjoiaHR0cHM6Ly9hYjEuYW1vZ2EudGVjaC9hbXNzby9yZWFsbXMvQWxpY2VCbHVlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIwNWUzMmFlLTk2ZmEtNGU3Ni1hYTU3LTJlMGViY2E0OWZlMiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFsaWNlLWtiIiwic2Vzc2lvbl9zdGF0ZSI6ImVmOWJkYWZmLWFhNTctNGIzNi05Y2EzLWNkYTBkODEyODkyYiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDozMDAyIiwiaHR0cDovL2xvY2FsaG9zdDo1MDUwIiwiaHR0cDovL2xvY2FsaG9zdDo5OTQzIiwiaHR0cDovL2xvY2FsaG9zdDo5MDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtYWxpY2VibHVla2IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFsaWNlLWtiIjp7InJvbGVzIjpbIkdVRVNUX1VTRVIiLCJBQ1RJVkVfVVNFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiZWY5YmRhZmYtYWE1Ny00YjM2LTljYTMtY2RhMGQ4MTI4OTJiIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVjYyI6IkFCMDY4ODE4IiwiY2xpZW50Um9sZSI6WyJHVUVTVF9VU0VSIiwiQUNUSVZFX1VTRVIiXSwibmFtZSI6IkFNT0wgS0lUVFVSIiwibW9iaWxlIjoiODE5NzEzNzAwNyIsInByZWZlcnJlZF91c2VybmFtZSI6ImFiMDY4ODE4IiwiZ2l2ZW5fbmFtZSI6IkFNT0wiLCJmYW1pbHlfbmFtZSI6IktJVFRVUiIsImVtYWlsIjoiYW1vbGtpdHR1cjFAZ21haWwuY29tIn0.RImfdzNnHxTqINC6cWQw4qyv24OsmxyNameu60ak5eL3qApRsPkVio__fmgmf8M_JSastSGCOsV1BxmiQixtz_v6wS7uWLXz3ZOPV1S5Vm1t0CuJc5HVDyxcVnDLf10yWeu3bac0vAjDBl44JYIVSudUePM_AhTBIWmylbVBlAlCWc4ZKH5lHwVnmh7uogi5gSKW1cxxPRcLAEF2KK3y0QBQtg27zu9O9R8nH0OnjdTDLEXMRSgT2lqxYQ0mzN8mvvTInjVdilpdbqBeWaAghaRpolEGflyWeJI_MwQbT31NQhZh7HUdpGRDDle-Y8lR2xDoZEdkir5RdX4uzw4jMg",
+                "percentageRisk": {
+                    "AmiPy": 250000,
+                    "MPWizard": 0.01,
+                    "Siri": 0.01,
+                    "Overnight_Options": 200000
+                },
+                "current_capital": 500000,
+                "yesterday_PnL": 6870.07,
+                "expected_morning_balance": 460087.07
+            },
+            "accounts_to_trade": [
+                "brijesh",
+                "sridhar",
+                "vinay",
+                "vinod",
+                "venkatesh"
+            ]
+        }
     }
 }

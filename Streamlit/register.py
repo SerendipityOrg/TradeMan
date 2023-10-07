@@ -27,6 +27,7 @@ if not firebase_admin._apps:
         'storageBucket': storage_bucket
     })
 
+
 class SessionState:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -270,7 +271,7 @@ def register_page():
             error_message = "Please fill the following fields: " + \
                 ", ".join(unfilled_fields)
             st.error(error_message)
-                
+
     # Function to save data to broker.json file
     def save_to_json(data):
         with open('broker.json', 'w') as file:
@@ -336,6 +337,7 @@ def register_page():
     # Save the formatted data to broker.json when the user clicks the save button
     if st.button("Save to broker.json"):
         save_to_json(data_to_save)
+
 
 if __name__ == "__main__":
     register_page()
