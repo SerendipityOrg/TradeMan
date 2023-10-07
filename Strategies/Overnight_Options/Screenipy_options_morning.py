@@ -45,7 +45,7 @@ def fetch_order_details_for_user(user, broker):
                 "base_symbol": index,
                 "option_type": option_type,
                 "strike_prc": strike_price,
-                "transcation": transaction_type
+                "transaction": transaction_type
             }
         else:
             order_details_future = {
@@ -53,7 +53,7 @@ def fetch_order_details_for_user(user, broker):
                 "base_symbol": index,
                 "option_type": 'FUT',
                 "strike_prc": 0,
-                "transcation": transaction_type
+                "transaction": transaction_type
             }
 
     return order_details_opt, order_details_future

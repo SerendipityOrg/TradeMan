@@ -1,19 +1,28 @@
-
 import pandas as pd
-import json
+import json,os,sys,io
 from openpyxl import load_workbook
-import os
-import sys
-import io
+import general_calc as gc
 from babel.numbers import format_currency
 from telethon.sync import TelegramClient
 from calculations.taxcalculation import *
 import firebase_admin
 from firebase_admin import credentials, storage, db
+from dotenv import load_dotenv
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+BROKER_DIR = os.path.join(ROOT_DIR, '..', 'Brokers')
+env_file_path = os.path.join(BROKER_DIR, '.env')
+env_file_path = os.path.abspath(env_file_path)
 
-api_id = '22941664'
-api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
+load_dotenv(env_file_path)
+
+api_id = os.getenv('telethon_api_id')
+api_hash = os.getenv('telethon_api_hash')
+
+script_dir = os.path.dirname(os.path.realpath(__file__))
+broker_filepath = os.path.join(script_dir, "broker.json")
+json_dir = os.path.join(script_dir, "users")
+excel_dir = os.path.join(script_dir, "excel")
 
 # Change the standard output encoding to UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -244,13 +253,7 @@ def process_overnight_options_trades(overnight_options_trades):
     return result
 
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-broker_filepath = os.path.join(script_dir, "broker.json")
-json_dir = os.path.join(script_dir,'..','UserProfile', "json")
-excel_dir = os.path.join(script_dir,'..','UserProfile', "excel")
-
-with open(broker_filepath) as file:
-    data = json.load(file)
+data = gc.read_json_file(broker_filepath)
 
 # Initialize an empty list for the accounts to trade
 user_list = []
@@ -265,8 +268,9 @@ for broker, broker_data in data.items():
 
 for broker, user in user_list:
     # Load the JSON data
-    with open(os.path.join(json_dir, f"{user}.json")) as file:
-        user_data = json.load(file)
+    # with open(os.path.join(json_dir, f"{user}.json")) as file:
+    #     user_data = json.load(file)
+    user_data = gc.read_json_file(os.path.join(json_dir, f"{user}.json"))
 
     phone_number = data[broker][user]["mobile_number"]
 

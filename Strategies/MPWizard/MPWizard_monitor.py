@@ -107,7 +107,7 @@ class OrderMonitor:
             print(f"{cross_type} at {ltp} for {name}!")
             
             order_details = {
-                "transcation":"BUY",
+                "transaction":"BUY",
                 "base_symbol" : name,
                 "option_type" : option_type,
                 "strike_prc" : strikeprc,

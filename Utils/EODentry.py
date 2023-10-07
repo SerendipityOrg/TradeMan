@@ -1,10 +1,10 @@
 import os,sys
-import Utils.general_calc as general_calc 
+import general_calc as general_calc 
 from datetime import datetime
 from pprint import pprint
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-calc_dir = os.path.join(script_dir, "Brokers")
+calc_dir = os.path.join(script_dir, '..',"Brokers")
 sys.path.append(calc_dir)
 
 import place_order_calc as place_order_calc
@@ -66,7 +66,7 @@ def simplify_aliceblue_order(detail):
 
 
 def load_userdata():
-    return general_calc.read_json_file(os.path.join(script_dir, "Utils","broker.json"))
+    return general_calc.read_json_file(os.path.join(script_dir,"broker.json"))
 
 json_data = load_userdata()
 

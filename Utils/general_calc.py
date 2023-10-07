@@ -148,7 +148,6 @@ def get_tokens(base_symbol, expiry_date, option_type, strike_prc=0):
 
     # Reading NFO.csv
     nfo_df = pd.read_csv(os.path.join(script_dir, 'NFO.csv'))
-
     if option_type == 'FUT':
         option_type = 'XX'
     if strike_prc == 0:
