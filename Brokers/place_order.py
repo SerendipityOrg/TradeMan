@@ -70,7 +70,7 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             return
         
         details = {
-            'transaction_type': order_details['transcation'],
+            'transaction_type': order_details['transaction'],
             'base_symbol': order_details['base_symbol'],
             'strike_prc': order_details['strike_prc'],
             'option_type': order_details['option_type'],
@@ -95,11 +95,13 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
         if strategy == 'MPWizard' or strategy == 'Siri':
             price = InstrumentMonitor._fetch_ltp_for_token(monitor, token)
             limit_prc = float(price) - order_details['stoploss_points']
-            print(f"Limit price is {limit_prc}")
             if limit_prc < 0:
                 limit_prc = 1.0
+            #change the order_details['transaction] to 'SELL'
+            order_details['transaction'] = 'SELL'
+            
             order_func ={
-                        'transaction_type': 'SELL',
+                        'transaction_type': order_details['transaction'],
                         'tradingsymbol': trading_symbol,
                         'user': user,
                         'broker': broker,
@@ -110,6 +112,9 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
                         'limit_prc': round(limit_prc),
                         'price_ref' : order_details['stoploss_points']
                     }
+            order_tag = place_order_calc.get_trade_id(strategy, signal=signal, order_details=order_details)
+            if order_tag is not None:
+                order_func['order_tag'] = order_tag
             place_order_func(strategy, order_func , qty=qty)
         #calculate the target based on the priceref
             target = order_details.get('target', round(float(avg_prc[1]) + (order_details['stoploss_points'] / 2)))
