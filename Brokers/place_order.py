@@ -111,6 +111,7 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             if order_tag is not None:
                 order_func['order_tag'] = order_tag
             place_order_func(strategy, order_func , qty=qty)
+            order_details['transaction'] = 'BUY'
         #calculate the target based on the priceref
             target = order_details.get('target', round(float(avg_prc) + (order_details['stoploss_points'] / 2)))
             print(f"Target is {target}")
