@@ -19,50 +19,55 @@ def get_strategy_json(strategy_name):
     strategy_json = general_calc.read_json_file(strategy_json_path)
     return strategy_json,strategy_json_path
 
-def update_strategy_json(strategy_json_path, strategy_json,new_trade_id):
-    strategy_json['last_trade_id'] = new_trade_id
-    general_calc.write_json_file(strategy_json_path, strategy_json)
-
-trade_ids_for_symbols = {}
+current_exit_signal_cache = {}
 
 def get_trade_id(strategy, signal=None, order_details=None):
-    # Fetch the JSON for the given strategy
-    strategy_json,strategy_json_path = get_strategy_json(strategy)    
+    global current_exit_signal_cache  # Use this only if the function is at the global scope
+
+    print("get_trade_id", strategy, signal, order_details)
+    strategy_json, strategy_json_path = get_strategy_json(strategy)
+
+    next_trade_id_str = strategy_json["next_trade_id"]
+    strategy_prefix = ''.join([i for i in next_trade_id_str if not i.isdigit()])
+    next_trade_id_num = int(''.join([i for i in next_trade_id_str if i.isdigit()]))
     
-    # Extract the last trade_id
-    last_trade_id_str = strategy_json["last_trade_id"]
-    
-    # Extract the numerical part and strategy prefix
-    strategy_prefix = ''.join([i for i in last_trade_id_str if not i.isdigit()])
-    last_trade_id_num = int(''.join([i for i in last_trade_id_str if i.isdigit()]))
-    
-    is_entry = False
     is_exit = False
 
     if strategy in ["AmiPy", "Overnight_Options"]:
-        entry_signals = ["ShortSignal", "LongSignal", "Afternoon"]
         exit_signals = ["ShortCoverSignal", "LongCoverSignal", "Morning"]
-        if signal in entry_signals:
-            is_entry = True
-        elif signal in exit_signals:
+        if signal in exit_signals:
             is_exit = True
     else:
-        is_entry = order_details['transcation'].lower() == 'buy'
-        is_exit = order_details['transcation'].lower() == 'sell'
-    if is_entry:
-        next_trade_id_num = last_trade_id_num + 1
-        next_trade_id = strategy_prefix + str(next_trade_id_num)
-        if strategy == "MPWizard" and order_details['tradingsymbol']:
-            trade_ids_for_symbols[order_details['tradingsymbol']] = next_trade_id
-        update_strategy_json(strategy_json_path, strategy_json,next_trade_id)
-    elif is_exit:
-        if strategy == "MPWizard" and order_details['tradingsymbol'] and order_details['tradingsymbol'] in trade_ids_for_symbols:
-            next_trade_id = trade_ids_for_symbols[order_details['tradingsymbol']]
-        else:
-            next_trade_id = strategy_prefix + str(last_trade_id_num)
+        is_exit = order_details.get('transaction', '').lower() == 'sell' or order_details.get('transaction_type', '').lower() == 'sell'
+
+    current_trade_id = strategy_prefix + str(next_trade_id_num)
+
+    if is_exit:
+        current_trade_id += "_exit"
     else:
-        next_trade_id = last_trade_id_str
-    return next_trade_id
+        current_trade_id += "_entry"
+    
+    # Store trade_ids that are placed today in the JSON under the `today_orders` tag
+    if "today_orders" not in strategy_json:
+        strategy_json["today_orders"] = []
+
+    # Check if the signal is in our cache
+    if is_exit:
+        if signal in current_exit_signal_cache:
+            # Use the cached trade_id for the current signal
+            return current_exit_signal_cache[signal]
+        else:
+            # Store the current trade_id in the cache for this signal
+            current_exit_signal_cache[signal] = current_trade_id
+
+        # Increment the trade_id after using it for the current exit order and update the JSON.
+        strategy_json["today_orders"].append(strategy_prefix + str(next_trade_id_num))
+        next_trade_id_num += 1
+        new_trade_id = strategy_prefix + str(next_trade_id_num)
+        strategy_json["next_trade_id"] = new_trade_id
+        general_calc.write_json_file(strategy_json_path, strategy_json)
+
+    return current_trade_id
 
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, avg_price, order_details, user_details,strategy):

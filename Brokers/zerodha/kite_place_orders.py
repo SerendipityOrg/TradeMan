@@ -185,3 +185,7 @@ def exit_order(exit_order_func):
     )
     print("order_id",order_id)
     
+def get_order_details(user_details):
+    kite = create_kite(user_details)
+    orders = kite.orders()
+    return orders

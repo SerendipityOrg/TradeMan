@@ -184,3 +184,7 @@ def exit_order(exit_order_func):
     )
     print("order_id",order_id)
 
+def get_order_details(user_details):
+    alice = create_alice(user_details)
+    order_details = alice.get_order_history('')
+    return order_details

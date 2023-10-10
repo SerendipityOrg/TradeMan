@@ -58,7 +58,7 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             return
         
         details = {
-            'transaction_type': order_details['transcation'],
+            'transaction_type': order_details['transaction'],
             'base_symbol': order_details['base_symbol'],
             'strike_prc': order_details['strike_prc'],
             'tradingsymbol': trading_symbol,
@@ -76,7 +76,11 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
         
         if signal is not None:
             details['signal'] = signal
-            
+        
+        order_tag = place_order_calc.get_trade_id(strategy, signal=signal, order_details=order_details)
+        if order_tag is not None:
+                details['order_tag'] = order_tag
+
         _,avg_prc = place_order_func(strategy, details, qty=qty)
         #######################price ref can be none 
         
@@ -85,10 +89,14 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             if 'target' not in order_details:
                 order_details['target'] = round(float(option_ltp) + (order_details['stoploss_points'] / 2))
             limit_prc = float(option_ltp) - order_details['stoploss_points']
+            limit_prc = round(limit_prc)
             if limit_prc < 0:
                 limit_prc = 1.0
+            #change the order_details['transaction] to 'SELL'
+            order_details['transaction'] = 'SELL'
+            
             order_func ={
-                        'transaction_type': 'SELL',
+                        'transaction_type': order_details['transaction'],
                         'tradingsymbol': trading_symbol,
                         'user': user,
                         'broker': broker,
@@ -99,7 +107,11 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
                         'limit_prc': round(limit_prc),
                         'price_ref' : order_details['stoploss_points']
                     }
+            order_tag = place_order_calc.get_trade_id(strategy, signal=signal, order_details=order_details)
+            if order_tag is not None:
+                order_func['order_tag'] = order_tag
             place_order_func(strategy, order_func , qty=qty)
+            order_details['transaction'] = 'BUY'
         #calculate the target based on the priceref
             target = order_details.get('target', round(float(avg_prc) + (order_details['stoploss_points'] / 2)))
             print(f"Target is {target}")
@@ -124,6 +136,7 @@ def modify_orders(token=None,monitor=None,order_details=None):
         order_details['target'] = token_data['target']
         order_details['limit_prc'] = token_data['limit_prc']
         order_details['strategy'] = token_data['strategy']
+    print(order_details['target'],"target ",order_details['limit_prc'],"limit prc")
 
     
     weeklyexpiry, _ = gc.get_expiry_dates(order_details['base_symbol'])
@@ -163,17 +176,20 @@ def modify_orders(token=None,monitor=None,order_details=None):
 def exit_order_details(token=None,monitor=None):
     token_data = monitor.tokens_to_monitor[token]
     order_details = token_data['order_details']
-    trading_symbol = order_details['tradingsymbol'].name
+    if isinstance(order_details['tradingsymbol'], str):
+        trading_symbol = order_details['tradingsymbol']
+    else:
+        trading_symbol = order_details['tradingsymbol'].name
     print("trading_symbol",trading_symbol)
 
-    users_to_trade = gc.get_strategy_users(order_details['strategy'])
+    users_to_trade = gc.get_strategy_users(token_data['strategy'])
 
     for broker,user in users_to_trade:
         exit_order_func = {
                     'user': user,
                     'broker': broker,
                     'limit_prc': order_details['limit_prc'],
-                    'strategy': order_details['strategy'],
+                    'strategy': token_data['strategy'],
                     'trade_type': 'SELL',
                     'token' : trading_symbol
                 }
