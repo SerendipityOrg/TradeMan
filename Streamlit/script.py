@@ -114,13 +114,14 @@ def show_profile(client_data):
         }
         for broker_1 in Brokers_list_1:
             broker_1_data["Field"].extend(["Broker Name", "User Name", "Password", "2FA",
-                                           "TotpAuth", "ApiKey", "ApiSecret", "Active", "Capital", "Risk profile"])
+                                           "TotpAuth", "ApiCode", "ApiKey", "ApiSecret", "Active", "Capital", "Risk profile"])
             broker_1_data["Value"].extend([
                 str(broker_1.get("broker_name", [""])[0]),
                 str(broker_1.get("user_name", "")),
                 str(broker_1.get("password", "")),
                 str(broker_1.get("two_fa", "")),
                 str(broker_1.get("totp_auth", "")),
+                str(broker_1.get("api_code", "")),
                 str(broker_1.get("api_key", "")),
                 str(broker_1.get("api_secret", "")),
                 str(broker_1.get("active", "")),
@@ -147,13 +148,14 @@ def show_profile(client_data):
         }
         for broker_2 in Brokers_list_2:
             broker_2_data["Field"].extend(["Broker Name", "User Name", "Password", "2FA",
-                                           "TotpAuth", "ApiKey", "ApiSecret", "Active", "Capital", "Risk profile"])
+                                           "TotpAuth", "Apicode", "ApiKey", "ApiSecret", "Active", "Capital", "Risk profile"])
             broker_2_data["Value"].extend([
                 str(broker_2.get("broker_name", [""])[0]),
                 str(broker_2.get("user_name", "")),
                 str(broker_2.get("password", "")),
                 str(broker_2.get("two_fa", "")),
                 str(broker_2.get("totp_auth", "")),
+                str(broker_2.get("api_code", "")),
                 str(broker_2.get("api_key", "")),
                 str(broker_2.get("api_secret", "")),
                 str(broker_2.get("active", "")),
@@ -196,7 +198,8 @@ def show_profile(client_data):
         st.markdown(table_style, unsafe_allow_html=True)
         st.write(strategy_df.to_html(index=False, escape=False),
                  unsafe_allow_html=True)
-        
+
+
 table_style = """
 <style>
 table.dataframe {
@@ -226,7 +229,9 @@ table.dataframe tr:hover {
 """
 
 # Function to display performance dashboard
-def display_performance_dashboard(selected_client,client_data,excel_file_name):
+
+
+def display_performance_dashboard(selected_client, client_data, excel_file_name):
     # CSS style definitions for the option menu
     selected = option_menu(None, ["Calendar", "Statistics", "Graph"],
                            icons=['calendar', 'file-bar-graph', 'graph-up'],
@@ -236,7 +241,7 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
                                "icon": {"color": "orange", "font-size": "25px"},
                                "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
                                "nav-link-selected": {"background-color": "purple"},
-                           })
+    })
 
     # Reference the Firebase Storage bucket
     bucket = storage.bucket(storage_bucket)
@@ -273,7 +278,8 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
             print(f"Extracting data from sheet: DTD")
 
             # Get column names and their indices from the first row
-            column_indices = {cell.value: idx for idx, cell in enumerate(sheet[1])}
+            column_indices = {cell.value: idx for idx,
+                              cell in enumerate(sheet[1])}
 
             # Loop through each row in the sheet to read specific columns
             for row in sheet.iter_rows(min_row=3, max_row=sheet.max_row):
@@ -282,22 +288,25 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
                 date_value = row[column_indices['Date']].value
                 date = date_value.strftime('%Y-%m-%d') if date_value else None
                 amipy = row[column_indices['AmiPy']].value
-                zrm = row [column_indices['ZRM']].value
-                overnight_options = row [column_indices['Overnight Options']].value
-                gross_pnl = row [column_indices['Gross PnL']].value
-                tax = row [column_indices['Tax']].value
+                zrm = row[column_indices['ZRM']].value
+                overnight_options = row[column_indices['Overnight Options']].value
+                gross_pnl = row[column_indices['Gross PnL']].value
+                tax = row[column_indices['Tax']].value
                 transaction_amount = row[column_indices['Transaction Amount']].value
                 deposit_withdrawal = row[column_indices['Deposit/Withdrawal']].value
                 # Check if the "Running Balance" column exists in the first row
                 if 'Running Balance' in column_indices:
-                        running_balance = row[column_indices['Running Balance']].value
-                        print(f"Row {row[0].row}: Running Balance value from Excel: {running_balance}")  # Debug print
+                    running_balance = row[column_indices['Running Balance']].value
+                    # Debug print
+                    print(
+                        f"Row {row[0].row}: Running Balance value from Excel: {running_balance}")
                 else:
-                        print("Running Balance column not found!")
-                        running_balance = None
+                    print("Running Balance column not found!")
+                    running_balance = None
 
-                data.append([date, opening_balance, mp_wizard, amipy, zrm, overnight_options, gross_pnl, tax, transaction_amount, deposit_withdrawal, running_balance])
-            
+                data.append([date, opening_balance, mp_wizard, amipy, zrm, overnight_options,
+                            gross_pnl, tax, transaction_amount, deposit_withdrawal, running_balance])
+
         # Add custom CSS for the table and value colors
         st.markdown("""
         <style>
@@ -322,14 +331,16 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
         }
         </style>
         """, unsafe_allow_html=True)
-        
+
         # Calendar functionality
     if selected == "Calendar":
         selected_date = st.date_input("Select a Date")
 
         if selected_date:
-            filtered_data = [record for record in data if record[0] == selected_date.strftime('%Y-%m-%d')]
-            print(f"Filtered data for date {selected_date}: {filtered_data}")  # Debug print
+            filtered_data = [record for record in data if record[0]
+                             == selected_date.strftime('%Y-%m-%d')]
+            # Debug print
+            print(f"Filtered data for date {selected_date}: {filtered_data}")
         if filtered_data:
             table_data = []
             for record in filtered_data:
@@ -345,7 +356,8 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
                 if record[4] is not None:  # ZRM
                     field_names["ZRM"] = format_value(record[4], "italic")
                 if record[5] is not None:  # Overnight Options
-                    field_names["Overnight Options"] = format_value(record[5], "italic")
+                    field_names["Overnight Options"] = format_value(
+                        record[5], "italic")
 
                 # Add the remaining fields
                 field_names.update({
@@ -365,16 +377,18 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
                 table_data.extend(formatted_data)
 
             # Display the table without header
-            st.write(pd.DataFrame(table_data, columns=None).to_html(classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
-
+            st.write(pd.DataFrame(table_data, columns=None).to_html(
+                classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
 
     if selected == "Statistics":
         # Display date input fields for the user to select the start and end dates
-        start_date = st.date_input("Select Start Date", datetime.date(2023, 8, 4))
+        start_date = st.date_input(
+            "Select Start Date", datetime.date(2023, 8, 4))
         end_date = st.date_input("Select End Date")
 
         # Filter the data based on the selected date range
-        filtered_data = [record for record in data if record[0] is not None and start_date.strftime('%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
+        filtered_data = [record for record in data if record[0] is not None and start_date.strftime(
+            '%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
 
         # Extract relevant data from filtered_data
         opening_balances = [record[1] for record in filtered_data]
@@ -383,7 +397,7 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
         net_pnls = [record[8] for record in filtered_data]
         transaction_amounts = [record[8] for record in filtered_data]
         deposit_withdrawals = [record[9] for record in filtered_data]
-        tax=[record[7]for record in filtered_data]
+        tax = [record[7]for record in filtered_data]
 
         # Calculate statistics
         initial_capital = opening_balances[0] if opening_balances else 0
@@ -391,48 +405,56 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
         total_profit = sum(gross_pnls)
         tax_amount = sum(tax)
         net_profit = total_profit - tax_amount
-        net_profit_percent = (net_profit / initial_capital) * 100 if initial_capital != 0 else 0
+        net_profit_percent = (net_profit / initial_capital) * \
+            100 if initial_capital != 0 else 0
         avg_profit = total_profit / len(gross_pnls) if gross_pnls else 0
-        avg_profit_percent = (avg_profit / initial_capital) * 100 if initial_capital != 0 else 0
-        total_deposits = sum([amount for amount in deposit_withdrawals if amount is not None and amount > 0])
-        total_withdrawal = sum([amount for amount in deposit_withdrawals if amount is not None and amount < 0])
+        avg_profit_percent = (avg_profit / initial_capital) * \
+            100 if initial_capital != 0 else 0
+        total_deposits = sum(
+            [amount for amount in deposit_withdrawals if amount is not None and amount > 0])
+        total_withdrawal = sum(
+            [amount for amount in deposit_withdrawals if amount is not None and amount < 0])
         total_commission = sum(transaction_amounts)
 
         # Create a DataFrame for the statistics
         stats_data = {
-            "Metric": ["Initial Capital", "Ending Capital", "Total Profit","Tax","Net Profit", "Net Profit %",  "Avg. Profit", "Avg. Profit %",  "Total Deposits", "Total Withdrawal","Total Commission"],
-            "Value": [format_stat_value(initial_capital), format_stat_value(ending_capital), format_stat_value(total_profit),format_stat_value(tax_amount),format_stat_value(net_profit), format_stat_value(f"{net_profit_percent:.2f}%"),  format_stat_value(avg_profit), format_stat_value(f"{avg_profit_percent:.2f}%"),  format_stat_value(total_deposits), format_stat_value(total_withdrawal), format_stat_value(total_commission)]
+            "Metric": ["Initial Capital", "Ending Capital", "Total Profit", "Tax", "Net Profit", "Net Profit %",  "Avg. Profit", "Avg. Profit %",  "Total Deposits", "Total Withdrawal", "Total Commission"],
+            "Value": [format_stat_value(initial_capital), format_stat_value(ending_capital), format_stat_value(total_profit), format_stat_value(tax_amount), format_stat_value(net_profit), format_stat_value(f"{net_profit_percent:.2f}%"),  format_stat_value(avg_profit), format_stat_value(f"{avg_profit_percent:.2f}%"),  format_stat_value(total_deposits), format_stat_value(total_withdrawal), format_stat_value(total_commission)]
         }
 
         stats_df = pd.DataFrame(stats_data)
 
         # Display the table without index and without column headers, and with custom styles
-        st.write(stats_df.to_html(index=False, header=False, classes='custom-table', escape=False), unsafe_allow_html=True)
-    
+        st.write(stats_df.to_html(index=False, header=False,
+                 classes='custom-table', escape=False), unsafe_allow_html=True)
+
     if selected == 'Graph':
-    # If filtered_data is not defined, set it with a default date range
+        # If filtered_data is not defined, set it with a default date range
         try:
             filtered_data
         except NameError:
             start_date = datetime.date(2023, 8, 4)
             end_date = datetime.date.today()
-            filtered_data = [record for record in data if record[0] is not None and start_date.strftime('%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
+            filtered_data = [record for record in data if record[0] is not None and start_date.strftime(
+                '%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
 
         graph_option = option_menu(None, ["Net PnL", "Running Balance"],
-                        icons=['line-chart', 'line-chart'],  # Assuming these are the icons you want
-                        menu_icon="chart-bar",  # Placeholder icon
-                        default_index=0, 
-                        orientation="horizontal",
-                        styles={
-                            "container": {"padding": "0!important", "background-color": "#fafafa"},
-                            "icon": {"color": "orange", "font-size": "18px"},
-                            "nav-link": {"font-size": "18px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
-                            "nav-link-selected": {"background-color": "orange"},
-                        })
+                                   # Assuming these are the icons you want
+                                   icons=['line-chart', 'line-chart'],
+                                   menu_icon="chart-bar",  # Placeholder icon
+                                   default_index=0,
+                                   orientation="horizontal",
+                                   styles={
+            "container": {"padding": "0!important", "background-color": "#fafafa"},
+            "icon": {"color": "orange", "font-size": "18px"},
+            "nav-link": {"font-size": "18px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
+            "nav-link-selected": {"background-color": "orange"},
+        })
 
         if graph_option == "Net PnL":
             # Calculate net PnL for each record in filtered_data
-            net_pnls = [record[6] - (record[8]/2) for record in filtered_data]  # Assuming gross_pnl - (transaction_amount/2) gives net PnL
+            # Assuming gross_pnl - (transaction_amount/2) gives net PnL
+            net_pnls = [record[6] - (record[8]/2) for record in filtered_data]
 
             # Create a Plotly figure
             fig = go.Figure()
@@ -440,11 +462,11 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
             # Add traces for each segment of the line with the determined color
             for i in range(1, len(net_pnls)):
                 color = 'green' if net_pnls[i] > net_pnls[i-1] else 'red'
-                fig.add_trace(go.Scatter(x=[filtered_data[i-1][0], filtered_data[i][0]], 
-                                        y=[net_pnls[i-1], net_pnls[i]], 
-                                        mode='lines', 
-                                        line=dict(color=color, width=2),
-                                        showlegend=False))  # Hide legend for each trace
+                fig.add_trace(go.Scatter(x=[filtered_data[i-1][0], filtered_data[i][0]],
+                                         y=[net_pnls[i-1], net_pnls[i]],
+                                         mode='lines',
+                                         line=dict(color=color, width=2),
+                                         showlegend=False))  # Hide legend for each trace
 
             # Update the layout to hide the overall legend
             fig.update_layout(showlegend=False)
@@ -459,7 +481,6 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
                 l = re.sub(r'(?<=\d)(?=(\d\d)+\d(?!\d))', ',', l)
                 return l + '.' + r
 
-
         elif graph_option == "Running Balance":
             # Extract running balances from filtered_data
             running_balances = [record[10] for record in filtered_data]
@@ -468,16 +489,17 @@ def display_performance_dashboard(selected_client,client_data,excel_file_name):
             fig = go.Figure()
 
             # Add the running balances data to the figure
-            fig.add_trace(go.Scatter(x=[record[0] for record in filtered_data], 
-                                    y=running_balances, 
-                                    mode='lines', 
-                                    line=dict(color='forestgreen', width=2),
-                                    hovertemplate='%{y:,.2f}'))
+            fig.add_trace(go.Scatter(x=[record[0] for record in filtered_data],
+                                     y=running_balances,
+                                     mode='lines',
+                                     line=dict(color='forestgreen', width=2),
+                                     hovertemplate='%{y:,.2f}'))
 
             # Get the range of y-values for custom tick formatting
             y_max = max(running_balances)
             y_min = min(running_balances)
-            tickvals = list(range(int(math.floor(y_min / 1e5) * 1e5), int(math.ceil(y_max / 1e5) * 1e5), int(1e5)))
+            tickvals = list(range(int(math.floor(y_min / 1e5) * 1e5),
+                            int(math.ceil(y_max / 1e5) * 1e5), int(1e5)))
             ticktext = [indian_format(val) for val in tickvals]
 
             # Update y-axis to display values in Indian rupees with custom formatting

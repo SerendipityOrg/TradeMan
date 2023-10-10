@@ -202,6 +202,20 @@
                 "vinod",
                 "venkatesh"
             ]
+        },
+        "gayathri": {
+            "username": "1045493",
+            "password": "K@nnada333",
+            "twoFA": "1991",
+            "api_secret": "PyUadPymqdZGNidudLRTbGVWCAksEBzgLYAmhesNIpmAkCxyfMSuiGXfrtRthYTTmhcOVmIcJAWexvIRnlJxhfnJtseOYTIYbpjJ",
+            "app_code": "KUzmYyOpUJpbUbLs",
+            "api_key": "qORznD3GogGG3iEPgtCgpoP2OB5HdCFtfTmSi027PRa2mopDxrmDfjKbLXBTQmTgbyk4GSum3pgkY0nGRHyRNUOE041tngfFUAqdWEqqzOoipqRJKOrt46ZxhfHZUbXR",
+            "totp_access": "TFOTOMRZTBZMSCJKFKSAAGYRAYCBXMHJ",
+            "session_id": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyam9lOFVScGxZU3FTcDB3RDNVemVBQkgxYkpmOE4wSDRDMGVVSWhXUVAwIn0",
+            "mobile_number": "+918867955798",
+            "percentageRisk": {
+                "MPWizard": 0.025
+            }
         }
     }
 }

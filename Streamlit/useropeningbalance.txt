@@ -4,6 +4,9 @@ sridhar: 40000.00
 venkatesh:70000.00
 vinay: 50000.00
 vinod: 50000.00
+arjun: 75000.00
+gayathri: 50000.00
+
 
 
 

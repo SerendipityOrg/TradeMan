@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from babel.numbers import format_currency
+from formats import custom_format
 
 # Function to format the 'Running Balance' column
 
@@ -35,19 +35,6 @@ def fetch_data_from_excel(file_name, sheet_mappings):
                 f"Sheet '{actual_sheet_name}' not found in {file_name}. Skipping...")
     return data_mappings
 
-# Custom format function for currency
-
-
-def custom_format(amount):
-    if isinstance(amount, (int, float)):
-        formatted = format_currency(amount, 'INR', locale='en_IN')
-        return formatted.replace('₹', '₹ ')
-    elif isinstance(amount, str):
-        # Handle the case where 'amount' is already a formatted string
-        return amount
-    else:
-        # Return the value as is (not formatted)
-        return amount
 
 # Function to create and return the DTD DataFrame with individual transactions and formatted columns
 
@@ -58,7 +45,7 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
         return pd.DataFrame(), 0
 
     all_dates = pd.concat([df['Date']
-                           for df in data_mappings.values()]).unique()
+                          for df in data_mappings.values()]).unique()
     all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
 
     rows = []
@@ -96,21 +83,29 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
                 for _, row in sub_df.iterrows():
                     trade_id = row['Trade ID']
                     amount = row['Net PnL']
-                    if amount != 0.00:
+                    # Check if amount is not NaN and not 0.00
+                    if pd.notna(amount) and amount != 0.00:
                         running_balance += amount
+                        formatted_amount = custom_format(amount)
+                        formatted_running_balance = custom_format(
+                            running_balance)
+                        if formatted_running_balance == "NaN":
+                            print(
+                                f"Warning: Running balance is NaN for Trade ID: {trade_id}")
                         rows.append({
                             'Sl NO': sl_no,
                             'Date': date_str,
                             'Day': day_str,
                             'Trade ID': trade_id,
                             'Details': transaction_id,
-                            'Amount': custom_format(amount),
-                            'Running Balance': custom_format(running_balance)
+                            'Amount': formatted_amount,
+                            'Running Balance': formatted_running_balance
                         })
                         sl_no += 1
 
     dtd_df = pd.DataFrame(rows)
     return dtd_df, running_balance
+
 
 # Function to retrieve existing 'Opening Balance' from the DTD sheet
 

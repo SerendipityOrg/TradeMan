@@ -46,6 +46,7 @@ if not firebase_admin._apps:
     # Initialize variables
 data = []  # This will hold the Excel data
 
+
 def login_admin(username, password):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
@@ -63,14 +64,16 @@ def login_admin(username, password):
                 return True
         return False
 
+
 def get_weeks_for_month(month_number, year):
     first_day_of_month = datetime.date(year, month_number, 1)
-    last_day_of_month = datetime.date(year, month_number + 1, 1) - datetime.timedelta(days=1)
-    
+    last_day_of_month = datetime.date(
+        year, month_number + 1, 1) - datetime.timedelta(days=1)
+
     # Find the first Saturday of the month
     while first_day_of_month.weekday() != 5:
         first_day_of_month += datetime.timedelta(days=1)
-    
+
     weeks = []
     while first_day_of_month <= last_day_of_month:
         end_day = first_day_of_month + datetime.timedelta(days=6)
@@ -78,8 +81,9 @@ def get_weeks_for_month(month_number, year):
             end_day = last_day_of_month
         weeks.append((first_day_of_month.day, end_day.day))
         first_day_of_month += datetime.timedelta(days=7)
-    
+
     return weeks
+
 
 def update_client_data(client_name, updated_data):
     # Get a reference to the selected client's database
@@ -132,10 +136,10 @@ def update_profile_picture(selected_client_name, new_profile_picture):
 def select_client():
     # Get a reference to the clients in the Firebase database
     client_ref = db.reference('/clients')
-    
+
     # Retrieve the client data from the database
     client_data = client_ref.get()
-    
+
     # If there's no client data, show a warning message
     if not client_data:
         st.sidebar.warning("No client data found.")
@@ -146,17 +150,20 @@ def select_client():
 
     # Modify the client names for display:
     # Replace underscores with spaces and capitalize each word
-    formatted_client_names = [client_name.replace('_', ' ').title() for client_name in client_names]
+    formatted_client_names = [client_name.replace(
+        '_', ' ').title() for client_name in client_names]
 
     # Create a select box in the Streamlit sidebar to choose a client
-    selected_client_name = st.sidebar.selectbox('Select a client', formatted_client_names)
+    selected_client_name = st.sidebar.selectbox(
+        'Select a client', formatted_client_names)
 
     # If no client is selected, exit the function early
     if selected_client_name == 'Select':
         return
 
     # Convert the formatted client name back to its original format (with underscores and lowercase)
-    original_selected_client_name = selected_client_name.replace(' ', '_').lower()
+    original_selected_client_name = selected_client_name.replace(
+        ' ', '_').lower()
 
     # Check if the selected client name is a valid key in the retrieved client data
     if original_selected_client_name not in client_data:
@@ -167,19 +174,23 @@ def select_client():
     selected_client = client_data[original_selected_client_name]
 
     # Show another select box for the user to choose between 'Profile' and 'Performance Dashboard'
-    next_selection = st.sidebar.selectbox('Client Details', ['Profile', 'Performance Dashboard'])
+    next_selection = st.sidebar.selectbox(
+        'Client Details', ['Profile', 'Performance Dashboard'])
 
     # Display the appropriate content based on the user's choice
     if next_selection == 'Profile':
         show_profile(selected_client, selected_client_name)
 
     elif next_selection == 'Performance Dashboard':
-             # Convert the first letter of client_username to lowercase for file naming
+        # Convert the first letter of client_username to lowercase for file naming
         client_username = selected_client.get("Username", '')
         client_username = client_username[0].lower() + client_username[1:]
-        excel_file_name = f"{client_username}.xlsx"  # Construct the Excel file name based on client's username
+        # Construct the Excel file name based on client's username
+        excel_file_name = f"{client_username}.xlsx"
         # Call the function to display the performance dashboard, passing in both the client data and Excel file name
-        display_performance_dashboard(selected_client,client_username, excel_file_name)
+        display_performance_dashboard(
+            selected_client, client_username, excel_file_name)
+
 
 def show_profile(selected_client, selected_client_name):
     profile_picture = selected_client.get("Profile Picture")
@@ -277,13 +288,14 @@ def show_profile(selected_client, selected_client_name):
                 broker_name = broker_name[0]
 
             broker_1_data["Field"].extend(["Broker Name", "User Name", "Password", "2FA",
-                                           "TotpAuth", "ApiKey", "ApiSecret", "Active", "Capital", "Risk profile"])
+                                           "TotpAuth", "Apicode", "ApiKey", "ApiSecret", "Active", "Capital", "Risk profile"])
             broker_1_data["Value"].extend([
                 str(broker_name),  # Use the processed broker_name value here
                 str(broker_1.get("user_name", "")),
                 str(broker_1.get("password", "")),
                 str(broker_1.get("two_fa", "")),
                 str(broker_1.get("totp_auth", "")),
+                str(broker_1.get("api_code", "")),
                 str(broker_1.get("api_key", "")),
                 str(broker_1.get("api_secret", "")),
                 str(broker_1.get("active", False)),
@@ -318,12 +330,13 @@ def show_profile(selected_client, selected_client_name):
 
             for broker_2 in Brokers_list_2:
                 broker_2_data["Field"].extend(["Broker Name", "User Name", "Password", "2FA",
-                                               "TotpAuth", "ApiKey", "ApiSecret", "Active", "Capital", "Risk profile"])
+                                               "TotpAuth", "Apicode", "ApiKey", "ApiSecret", "Active", "Capital", "Risk profile"])
                 broker_2_data["Value"].extend([
                     str(broker_2.get("user_name", "")),
                     str(broker_2.get("password", "")),
                     str(broker_2.get("two_fa", "")),
                     str(broker_2.get("totp_auth", "")),
+                    str(broker_2.get("api_code", "")),
                     str(broker_2.get("api_key", "")),
                     str(broker_2.get("api_secret", "")),
                     str(broker_2.get("active", False)),
@@ -437,6 +450,8 @@ def show_profile(selected_client, selected_client_name):
                         "2FA:", key=f"two_fa_1_{i}", value=broker_1.get("two_fa", ""))
                     broker_1["totp_auth"] = st.text_input(
                         "TotpAuth:", key=f"totp_auth_1_{i}", value=broker_1.get("totp_auth", ""))
+                    broker_1["api_code"] = st.text_input(
+                        "ApiCode:", key=f"api_code_1{i}", value=broker_1.get("api_code", ""))
                     broker_1["api_key"] = st.text_input(
                         "ApiKey:", key=f"api_key_1_{i}", value=broker_1.get("api_key", ""))
                     broker_1["api_secret"] = st.text_input(
@@ -464,6 +479,8 @@ def show_profile(selected_client, selected_client_name):
                         "2FA:", key=f"two_fa_2_{i}", value=broker_2.get("two_fa", ""))
                     broker_2["totp_auth"] = st.text_input(
                         "TotpAuth:", key=f"totp_auth_2_{i}", value=broker_2.get("totp_auth", ""))
+                    broker_2["api_code"] = st.text_input(
+                        "ApiCode:", key=f"api_code_2{i}", value=broker_2.get("api_code", ""))
                     broker_2["api_key"] = st.text_input(
                         "ApiKey:", key=f"api_key_2_{i}", value=broker_2.get("api_key", ""))
                     broker_2["api_secret"] = st.text_input(
@@ -516,6 +533,7 @@ def show_profile(selected_client, selected_client_name):
 
                     st.success('Client details updated successfully.')
                 st.session_state.edit_mode = False  # Switch out of edit mode
+
 
 def login():
 

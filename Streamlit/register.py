@@ -42,6 +42,12 @@ def get_session_state():
     return st.session_state["session_state"]
 
 
+# Define file_path globally at the top level of your script
+script_dir = os.path.dirname(os.path.realpath(__file__))
+utils = os.path.join(script_dir, '..', 'Utils')
+file_path = os.path.join(utils, 'broker.json')
+
+
 def register_page():
     # Initialize or retrieve session state
     session_state = get_session_state()
@@ -88,6 +94,7 @@ def register_page():
         broker_1["two_fa"] = st.text_input("2FA:", key=f"two_fa_{i}")
         broker_1["totp_auth"] = st.text_input(
             "TotpAuth:", key=f"totp_auth_{i}")
+        broker_1["api_code"] = st.text_input("ApiCode:", key=f"api_code_{i}")
         broker_1["api_key"] = st.text_input("ApiKey:", key=f"api_key_{i}")
         broker_1["api_secret"] = st.text_input(
             "ApiSecret:", key=f"api_secret_{i}")
@@ -121,6 +128,7 @@ def register_page():
         broker_2["two_fa"] = st.text_input("2FA:", key=f"two_fa2_{i}")
         broker_2["totp_auth"] = st.text_input(
             "TotpAuth:", key=f"totp_auth2_{i}")
+        broker_2["api_code"] = st.text_input("ApiCode:", key=f"api_code2_{i}")
         broker_2["api_key"] = st.text_input("ApiKey:", key=f"api_key2_{i}")
         broker_2["api_secret"] = st.text_input(
             "ApiSecret:", key=f"api_secret2_{i}")
@@ -142,8 +150,8 @@ def register_page():
 
     # Create dynamic input fields for strategy information
     strategy_list = []
-    all_strategies = ["AmiPy", "MP Wizard", "ZRM",
-                      "Overnight Options", "Screenipy Stocks"]
+    all_strategies = ["AmiPy", "MPWizard", "ZRM",
+                      "OvernightOptions", "Screenipy Stocks"]
     for i, strategy in enumerate(session_state.strategies):
         strategy["strategy_name"] = st.multiselect(
             "Strategy Name", all_strategies, key=f"strategy_name_{i}")
@@ -274,8 +282,26 @@ def register_page():
 
     # Function to save data to broker.json file
     def save_to_json(data):
-        with open('broker.json', 'w') as file:
-            json.dump(data, file, indent=4)
+        # Read the existing data
+        existing_data = {}
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as file:
+                existing_data = json.load(file)
+
+        # Merge existing and new data
+        for key, value in data.items():
+            if key in existing_data:
+                for subkey, subvalue in value.items():
+                    if subkey in existing_data[key]:
+                        st.warning(f"Overwriting key {subkey} in {key}")
+                    existing_data[key][subkey] = subvalue
+            else:
+                existing_data[key] = value
+
+        # Save the merged data
+        with open(file_path, 'w') as file:
+            json.dump(existing_data, file, indent=4)
+
         st.success("Data saved successfully to broker.json!")
 
     # Assuming you've already set up Streamlit and collected all the relevant inputs
@@ -283,12 +309,27 @@ def register_page():
 
     data_to_save = {}
 
+    # Function to convert percentage string to float
+    def percentage_string_to_float(percentage_str):
+        return float(percentage_str.strip('%')) / 100
+
     # Processing Zerodha broker details
     for broker_1 in broker_list_1:
         if broker_1["broker_name"] == "Zerodha":
             username = broker_1["user_name"]
+
+            percentageRisk = {}
+            for strategy in strategy_list:
+                for selected_strategy in strategy["strategy_name"]:
+                    for selected_broker_name in strategy["broker"]:
+                        if selected_broker_name == "Zerodha":
+                            perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}"
+                            if perc_allocated_key in strategy:
+                                percentageRisk[selected_strategy] = percentage_string_to_float(
+                                    strategy[perc_allocated_key])
+
             data_to_save["zerodha"] = {
-                username: {
+                UserName: {
                     "username": username,
                     "password": broker_1["password"],
                     "api_key": broker_1["api_key"],
@@ -296,41 +337,94 @@ def register_page():
                     "totp": broker_1.get("totp_auth", ""),
                     "access_token": "",
                     "mobile_number": phone,
-                    "percentageRisk": {
-                        "AmiPy": broker_1.get("AmiPy", 0),
-                        "MPWizard": broker_1.get("MPWizard", 0),
-                        "ZRM": broker_1.get("ZRM", 0),
-                        "overnight_option": broker_1.get("overnight_option", 0)
-                    },
-                    "current_capital": broker_1.get("capital", 0),
-                    "yesterday_PnL": 0,
-                    "expected_morning_balance": 0
+                    "percentageRisk": percentageRisk,
                 }
             }
 
-    # Processing AliceBlue broker details
+    # Process AliceBlue broker details
+    for broker_1 in broker_list_1:
+        if broker_1["broker_name"] == "AliceBlue":
+            username = broker_1["user_name"]
+
+            percentageRisk = {}
+            for strategy in strategy_list:
+                for selected_strategy in strategy["strategy_name"]:
+                    for selected_broker_name in strategy["broker"]:
+                        if selected_broker_name == "AliceBlue":
+                            perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}"
+                            if perc_allocated_key in strategy:
+                                percentageRisk[selected_strategy] = percentage_string_to_float(
+                                    strategy[perc_allocated_key])
+
+            data_to_save["aliceblue"] = {
+                UserName: {
+                    "username": username,
+                    "password": broker_1["password"],
+                    "twoFA": broker_1.get("two_fa", ""),
+                    "api_secret": broker_1["api_secret"],
+                    "app_code": broker_1["api_code"],
+                    "api_key": broker_1["api_key"],
+                    "totp_access": broker_1.get("totp_auth", ""),
+                    "session_id": "",
+                    "mobile_number": phone,
+                    "percentageRisk": percentageRisk,
+                }
+            }
+
+    for broker_2 in broker_list_1:
+        if broker_2["broker_name"] == "Zerodha":
+            username = broker_2["user_name"]
+
+            percentageRisk = {}
+            for strategy in strategy_list:
+                for selected_strategy in strategy["strategy_name"]:
+                    for selected_broker_name in strategy["broker"]:
+                        if selected_broker_name == "Zerodha":
+                            perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}"
+                            if perc_allocated_key in strategy:
+                                percentageRisk[selected_strategy] = percentage_string_to_float(
+                                    strategy[perc_allocated_key])
+
+            data_to_save["zerodha"] = {
+                UserName: {
+                    "username": username,
+                    "password": broker_2["password"],
+                    "api_key": broker_2["api_key"],
+                    "api_secret": broker_2["api_secret"],
+                    "totp": broker_2.get("totp_auth", ""),
+                    "access_token": "",
+                    "mobile_number": phone,
+                    "percentageRisk": percentageRisk,
+                }
+            }
+
+    # Process AliceBlue broker details
     for broker_2 in broker_list_2:
         if broker_2["broker_name"] == "AliceBlue":
             username = broker_2["user_name"]
+
+            percentageRisk = {}
+            for strategy in strategy_list:
+                for selected_strategy in strategy["strategy_name"]:
+                    for selected_broker_name in strategy["broker"]:
+                        if selected_broker_name == "AliceBlue":
+                            perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}"
+                            if perc_allocated_key in strategy:
+                                percentageRisk[selected_strategy] = percentage_string_to_float(
+                                    strategy[perc_allocated_key])
+
             data_to_save["aliceblue"] = {
-                username: {
+                UserName: {
                     "username": username,
                     "password": broker_2["password"],
                     "twoFA": broker_2.get("two_fa", ""),
                     "api_secret": broker_2["api_secret"],
-                    "app_code": "",
+                    "app_code": broker_2["api_code"],
                     "api_key": broker_2["api_key"],
                     "totp_access": broker_2.get("totp_auth", ""),
                     "session_id": "",
                     "mobile_number": phone,
-                    "percentageRisk": {
-                        "AmiPy": broker_2.get("AmiPy", 0),
-                        "MPWizard": broker_2.get("MPWizard", 0),
-                        "overnight_option": broker_2.get("overnight_option", 0)
-                    },
-                    "current_capital": broker_2.get("capital", 0),
-                    "yesterday_PnL": 0,
-                    "expected_morning_balance": 0
+                    "percentageRisk": percentageRisk,
                 }
             }
 
