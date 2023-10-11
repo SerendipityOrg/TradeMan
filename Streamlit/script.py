@@ -282,30 +282,17 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                               cell in enumerate(sheet[1])}
 
             # Loop through each row in the sheet to read specific columns
-            for row in sheet.iter_rows(min_row=3, max_row=sheet.max_row):
-                opening_balance = row[column_indices['Opening Balance']].value
-                mp_wizard = row[column_indices['MP Wizard']].value
-                date_value = row[column_indices['Date']].value
-                date = date_value.strftime('%Y-%m-%d') if date_value else None
-                amipy = row[column_indices['AmiPy']].value
-                zrm = row[column_indices['ZRM']].value
-                overnight_options = row[column_indices['Overnight Options']].value
-                gross_pnl = row[column_indices['Gross PnL']].value
-                tax = row[column_indices['Tax']].value
-                transaction_amount = row[column_indices['Transaction Amount']].value
-                deposit_withdrawal = row[column_indices['Deposit/Withdrawal']].value
-                # Check if the "Running Balance" column exists in the first row
-                if 'Running Balance' in column_indices:
-                    running_balance = row[column_indices['Running Balance']].value
-                    # Debug print
-                    print(
-                        f"Row {row[0].row}: Running Balance value from Excel: {running_balance}")
-                else:
-                    print("Running Balance column not found!")
-                    running_balance = None
+            # Assuming headers are in the first row
+            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
+                date = row[column_indices['Date']].value
+                day = row[column_indices['Day']].value
+                trade_id = row[column_indices['Trade ID']].value
+                details = row[column_indices['Details']].value
+                amount = row[column_indices['Amount']].value
+                running_balance = row[column_indices['Running Balance']].value
 
-                data.append([date, opening_balance, mp_wizard, amipy, zrm, overnight_options,
-                            gross_pnl, tax, transaction_amount, deposit_withdrawal, running_balance])
+                data.append([date, day, trade_id, details,
+                            amount, running_balance])
 
         # Add custom CSS for the table and value colors
         st.markdown("""
@@ -339,46 +326,33 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         if selected_date:
             filtered_data = [record for record in data if record[0]
                              == selected_date.strftime('%Y-%m-%d')]
+
             # Debug print
             print(f"Filtered data for date {selected_date}: {filtered_data}")
-        if filtered_data:
-            table_data = []
-            for record in filtered_data:
-                # Create a dictionary to store the labels and formatted values
-                field_names = {
-                    "Opening Balance": format_value(record[1], "bold"),
-                    "MP Wizard": format_value(record[2], "italic"),
-                }
 
-                # Add fields conditionally
-                if record[3] is not None:  # AmiPy
-                    field_names["AmiPy"] = format_value(record[3], "italic")
-                if record[4] is not None:  # ZRM
-                    field_names["ZRM"] = format_value(record[4], "italic")
-                if record[5] is not None:  # Overnight Options
-                    field_names["Overnight Options"] = format_value(
-                        record[5], "italic")
+            if filtered_data:
+                table_data = []
 
-                # Add the remaining fields
-                field_names.update({
-                    "Gross PnL": format_value(record[6], "bold"),
-                    "Tax": format_value(record[7]),
-                    "Net PnL": format_value(record[8], "bold"),
-                    "Deposit/Withdrawal": format_value(record[9]),
-                    "Running Balance": format_value(record[10], "bold")
-                })
+                for record in filtered_data:
+                    # Create a dictionary to store the labels and formatted values
+                    field_names = {
+                        # Index 3 corresponds to 'details'
+                        "Details": format_value(record[3], "italic"),
+                        # Index 4 corresponds to 'amount'
+                        "Amount": format_value(record[4], "italic"),
+                        # Index 5 corresponds to 'running_balance'
+                        "Running Balance": format_value(record[5], "bold")
+                    }
 
-                # Format the filtered data
-                formatted_data = []
-                for field, value in field_names.items():
-                    if value != "N/A":
-                        formatted_data.append([field, value])
+                    # Format the filtered data
+                    formatted_data = [[field, value] for field,
+                                      value in field_names.items() if value != "N/A"]
 
-                table_data.extend(formatted_data)
+                    table_data.extend(formatted_data)
 
-            # Display the table without header
-            st.write(pd.DataFrame(table_data, columns=None).to_html(
-                classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
+                # Display the table without header
+                st.write(pd.DataFrame(table_data, columns=None).to_html(
+                    classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
 
     if selected == "Statistics":
         # Display date input fields for the user to select the start and end dates
