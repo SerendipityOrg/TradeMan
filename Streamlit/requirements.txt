@@ -15,4 +15,5 @@ streamlit_on_Hover_tabs==1.0.1
 firebase-admin==6.1.0
 streamlit_calendar==0.4.0
 streamlit_option_menu==0.3.2
-python-dotenv
+python-dotenv==0.19.1
+
