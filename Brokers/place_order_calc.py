@@ -19,9 +19,7 @@ def get_strategy_json(strategy_name):
     strategy_json = general_calc.read_json_file(strategy_json_path)
     return strategy_json,strategy_json_path
 
-
 current_exit_signal_cache = {}
-
 
 def get_trade_id(strategy, signal=None, order_details=None):
     global current_exit_signal_cache  # Use this only if the function is at the global scope
@@ -41,7 +39,6 @@ def get_trade_id(strategy, signal=None, order_details=None):
             is_exit = True
     else:
         is_exit = order_details.get('transaction', '').lower() == 'sell' or order_details.get('transaction_type', '').lower() == 'sell'
-        print("is_exit", is_exit)
 
     current_trade_id = strategy_prefix + str(next_trade_id_num)
 
@@ -71,11 +68,6 @@ def get_trade_id(strategy, signal=None, order_details=None):
         general_calc.write_json_file(strategy_json_path, strategy_json)
 
     return current_trade_id
-
-
-
-
-
 
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, avg_price, order_details, user_details,strategy):

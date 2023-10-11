@@ -91,11 +91,14 @@ def update_excel_data(all_dfs, mpwizard_df, amipy_df, overnight_df):
     if not overnight_df.empty:
         all_dfs["Overnight_options"] = pd.concat([all_dfs.get("Overnight_options", pd.DataFrame()), overnight_df])
 
+
+cred = credentials.Certificate("TradeMan/Utils/Excel/credentials.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
+})
+
 def save_to_firebase(user, excel_path):
-    cred = credentials.Certificate("TradeMan/Utils/credentials.json")
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
-    })
+    
     # Correct bucket name
     bucket = storage.bucket(name='trading-app-caf8e.appspot.com')
     blob = bucket.blob(f'{user}.xlsx')
@@ -104,7 +107,7 @@ def save_to_firebase(user, excel_path):
     print(f"Excel file for {user} has been uploaded to Firebase.")
 
 def send_telegram_message(phone_number, message):
-    session_filepath = os.path.join(script_dir, "..",'..' "+918618221715.session")
+    session_filepath = os.path.join(script_dir, "..",'..','..', "+918618221715.session")
     with TelegramClient(session_filepath, api_id, api_hash) as client:
         client.send_message(phone_number, message, parse_mode='md')
 
@@ -148,9 +151,9 @@ def main():
         save_all_sheets_to_excel(all_dfs, excel_path)
         dtd.update_dtd_sheets()
 
-        # # Assuming you want to save to Firebase and send messages as in the original script
-        # save_to_firebase(user, excel_path)  # Existing function
-        # send_telegram_message(phone_number, message)  # Separate into a function
+        # Assuming you want to save to Firebase and send messages as in the original script
+        save_to_firebase(user, excel_path)  # Existing function
+        send_telegram_message(phone_number, message)  # Separate into a function
 
 # Add other necessary helper functions...
 

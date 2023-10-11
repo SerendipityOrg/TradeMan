@@ -4,9 +4,3 @@
 *.log
 *.json
 *.xlsx
-
-Amipy/.DS_Store
-Scripts/Logs/Amipy_NF.log
-Brokers/.env
-Utils/broker.json
-Utils/broker.json
