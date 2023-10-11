@@ -264,7 +264,6 @@ for user in users_with_strategies:
     if combined_user_orders:
         user_final_orders = {"orders": combined_user_orders}
         pprint(user_final_orders)
-        
 
     # user_json_data = general_calc.read_json_file(user_json_path)
         

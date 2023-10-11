@@ -331,13 +331,13 @@ def updateSignalDf(last_signal):
                 token_strike_price = int(zerodha[-7:-2])
                 # Compare with strike_prc
                 if token_strike_price == strike_prc:
-                    transcation_type = 'SELL'
+                    transaction_type = 'SELL'
                 else:
-                    transcation_type = 'BUY'
+                    transaction_type = 'BUY'
                 order_details_opt = {
                     "strike_prc": strike_prc,
                     "base_symbol": base_symbol,
-                    "transaction": transcation_type,
+                    "transaction": transaction_type,
                 }
                 # Call your place_order function here
                 place_order.place_order_for_broker("AmiPy",order_details_opt , trading_symbol=(zerodha,alice),signal='ShortSignal')
@@ -370,13 +370,13 @@ def updateSignalDf(last_signal):
 
                 # Compare with strike_prc
                 if token_strike_price == strike_prc:
-                    transcation_type = 'BUY'
+                    transaction_type = 'BUY'
                 else:
-                    transcation_type = 'SELL'
+                    transaction_type = 'SELL'
                 order_details_opt = {
                     "strike_prc": strike_prc,
                     "base_symbol": base_symbol,
-                    "transaction": transcation_type,
+                    "transaction": transaction_type,
                 }                
                 # Call your place_order function here
                 place_order.place_order_for_broker("AmiPy", order_details_opt , trading_symbol=(zerodha,alice),signal='ShortCoverSignal')

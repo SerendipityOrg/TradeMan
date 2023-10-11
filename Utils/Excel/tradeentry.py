@@ -9,10 +9,10 @@ import firebase_admin
 from firebase_admin import credentials, storage
 from telethon.sync import TelegramClient
 from dotenv import load_dotenv
+import dtdautomation as dtd
 
 env_path = os.path.join(os.path.dirname(__file__), '..','..','Brokers', '.env')
 load_dotenv(env_path)
-
 
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
@@ -157,6 +157,7 @@ def main():
 
         update_excel_data(all_dfs, mpwizard_df, amipy_df, overnight_df)
         save_all_sheets_to_excel(all_dfs, excel_path)
+        dtd.update_dtd_sheets()
 
         # Assuming you want to save to Firebase and send messages as in the original script
         save_to_firebase(user, excel_path)  # Existing function

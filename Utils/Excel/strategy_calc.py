@@ -32,6 +32,7 @@ def process_mpwizard_trades(broker,mpwizard_trades):
             option_type = "PE" if buy_trade["tradingsymbol"][-6] == "P" else "CE"
 
         trade_data = {
+            "Trade ID": buy_trade["trade_id"],
             "Strategy": "MPWizard",
             "Index": index,
             "Strike Prc": strike_price,
@@ -107,6 +108,7 @@ def process_short_trades(broker,short_signals, short_cover_signals,signal):
         charges = charges + hedge_charges
 
         trade_data = {
+            "Trade ID": short_signal_group[0]["trade_id"],
             "Strategy": "Nifty Straddle",
             "Index": "NIFTY",
             "Trade Type": signal,
@@ -152,6 +154,7 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
                 long_signal_pair[0]["qty"], entry_price, exit_price, 2)
 
         trade_data = {
+            "Trade ID": long_signal_pair[0]["trade_id"],
             "Strategy": "Amipy",
             "Index": "NIFTY",
             "Trade Type": signal,
@@ -220,6 +223,7 @@ def process_overnight_options_trades(broker,overnight_options_trades):
 
     # Appending to result list
     trade_data = {
+        "Trade ID": afternoon_trades[0]["trade_id"],
         "Strategy": "Overnight_Options",
         "Trade_Type": direction,
         "Date": pd.to_datetime(morning_trades[0]["timestamp"]).strftime('%d-%b-%y'),
