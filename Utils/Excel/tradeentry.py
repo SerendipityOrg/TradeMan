@@ -2,6 +2,7 @@ import os,sys
 import json
 import pandas as pd
 from openpyxl import load_workbook
+from openpyxl.styles import Alignment
 from babel.numbers import format_currency
 import strategy_calc as sc
 import firebase_admin
@@ -10,7 +11,7 @@ from telethon.sync import TelegramClient
 from dotenv import load_dotenv
 
 env_path = os.path.join(os.path.dirname(__file__), '..','..','Brokers', '.env')
-print(load_dotenv(env_path))
+load_dotenv(env_path)
 
 
 api_id = os.getenv('telethon_api_id')
@@ -26,16 +27,15 @@ broker_filepath = os.path.join(utils_dir, "broker.json")
 userprofile_dir = os.path.join(script_dir, "..","..", "UserProfile")
 json_dir = os.path.join(userprofile_dir, "json")
 excel_dir = os.path.join(userprofile_dir, "excel")
-
+# excel_dir = os.getenv('excel_filepath')
 
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
-    return formatted.replace('₹', '₹ ')
+    return formatted.replace('₹', '₹')
 
 def process_strategy_data(user_data, broker, strategy_name, process_func):
     if strategy_name in user_data[broker]["orders"]:
         data = process_func(broker,user_data[broker]["orders"][strategy_name])
-        print(data)
         df = pd.DataFrame(data)
         pnl = round(df["PnL"].sum(), 2)
         tax = round(df["Tax"].sum(), 2)
@@ -50,6 +50,14 @@ def save_all_sheets_to_excel(all_dfs, excel_path):
     with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
         for sheet_name, df in all_dfs.items():
             df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+            # Now that the data is written, get the worksheet to apply styles
+            worksheet = writer.sheets[sheet_name]
+
+            for row in worksheet.iter_rows():
+                for cell in row:
+                    cell.alignment = Alignment(horizontal='center')
+        writer.save()
 
 def build_message(user, mpwizard_pnl, amipy_pnl, overnight_pnl, gross_pnl, tax, current_capital, expected_capital):
     # Construct the message similar to the original script
@@ -139,7 +147,7 @@ def main():
         expected_capital = current_capital + net_pnl if net_pnl > 0 else current_capital - abs(net_pnl)
 
         message_parts = build_message(user, mpwizard_pnl, amipy_pnl, overnight_pnl, gross_pnl, tax, current_capital, expected_capital)
-        message = "\n".join(message_parts).replace('\u20b9', 'INR')
+        message = "\n".join(message_parts).replace('\u20b9', '₹')
         print(message)
 
         update_json_data(data, broker, user, net_pnl, expected_capital, broker_filepath)

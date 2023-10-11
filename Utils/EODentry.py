@@ -23,10 +23,10 @@ def simplify_zerodha_order(detail):
         option_type = trade_symbol[-2:]
 
     trade_id = detail['tag']
-    if trade_id.endswith('_entry'):
-        trade_id = trade_id.rsplit('_entry', 1)[0]
-    elif trade_id.endswith('_exit'):
-        trade_id = trade_id.rsplit('_exit', 1)[0]
+    # if trade_id.endswith('_entry'):
+    #     trade_id = trade_id.rsplit('_entry', 1)[0]
+    # elif trade_id.endswith('_exit'):
+    #     trade_id = trade_id.rsplit('_exit', 1)[0]
     
     return {
         'trade_id' : trade_id,  # This is the order_id for zerodha
@@ -48,10 +48,10 @@ def simplify_aliceblue_order(detail):
         option_type = detail['optionType']
 
     trade_id = detail['remarks']
-    if trade_id.endswith('_entry'):
-        trade_id = trade_id.rsplit('_entry', 1)[0]
-    elif trade_id.endswith('_exit'):
-        trade_id = trade_id.rsplit('_exit', 1)[0]
+    # if trade_id.endswith('_entry'):
+    #     trade_id = trade_id.rsplit('_entry', 1)[0]
+    # elif trade_id.endswith('_exit'):
+    #     trade_id = trade_id.rsplit('_exit', 1)[0]
 
     return {
         'trade_id' : trade_id,
@@ -98,35 +98,38 @@ def assign_short_and_long_orders(orders):
         # Determine which orders are main and which are hedge
         for _, orders in strike_prices.items():
             if len(orders) == 2:
-                main_orders.extend(orders)
-            else:
                 hedge_orders.extend(orders)
-
+            else:
+                main_orders.extend(orders)
         return main_orders, hedge_orders
+    
+    entry_orders = [order for order in orders if "_entry" in order["trade_id"]]
+    exit_orders = [order for order in orders if "_exit" in order["trade_id"]]
 
-    main_orders, hedge_orders = categorize_orders(orders)
 
-    # Assign orders based on the logic provided
-    if len(orders) == 4:
-        if "_entry" in orders[0]["trade_id"]:
-            for order in main_orders:
-                order["trade_type"] = "ShortSignal"
-            for order in hedge_orders:
-                order["trade_type"] = "HedgeOrder"
-            results["AmiPy"]["ShortSignal"].extend(main_orders)
-            results["AmiPy"]["ShortSignal"].extend(hedge_orders)
-        else:
-            for order in main_orders:
-                order["trade_type"] = "ShortCoverSignal"
-            for order in hedge_orders:
-                order["trade_type"] = "HedgeOrder"
-            results["AmiPy"]["ShortCoverSignal"].extend(main_orders)
-            results["AmiPy"]["ShortCoverSignal"].extend(hedge_orders)
-    elif len(orders) == 2:
-        if "_entry" in orders[0]["trade_id"]:
-            results["AmiPy"]["LongSignal"] = main_orders
-        else:
-            results["AmiPy"]["LongCoverSignal"] = main_orders
+    # Process entry orders
+    main_orders, hedge_orders = categorize_orders(entry_orders)
+    if len(entry_orders) in [4, 8]:
+        for order in main_orders:
+            order["trade_id"] = order["trade_id"].split('_')[0]
+            order["trade_type"] = "ShortSignal"
+        for order in hedge_orders:
+            order["trade_id"] = order["trade_id"].split('_')[0]
+            order["trade_type"] = "HedgeOrder"
+        results["AmiPy"]["ShortSignal"].extend(main_orders)
+        results["AmiPy"]["ShortSignal"].extend(hedge_orders)
+
+    # Process exit orders
+    main_orders, hedge_orders = categorize_orders(exit_orders)
+    if len(exit_orders) in [4, 8]:
+        for order in main_orders:
+            order["trade_id"] = order["trade_id"].split('_')[0]
+            order["trade_type"] = "ShortCoverSignal"
+        for order in hedge_orders:
+            order["trade_id"] = order["trade_id"].split('_')[0]
+            order["trade_type"] = "HedgeOrder"
+        results["AmiPy"]["ShortCoverSignal"].extend(main_orders)
+        results["AmiPy"]["ShortCoverSignal"].extend(hedge_orders)
 
     return results
 
@@ -140,7 +143,6 @@ def amipy_details(orders, broker, user):
             simplified_orders.append(simplify_aliceblue_order(order))
         else:
             simplified_orders.append(order)
-        
     # Step 2: Assign short and long orders
     organized_orders = assign_short_and_long_orders(simplified_orders)
     
@@ -163,8 +165,10 @@ def mpwizard_details(orders, broker, user):
         simplified_order = simplify_zerodha_order(order) if broker == "zerodha" else simplify_aliceblue_order(order) if broker == "aliceblue" else order
 
         if simplified_order["trade_type"] == "BUY":
+            simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
             buy_orders.append(simplified_order)
         elif simplified_order["trade_type"] == "SELL":
+            simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
             sell_orders.append(simplified_order)
 
     results = {
@@ -182,6 +186,7 @@ def overnight_options_details(orders, broker, user):
     # Simplify the orders and collect them
     for order in orders:
         simplified_order = simplify_zerodha_order(order) if broker == "zerodha" else simplify_aliceblue_order(order) if broker == "aliceblue" else order
+        simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
         morning_trade_orders.append(simplified_order)
 
     # Check if there are 2 orders and group them under "Morning Trade"
@@ -259,9 +264,10 @@ for user in users_with_strategies:
     if combined_user_orders:
         user_final_orders = {"orders": combined_user_orders}
         pprint(user_final_orders)
-
-    user_json_data = general_calc.read_json_file(user_json_path)
         
-    user_json_data[user["broker"]]["today_orders"] = user_final_orders
 
-    general_calc.write_json_file(user_json_path, user_json_data)
+    # user_json_data = general_calc.read_json_file(user_json_path)
+        
+    # user_json_data[user["broker"]]["today_orders"] = user_final_orders
+
+    # general_calc.write_json_file(user_json_path, user_json_data)
