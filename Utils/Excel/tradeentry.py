@@ -4,7 +4,14 @@ import pandas as pd
 from openpyxl import load_workbook
 from babel.numbers import format_currency
 import strategy_calc as sc
+import firebase_admin
+from firebase_admin import credentials, storage
+from telethon.sync import TelegramClient
+from dotenv import load_dotenv
+import dtdautomation as dtd
 
+env_path = os.path.join(os.path.dirname(__file__), '..','..','Brokers', '.env')
+load_dotenv(env_path)
 
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
@@ -84,6 +91,24 @@ def update_excel_data(all_dfs, mpwizard_df, amipy_df, overnight_df):
     if not overnight_df.empty:
         all_dfs["Overnight_options"] = pd.concat([all_dfs.get("Overnight_options", pd.DataFrame()), overnight_df])
 
+def save_to_firebase(user, excel_path):
+    cred = credentials.Certificate("TradeMan/Utils/credentials.json")
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
+    })
+    # Correct bucket name
+    bucket = storage.bucket(name='trading-app-caf8e.appspot.com')
+    blob = bucket.blob(f'{user}.xlsx')
+    with open(excel_path, 'rb') as my_file:
+        blob.upload_from_file(my_file)
+    print(f"Excel file for {user} has been uploaded to Firebase.")
+
+def send_telegram_message(phone_number, message):
+    session_filepath = os.path.join(script_dir, "..",'..' "+918618221715.session")
+    with TelegramClient(session_filepath, api_id, api_hash) as client:
+        client.send_message(phone_number, message, parse_mode='md')
+
+
 def main():
     data = gc.read_json_file(broker_filepath)
     user_list = []
@@ -121,6 +146,7 @@ def main():
 
         update_excel_data(all_dfs, mpwizard_df, amipy_df, overnight_df)
         save_all_sheets_to_excel(all_dfs, excel_path)
+        dtd.update_dtd_sheets()
 
         # # Assuming you want to save to Firebase and send messages as in the original script
         # save_to_firebase(user, excel_path)  # Existing function

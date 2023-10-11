@@ -76,6 +76,10 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
         
         if signal is not None:
             details['signal'] = signal
+        
+        order_tag = place_order_calc.get_trade_id(strategy, signal=signal, order_details=order_details)
+        if order_tag is not None:
+                details['order_tag'] = order_tag
             
         _,avg_prc = place_order_func(strategy, details, qty=qty)
         #######################price ref can be none 
@@ -106,6 +110,7 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
             if order_tag is not None:
                 order_func['order_tag'] = order_tag
             place_order_func(strategy, order_func , qty=qty)
+            order_details['transaction'] = 'BUY'
         #calculate the target based on the priceref
             target = order_details.get('target', round(float(avg_prc) + (order_details['stoploss_points'] / 2)))
             print(f"Target is {target}")
