@@ -11,8 +11,9 @@ import plotly.graph_objects as go
 from firebase_admin import db
 from firebase_admin import credentials, storage
 import openpyxl
+from collections import defaultdict
 from io import BytesIO
-from formats import format_value, format_stat_value, indian_format
+from formats import format_value, format_stat_value, indian_format, custom_format
 from streamlit_option_menu import option_menu
 
 
@@ -319,95 +320,95 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         </style>
         """, unsafe_allow_html=True)
 
-        # Calendar functionality
     if selected == "Calendar":
         selected_date = st.date_input("Select a Date")
 
         if selected_date:
-            filtered_data = [record for record in data if record[0]
-                             == selected_date.strftime('%Y-%m-%d')]
+            # Filter the data based on the selected date with the format '12-Oct-23'
+            formatted_date = selected_date.strftime('%d-%b-%y')
+            filtered_data = [
+                record for record in data if record[0] == formatted_date]
 
             # Debug print
             print(f"Filtered data for date {selected_date}: {filtered_data}")
 
-            if filtered_data:
-                table_data = []
+            if not filtered_data:
+                st.write(f"No data available for {selected_date}")
+            else:
+                # Aggregate the amounts for each distinct detail type
+                details_aggregated = defaultdict(float)
+                running_balance = 0
 
                 for record in filtered_data:
-                    # Create a dictionary to store the labels and formatted values
-                    field_names = {
-                        # Index 3 corresponds to 'details'
-                        "Details": format_value(record[3], "italic"),
-                        # Index 4 corresponds to 'amount'
-                        "Amount": format_value(record[4], "italic"),
-                        # Index 5 corresponds to 'running_balance'
-                        "Running Balance": format_value(record[5], "bold")
-                    }
+                    detail_type = record[3]
+                    amount = float(record[4].replace('₹', '').replace(
+                        ',', '').replace(' ', '').strip())
+                    details_aggregated[detail_type] += amount
+                    running_balance = float(record[5].replace(
+                        '₹', '').replace(',', '').replace(' ', '').strip())
 
-                    # Format the filtered data
-                    formatted_data = [[field, value] for field,
-                                      value in field_names.items() if value != "N/A"]
+                aggregated_data = []
 
-                    table_data.extend(formatted_data)
+                # Add the aggregated amounts to the aggregated_data list using format_value and check for italicized detail types
+                italic_types = ["MP Wizard", "AmiPy",
+                                "Overnight Options", "ZRM"]
+                for detail_type, amount in details_aggregated.items():
+                    display_detail = detail_type if detail_type not in italic_types else f"<em>{detail_type}</em>"
+                    aggregated_data.append(
+                        [display_detail, format_value(amount)])
 
-                # Display the table without header
-                st.write(pd.DataFrame(table_data, columns=None).to_html(
+                # Format and color the Running Balance value in green
+                running_balance_formatted = f"<span style='color: green;'>{custom_format(running_balance)}</span>"
+                aggregated_data.append(
+                    [f"<strong>Running Balance</strong>", running_balance_formatted])
+
+                # Display the table without header using pandas
+                st.write(pd.DataFrame(aggregated_data).to_html(
                     classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
 
     if selected == "Statistics":
         # Display date input fields for the user to select the start and end dates
         start_date = st.date_input(
-            "Select Start Date", datetime.date(2023, 8, 4))
+            "Select Start Date", datetime.date(2023, 7, 1))
         end_date = st.date_input("Select End Date")
 
-        # Filter the data based on the selected date range
-        filtered_data = [record for record in data if record[0] is not None and start_date.strftime(
-            '%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
+        if start_date and end_date:
+            # Filter data based on the selected date range
+            filtered_data = [
+                record for record in data if datetime.datetime.strptime(record[0], '%d-%b-%y').date() <= end_date and datetime.datetime.strptime(record[0], '%d-%b-%y').date() >= start_date
+            ]
 
-        # Extract relevant data from filtered_data
-        opening_balances = [record[1] for record in filtered_data]
-        running_balances = [record[10] for record in filtered_data]
-        gross_pnls = [record[6] for record in filtered_data]
-        net_pnls = [record[8] for record in filtered_data]
-        transaction_amounts = [record[8] for record in filtered_data]
-        deposit_withdrawals = [record[9] for record in filtered_data]
-        tax = [record[7]for record in filtered_data]
+            # If no data available for the selected range, display a message
+            if not filtered_data:
+                st.write(
+                    f"No data available between {start_date} and {end_date}")
+                return
 
-        # Calculate statistics
-        initial_capital = opening_balances[0] if opening_balances else 0
-        ending_capital = running_balances[-1] if running_balances else 0
-        total_profit = sum(gross_pnls)
-        tax_amount = sum(tax)
-        net_profit = total_profit - tax_amount
-        net_profit_percent = (net_profit / initial_capital) * \
-            100 if initial_capital != 0 else 0
-        avg_profit = total_profit / len(gross_pnls) if gross_pnls else 0
-        avg_profit_percent = (avg_profit / initial_capital) * \
-            100 if initial_capital != 0 else 0
-        total_deposits = sum(
-            [amount for amount in deposit_withdrawals if amount is not None and amount > 0])
-        total_withdrawal = sum(
-            [amount for amount in deposit_withdrawals if amount is not None and amount < 0])
-        total_commission = sum(transaction_amounts)
+            # Compute the statistics
+            initial_capital = float(filtered_data[0][5].replace(
+                '₹', '').replace(',', '').replace(' ', '').strip())
+            ending_capital = float(
+                filtered_data[-1][5].replace('₹', '').replace(',', '').replace(' ', '').strip())
+            total_profit = ending_capital - initial_capital
 
-        # Create a DataFrame for the statistics
-        stats_data = {
-            "Metric": ["Initial Capital", "Ending Capital", "Total Profit", "Tax", "Net Profit", "Net Profit %",  "Avg. Profit", "Avg. Profit %",  "Total Deposits", "Total Withdrawal", "Total Commission"],
-            "Value": [format_stat_value(initial_capital), format_stat_value(ending_capital), format_stat_value(total_profit), format_stat_value(tax_amount), format_stat_value(net_profit), format_stat_value(f"{net_profit_percent:.2f}%"),  format_stat_value(avg_profit), format_stat_value(f"{avg_profit_percent:.2f}%"),  format_stat_value(total_deposits), format_stat_value(total_withdrawal), format_stat_value(total_commission)]
-        }
+            # Create a DataFrame for the statistics
+            stats_data = {
+                "Metric": ["Initial Capital", "Ending Capital", "Total Profit"],
+                "Value": [custom_format(initial_capital), custom_format(ending_capital), custom_format(total_profit)]
+            }
 
-        stats_df = pd.DataFrame(stats_data)
+            stats_df = pd.DataFrame(stats_data)
 
-        # Display the table without index and without column headers, and with custom styles
-        st.write(stats_df.to_html(index=False, header=False,
-                 classes='custom-table', escape=False), unsafe_allow_html=True)
+            # Display the table without index and without column headers, and with custom styles
+            st.write(stats_df.to_html(index=False, header=False,
+                     classes='custom-table', escape=False), unsafe_allow_html=True)
 
     if selected == 'Graph':
         # If filtered_data is not defined, set it with a default date range
         try:
             filtered_data
         except NameError:
-            start_date = datetime.date(2023, 8, 4)
+            start_date = datetime.date(2023, 7, 1)
             end_date = datetime.date.today()
             filtered_data = [record for record in data if record[0] is not None and start_date.strftime(
                 '%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
@@ -425,10 +426,19 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             "nav-link-selected": {"background-color": "orange"},
         })
 
-        if graph_option == "Net PnL":
-            # Calculate net PnL for each record in filtered_data
-            # Assuming gross_pnl - (transaction_amount/2) gives net PnL
-            net_pnls = [record[6] - (record[8]/2) for record in filtered_data]
+        if selected == 'Graph':
+            # Extract required columns from filtered_data
+            details = [record[4] for record in filtered_data]
+            amounts = [record[5] for record in filtered_data]
+
+            # Convert amount strings to floats
+            amounts = [float(amount.replace('₹', '').replace(
+                ',', '').strip()) for amount in amounts]
+
+            # Get distinct detail types that you want to plot
+            detail_types = ["MP Wizard", "AmiPy", "Overnight Options", "ZRM"]
+            net_pnls = [amounts[i]
+                        for i in range(len(details)) if details[i] in detail_types]
 
             # Create a Plotly figure
             fig = go.Figure()
@@ -436,7 +446,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             # Add traces for each segment of the line with the determined color
             for i in range(1, len(net_pnls)):
                 color = 'green' if net_pnls[i] > net_pnls[i-1] else 'red'
-                fig.add_trace(go.Scatter(x=[filtered_data[i-1][0], filtered_data[i][0]],
+                fig.add_trace(go.Scatter(x=[filtered_data[i-1][1], filtered_data[i][1]],  # Dates as x-axis
                                          y=[net_pnls[i-1], net_pnls[i]],
                                          mode='lines',
                                          line=dict(color=color, width=2),
@@ -448,22 +458,28 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             # Display the graph using Streamlit's plotly_chart function
             st.plotly_chart(fig)
 
-            def indian_format_decimal(num):
-                """Format decimal number in Indian style with commas"""
-                s = '{:,.2f}'.format(num)
-                l, r = s.split('.')
-                l = re.sub(r'(?<=\d)(?=(\d\d)+\d(?!\d))', ',', l)
-                return l + '.' + r
-
         elif graph_option == "Running Balance":
-            # Extract running balances from filtered_data
-            running_balances = [record[10] for record in filtered_data]
+            # Extract running balances from filtered_data, ensuring they are floats
+            running_balances = [float(record[6].replace('₹', '').replace(
+                ',', '').strip()) for record in filtered_data]
+
+            # Extract the dates, ensuring they are in a format recognizable by Plotly
+            dates = [record[0] for record in filtered_data]
+
+            # Debugging: Print out the running balances and dates to ensure they have values
+            st.write(running_balances)
+            st.write(dates)
+
+            # If there are no valid running balances or dates, we can avoid plotting an empty graph
+            if not running_balances or not dates:
+                st.write("No valid data available for the selected date range.")
+                return
 
             # Create a Plotly figure for Running Balance
             fig = go.Figure()
 
             # Add the running balances data to the figure
-            fig.add_trace(go.Scatter(x=[record[0] for record in filtered_data],
+            fig.add_trace(go.Scatter(x=dates,
                                      y=running_balances,
                                      mode='lines',
                                      line=dict(color='forestgreen', width=2),
@@ -473,12 +489,12 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             y_max = max(running_balances)
             y_min = min(running_balances)
             tickvals = list(range(int(math.floor(y_min / 1e5) * 1e5),
-                            int(math.ceil(y_max / 1e5) * 1e5), int(1e5)))
-            ticktext = [indian_format(val) for val in tickvals]
+                                  int(math.ceil(y_max / 1e5) * 1e5), int(1e5)))
+            ticktext = [custom_format(val) for val in tickvals]
 
             # Update y-axis to display values in Indian rupees with custom formatting
             fig.update_layout(
-                yaxis_title="Amount (₹)",
+                yaxis_title="Amount",
                 yaxis_tickvals=tickvals,
                 yaxis_ticktext=ticktext
             )
