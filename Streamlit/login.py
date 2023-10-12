@@ -21,7 +21,9 @@ from formats import format_value, format_stat_value, indian_format
 load_dotenv()
 
 # Retrieve values from .env
-firebase_credentials_path = os.getenv('FIREBASE_CREDENTIALS_PATH')
+script_dir = os.path.dirname(os.path.realpath(__file__))
+firebase_credentials_path = os.path.join(
+    script_dir, 'firebasecredentials.json')
 database_url = os.getenv('DATABASE_URL')
 storage_bucket = os.getenv('STORAGE_BUCKET')
 
