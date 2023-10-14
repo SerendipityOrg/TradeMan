@@ -257,8 +257,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
     data = []  # List to store extracted data from Excel
     # Excel header should be the same as below
-    # SI NO,Date,Day,Transaction,Opening Balance,MP Wizard,AmiPy,ZRM,Overnight Options,
-    # Gross PnL,Tax,Transaction Amount,Running Balance,Deposit/Withdrawal,Telegram Balance,Difference Amount,Remarks
+    # Sl NO,Date,Day,Trade ID,Details,Amount,Running Balance
 
     # If the client's Excel file exists, proceed to extract data
     if file_exists:
@@ -426,77 +425,79 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             "nav-link-selected": {"background-color": "orange"},
         })
 
-        if selected == 'Graph':
-            # Extract required columns from filtered_data
-            details = [record[4] for record in filtered_data]
-            amounts = [record[5] for record in filtered_data]
-
-            # Convert amount strings to floats
-            amounts = [float(amount.replace('₹', '').replace(
-                ',', '').strip()) for amount in amounts]
-
-            # Get distinct detail types that you want to plot
-            detail_types = ["MP Wizard", "AmiPy", "Overnight Options", "ZRM"]
-            net_pnls = [amounts[i]
-                        for i in range(len(details)) if details[i] in detail_types]
+        if graph_option == "Net PnL":
+            categories = ["MP Wizard", "AmiPy", "ZRM", "Overnight Options"]
 
             # Create a Plotly figure
             fig = go.Figure()
 
-            # Add traces for each segment of the line with the determined color
-            for i in range(1, len(net_pnls)):
-                color = 'green' if net_pnls[i] > net_pnls[i-1] else 'red'
-                fig.add_trace(go.Scatter(x=[filtered_data[i-1][1], filtered_data[i][1]],  # Dates as x-axis
-                                         y=[net_pnls[i-1], net_pnls[i]],
-                                         mode='lines',
-                                         line=dict(color=color, width=2),
-                                         showlegend=False))  # Hide legend for each trace
+            # Add traces for each category
+            for category in categories:
+                # Get amounts and dates where details match the current category
+                amounts_for_category = [
+                    record[4] for record in filtered_data if record[3] == category]
+                dates_for_category = [record[0]
+                                      for record in filtered_data if record[3] == category]
 
-            # Update the layout to hide the overall legend
-            fig.update_layout(showlegend=False)
+                fig.add_trace(go.Scatter(
+                    x=dates_for_category,
+                    y=amounts_for_category,
+                    mode='lines',
+                    name=category
+                ))
+
+            # Update axes titles
+            fig.update_layout(
+                yaxis_title="Amount (₹)",
+                xaxis_title="Date"
+            )
 
             # Display the graph using Streamlit's plotly_chart function
             st.plotly_chart(fig)
 
         elif graph_option == "Running Balance":
-            # Extract running balances from filtered_data, ensuring they are floats
-            running_balances = [float(record[6].replace('₹', '').replace(
-                ',', '').strip()) for record in filtered_data]
+            # Extract running balances from the entire dataset and convert them to floats
+            running_balance = [float(record[5].replace('₹', '').replace(
+                ',', '').replace(' ', '').strip()) for record in data]
 
-            # Extract the dates, ensuring they are in a format recognizable by Plotly
-            dates = [record[0] for record in filtered_data]
-
-            # Debugging: Print out the running balances and dates to ensure they have values
-            st.write(running_balances)
-            st.write(dates)
-
-            # If there are no valid running balances or dates, we can avoid plotting an empty graph
-            if not running_balances or not dates:
-                st.write("No valid data available for the selected date range.")
-                return
+            # Create an auxiliary list of formatted values
+            formatted_balance = [custom_format(val) for val in running_balance]
 
             # Create a Plotly figure for Running Balance
             fig = go.Figure()
 
-            # Add the running balances data to the figure
-            fig.add_trace(go.Scatter(x=dates,
-                                     y=running_balances,
-                                     mode='lines',
-                                     line=dict(color='forestgreen', width=2),
-                                     hovertemplate='%{y:,.2f}'))
+            # Add traces for each segment of the line with the determined color
+            for i in range(1, len(running_balance)):
+                color = 'green' if running_balance[i] > running_balance[i - 1] else 'red'
+                fig.add_trace(go.Scatter(
+                    x=[data[i - 1][0], data[i][0]],
+                    y=[running_balance[i - 1], running_balance[i]],
+                    customdata=[formatted_balance[i - 1],
+                                formatted_balance[i]],
+                    mode='lines',
+                    line=dict(color=color, width=2),
+                    hovertemplate='<b>Date:</b> %{x}<br><b>Running Balance:</b> %{customdata}',
+                    showlegend=False
+                ))
+
+            # Hide legend for each trace
+
+            # Update the layout to hide the overall legend
+            fig.update_layout(showlegend=False)
 
             # Get the range of y-values for custom tick formatting
-            y_max = max(running_balances)
-            y_min = min(running_balances)
-            tickvals = list(range(int(math.floor(y_min / 1e5) * 1e5),
-                                  int(math.ceil(y_max / 1e5) * 1e5), int(1e5)))
+            y_max = max(running_balance)
+            y_min = min(running_balance)
+            tickvals = list(
+                range(40000, int(math.ceil(y_max / 50000) * 50000) + 1, 50000))
             ticktext = [custom_format(val) for val in tickvals]
 
             # Update y-axis to display values in Indian rupees with custom formatting
             fig.update_layout(
-                yaxis_title="Amount",
+                yaxis_title="Amount (₹)",
                 yaxis_tickvals=tickvals,
-                yaxis_ticktext=ticktext
+                yaxis_ticktext=ticktext,
+                xaxis_title="Date"
             )
 
             # Display the Running Balance graph using Streamlit's plotly_chart function
