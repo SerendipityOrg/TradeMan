@@ -20,9 +20,17 @@ def get_strategy_json(strategy_name):
     return strategy_json,strategy_json_path
 
 current_exit_signal_cache = {}
+# Global cache for trade IDs
+trade_id_cache = {}
 
 def get_trade_id(strategy, signal=None, order_details=None):
-    global current_exit_signal_cache  # Use this only if the function is at the global scope
+    global current_exit_signal_cache
+    global trade_id_cache  # Use the global cache
+
+    # Create a unique key for the current set of input parameters
+    cache_key = f"{strategy}-{signal}-{order_details.get('transaction', '')}-{order_details.get('transaction_type', '')}"
+    if cache_key in trade_id_cache:
+        return trade_id_cache[cache_key]  # Return the cached ID if it exists
 
     strategy_json, strategy_json_path = get_strategy_json(strategy)
 
@@ -65,7 +73,11 @@ def get_trade_id(strategy, signal=None, order_details=None):
         new_trade_id = strategy_prefix + str(next_trade_id_num)
         strategy_json["next_trade_id"] = new_trade_id
         general_calc.write_json_file(strategy_json_path, strategy_json)
-    print('current_trade_id',current_trade_id)
+    print('current_trade_id', current_trade_id)
+
+    # Cache the generated trade ID before returning it
+    trade_id_cache[cache_key] = current_trade_id
+
     return current_trade_id
 
 # 1. Renamed the function to avoid clash with the logging module
@@ -143,7 +155,7 @@ def get_quantity(user_data, broker, strategy, tradingsymbol=None):
     return quantity_data if isinstance(quantity_data, dict) else quantity_data
 
 def retrieve_order_id(user, broker,strategy, trade_type, tradingsymbol):
-
+    print(tradingsymbol)
     user_details, _ = get_user_details(user)
     # Navigate through the JSON structure to retrieve the desired order_id
     orders_dict = user_details.get(broker, {})

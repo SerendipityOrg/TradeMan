@@ -89,8 +89,9 @@ def get_option_tokens(base_symbol, expiry_date, strike_prc):
 
     return tokens, trading_symbol_list, trading_symbol_aliceblue
 
-# tokens = get_option_tokens("NIFTY","2023-09-14",19800)
-# print(tokens[2])
+# tokens = get_option_tokens("NIFTY","2023-10-19",19800)
+# tokens[1].reverse()
+# print(tokens[1])
 
 
 def callputmergeddf(hist_data,tokens):

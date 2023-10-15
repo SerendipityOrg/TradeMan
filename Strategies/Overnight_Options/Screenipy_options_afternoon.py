@@ -181,8 +181,8 @@ order_details_future = {
 }
 
 orders_to_place = [
-    ('Overnight_Options', order_details_future),
-    ('Overnight_Options', order_details_opt)
+    ('Overnight_Options', order_details_opt),
+    ('Overnight_Options', order_details_future)
 ]
 
 for strategy, order_details in orders_to_place:
