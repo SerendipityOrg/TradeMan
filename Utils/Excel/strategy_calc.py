@@ -37,16 +37,16 @@ def process_mpwizard_trades(broker,mpwizard_trades):
             "Index": index,
             "Strike Prc": strike_price,
             "Option Type": option_type,
-            "Date": pd.to_datetime(buy_trade["timestamp"]).date(),
+            "Date": pd.to_datetime(buy_trade["timestamp"]).strftime('%d-%b-%y'),
             "Entry Time": pd.to_datetime(buy_trade["timestamp"]).strftime('%H:%M'),
             "Exit Time": pd.to_datetime(sell_trade["timestamp"]).strftime('%H:%M'),
             "Entry Price": buy_trade["avg_prc"],
             "Exit Price": sell_trade["avg_prc"],
             "Trade points": float(sell_trade["avg_prc"]) - float(buy_trade["avg_prc"]),
             "Qty": buy_trade["qty"],
-            "PnL": (float(sell_trade["avg_prc"]) - float(buy_trade["avg_prc"])) * int(buy_trade["qty"]),
-            "Tax": charges,
-            "Net PnL" : (float(sell_trade["avg_prc"]) - float(buy_trade["avg_prc"])) * int(buy_trade["qty"]) - charges
+            "PnL": round((float(sell_trade["avg_prc"]) - float(buy_trade["avg_prc"])) * int(buy_trade["qty"]),2),
+            "Tax": round(charges,2),
+            "Net PnL" : round(((float(sell_trade["avg_prc"]) - float(buy_trade["avg_prc"])) * int(buy_trade["qty"]) - charges),2)
         }
         result.append(trade_data)
     return result
@@ -113,7 +113,7 @@ def process_short_trades(broker,short_signals, short_cover_signals,signal):
             "Index": "NIFTY",
             "Trade Type": signal,
             "Strike Prc": short_signal_group[0]["strike_price"],
-            "Date": pd.to_datetime(short_signal_group[0]["timestamp"]).date(),
+            "Date": pd.to_datetime(short_signal_group[0]["timestamp"]).strftime('%d-%b-%y'),
             "Entry Time": pd.to_datetime(short_signal_group[0]["timestamp"]).strftime('%H:%M'),
             "Exit Time": pd.to_datetime(short_cover_signal_group[0]["timestamp"]).strftime('%H:%M'),
             "Entry Price": entry_price,
@@ -122,9 +122,9 @@ def process_short_trades(broker,short_signals, short_cover_signals,signal):
             "Hedge Exit": hedge_exit,
             "Trade points": trade_points,
             "Qty": short_signal_group[0]["qty"],
-            "PnL": trade_points * int(short_signal_group[0]["qty"]),
-            "Tax": charges,
-            "Net PnL" : trade_points * int(short_signal_group[0]["qty"]) - charges
+            "PnL": round(trade_points * int(short_signal_group[0]["qty"]),2),
+            "Tax": round(charges,2),
+            "Net PnL" : round((trade_points * int(short_signal_group[0]["qty"]) - charges),2)
         }
         result.append(trade_data)
     return result
@@ -159,7 +159,7 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
             "Index": "NIFTY",
             "Trade Type": signal,
             "Strike Prc": long_signal_pair[0]["strike_price"],
-            "Date": pd.to_datetime(long_signal_pair[0]["timestamp"]).date(),
+            "Date": pd.to_datetime(long_signal_pair[0]["timestamp"]).strftime('%d-%b-%y'),
             "Entry Time": pd.to_datetime(long_signal_pair[0]["timestamp"]).strftime('%H:%M'),
             "Exit Time": pd.to_datetime(long_cover_signal_pair[0]["timestamp"]).strftime('%H:%M'),
             "Entry Price": entry_price,
@@ -168,9 +168,9 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
             "Hedge Exit": 0.0,
             "Trade points": trade_points,
             "Qty": long_signal_pair[0]["qty"],
-            "PnL": trade_points * int(long_signal_pair[0]["qty"]),
-            "Tax": charges,
-            "Net PnL" : trade_points * int(long_signal_pair[0]["qty"]) - charges
+            "PnL": round(trade_points * int(long_signal_pair[0]["qty"]),2),
+            "Tax": round(charges,2),
+            "Net PnL" : round((trade_points * int(long_signal_pair[0]["qty"]) - charges),2)
         }
         result.append(trade_data)
     return result
@@ -226,7 +226,7 @@ def process_overnight_options_trades(broker,overnight_options_trades):
         "Trade ID": afternoon_trades[0]["trade_id"],
         "Strategy": "Overnight_Options",
         "Trade_Type": direction,
-        "Date": pd.to_datetime(morning_trades[0]["timestamp"]).date(),
+        "Date": pd.to_datetime(morning_trades[0]["timestamp"]).strftime('%d-%b-%y'),
         "Entry Time": pd.to_datetime(afternoon_trades[0]["timestamp"]).strftime('%H:%M'),
         "Exit Time": pd.to_datetime(morning_trades[0]["timestamp"]).strftime('%H:%M'),
         "Future_Entry": future_entry,
@@ -235,9 +235,9 @@ def process_overnight_options_trades(broker,overnight_options_trades):
         "Option_Exit": option_exit,
         "Trade_Points": trade_points,
         "Qty": qty,
-        "PnL": PnL,
-        "Tax": total_tax,
-        "Net PnL" : PnL - total_tax
+        "PnL": round(PnL,2),
+        "Tax": round(total_tax,2),
+        "Net PnL" : round((PnL - total_tax),2)
     }
     result.append(trade_data)
     return result

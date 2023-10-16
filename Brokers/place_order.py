@@ -21,7 +21,6 @@ def start_monitoring(monitor):
 
 #TODO: write documentation
 def place_order_for_broker(strategy, order_details=None, qty =None,monitor = None, trading_symbol = None, signal = None):
-    print(order_details)
     from instrument_monitor import InstrumentMonitor
 
     if trading_symbol is not None:
@@ -135,7 +134,7 @@ def modify_orders(token=None,monitor=None,order_details=None):
         order_details['target'] = token_data['target']
         order_details['limit_prc'] = token_data['limit_prc']
         order_details['strategy'] = token_data['strategy']
-    print(order_details['target'],"target ",order_details['limit_prc'],"limit prc")
+    # print(order_details['target'],"target ",order_details['limit_prc'],"limit prc")
 
     
     weeklyexpiry, _ = gc.get_expiry_dates(order_details['base_symbol'])

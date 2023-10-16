@@ -24,7 +24,6 @@ current_exit_signal_cache = {}
 def get_trade_id(strategy, signal=None, order_details=None):
     global current_exit_signal_cache  # Use this only if the function is at the global scope
 
-    print("get_trade_id", strategy, signal, order_details)
     strategy_json, strategy_json_path = get_strategy_json(strategy)
 
     next_trade_id_str = strategy_json["next_trade_id"]
@@ -66,7 +65,7 @@ def get_trade_id(strategy, signal=None, order_details=None):
         new_trade_id = strategy_prefix + str(next_trade_id_num)
         strategy_json["next_trade_id"] = new_trade_id
         general_calc.write_json_file(strategy_json_path, strategy_json)
-
+    print('current_trade_id',current_trade_id)
     return current_trade_id
 
 # 1. Renamed the function to avoid clash with the logging module
