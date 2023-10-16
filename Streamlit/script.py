@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 from firebase_admin import db
 from firebase_admin import credentials, storage
 import openpyxl
+import json
 from collections import defaultdict
 from io import BytesIO
 from formats import format_value, format_stat_value, indian_format, custom_format
@@ -20,8 +21,18 @@ from streamlit_option_menu import option_menu
 storage_bucket = os.getenv('STORAGE_BUCKET')
 
 
-def show_profile(client_data):
+def display_profile_picture(client_data, style=None):
+    # Ensure that client_data is a dictionary
+    if isinstance(client_data, str):
+        # Try to load the string as a JSON dictionary
+        try:
+            client_data = json.loads(client_data)
+        except json.JSONDecodeError:
+            return
+
+    # Fetch the profile picture from the client_data dictionary
     profile_picture = client_data.get("Profile Picture")
+
     # Display the profile picture if available
     if profile_picture is not None:
         # Decode base64 string to bytes
@@ -30,34 +41,54 @@ def show_profile(client_data):
         # Convert profile picture from bytes to PIL Image
         image = Image.open(io.BytesIO(profile_picture_bytes))
 
-       # Convert the image to RGB
+        # Convert the image to RGB
         image_rgb = image.convert("RGB")
 
         # Save the image in JPG format with reduced quality (adjust the quality value as needed)
         image_path = "profile_picture.jpg"
-        # Adjust the quality value as needed
         image_rgb.save(image_path, "JPEG", quality=50)
 
-        # Define CSS style to position the profile picture in the right top corner with some margin
-        css_style = f"""
+        # Define default CSS style
+        css_style_default = {
+            "container": {
+                "position": "absolute",
+                "top": "-80px",
+                "right": "-170px",
+                "border": "2px solid #ccc",
+                "border-radius": "50%",
+                "overflow": "hidden"
+            },
+            "img": {
+                "width": "100px",
+                "height": "100px"
+            }
+        }
+
+        # If additional styles are provided, update the default style
+        if style:
+            for key, value in style.items():
+                if key in css_style_default:
+                    css_style_default[key].update(value)
+
+        # Convert the style dictionary to a CSS string
+        css_style_string = """
             <style>
                 .profile-picture-container {{
-                    position: absolute;
-                    top: -40px;  /* Adjust the top value as needed */
-                    right: 10px;
-                    border: 2px solid #ccc;
-                    border-radius: 50%;
-                    overflow: hidden;
+                    {container_styles}
                 }}
                 .profile-picture-container img {{
-                    width: 100px;
-                    height: 100px;
+                    {img_styles}
                 }}
             </style>
-        """
+        """.format(
+            container_styles='; '.join(
+                f'{k}: {v}' for k, v in css_style_default['container'].items()),
+            img_styles='; '.join(
+                f'{k}: {v}' for k, v in css_style_default['img'].items())
+        )
 
         # Display the CSS style
-        st.markdown(css_style, unsafe_allow_html=True)
+        st.markdown(css_style_string, unsafe_allow_html=True)
 
         # Display the profile picture in a container with the defined CSS style
         st.markdown(f"""
@@ -68,6 +99,11 @@ def show_profile(client_data):
 
         # Remove the saved image file
         os.remove(image_path)
+
+
+def show_profile(client_data):
+    # Display profile picture
+    display_profile_picture(client_data)
 
     pd.options.display.float_format = '{:,.2f}'.format
     # Set the title for the Streamlit app
@@ -233,6 +269,9 @@ table.dataframe tr:hover {
 
 
 def display_performance_dashboard(selected_client, client_data, excel_file_name):
+    # Display the profile picture with the new style
+    display_profile_picture(client_data)
+
     # CSS style definitions for the option menu
     selected = option_menu(None, ["Calendar", "Statistics", "Graph"],
                            icons=['calendar', 'file-bar-graph', 'graph-up'],
@@ -291,8 +330,14 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                 amount = row[column_indices['Amount']].value
                 running_balance = row[column_indices['Running Balance']].value
 
-                data.append([date, day, trade_id, details,
-                            amount, running_balance])
+                # Skip the opening balance rows
+                if details != "Opening Balance":
+                    data.append([date, day, trade_id, details,
+                                amount, running_balance])
+
+            # Extract the default start date from the first entry of the data (which is now not the opening balance)
+            default_start_date = datetime.datetime.strptime(
+                data[0][0], '%d-%b-%y').date()
 
         # Add custom CSS for the table and value colors
         st.markdown("""
@@ -366,48 +411,99 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                     classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
 
     if selected == "Statistics":
+
+        # Extract the default start date from the Excel "DTD" sheet
+        default_start_date = None
+        if data:
+            default_start_date = datetime.datetime.strptime(
+                data[0][0], '%d-%b-%y').date()
+
         # Display date input fields for the user to select the start and end dates
         start_date = st.date_input(
-            "Select Start Date", datetime.date(2023, 7, 1))
+            "Select Start Date", default_start_date)
         end_date = st.date_input("Select End Date")
 
-        if start_date and end_date:
-            # Filter data based on the selected date range
+        # Option menu for stats
+        option_selected = option_menu(None, ['Strategy Stats', 'Admin Stats'],
+                                      menu_icon="cast", default_index=0, orientation="horizontal",
+                                      styles={
+            "container": {"padding": "0!important", "background-color": "#fafafa"},
+            "icon": {"color": "orange", "font-size": "25px"},
+            "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
+            "nav-link-selected": {"background-color": "#a3297a"}, })
+
+        if option_selected == 'Strategy Stats':
+            # List of target detail types
+            target_types = ["MP Wizard", "AmiPy", "Overnight Options", "ZRM"]
+
+            # Filter data for the selected date range
             filtered_data = [
                 record for record in data if datetime.datetime.strptime(record[0], '%d-%b-%y').date() <= end_date and datetime.datetime.strptime(record[0], '%d-%b-%y').date() >= start_date
             ]
 
-            # If no data available for the selected range, display a message
-            if not filtered_data:
-                st.write(
-                    f"No data available between {start_date} and {end_date}")
-                return
+            # Aggregate the amounts for each target detail type
+            details_aggregated = defaultdict(float)
 
-            # Compute the statistics
-            initial_capital = float(filtered_data[0][5].replace(
-                '₹', '').replace(',', '').replace(' ', '').strip())
-            ending_capital = float(
-                filtered_data[-1][5].replace('₹', '').replace(',', '').replace(' ', '').strip())
-            total_profit = ending_capital - initial_capital
+            for record in filtered_data:
+                detail_type = record[3]
+                amount = float(record[4].replace('₹', '').replace(
+                    ',', '').replace(' ', '').strip())
 
-            # Create a DataFrame for the statistics
-            stats_data = {
-                "Metric": ["Initial Capital", "Ending Capital", "Total Profit"],
-                "Value": [custom_format(initial_capital), custom_format(ending_capital), custom_format(total_profit)]
-            }
+                if detail_type in target_types:
+                    details_aggregated[detail_type] += amount
 
-            stats_df = pd.DataFrame(stats_data)
+            aggregated_data = []
 
-            # Display the table without index and without column headers, and with custom styles
-            st.write(stats_df.to_html(index=False, header=False,
-                     classes='custom-table', escape=False), unsafe_allow_html=True)
+            # Add the aggregated amounts to the aggregated_data list using format_value
+            for detail_type, amount in details_aggregated.items():
+                display_detail = detail_type
+                aggregated_data.append([display_detail, format_value(amount)])
+
+            # Display the table using pandas
+            st.write(pd.DataFrame(aggregated_data, columns=['Detail Type', 'Amount']).to_html(
+                classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
+
+        if option_selected == 'Admin Stats':
+
+            if start_date and end_date:
+                # Filter data based on the selected date range
+                filtered_data = [
+                    record for record in data if datetime.datetime.strptime(record[0], '%d-%b-%y').date() <= end_date and datetime.datetime.strptime(record[0], '%d-%b-%y').date() >= start_date
+                ]
+
+                # If no data available for the selected range, display a message
+                if not filtered_data:
+                    st.write(
+                        f"No data available between {start_date} and {end_date}")
+                    return
+
+                # Compute the statistics
+                initial_capital = float(filtered_data[0][5].replace(
+                    '₹', '').replace(',', '').replace(' ', '').strip())
+                ending_capital = float(
+                    filtered_data[-1][5].replace('₹', '').replace(',', '').replace(' ', '').strip())
+                total_profit = ending_capital - initial_capital
+
+                # Create a DataFrame for the statistics
+                stats_data = {
+                    "Metric": ["Initial Capital", "Ending Capital", "Total Profit"],
+                    "Value": [f"<span style='color: green;'>{custom_format(initial_capital)}</span>",
+                              f"<span style='color: green;'>{custom_format(ending_capital)}</span>",
+                              f"<span style='color: green;'>{custom_format(total_profit)}</span>"]
+                }
+
+                stats_df = pd.DataFrame(stats_data)
+
+                # Display the table without index and without column headers, and with custom styles
+                st.write(stats_df.to_html(index=False, header=False,
+                                          classes='custom-table', escape=False), unsafe_allow_html=True)
 
     if selected == 'Graph':
         # If filtered_data is not defined, set it with a default date range
         try:
             filtered_data
         except NameError:
-            start_date = datetime.date(2023, 7, 1)
+            start_date = datetime.date(default_start_date)
             end_date = datetime.date.today()
             filtered_data = [record for record in data if record[0] is not None and start_date.strftime(
                 '%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]

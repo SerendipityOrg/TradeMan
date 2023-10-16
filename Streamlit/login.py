@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from streamlit_calendar import calendar
 from firebase_admin import storage
 from streamlit_option_menu import option_menu
-from script import display_performance_dashboard, table_style
+from script import display_performance_dashboard, table_style, display_profile_picture
 from formats import format_value, format_stat_value, indian_format
 
 
@@ -119,8 +119,10 @@ def display_for_login(client_data):
         client_username = client_data.get("Username", '')
         client_username = client_username[0].lower() + client_username[1:]
         excel_file_name = f"{client_username}.xlsx"
+        display_profile_picture(client_data)
         display_performance_dashboard(
             client_data, client_username, excel_file_name)
+
     else:
         st.warning("No client data available.")
 
