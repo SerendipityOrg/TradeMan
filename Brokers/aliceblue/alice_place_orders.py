@@ -54,7 +54,7 @@ def alice_place_order(alice, strategy, order_details, qty, user_details):
         product_type = ProductType.Intraday
 
     avg_prc = 0.0
-    limit_prc = round(float(order_details.get('limit_prc', 0.0)),1)
+    limit_prc = float(order_details.get('limit_prc', 0.0))
     trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
     try:
         print("order_details",order_details.get('order_tag', None))
@@ -149,6 +149,7 @@ def create_alice(user_details):
     return alice
 
 def update_stoploss(monitor_order_func):
+    print("in update stoploss")
     global alice
     if alice is None:
         user_details,_ = get_user_details(monitor_order_func.get('user'))
@@ -174,7 +175,6 @@ def update_stoploss(monitor_order_func):
     print("alice modify_order",modify_order)
 
 def exit_order(exit_order_func):
-    print("exit_order_func",exit_order_func)
     order_id = retrieve_order_id(
         exit_order_func.get('user'),
         exit_order_func.get('broker'),
@@ -184,3 +184,7 @@ def exit_order(exit_order_func):
     )
     print("order_id",order_id)
 
+def get_order_details(user_details):
+    alice = create_alice(user_details)
+    order_details = alice.get_order_history('')
+    return order_details

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define maximum number of attempts
-max_attempts=5
+max_attempts=2
 
 # Counter for the number of attempts
 attempt=0
@@ -19,7 +19,7 @@ while true; do
     # Source conda, activate the environment and run the script
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
 	conda activate tradingenv && \
-    cd /Users/traderscafe/Desktop/Main/TradeMan/Strategies/OverNight && \
+    cd /Users/traderscafe/Desktop/Main/TradeMan/Strategies/Overnight_Options && \
 	/Users/traderscafe/miniconda3/envs/tradingenv/bin/python Screenipy_options_afternoon.py && \
 	echo "Program started successfully" && break
 

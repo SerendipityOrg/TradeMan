@@ -160,6 +160,7 @@ prediction = getNiftyPrediction(
                 data=fetchLatestNiftyDaily(proxyServer=proxyServer), 
                 proxyServer=proxyServer
             )
+print(prediction)
 option_type = 'CE' if prediction == 'BEARISH' else 'PE'
 strikeprc = bear_strikeprc if prediction == 'BEARISH' else bull_strikeprc
 transaction_type = 'SELL' if prediction == 'BEARISH' else 'BUY'
@@ -168,14 +169,14 @@ order_details_opt = {
     "base_symbol": index,
     "option_type": option_type,
     "strike_prc": strikeprc,
-    "transcation":"BUY",
+    "transaction":"BUY",
     "direction": prediction
 }
 order_details_future = {
     "base_symbol": index,
     "option_type": 'FUT',
     "strike_prc": 0,
-    "transcation": transaction_type,
+    "transaction": transaction_type,
     "direction": prediction
 }
 

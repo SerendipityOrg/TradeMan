@@ -134,7 +134,7 @@ def trade_callback(update: Update, context: CallbackContext) -> None:
     "base_symbol": context.user_data['index'],
     "option_type": context.user_data['option_type'],
     "strike_prc": context.user_data['strike_price'],
-    "transcation": trade_type
+    "transaction": trade_type
     }
 
     order_details['stoploss_points'] = mpw.get_weekday_price_ref(order_details['base_symbol'])
