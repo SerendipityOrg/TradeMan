@@ -394,7 +394,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                 aggregated_data = []
 
                 # Add the aggregated amounts to the aggregated_data list using format_value and check for italicized detail types
-                italic_types = ["MP Wizard", "AmiPy",
+                italic_types = ["MPWizard", "AmiPy",
                                 "Overnight Options", "ZRM"]
                 for detail_type, amount in details_aggregated.items():
                     display_detail = detail_type if detail_type not in italic_types else f"<em>{detail_type}</em>"
@@ -415,12 +415,15 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         # Extract the default start date from the Excel "DTD" sheet
         default_start_date = None
         if data:
-            default_start_date = datetime.datetime.strptime(
-                data[0][0], '%d-%b-%y').date()
+            try:
+                default_start_date = datetime.datetime.strptime(
+                    data[0][0], '%d-%b-%y').date()
+            except ValueError as e:
+                print(f"Failed to parse default start date {data[0][0]}: {e}")
+                default_start_date = datetime.date.today()  # or some other fallback date
 
         # Display date input fields for the user to select the start and end dates
-        start_date = st.date_input(
-            "Select Start Date", default_start_date)
+        start_date = st.date_input("Select Start Date", default_start_date)
         end_date = st.date_input("Select End Date")
 
         # Option menu for stats
@@ -434,12 +437,18 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
         if option_selected == 'Strategy Stats':
             # List of target detail types
-            target_types = ["MP Wizard", "AmiPy", "Overnight Options", "ZRM"]
+            target_types = ["MPWizard", "AmiPy", "Overnight Options", "ZRM"]
 
             # Filter data for the selected date range
-            filtered_data = [
-                record for record in data if datetime.datetime.strptime(record[0], '%d-%b-%y').date() <= end_date and datetime.datetime.strptime(record[0], '%d-%b-%y').date() >= start_date
-            ]
+            filtered_data = []
+            for record in data:
+                try:
+                    record_date = datetime.datetime.strptime(
+                        record[0], '%d-%b-%y').date()
+                    if start_date <= record_date <= end_date:
+                        filtered_data.append(record)
+                except ValueError as e:
+                    print(f"Failed to parse date {record[0]}: {e}")
 
             # Aggregate the amounts for each target detail type
             details_aggregated = defaultdict(float)
@@ -466,16 +475,15 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         if option_selected == 'Admin Stats':
 
             if start_date and end_date:
-                # Filter data based on the selected date range
-                filtered_data = [
-                    record for record in data if datetime.datetime.strptime(record[0], '%d-%b-%y').date() <= end_date and datetime.datetime.strptime(record[0], '%d-%b-%y').date() >= start_date
-                ]
-
-                # If no data available for the selected range, display a message
-                if not filtered_data:
-                    st.write(
-                        f"No data available between {start_date} and {end_date}")
-                    return
+                filtered_data = []
+                for record in data:
+                    try:
+                        record_date = datetime.datetime.strptime(
+                            record[0], '%d-%b-%y').date()
+                        if start_date <= record_date <= end_date:
+                            filtered_data.append(record)
+                    except ValueError as e:
+                        print(f"Failed to parse date {record[0]}: {e}")
 
                 # Compute the statistics
                 initial_capital = float(filtered_data[0][5].replace(
@@ -499,19 +507,32 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                                           classes='custom-table', escape=False), unsafe_allow_html=True)
 
     if selected == 'Graph':
-        # If filtered_data is not defined, set it with a default date range
-        try:
-            filtered_data
-        except NameError:
-            start_date = datetime.date(default_start_date)
+        if 'filtered_data' not in locals():
+            if default_start_date:  # Check if default_start_date exists
+                start_date = default_start_date
+            else:
+                start_date = datetime.date.today()  # Fallback if default_start_date doesn't exist
             end_date = datetime.date.today()
-            filtered_data = [record for record in data if record[0] is not None and start_date.strftime(
-                '%Y-%m-%d') <= record[0] <= end_date.strftime('%Y-%m-%d')]
+            filtered_data = []
+            for record in data:
+                if record[0]:
+                    try:
+                        record_date = datetime.datetime.strptime(
+                            record[0], '%d-%b-%y').date()
+                        if start_date <= record_date <= end_date:
+                            filtered_data.append(record)
+                    except ValueError as e:
+                        print(f"Failed to parse date {record[0]}: {e}")
+
+        # Extract unique strategies from data
+        unique_strategies = set([record[3] for record in data])
+        categories = ["MPWizard", "AmiPy", "ZRM", "Overnight Options"]
+        available_strategies = [
+            strategy for strategy in categories if strategy in unique_strategies]
 
         graph_option = option_menu(None, ["Net PnL", "Running Balance"],
-                                   # Assuming these are the icons you want
                                    icons=['line-chart', 'line-chart'],
-                                   menu_icon="chart-bar",  # Placeholder icon
+                                   menu_icon="chart-bar",
                                    default_index=0,
                                    orientation="horizontal",
                                    styles={
@@ -522,33 +543,34 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         })
 
         if graph_option == "Net PnL":
-            categories = ["MP Wizard", "AmiPy", "ZRM", "Overnight Options"]
+            if not available_strategies:
+                st.write("No available strategies in the DTD sheet.")
+                return
+            selected_strategy = st.selectbox(
+                'Select Strategy:', available_strategies)
+            selected_strategies = [selected_strategy]
+            strategy_data = [
+                record for record in data if record[3] in selected_strategies]
+            daily_pnl = [float(record[4].replace('₹', '').replace(
+                ',', '').replace(' ', '').strip()) for record in strategy_data]
 
-            # Create a Plotly figure
+            # Plotting code for Net PnL
             fig = go.Figure()
-
-            # Add traces for each category
-            for category in categories:
-                # Get amounts and dates where details match the current category
-                amounts_for_category = [
-                    record[4] for record in filtered_data if record[3] == category]
-                dates_for_category = [record[0]
-                                      for record in filtered_data if record[3] == category]
-
+            for i in range(1, len(daily_pnl)):
+                color = 'green' if daily_pnl[i] > daily_pnl[i - 1] else 'red'
                 fig.add_trace(go.Scatter(
-                    x=dates_for_category,
-                    y=amounts_for_category,
+                    x=[strategy_data[i - 1][0], strategy_data[i][0]],
+                    y=[daily_pnl[i - 1], daily_pnl[i]],
                     mode='lines',
-                    name=category
+                    line=dict(color=color, width=2),
+                    hovertemplate='<b>Date:</b> %{x}<br><b>Net PnL:</b> ₹%{y:,.2f}',
+                    showlegend=False
                 ))
-
-            # Update axes titles
             fig.update_layout(
-                yaxis_title="Amount (₹)",
-                xaxis_title="Date"
+                title=f'Net PnL for {selected_strategy}',
+                xaxis_title="Date",
+                yaxis_title="Net PnL (₹)"
             )
-
-            # Display the graph using Streamlit's plotly_chart function
             st.plotly_chart(fig)
 
         elif graph_option == "Running Balance":

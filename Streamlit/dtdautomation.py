@@ -49,7 +49,7 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
     all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
 
     rows = []
-    default_details = ['MP Wizard', 'AmiPy', 'ZRM', 'Overnight Options']
+    default_details = ['MPWizard', 'AmiPy', 'ZRM', 'Overnight Options']
     sl_no = 1
 
     # Initialize the running balance with the opening balance
@@ -188,7 +188,7 @@ if __name__ == "__main__":
         os.path.join(script_dir, 'useropeningbalance.txt'))
 
     sheet_mappings = {
-        'MP Wizard': 'MPWizard',
+        'MPWizard': 'MPWizard',
         'AmiPy': 'AmiPy',
         'ZRM': 'ZRM',
         'Overnight Options': 'Overnight_options'
