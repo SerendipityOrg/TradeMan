@@ -10,6 +10,8 @@ UTILS_DIR = os.path.join(CURRENT_DIR, '..', 'Utils')
 
 sys.path.append(UTILS_DIR)
 from general_calc import *
+import Discord.discordchannels as discord
+
 
 BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
 sys.path.append(BROKERS_DIR)
@@ -17,8 +19,6 @@ import aliceblue.alice_place_orders as aliceblue
 import zerodha.kite_place_orders as zerodha
 import place_order as place_order
 
-sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
-import discordchannels as discord
 
 env_file_path = os.path.join(CURRENT_DIR, '.env')
 env_file_path = os.path.abspath(env_file_path)

@@ -1,0 +1,1 @@
+A small script to simulate market at predetermined rate.

@@ -26,7 +26,7 @@ def get_trade_id(strategy, signal=None, order_details=None):
 
     strategy_json, strategy_json_path = get_strategy_json(strategy)
 
-    next_trade_id_str = strategy_json["next_trade_id"]
+    next_trade_id_str = strategy_json["NextTradeId"]
     strategy_prefix = ''.join([i for i in next_trade_id_str if not i.isdigit()])
     next_trade_id_num = int(''.join([i for i in next_trade_id_str if i.isdigit()]))
     
@@ -38,6 +38,7 @@ def get_trade_id(strategy, signal=None, order_details=None):
             is_exit = True
     else:
         is_exit = order_details.get('transaction', '').lower() == 'sell' or order_details.get('transaction_type', '').lower() == 'sell'
+        print('is_exit',is_exit)
 
     current_trade_id = strategy_prefix + str(next_trade_id_num)
 
@@ -47,8 +48,8 @@ def get_trade_id(strategy, signal=None, order_details=None):
         current_trade_id += "_entry"
     
     # Store trade_ids that are placed today in the JSON under the `today_orders` tag
-    if "today_orders" not in strategy_json:
-        strategy_json["today_orders"] = []
+    if "TodayOrders" not in strategy_json:
+        strategy_json["TodayOrders"] = []
 
     # Check if the signal is in our cache
     if is_exit:
@@ -60,16 +61,16 @@ def get_trade_id(strategy, signal=None, order_details=None):
             current_exit_signal_cache[signal] = current_trade_id
 
         # Increment the trade_id after using it for the current exit order and update the JSON.
-        strategy_json["today_orders"].append(strategy_prefix + str(next_trade_id_num))
+        strategy_json["TodayOrders"].append(strategy_prefix + str(next_trade_id_num))
         next_trade_id_num += 1
         new_trade_id = strategy_prefix + str(next_trade_id_num)
-        strategy_json["next_trade_id"] = new_trade_id
+        strategy_json["NextTradeId"] = new_trade_id
         general_calc.write_json_file(strategy_json_path, strategy_json)
     print('current_trade_id',current_trade_id)
     return current_trade_id
 
 # 1. Renamed the function to avoid clash with the logging module
-def log_order(order_id, avg_price, order_details, user_details,strategy):
+def log_order(order_id, avg_price, order_details, user_details,strategy):#TODO orders should be logged to OrdersJson folder in UserProfile
     user, json_path = get_user_details(order_details['user'])
     if 'strike_prc' in order_details:
         strike_prc = order_details['strike_prc']

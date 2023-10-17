@@ -6,13 +6,13 @@ UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..','Utils')
 
 sys.path.append(UTILS_DIR)
 from general_calc import *
+import Discord.discordchannels as discord
+
 
 FILE_DIR = os.path.join(CURRENT_DIR,'..',)
 sys.path.append(FILE_DIR)
 from place_order_calc import *
 
-sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
-import discordchannels as discord
 
 kite = None
 

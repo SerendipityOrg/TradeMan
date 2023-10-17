@@ -1,18 +1,18 @@
 import logging
 from pya3 import *
 import sys
+import icecream as ic
+
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..','Utils')
+UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..','MarketUtils')
 
 sys.path.append(UTILS_DIR)
 from general_calc import *
+import Discord.discordchannels as discord
 
 FILE_DIR = os.path.join(CURRENT_DIR,'..',)
 sys.path.append(FILE_DIR)
 from place_order_calc import *
-
-sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
-import discordchannels as discord
 
 alice = None
 
@@ -154,7 +154,7 @@ def update_stoploss(monitor_order_func):
     if alice is None:
         user_details,_ = get_user_details(monitor_order_func.get('user'))
         alice = create_alice(user_details)
-
+    print(monitor_order_func.get('token'))
     order_id = retrieve_order_id(
             monitor_order_func.get('user'),
             monitor_order_func.get('broker'),

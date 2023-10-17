@@ -9,7 +9,7 @@ import place_order_calc as place_order_calc
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Navigate to the Brokers and Utils directories relative to the current script's location
-UTILS_DIR = os.path.join(CURRENT_DIR, '..','Utils')
+UTILS_DIR = os.path.join(CURRENT_DIR, '..','MarketUtils')
 
 sys.path.append(UTILS_DIR)
 import general_calc as gc
@@ -20,14 +20,15 @@ def start_monitoring(monitor):
     monitor_thread.start()
 
 #TODO: write documentation
-def place_order_for_broker(strategy, order_details=None, qty =None,monitor = None, trading_symbol = None, signal = None):
+def place_order_for_broker(order_details=None,monitor = None, trading_symbol = None, signal = None,qty = None):
     from instrument_monitor import InstrumentMonitor
-
+    print(order_details)
     if trading_symbol is not None:
         trading_symbol_list, trading_symbol_aliceblue = trading_symbol
     else:
         weeklyexpiry, monthlyexpiry = gc.get_expiry_dates(order_details['base_symbol']) # TODO: Process before 10:15 at the start of the script
 
+        strategy = order_details['strategy']
         
         if strategy == "Overnight_Options" and order_details['strike_prc'] == 0:
             expiry = monthlyexpiry
@@ -80,6 +81,9 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
         if order_tag is not None:
                 details['order_tag'] = order_tag
         _,avg_prc = place_order_func(strategy, details, qty=qty)
+
+        if strategy == 'ExpiryTrader' and order_details['order_mode'] == 'Main':
+            place_stoploss_order(strategy, order_details, qty, monitor, trading_symbol, signal)
         #######################price ref can be none 
         
         if strategy == 'MPWizard' or strategy == 'Siri':
@@ -123,7 +127,46 @@ def place_order_for_broker(strategy, order_details=None, qty =None,monitor = Non
         if not monitor:
             monitor = InstrumentMonitor(callback=partial(modify_orders,monitor=monitor))
         start_monitoring(monitor) 
-               
+
+def place_stoploss_order(strategy, order_details=None, qty =None,monitor = None, trading_symbol = None, signal = None):
+    from instrument_monitor import InstrumentMonitor
+    weeklyexpiry, monthlyexpiry = gc.get_expiry_dates(order_details['base_symbol'])
+    token, trading_symbol_list, trading_symbol_aliceblue = gc.get_tokens(
+                                                                order_details['base_symbol'], 
+                                                                weeklyexpiry, 
+                                                                order_details['option_type'], 
+                                                                order_details['strike_prc']
+                                                            )
+    option_ltp = InstrumentMonitor._fetch_ltp_for_token(monitor, token)
+    print("option_ltp",option_ltp)
+    stoploss_mutiplier = order_details.get('stoploss_mutiplier',0)
+    limit_prc = round(float(option_ltp) * (stoploss_mutiplier))
+
+    if limit_prc <= 0:
+        limit_prc = 1.0
+    else:
+        limit_prc = round(limit_prc,1)
+    order_details['limit_prc'] = limit_prc
+    order_details['transaction_type'] = 'BUY'
+    order_details['order_trade_type'] = 'Stoploss'
+    users_to_trade = gc.get_strategy_users(strategy)
+
+    
+    for broker,user in users_to_trade:
+        if broker == 'zerodha':
+            order_details['tradingsymbol'] = trading_symbol_list
+            order_details['user'] = user
+            place_order_func = zerodha.place_zerodha_order
+        elif broker == 'aliceblue':
+            order_details['tradingsymbol'] = trading_symbol_aliceblue
+            order_details['user'] = user
+            place_order_func = aliceblue.place_aliceblue_order
+        else:
+            print(f"Unknown broker: {broker}")
+            return
+        _,avg_prc = place_order_func(strategy, order_details, qty=qty)
+        
+
     
 
 def modify_orders(token=None,monitor=None,order_details=None):
