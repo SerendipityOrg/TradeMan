@@ -72,8 +72,8 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
         if date < start_date:
             continue
 
-        date_str = date.strftime('%d-%b-%y')
-        day_str = date.strftime('%A')
+        date_str = pd.Timestamp(date).strftime('%d-%b-%y')
+        day_str = pd.Timestamp(date).strftime('%A')
 
         for transaction_id in default_details:
             if transaction_id in data_mappings:
