@@ -4,26 +4,18 @@ import datetime as dt
 from time import sleep
 from dotenv import load_dotenv
 
-# Setup paths and load environment variables
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.extend([os.path.join(ROOT_DIR, '..', path) for path in ['Utils', 'Brokers']])
-load_dotenv(os.path.join(ROOT_DIR, '..', 'Brokers', '.env'))
+DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+sys.path.append(DIR_PATH)
 
-UTILS_DIR = os.path.join(ROOT_DIR, '..','MarketUtils')
-sys.path.append(UTILS_DIR)
-import general_calc
+import MarketUtils.general_calc as general_calc
+import Brokers.place_order as place_order
+import Strategies.StrategyBase as StrategyBase
+import MarketUtils.InstrumentBase as InstrumentBase
+import Brokers.BrokerUtils.Broker as Broker
 
-
-BROKERS_DIR = os.path.join(ROOT_DIR, '..', 'Brokers')
-sys.path.append(BROKERS_DIR)
-import place_order 
-
-# Add parent directory to sys.path
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(parent_dir)
-
-# Now you can import the Strategy module
-import StrategyBase
+ENV_PATH = os.path.join(DIR_PATH, '.env')
+STRATEGY_PATH = os.path.join(DIR_PATH, 'Strategies', 'ExpiryTrader', 'ExpiryTrader.json')
+load_dotenv(ENV_PATH)
 
 class ExpiryTrader(StrategyBase.Strategy):
     def get_general_params(self):
@@ -38,16 +30,26 @@ class ExpiryTrader(StrategyBase.Strategy):
   # No additional methods or attributes for now. Can be expanded as needed.
 
 # Testing the class with ExpiryTrader data
-expiry_trader_obj = ExpiryTrader.read_strategy_json(r"Strategies/ExpiryTrader/ExpiryTrader.json")  #TODO pass the location as variable
-# Update the JSON file with today's expiry
-today_expiry, expiry_token = expiry_trader_obj.determine_expiry_index()
+expiry_trader_obj = ExpiryTrader.read_strategy_json(STRATEGY_PATH)  #TODO pass the location as variable
+instrument_obj = InstrumentBase.Instrument()
+
+hedge_transcation_type = "BUY"
+main_transcation_type = "SELL"
+
 
 # Extract strategy parameters
+today_expiry_symbol, today_expiry_token = expiry_trader_obj.determine_expiry_index()
+strategy_name = expiry_trader_obj.get_strategy_name()
 prediction = expiry_trader_obj.get_general_params().get('TradeView')
+order_type = expiry_trader_obj.get_general_params().get('OrderType')
+segment_type = expiry_trader_obj.get_general_params().get('Segment')
+product_type = expiry_trader_obj.get_general_params().get('ProductType')
+
 strike_prc_multiplier = expiry_trader_obj.get_entry_params().get('StrikeMultiplier')
 hedge_multiplier = expiry_trader_obj.get_entry_params().get('HedgeMultiplier')
 stoploss_mutiplier = expiry_trader_obj.get_entry_params().get('SLMultipler')
 desired_start_time_str = expiry_trader_obj.get_entry_params().get('EntryTime')
+
 start_hour, start_minute, start_second = map(int, desired_start_time_str.split(':'))
 
 # Main logic
@@ -57,34 +59,53 @@ if wait_time.total_seconds() > 0:
     print(f"Waiting for {wait_time} before starting the bot")
     sleep(wait_time.total_seconds())
 
-main_strikeprc = expiry_trader_obj.calculate_strike_prc(expiry_token, today_expiry, prediction, strike_prc_multiplier)
-option_type = expiry_trader_obj.get_option_type(prediction,"OB")
-hedge_strikeprc = expiry_trader_obj.get_hedge_strikeprc(expiry_token, today_expiry, prediction, hedge_multiplier)
-hedge_option_type = expiry_trader_obj.get_option_type(prediction,"OB")
+main_strikeprc = expiry_trader_obj.calculate_current_atm_strike_prc(today_expiry_token, today_expiry_symbol, prediction, strike_prc_multiplier)
+hedge_strikeprc = expiry_trader_obj.get_hedge_strikeprc(today_expiry_token, today_expiry_symbol, prediction, hedge_multiplier)
+main_option_type = expiry_trader_obj.get_option_type(prediction, "OS")
+hedge_option_type = expiry_trader_obj.get_hedge_option_type(prediction)
 
-print(f"Placing order for {today_expiry} {option_type} {main_strikeprc} {prediction} at {now}")
-print(f"Placing order for {today_expiry} {hedge_option_type} {hedge_strikeprc} {prediction} at {now}")
+today_expiry = instrument_obj.get_expiry_by_criteria(today_expiry_symbol, main_option_type,main_strikeprc, "current_week")
+main_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol, main_option_type,main_strikeprc, today_expiry)
+hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol, hedge_option_type,hedge_strikeprc, today_expiry)
+
+active_users = Broker.get_active_subscribers(strategy_name)
+print(active_users)
 
 orders_to_place = [
-    ({
-        "strategy": "ExpiryTrader",
-        "base_symbol": today_expiry,
-        "option_type": expiry_trader_obj.get_hedge_option_type(prediction),
-        "strike_prc": hedge_strikeprc,
-        "transaction": "BUY",
-        "order_mode" : "Hedge"
-    }),
-    ({
-        "strategy": "ExpiryTrader",
-        "base_symbol": today_expiry,
-        "option_type": expiry_trader_obj.get_option_type(prediction,expiry_trader_obj.get_general_params().get('StrategyType')),
-        "strike_prc": main_strikeprc,
-        "transaction": "SELL",
-        "order_mode" : "Main",
-        "stoploss_mutiplier": stoploss_mutiplier
-    })
+    {  
+        "strategy": strategy_name,
+        "exchange_token" : hedge_exchange_token,     
+        "segment" : segment_type,
+        "transaction_type": hedge_transcation_type,  
+        "order_type" : order_type, 
+        "product_type" : product_type,
+        "order_mode" : ["Hedge"],
+        "trade_id" : "ET1" #TODO fetch the order_tag from {strategy_name}.json
+    },
+    {
+        "strategy": strategy_name,
+        "exchange_token" : main_exchange_token,     
+        "segment" : segment_type,
+        "transaction_type": main_transcation_type, 
+        "order_type" : order_type, 
+        "product_type" : product_type,
+        "stoploss_mutiplier": stoploss_mutiplier,
+        "order_mode" : ["Main","SL"],
+        "trade_id" : "ET1" #TODO fetch the order_tag from {strategy_name}.json
+    }
 ]
 
-for order_details in orders_to_place:
-    place_order.place_order_for_broker(order_details)
+place_order.place_order_for_strategy(strategy_name,orders_to_place)
+
+# # print("orders_to_place",orders_to_place)
+# for order_details in orders_to_place:
+#     place_order.place_order_for_strategy(order_details)
+
+# for broker, usernames in active_users.items():
+#     for username in usernames:
+#         for order in orders_to_place:
+#             order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
+#             order_with_user["broker"] = broker
+#             order_with_user["username"] = username
+#             place_order.place_order_for_broker(order_with_user)
 

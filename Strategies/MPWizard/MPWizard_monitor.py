@@ -6,7 +6,7 @@ import sys
 # Constants and paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BROKERS_DIR = os.path.abspath(os.path.join(CURRENT_DIR, '..', '..', 'Brokers'))
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'Utils') # TODO move these three lines to a general location
+UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'MarketUtils') # TODO move these three lines to a general location
 
 # Load environment variables
 mpwizard_json = os.path.abspath(os.path.join(CURRENT_DIR, "MPWizard.json"))
@@ -117,7 +117,7 @@ class OrderMonitor:
             place_order.place_order_for_broker("MPWizard", order_details, monitor=self.monitor)
             self.indices_triggered_today.add(name) 
             
-            message = f"{cross_type} at {ltp} for {name}!"
+            message = f"{cross_type} {mood_data_entry['IBLevel']} {mood_data_entry['InstruMood']} at {ltp} for {name}!"
             discord.discord_bot(message,"MPWizard") 
             self.orders_placed_today += 1
             self.message_sent[name][level_name] = True

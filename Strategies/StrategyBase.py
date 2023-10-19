@@ -2,11 +2,10 @@ import json,os,sys
 from kiteconnect import KiteConnect
 import datetime as dt
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BROKERS_DIR = os.path.join(ROOT_DIR, '..', 'Brokers')
-sys.path.append(BROKERS_DIR)
+DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+sys.path.append(DIR_PATH)
 
-import Broker as Broker
+from Brokers.BrokerUtils import Broker
 
 
 
@@ -91,6 +90,12 @@ class Strategy:
             strategy_data = json.load(file)
         return cls(strategy_data)
     
+    #TODD add a function to get exhange token from instrument.csv
+    #TODO add a function to return the weekly expiry for a token 
+    #TODO add a function to return the monthly expiry for a token
+    #TODO add a function to return the next week expiry for a token
+    
+    
     def get_option_type(self,prediction,strategy_option_mode):
         if strategy_option_mode == "OS":
             return 'CE' if prediction == 'Bearish' else 'PE'
@@ -128,7 +133,6 @@ class Strategy:
             return "No expiry today"
 
     def round_strike_prc(self,ltp, base_symbol): #TODO: Add support for other base symbols using a csv list
-        print(ltp, base_symbol)
         if base_symbol == 'NIFTY' or base_symbol == 'FINNIFTY' or base_symbol == 'MIDCPNIFTY':
             return round(ltp / 50) * 50
         if base_symbol == 'BANKNIFTY' or base_symbol == 'SENSEX':
@@ -140,7 +144,7 @@ class Strategy:
         if base_symbol == 'BANKNIFTY' or base_symbol == 'SENSEX':
             return 100
        
-    def calculate_strike_prc(self,expiry_token, base_symbol, prediction, strike_prc_multiplier):
+    def calculate_current_atm_strike_prc(self,expiry_token, base_symbol, prediction, strike_prc_multiplier):
         ltp = self.get_single_ltp(expiry_token)
         base_strike = self.round_strike_prc(ltp, base_symbol)
         multiplier = self.get_strike_distance_multiplier(base_symbol)

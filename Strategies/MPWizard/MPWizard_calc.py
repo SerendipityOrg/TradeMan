@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 # Define constants and paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'Utils')
+UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'MarketUtils')
 sys.path.append(UTILS_DIR)
 import general_calc as gc
 

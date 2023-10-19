@@ -3,29 +3,18 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageH
 import os,sys 
 from dotenv import load_dotenv
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
-
-sys.path.append(BROKERS_DIR)
-import place_order as place_order
-from instrument_monitor import InstrumentMonitor
-
-env_file_path = os.path.abspath(os.path.join(BROKERS_DIR,'.env'))
-
 # Load environment variables from .env file
+
+DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+sys.path.append(DIR_PATH)
+
+env_file_path = os.path.join(DIR_PATH, '.env')
 load_dotenv(env_file_path)
-
 token = os.getenv('telegram_bot_token')
-
-mpwizard = os.path.abspath(os.path.join(CURRENT_DIR, '..','..','Strategies','MPWizard'))
-sys.path.append(mpwizard)
-import MPWizard_calc as mpw
-# token = '807232387:AAF5OgaGJuUPV8xwDUxYFRHaOWJSU5pIAic'
-
-UTILS_DIR = os.path.join(CURRENT_DIR, '..')
-
-sys.path.append(UTILS_DIR)
-import general_calc as gc
+import MarketUtils.general_calc as gc
+import Brokers.place_order as place_order
+import Strategies.MPWizard.MPWizard_calc as mpw
+import MarketUtils.InstrumentBase as InstrumentBase
 
 # Navigate to the Brokers and Utils directories relative to the current script's location
 
@@ -127,19 +116,27 @@ def limit_callback(update: Update, context: CallbackContext) -> None:
 def trade_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     query.answer()
-    monitor = InstrumentMonitor()
     trade_type = query.data
+    instrument_obj = InstrumentBase.Instrument()
 
-    order_details = {
-    "base_symbol": context.user_data['index'],
-    "option_type": context.user_data['option_type'],
-    "strike_prc": context.user_data['strike_price'],
-    "transaction": trade_type
-    }
+    today_expiry = instrument_obj.get_expiry_by_criteria( context.user_data['index'], context.user_data['option_type'],context.user_data['strike_price'], "current_week")
+    main_exchange_token = instrument_obj.get_exchange_token_by_criteria(context.user_data['index'], context.user_data['option_type'],context.user_data['strike_price'], today_expiry)
 
-    order_details['stoploss_points'] = mpw.get_weekday_price_ref(order_details['base_symbol'])
+    order_details = [{
+    "strategy": "MPWizard",
+    "exchange_token" : main_exchange_token,     #TODO fetch the exhange token from instrument.csv
+    "segment" : "NFO",
+    "transaction_type": trade_type,  #TODO declare this a constant variable
+    "order_type" : "Market", #TODO fetch this from expiry_trader_obj
+    "product_type" : "MIS",
+    "order_mode" : ["Main","TSL"],
+    "price_ref" : 18,
+    "trade_id" : "MPW1"}]#TODO fetch the order_tag from {strategy_name}.json
+
+
+
     if context.user_data['action'] == 'Place Order':
-        place_order.place_order_for_broker("MPWizard", order_details, monitor=monitor)
+        place_order.place_order_for_strategy("MPWizard",order_details)
 
 
 

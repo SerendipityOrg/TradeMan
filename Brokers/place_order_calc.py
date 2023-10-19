@@ -1,16 +1,14 @@
 import datetime as dt
 import os,re
 import sys
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Navigate to the Brokers and Utils directories relative to the current script's location
-UTILS_DIR = os.path.join(CURRENT_DIR, '..','Utils')
+DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+sys.path.append(DIR_PATH)
 
-sys.path.append(UTILS_DIR)
-import general_calc as general_calc
+import MarketUtils.general_calc as general_calc
 
 def get_user_details(user):
-    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'json', f'{user}.json')
+    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'UserJson', f'{user}.json')
     json_data = general_calc.read_json_file(user_json_path)
     return json_data, user_json_path
 
@@ -122,6 +120,13 @@ def log_order(order_id, avg_price, order_details, user_details,strategy):#TODO o
     order_type_list.append(order_dict)
 
     log_details = general_calc.write_json_file(json_path, user_details)
+
+def assign_user_details(active_users_json_path,order_details):
+    user_details = general_calc.read_json_file(active_users_json_path)
+    for user in user_details:
+        if user['account_name'] == order_details['username']:
+            user_details = user
+    return user_details
     
 def get_quantity(user_data, broker, strategy, tradingsymbol=None):
     strategy_key = f"{strategy}_qty"
@@ -155,3 +160,42 @@ def retrieve_order_id(user, broker,strategy, trade_type, tradingsymbol):
             return order['order_id']
 
     return None
+
+def calculate_stoploss(order_details,ltp):#TODo split this function into two parts
+    if 'stoploss_mutiplier' in order_details:
+        stoploss = calculate_multipler_stoploss(order_details,ltp)
+    elif 'price_ref' in order_details:
+        stoploss = calculate_priceref_stoploss(order_details,ltp)
+    else:
+        raise ValueError("Invalid stoploss calculation in order_details")
+    return stoploss
+
+def calculate_multipler_stoploss(order_details,ltp):
+    if order_details.get('transaction_type') == 'BUY':
+        stoploss = round(float(ltp - (ltp * order_details.get('stoploss_mutiplier'))),1)
+    elif order_details.get('transaction_type') == 'SELL':
+        stoploss = round(float(ltp + (ltp * order_details.get('stoploss_mutiplier'))),1)
+    return stoploss
+
+def calculate_priceref_stoploss(order_details,ltp):
+    if order_details.get('transaction_type') == 'BUY':
+        stoploss = round(float(ltp - order_details.get('price_ref')),1)
+    elif order_details.get('transaction_type') == 'SELL':
+        stoploss = round(float(ltp + order_details.get('price_ref')),1)
+    return stoploss
+
+def calculate_trigger_price(transaction_type,stoploss):
+    if transaction_type == 'BUY':
+        trigger_price = round(float(stoploss + 1),1)
+    elif transaction_type == 'SELL':
+        trigger_price = round(float(stoploss - 1),1)
+    return trigger_price
+
+def calculate_transaction_type_sl(transaction_type):
+    if transaction_type == 'BUY':
+        transaction_type_sl = 'SELL'
+    elif transaction_type == 'SELL':
+        transaction_type_sl = 'BUY'
+    return transaction_type_sl
+
+

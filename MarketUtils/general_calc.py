@@ -2,7 +2,7 @@ import json
 import os
 import datetime as dt
 import pandas as pd
-# from pya3 import *
+from pya3 import *
 
 
 #Json Functions
@@ -15,7 +15,7 @@ def write_json_file(file_path, data):
         json.dump(data, file, indent=4)
 
 def get_user_details(user):
-    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'json', f'{user}.json')
+    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'UserJson', f'{user}.json')
     json_data = read_json_file(user_json_path)
     return json_data, user_json_path
 
