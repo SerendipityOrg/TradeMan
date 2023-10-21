@@ -10,6 +10,7 @@ import MarketUtils.general_calc as general_calc
 import MarketUtils.Discord.discordchannels as discord
 import Brokers.place_order_calc as place_order_calc
 import Brokers.Aliceblue.alice_utils as alice_utils
+from MarketUtils.InstrumentBase import Instrument
 
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
 
@@ -29,7 +30,7 @@ def alice_place_order(alice, order_details, user_details=None):
         Exception: If the order placement fails.
     """  
     exchange_token = order_details.get('exchange_token')
-    segment = order_details.get('segment')
+    segment = Instrument().get_segment_by_exchange_token(exchange_token)
     strategy = order_details.get('strategy')
     qty = int(order_details.get('qty'))
     product = order_details.get('product_type')
@@ -38,12 +39,10 @@ def alice_place_order(alice, order_details, user_details=None):
     order_type = alice_utils.calculate_order_type(order_details.get('order_type'))
     product_type = alice_utils.calculate_product_type(product)
 
-    avg_prc = 0.0
     limit_prc = order_details.get('limit_prc', 0.0)
     trigger_price = order_details.get('trigger_prc', None)
     
     try:
-        print("order_tag",order_details.get('order_tag', None))
         order_id = alice.place_order(transaction_type = transaction_type, 
                                         instrument = alice.get_instrument_by_token(segment, int(exchange_token)),
                                         quantity = qty ,
@@ -57,10 +56,8 @@ def alice_place_order(alice, order_details, user_details=None):
                                         is_amo = False,
                                         order_tag = order_details.get('order_tag', None))
         print("order_id",order_id)
-        avg_prc = alice_utils.get_avg_prc(alice,order_id)
-        
-        
-        return order_id['NOrdNo'], avg_prc # Merge place_order  #TODO retrun only order_id for all the brokers
+
+        return order_id['NOrdNo'] # Merge place_order  #TODO retrun only order_id for all the brokers
   
     except Exception as e:
         message = f"Order placement failed: {e} for {order_details['username']}"
@@ -84,24 +81,20 @@ def place_aliceblue_order(order_details: dict):
         Exception: If the order placement fails.
 
     """
-    user_details = place_order_calc.assign_user_details(active_users_json_path,order_details)
+    user_details = place_order_calc.assign_user_details(order_details.get('username'))
     alice = alice_utils.create_alice_obj(user_details)   
 
-    order_details['qty'] = user_details['qty'][order_details['strategy']]#TODO: write a logic to get the qty for MPWizard
-
     try:
-        order_id, avg_price = alice_place_order(alice, order_details, user_details)
+        order_id = alice_place_order(alice, order_details, user_details)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
         # You can set default or fallback values if needed
         order_id = None
-        avg_price = 0.0
     try:
-        place_order_calc.log_order(order_id, avg_price, order_details, user_details, order_details['strategy'])
+        place_order_calc.log_order(order_id, order_details)
     except Exception as e:
         print(f"Failed to log the order: {e}")
         
-    return order_id, avg_price
 
 
 def update_alice_stoploss(order_details):

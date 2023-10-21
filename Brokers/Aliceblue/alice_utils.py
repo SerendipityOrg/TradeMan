@@ -7,7 +7,7 @@ sys.path.append(DIR_PATH)
 # import Brokers.BrokerUtils.Broker as Broker
 # import Brokers.Aliceblue.alice_login as alice_login
 
-def create_alice_obj(user_details): 
+def create_alice_obj(user_details):
     return Aliceblue(user_id=user_details['username'],api_key=user_details['api_key'],session_id=user_details['session_id'])
 
 def recreate_alice_obj(user_details):

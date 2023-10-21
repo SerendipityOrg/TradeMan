@@ -3,8 +3,7 @@ import sys,threading
 from functools import partial
 from datetime import datetime
 
-
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
 import MarketUtils.general_calc as general_calc
@@ -15,8 +14,6 @@ import Brokers.place_order_calc as place_order_calc
 import Brokers.BrokerUtils.Broker as Broker
 from Brokers.instrument_monitor import InstrumentMonitor
 from MarketUtils.InstrumentBase import Instrument
-from Strategies.StrategyBase import Strategy
-
 
 def start_monitoring(monitor):
     monitor_thread = threading.Thread(target=monitor.fetch)
@@ -28,7 +25,6 @@ def add_token_to_monitor(order_details):
     monitor.add_token(order_details)
     start_monitoring(monitor)
 
-
 def place_order_for_strategy(strategy_name,order_details):
     active_users = Broker.get_active_subscribers(strategy_name)
     for broker, usernames in active_users.items():
@@ -37,6 +33,7 @@ def place_order_for_strategy(strategy_name,order_details):
                 order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
                 order_with_user["broker"] = broker
                 order_with_user["username"] = username
+                order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
                 place_order_for_broker(order_with_user)
 
 #TODO: write documentation
@@ -59,22 +56,17 @@ def place_order_for_broker(order_details=None):
 
 
 def place_stoploss_order(order_details=None,monitor=None):
-
     instrument_base = Instrument()
-
-
+    monitor = InstrumentMonitor()
 
     token = instrument_base.get_token_by_exchange_token(order_details.get('exchange_token'))
-    # option_ltp = strategy_obj.get_single_ltp(token)
-    option_ltp = 51.0
+    option_ltp = monitor._fetch_ltp_for_token(token)
 
 
-    order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
     order_details['limit_prc'] = place_order_calc.calculate_stoploss(order_details,option_ltp)
     order_details['trigger_prc'] = place_order_calc.calculate_trigger_price(order_details.get('transaction_type'),order_details['limit_prc'])
+    order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
     order_details['order_type'] = 'Stoploss'
-
-    print("order_details",order_details)
 
     if order_details['broker'] == "aliceblue":
         aliceblue.place_aliceblue_order(order_details)

@@ -1,8 +1,9 @@
-# from pya3 import *
-# from pprint import pprint
+from pya3 import *
+from pprint import pprint
 
-# alice = Aliceblue(user_id="929016",api_key="NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f")
-# alice.get_session_id()
+alice = Aliceblue(user_id="BY1424",api_key="yn6YMylMSOa7Qmp9OPYhtFWSE4OL7hTMTIptvx1Odl1DkVOxqCFuboLnTCJiEd2IoEQolWY7G1JlABIkPxsvDL81hcAcOa08zszFj7DFgqPkNKGJAll3tP3OZjvmIYH6")
+session = alice.get_session_id()
+alice.get_instrument_by_token('NFO',67310)
 # # order =  alice.place_order(transaction_type = TransactionType.Buy,
 # #                      instrument = alice.get_instrument_by_token('NFO', 67310),
 # #                      quantity = 50,
@@ -32,9 +33,11 @@
 #4 - Strategy behaviour for order_tag in {strategy}.json file
 
 
-from Brokers.place_order import place_order_for_strategy
-from Brokers.instrument_monitor import InstrumentMonitor
+# from Brokers.place_order import place_order_for_strategy
+# from Brokers.instrument_monitor import InstrumentMonitor
 
 
-order_details =  {'strategy': 'MPWizard', 'exchange_token': 67300, 'segment': 'NFO', 'transaction_type': 'SELL', 'order_type': 'Stoploss', 'product_type': 'MIS', 'order_mode': ['Main', 'TSL'], 'price_ref': 18, 'trade_id': 'MPW1', 'broker': 'aliceblue', 'username': 'vimala', 'qty': 1500, 'limit_prc': 18.1, 'trigger_prc': 17.1}
-place_order_for_strategy('MPWizard',[order_details])
+# order_details =  {'strategy': 'MPWizard', 'exchange_token': 67300, 'segment': 'NFO', 'transaction_type': 'SELL', 'order_type': 'Stoploss', 'product_type': 'MIS', 'order_mode': ['Main', 'TSL'], 'price_ref': 18, 'trade_id': 'MPW1', 'broker': 'aliceblue', 'username': 'vimala', 'qty': 1500, 'limit_prc': 18.1, 'trigger_prc': 17.1}
+# place_order_for_strategy('MPWizard',[order_details])
+
+

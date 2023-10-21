@@ -4,7 +4,7 @@ import datetime as dt
 from time import sleep
 from dotenv import load_dotenv
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
 import MarketUtils.general_calc as general_calc
@@ -14,7 +14,7 @@ import MarketUtils.InstrumentBase as InstrumentBase
 import Brokers.BrokerUtils.Broker as Broker
 
 ENV_PATH = os.path.join(DIR_PATH, '.env')
-STRATEGY_PATH = os.path.join(DIR_PATH, 'Strategies', 'ExpiryTrader', 'ExpiryTrader.json')
+STRATEGY_PATH = os.path.join(DIR_PATH, 'Strategies', 'ExpiryTrader', 'ExpiryTrader.json')#TODO find a better way to get the strategy path
 load_dotenv(ENV_PATH)
 
 class ExpiryTrader(StrategyBase.Strategy):
@@ -27,15 +27,12 @@ class ExpiryTrader(StrategyBase.Strategy):
     def get_exit_params(self):
         return self.exit_params
     
-  # No additional methods or attributes for now. Can be expanded as needed.
-
 # Testing the class with ExpiryTrader data
-expiry_trader_obj = ExpiryTrader.read_strategy_json(STRATEGY_PATH)  #TODO pass the location as variable
+expiry_trader_obj = ExpiryTrader.read_strategy_json(STRATEGY_PATH)  
 instrument_obj = InstrumentBase.Instrument()
 
 hedge_transcation_type = "BUY"
 main_transcation_type = "SELL"
-
 
 # Extract strategy parameters
 today_expiry_symbol, today_expiry_token = expiry_trader_obj.determine_expiry_index()
@@ -69,7 +66,6 @@ main_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry
 hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol, hedge_option_type,hedge_strikeprc, today_expiry)
 
 active_users = Broker.get_active_subscribers(strategy_name)
-print(active_users)
 
 orders_to_place = [
     {  
@@ -94,18 +90,6 @@ orders_to_place = [
         "trade_id" : "ET1" #TODO fetch the order_tag from {strategy_name}.json
     }
 ]
-
 place_order.place_order_for_strategy(strategy_name,orders_to_place)
 
-# # print("orders_to_place",orders_to_place)
-# for order_details in orders_to_place:
-#     place_order.place_order_for_strategy(order_details)
-
-# for broker, usernames in active_users.items():
-#     for username in usernames:
-#         for order in orders_to_place:
-#             order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
-#             order_with_user["broker"] = broker
-#             order_with_user["username"] = username
-#             place_order.place_order_for_broker(order_with_user)
 
