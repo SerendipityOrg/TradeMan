@@ -19,7 +19,7 @@ desired_start_time_str = os.getenv('program_start_time')  # e.g., "10:15"
 desired_start_hour, desired_start_minute = map(int, desired_start_time_str.split(':'))
 
 # Define the utilities directory and append it to the system path
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'Utils')
+UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'MarketUtils')
 sys.path.append(UTILS_DIR)
 
 # Import utility functions and classes

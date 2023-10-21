@@ -1,22 +1,20 @@
 import logging
 from kiteconnect import KiteConnect
 import sys,os
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..','Utils')
 
-sys.path.append(UTILS_DIR)
-from general_calc import *
 
-FILE_DIR = os.path.join(CURRENT_DIR,'..',)
-sys.path.append(FILE_DIR)
-from place_order_calc import *
+DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+sys.path.append(DIR_PATH)
 
-sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
-import discordchannels as discord
+import MarketUtils.general_calc as general_calc
+import MarketUtils.Discord.discordchannels as discord
+import Brokers.place_order_calc as place_order_calc
+import Brokers.Zerodha.kite_utils as kite_utils
 
-kite = None
 
-def place_order(kite, strategy, order_details, qty, user_details):
+active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
+
+def kite_place_order(kite, order_details, user_details=None):
     """
     Place an order with Zerodha broker.
 
@@ -31,69 +29,44 @@ def place_order(kite, strategy, order_details, qty, user_details):
     Raises:
         Exception: If the order placement fails.
     """
-              
-    transaction_type = order_details.get('transaction_type')
-    if transaction_type == 'BUY':
-        transaction_type = kite.TRANSACTION_TYPE_BUY
-    elif transaction_type == 'SELL':
-        transaction_type = kite.TRANSACTION_TYPE_SELL
-    else:
-        raise ValueError("Invalid transaction_type in order_details")
+    exchange_token = order_details.get('exchange_token')
+    segment = order_details.get('segment')
+    strategy = order_details.get('strategy')
+    qty = int(order_details.get('qty'))
+    product = order_details.get('product_type')
 
-    order_type_value = order_details.get('order_trade_type')
-    if order_type_value == 'Stoploss':
-        order_type = kite.ORDER_TYPE_SL
-    elif order_type_value == 'Market':
-        order_type = kite.ORDER_TYPE_MARKET
-    else:
-        raise ValueError("Invalid order_type in order_details")
-    
-    if strategy == 'Overnight_Options':
-        product_type = kite.PRODUCT_NRML
-    else:
-        product_type = kite.PRODUCT_MIS
-    
+    transaction_type = kite_utils.calculate_transaction_type(order_details.get('transaction_type'))
+    order_type = kite_utils.calculate_order_type(order_details.get('order_type'))
+    product_type = kite_utils.calculate_product_type(product)
+
     avg_prc = 0.0
     limit_prc = order_details.get('limit_prc', 0.0)
-    trigger_price = round(float(limit_prc) + 1.00, 1) if limit_prc else None
+    trigger_price = order_details.get('trigger_prc', None)
+
     try:
         order_id = kite.place_order(
             variety=kite.VARIETY_REGULAR,
             exchange=kite.EXCHANGE_NFO,
-            price=round(limit_prc,1),
+            price= limit_prc,
             tradingsymbol=order_details['tradingsymbol'],
             transaction_type=transaction_type, 
-            quantity=int(qty),
+            quantity= qty,
             trigger_price=trigger_price,
             product=product_type,
             order_type=order_type,
             tag= order_details.get('order_tag', None)
         )
         print(f"Order placed. ID is: {order_id}")
-        logging.info(f"Order placed. ID is: {order_id}")
-        
-        # Safely fetch the order history.
-        order_history = kite.order_history(order_id=order_id)
-        for order in order_history:
-            if order.get('status') == 'COMPLETE':
-                avg_prc = order.get('average_price', 0.0)
-                break  # Exit the loop once you find the completed order
-            
+        avg_prc = kite_utils.get_avg_prc(kite,order_id)
+
         if avg_prc == 0.0:
             try:
-                log_order(order_id, 0.0, order_details, user_details, strategy)
+                place_order_calc.log_order(order_id, 0.0, order_details, user_details, strategy)
             except Exception as e:
                 print(f"Failed to log the order with zero avg_prc: {e}")
             
             raise Exception("Order completed but average price not found.")
         
-        if strategy == 'Siri':
-            try:
-                msg = f"Avgprc is {avg_prc}"
-                discord.discord_bot(msg,"siri")
-            except Exception as e:
-                print(f"Discord bot failed: {e}") 
-
         return order_id, avg_prc
     
     except Exception as e:
@@ -118,17 +91,14 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
     Raises:
         Exception: If the order placement fails.
     """
-    global kite
-    user_details,_ = get_user_details(order_details['user'])
-    kite = KiteConnect(api_key=user_details['zerodha']['api_key'])
-    kite.set_access_token(user_details['zerodha']['access_token'])
-
-    if qty is None:
-        qty = get_quantity(user_details, 'zerodha', strategy, order_details['tradingsymbol'])
     
-    order_details['qty'] = qty
+    user_details = place_order_calc.assign_user_details(active_users_json_path,order_details)
+    kite = kite_utils.create_kite_obj(user_details)
+
+    order_details['qty'] = user_details['qty'][order_details['strategy']]#TODO: write a logic to get the qty for MPWizard
+    
     try:
-        order_id, avg_price = place_order(kite, strategy, order_details, qty, user_details)
+        order_id, avg_price = kite_place_order(kite, order_details, user_details)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
         # You can set default or fallback values if needed
@@ -136,17 +106,11 @@ def place_zerodha_order(strategy: str, order_details: dict, qty=None):
         avg_price = 0.0
     
     try:
-        log_order(order_id, avg_price, order_details, user_details, strategy)
+        place_order_calc.log_order(order_id, avg_price, order_details, user_details, strategy)
     except Exception as e:
         print(f"Failed to log the order: {e}")
         
     return order_id, avg_price
-
-def create_kite(user_details):
-    global kite
-    kite = KiteConnect(api_key=user_details['zerodha']['api_key'])
-    kite.set_access_token(user_details['zerodha']['access_token'])
-    return kite
 
 def update_stoploss(monitor_order_func):
     print("in update stoploss")

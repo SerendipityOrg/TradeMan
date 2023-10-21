@@ -4,31 +4,22 @@ import os
 import threading
 from kiteconnect import KiteConnect
 import sys
+from time import sleep
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', 'Utils')
+DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+sys.path.append(DIR_PATH)
 
-sys.path.append(UTILS_DIR)
-from general_calc import *
+import MarketUtils.general_calc as general_calc
+import MarketUtils.Discord.discordchannels as discord
+import Brokers.place_order as place_order
+import Brokers.BrokerUtils.Broker as Broker
+from MarketUtils.InstrumentBase import Instrument
 
-BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
-sys.path.append(BROKERS_DIR)
-import aliceblue.alice_place_orders as aliceblue
-import zerodha.kite_place_orders as zerodha
-import place_order as place_order
+active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
 
-sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
-import discordchannels as discord
-
-env_file_path = os.path.join(CURRENT_DIR, '.env')
-env_file_path = os.path.abspath(env_file_path)
-
-load_dotenv(env_file_path)
-
-file_path = os.getenv('omkar_json_filepath')
-omkar_details = read_json_file(file_path)
-kite = KiteConnect(api_key=omkar_details['zerodha']['api_key'])
-kite.set_access_token(omkar_details['zerodha']['access_token'])
+api_key,access_token = Broker.get_primary_account()
+kite = KiteConnect(api_key=api_key)
+kite.set_access_token(access_token)
 
 class InstrumentMonitor:
     """
@@ -46,18 +37,17 @@ class InstrumentMonitor:
         self.tokens_to_monitor = {}  # Using a dictionary to store token along with its target and limit price
         self.callback = callback
         
-    def add_token(self, token, target=None, limit_prc=None,order_details = None,strategy = None):
+    def add_token(self, order_details):
         """Add a token to the monitoring list."""
+        instrument_obj = Instrument()
+        token = instrument_obj.get_token_by_exchange_token(order_details.get('exchange_token'))
         if token not in self.tokens_to_monitor:
             print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor}")
         else:
             print(f"Token {token} is already being monitored.")
             
         self.tokens_to_monitor[token] = {
-            'target': target,
-            'limit_prc': limit_prc,
-            'order_details': order_details,
-            'strategy': strategy
+            'order_details': order_details
         }
         # Print the price_ref from the order_details
         if self.tokens_to_monitor[token] is not None :
@@ -87,6 +77,7 @@ class InstrumentMonitor:
         """Fetch LTPs for all monitored tokens."""
         ltps = {}
         for token in self.tokens_to_monitor.keys():
+            print(f"Fetching LTP for token {token}")
             try:
                 ltp_data = self._fetch_ltp_for_token(token)
                 ltps[token] = ltp_data
@@ -104,14 +95,12 @@ class InstrumentMonitor:
             for token, ltp in ltps.items():
                 print(f"The LTP for {token} is {ltp}")
                 token_data = self.tokens_to_monitor[token]
+                order_details = token_data['order_details']
 
                 # Check if the target is not None and if LTP has reached or exceeded it
-                if token_data['target'] is not None and ltp >= token_data['target']:
+                if order_details['target'] is not None and ltp >= order_details['target']:
                     print(f"Target reached for token {token}! LTP is {ltp}.")
-                    price_ref = token_data['order_details']['price_ref'] # TODO: This is related to MPwizard. Generalize this function
-                    token_data['target'] += (price_ref / 2)  # Adjust target by half of price_ref
-                    token_data['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
-                    place_order.modify_orders(token,monitor=self)
+                    place_order.modify_tsl(order_details)
                     print(f"New target for token {token} is {token_data['target']}.")
                     print(f"New limit price for token {token} is {token_data['limit_prc']}.")
                     message = f"Order modified! new target {token_data['target']}! and new stoploss is {token_data['limit_prc']} ."
@@ -123,11 +112,11 @@ class InstrumentMonitor:
                     #remove the token from the list
                     self.remove_token(token)
                 
-                #check if the time is 3:10 pm and if yes then remove the token from the list
-                elif datetime.now().strftime("%H:%M:%S") >= "15:57:00":
-                    print("Time is 3:10 pm")
-                    place_order.exit_order_details(token,monitor=self)
-                    self.remove_token(token)
+                # #check if the time is 3:10 pm and if yes then remove the token from the list
+                # elif datetime.now().strftime("%H:%M:%S") >= "15:57:00":
+                #     print("Time is 3:10 pm")
+                #     place_order.exit_order_details(token,monitor=self)
+                #     self.remove_token(token)
                     
                 # TODO: Check if there any open orders for the token at 3:10 pm if yes then cancel the order and sqaure off that order
                 
