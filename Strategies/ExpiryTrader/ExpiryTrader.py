@@ -7,14 +7,14 @@ from dotenv import load_dotenv
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
-import MarketUtils.general_calc as general_calc
 import Brokers.place_order as place_order
+import Brokers.place_order_calc as place_order_calc
 import Strategies.StrategyBase as StrategyBase
 import MarketUtils.InstrumentBase as InstrumentBase
 import Brokers.BrokerUtils.Broker as Broker
 
 ENV_PATH = os.path.join(DIR_PATH, '.env')
-STRATEGY_PATH = os.path.join(DIR_PATH, 'Strategies', 'ExpiryTrader', 'ExpiryTrader.json')#TODO find a better way to get the strategy path
+_,STRATEGY_PATH = place_order_calc.get_strategy_json('ExpiryTrader')
 load_dotenv(ENV_PATH)
 
 class ExpiryTrader(StrategyBase.Strategy):
@@ -61,11 +61,13 @@ hedge_strikeprc = expiry_trader_obj.get_hedge_strikeprc(today_expiry_token, toda
 main_option_type = expiry_trader_obj.get_option_type(prediction, "OS")
 hedge_option_type = expiry_trader_obj.get_hedge_option_type(prediction)
 
-today_expiry = instrument_obj.get_expiry_by_criteria(today_expiry_symbol, main_option_type,main_strikeprc, "current_week")
-main_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol, main_option_type,main_strikeprc, today_expiry)
-hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol, hedge_option_type,hedge_strikeprc, today_expiry)
+today_expiry = instrument_obj.get_expiry_by_criteria(today_expiry_symbol,main_strikeprc,main_option_type, "current_week")
+main_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol,main_strikeprc, main_option_type,today_expiry)
+hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol,hedge_strikeprc,hedge_option_type, today_expiry)
 
-active_users = Broker.get_active_subscribers(strategy_name)
+
+print(f"Main Strike Price: {main_strikeprc}", f"main_option_type: {main_option_type}")
+print(f"Hedge Strike Price: {hedge_strikeprc}", f"hedge_option_type: {hedge_option_type}")
 
 orders_to_place = [
     {  
@@ -90,6 +92,7 @@ orders_to_place = [
         "trade_id" : "ET1" #TODO fetch the order_tag from {strategy_name}.json
     }
 ]
+
 place_order.place_order_for_strategy(strategy_name,orders_to_place)
 
 

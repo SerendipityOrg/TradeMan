@@ -3,7 +3,7 @@ from pya3 import *
 import sys
 import icecream as ic
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
 import MarketUtils.general_calc as general_calc
@@ -31,7 +31,6 @@ def alice_place_order(alice, order_details, user_details=None):
     """  
     exchange_token = order_details.get('exchange_token')
     segment = Instrument().get_segment_by_exchange_token(exchange_token)
-    strategy = order_details.get('strategy')
     qty = int(order_details.get('qty'))
     product = order_details.get('product_type')
 
@@ -54,7 +53,7 @@ def alice_place_order(alice, order_details, user_details=None):
                                         square_off = None,
                                         trailing_sl = None,
                                         is_amo = False,
-                                        order_tag = order_details.get('order_tag', None))
+                                        order_tag = order_details.get('trade_id', None))
         print("order_id",order_id)
 
         return order_id['NOrdNo'] # Merge place_order  #TODO retrun only order_id for all the brokers

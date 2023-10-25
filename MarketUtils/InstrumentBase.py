@@ -44,8 +44,22 @@ class Instrument:
     def _get_last_weekly_expiry(self, weekly_expiries, target_month):
         """Return the last weekly expiry of the target month."""
         return max([expiry for expiry in weekly_expiries if datetime.strptime(expiry, "%Y-%m-%d").date().month == target_month])
+    
+    def weekly_expiry_type(self):
+        if datetime.today().weekday() == 3:
+            weekly_expiry_type = "next_week"
+        else:
+            weekly_expiry_type = "current_week"
+        return weekly_expiry_type
 
-    def get_expiry_by_criteria(self, base_symbol, option_type, strike_price, expiry_type="current_week"):
+    def monthly_expiry_type(self):
+        if datetime.today().weekday() == 3 and datetime.today().day > 21:
+            monthly_expiry_type = "next_month"
+        else:
+            monthly_expiry_type = "current_month"
+        return monthly_expiry_type
+
+    def get_expiry_by_criteria(self, base_symbol, strike_price, option_type,expiry_type="current_week"):
         filtered_data = self._filter_data(base_symbol, option_type, strike_price)
         today = datetime.now().date()
         future_expiries = filtered_data[filtered_data['expiry'].apply(lambda x: datetime.strptime(x, "%Y-%m-%d").date()) >= today]['expiry'].tolist()
@@ -70,7 +84,7 @@ class Instrument:
 
         return expiry_strategies[expiry_type]()
     
-    def get_exchange_token_by_criteria(self, base_symbol, option_type, strike_price, expiry):
+    def get_exchange_token_by_criteria(self, base_symbol,strike_price, option_type,expiry):
         filtered_data = self._filter_data(base_symbol, option_type, strike_price, expiry)
         if not filtered_data.empty:
             return filtered_data.iloc[0]['exchange_token']
@@ -113,7 +127,7 @@ class Instrument:
             return None
     
 
-instrument_obj = Instrument()
-print(instrument_obj.get_expiry_by_criteria('BANKNIFTY', 'CE', 43800, "current_week"))
+# instrument_obj = Instrument()
+# print(instrument_obj.get_expiry_by_criteria('BANKNIFTY', 'CE', 43800, "current_week"))
 
 # print(instrument_obj.get_expiry_by_criteria('BANKNIFTY', 'CE', 44100, "current_week"))

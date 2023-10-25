@@ -8,7 +8,7 @@ import os, sys
 
 print("Today's date:", dt.datetime.today())
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
 import Brokers.Aliceblue.alice_login as alice_login
@@ -37,8 +37,6 @@ def get_active_users(broker_json_details):
             active_users.append(user)
     return active_users
 
-
-
 def all_broker_login(active_users):
     for user in active_users:
         if user['broker'] == 'zerodha':
@@ -51,7 +49,6 @@ def all_broker_login(active_users):
     return active_users
 
 active_users = all_broker_login(get_active_users(broker_json_details))
-
 
 def calculate_lot(active_users):
     lots = qty_calc.calculate_lots(active_users)
@@ -69,7 +66,7 @@ general_calc.write_json_file(active_users_json_path, active_users)
 
 
 # if datetime.today().weekday() == 4:
-#     kite_utils.kite_lget_csv_kite(user_details)
-#     alice_utils.get_csv_alice()
+    # kite_utils.get_csv_kite(user_details)
+    # alice_utils.get_csv_alice()
 
 

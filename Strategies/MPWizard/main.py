@@ -6,25 +6,26 @@ from MPWizard_calc import get_high_low_range_and_update_json, get_average_range_
 import datetime as dt
 from time import sleep
 
-# Define the current directory and paths for JSON and environment files
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-mpwizard_json = os.path.abspath(os.path.join(CURRENT_DIR, "MPWizard.json"))
-env_file_path = os.path.abspath(os.path.join(CURRENT_DIR, '..', '..', 'Brokers', '.env'))
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
 
+ENV_PATH = os.path.join(DIR_PATH, '.env')
 # Load environment variables from .env file
-load_dotenv(env_file_path)
+load_dotenv(ENV_PATH)
+
+import Strategies.StrategyBase as StrategyBase
+import Brokers.place_order_calc as place_order_calc
+import MarketUtils.general_calc as general_calc
+
+
+_,STRATEGY_PATH = place_order_calc.get_strategy_json('MPWizard')
+strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
 
 # Fetch the desired start time from the environment variables
-desired_start_time_str = os.getenv('program_start_time')  # e.g., "10:15"
-desired_start_hour, desired_start_minute = map(int, desired_start_time_str.split(':'))
+desired_start_time_str = strategy_obj.get_entry_params().get('EntryTime')
+start_hour, start_minute, start_second = map(int, desired_start_time_str.split(':'))
 
-# Define the utilities directory and append it to the system path
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', '..', 'MarketUtils')
-sys.path.append(UTILS_DIR)
 
-# Import utility functions and classes
-import general_calc as general_calc
-from instrument import Instrument as instru
 
 # Fetch the list of users to trade with the strategy
 
@@ -33,11 +34,11 @@ def main():
     Main function to execute the trading strategy.
     """
     # Update the JSON file with average range data
-    get_average_range_and_update_json()
+    get_average_range_and_update_json(strategy_obj.get_general_params().get('ATRPeriod'))
     
     # Calculate the wait time before starting the bot
     now = dt.datetime.now()
-    wait_time = dt.datetime(now.year, now.month, now.day, desired_start_hour, desired_start_minute) - now
+    wait_time = dt.datetime(now.year, now.month, now.day, start_hour, start_minute) - now
     print(f"Waiting for {wait_time} before starting the bot")
     
     # Sleep for the calculated wait time if it's positive
@@ -48,10 +49,13 @@ def main():
     get_high_low_range_and_update_json()
     
     # Read the levels data from the JSON file
-    levels_data = general_calc.read_json_file(mpwizard_json)
-    
+    # levels_data = general_calc.read_json_file(mpwizard_json)
+
+    instruments = strategy_obj.get_extra_information()
+    print(instruments)
+
     # Create a list of Instrument objects from the levels data
-    instruments = [instru(data) for data in levels_data["indices"]]
+    # instruments = [instru(data) for data in levels_data["indices"]]
     
     # Initialize the OrderMonitor with the users and instruments, then start monitoring
     order_monitor = OrderMonitor(instruments=instruments) 

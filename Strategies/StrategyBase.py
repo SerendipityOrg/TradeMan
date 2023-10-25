@@ -6,7 +6,7 @@ DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
 sys.path.append(DIR_PATH)
 
 from Brokers.BrokerUtils import Broker
-
+import MarketUtils.general_calc as general_calc
 
 
 class Strategy:
@@ -19,7 +19,7 @@ class Strategy:
         self.entry_params = strategy_data.get('EntryParams', {})
         self.exit_params = strategy_data.get('ExitParams', {})
         self.today_orders = strategy_data.get('TodayOrders', [])
-        self.extra_information = strategy_data.get('ExtraInformation', strategy_data.get('ExtarInformation', {}))  # Handling the typo
+        self.extra_information = strategy_data.get('ExtraInformation', {})
         self.signal_entry = strategy_data.get('SignalEntry', {})
     
     # Getter methods
@@ -86,9 +86,23 @@ class Strategy:
 
     @classmethod
     def read_strategy_json(cls, file_path):
-        with open(file_path, "r") as file:
-            strategy_data = json.load(file)
+        strategy_data = general_calc.read_json_file(file_path)
         return cls(strategy_data)
+    
+    def write_strategy_json(self, file_path):
+        strategy_data = {
+            'StrategyName': self.strategy_name,
+            'Description': self.description,
+            'Instruments': self.instruments,
+            'NextTradeId': self.next_trade_id,
+            'GeneralParams': self.general_params,
+            'EntryParams': self.entry_params,
+            'ExitParams': self.exit_params,
+            'TodayOrders': self.today_orders,
+            'ExtraInformation': self.extra_information,
+            'SignalEntry': self.signal_entry
+        }
+        general_calc.write_json_file(file_path, strategy_data)
     
     #TODD add a function to get exhange token from instrument.csv
     #TODO add a function to return the weekly expiry for a token 
@@ -109,6 +123,14 @@ class Strategy:
             return 'CE' 
         elif prediction == 'Bullish':
             return 'PE'
+        else:
+            print("Invalid option mode")
+    
+    def get_transaction_type(self,prediction):
+        if prediction == 'Bearish':
+            return 'SELL' 
+        elif prediction == 'Bullish':
+            return 'BUY'
         else:
             print("Invalid option mode")
     
@@ -144,12 +166,15 @@ class Strategy:
         if base_symbol == 'BANKNIFTY' or base_symbol == 'SENSEX':
             return 100
        
-    def calculate_current_atm_strike_prc(self,expiry_token, base_symbol, prediction, strike_prc_multiplier):
+    def calculate_current_atm_strike_prc(self,expiry_token, base_symbol, prediction=None, strike_prc_multiplier=None):
         ltp = self.get_single_ltp(expiry_token)
         base_strike = self.round_strike_prc(ltp, base_symbol)
         multiplier = self.get_strike_distance_multiplier(base_symbol)
-        adjustment = multiplier * (strike_prc_multiplier if prediction == 'Bearish' else -strike_prc_multiplier)
-        return base_strike + adjustment
+        if strike_prc_multiplier:
+            adjustment = multiplier * (strike_prc_multiplier if prediction == 'Bearish' else -strike_prc_multiplier)
+            return base_strike + adjustment
+        else:
+            return base_strike
     
     def get_hedge_strikeprc(self,expiry_token, base_symbol, prediction, hedge_multiplier): #TODO get_strike_distance_multiplier as global variable
         ltp = self.get_single_ltp(expiry_token)
@@ -159,3 +184,11 @@ class Strategy:
         bull_strikeprc = strike_prc - (hedge_multiplier * strike_prc_multiplier)
         hedge_strikeprc = bear_strikeprc if prediction == 'Bearish' else bull_strikeprc
         return hedge_strikeprc
+    
+    def get_square_off_transaction(self,prediction):
+        if prediction == 'Bearish':
+            return 'BUY'
+        elif prediction == 'Bullish':
+            return'SELL'
+        else:
+            print("Invalid prediction")

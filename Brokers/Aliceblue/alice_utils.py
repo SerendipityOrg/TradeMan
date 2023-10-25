@@ -3,6 +3,7 @@ import sys
 
 DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
 sys.path.append(DIR_PATH)
+import Brokers.place_order_calc as place_order_calc
 # import MarketUtils.Calculations.qty_calc as qty_calc
 # import Brokers.BrokerUtils.Broker as Broker
 # import Brokers.Aliceblue.alice_login as alice_login
@@ -63,3 +64,16 @@ def get_avg_prc(alice,order_id):
     avg_prc_data = alice.get_order_history(order_id_value)
     avg_prc = avg_prc_data.get('Avgprc')
     return avg_prc
+
+def get_order_details(user, trade_id):
+    user_details = place_order_calc.assign_user_details(user)
+    alice = create_alice_obj(user_details)
+    orders = alice.get_order_history('')
+    orders_to_exit = []
+    for order in orders:
+        if order['remarks'] == trade_id:
+            orders_to_exit.append(order)
+    return orders_to_exit
+
+
+

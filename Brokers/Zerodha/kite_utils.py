@@ -8,9 +8,16 @@ sys.path.append(DIR_PATH)
 import MarketUtils.Calculations.qty_calc as qty_calc
 # import Brokers.BrokerUtils.Broker as Broker
 import Brokers.Zerodha.kite_login as kite_login
+import Brokers.place_order_calc as place_order_calc
 
-def create_kite_obj(user_details):
-    return KiteConnect(api_key=user_details['username'],access_token=user_details['access_token'])
+def create_kite_obj(user_details=None,api_key=None,access_token=None):
+    print(user_details)
+    if api_key and access_token:
+        return KiteConnect(api_key=api_key,access_token=access_token)
+    elif user_details:
+        return KiteConnect(api_key=user_details['api_key'],access_token=user_details['access_token'])
+    else:
+        raise ValueError("Either user_details or api_key and access_token must be provided")
 
 def get_csv_kite(user_details):
     kite = KiteConnect(api_key=user_details['zerodha']['omkar']['api_key'])
@@ -64,4 +71,14 @@ def get_avg_prc(kite,order_id):
             avg_prc = order.get('average_price', 0.0)
             break 
     return avg_prc
+
+def get_order_details(user,trade_id):
+    user_details = place_order_calc.get_user_details(user)
+    kite = create_kite_obj(user_details)
+    orders = kite.orders()
+    orders_to_exit = []
+    for order in orders:
+        if order['remarks'] == trade_id:
+            orders_to_exit.append(order)
+    return orders_to_exit
 

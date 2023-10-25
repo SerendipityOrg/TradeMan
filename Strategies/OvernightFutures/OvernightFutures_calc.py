@@ -1,32 +1,11 @@
-import os, sys
-import urllib
+import yfinance as yf
+import os
+import time
+import requests
 import numpy as np
 import keras
-import yfinance as yf
 import joblib
-import requests
-from kiteconnect import KiteConnect
-import time
-from dotenv import load_dotenv
-
-
-
-# Get the directory of the current script
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Navigate to the Brokers and Utils directories relative to the current script's location
-BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
-
-dotenv_path = os.path.join(BROKERS_DIR, '.env')
-load_dotenv(dotenv_path)
-
-# Import necessary modules
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'Utils'))
-import general_calc as gc
-
-
-sys.path.append(BROKERS_DIR)
-import place_order 
+import sys
 
 
 class SuppressOutput: 
@@ -48,20 +27,6 @@ class SuppressOutput:
             sys.stdout = self._stdout 
         if self.suppress_stderr: 
             sys.stderr = self._stderr
-
-
-index = os.getenv('overnight_index')
-
-
-def get_strikeprc():
-    file_path = os.getenv('omkar_json_filepath')
-    omkar_details = gc.read_json_file(file_path)
-    kite = KiteConnect(api_key=omkar_details['zerodha']['api_key'])
-    kite.set_access_token(omkar_details['zerodha']['access_token'])
-    token = os.getenv('nifty_token')
-    ltp_data = kite.ltp(token)  # Convert token to string
-    ltp = ltp_data[token]['last_price']
-    return gc.round_strike_prc(ltp,index)
 
 def fetchLatestNiftyDaily(proxyServer=None):
     return yf.download(
@@ -138,52 +103,9 @@ def getNiftyPrediction(data, proxyServer):
         data = pkl['scaler'].transform([data])
         pred = model.predict(data)[0]
     if pred > 0.5:
-        out = "BEARISH"
+        out = "Bearish"
         sug = "Hold your Short position!"
     else:
-        out = "BULLISH"
+        out = "Bullish"
         sug = "Stay Bullish!"
     return out
-
-
-strikeprc = get_strikeprc()
-
-bull_strikeprc = strikeprc - 150
-bear_strikeprc = strikeprc + 150
-
-try:
-    proxyServer = urllib.request.getproxies()['http']
-except KeyError:
-    proxyServer = ""
-
-prediction = getNiftyPrediction(
-                data=fetchLatestNiftyDaily(proxyServer=proxyServer), 
-                proxyServer=proxyServer
-            )
-print(prediction)
-option_type = 'CE' if prediction == 'BEARISH' else 'PE'
-strikeprc = bear_strikeprc if prediction == 'BEARISH' else bull_strikeprc
-transaction_type = 'SELL' if prediction == 'BEARISH' else 'BUY'
-
-order_details_opt = {
-    "base_symbol": index,
-    "option_type": option_type,
-    "strike_prc": strikeprc,
-    "transaction":"BUY",
-    "direction": prediction
-}
-order_details_future = {
-    "base_symbol": index,
-    "option_type": 'FUT',
-    "strike_prc": 0,
-    "transaction": transaction_type,
-    "direction": prediction
-}
-
-orders_to_place = [
-    ('Overnight_Options', order_details_future),
-    ('Overnight_Options', order_details_opt)
-]
-
-for strategy, order_details in orders_to_place:
-    place_order.place_order_for_broker(strategy, order_details,signal='Afternoon')

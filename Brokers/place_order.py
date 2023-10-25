@@ -37,11 +37,11 @@ def place_order_for_strategy(strategy_name,order_details):
                 place_order_for_broker(order_with_user)
 
 #TODO: write documentation
-def place_order_for_broker(order_details=None):
+def place_order_for_broker(order_details):
     if order_details['broker'] == "aliceblue":  #TODO make this a list of brokers and fetch them in the form of enum
-        aliceblue.place_aliceblue_order(order_details)
+        aliceblue.place_aliceblue_order(order_details=order_details)
     elif order_details['broker'] == "zerodha":
-        zerodha.place_zerodha_order(order_details)
+        zerodha.place_zerodha_order(order_details=order_details)
     else:
         print("Unknown broker")
         return
