@@ -1,6 +1,7 @@
 # Import necessary libraries and modules
-from MPWizard_monitor import OrderMonitor
-import os,sys
+# from MPWizard_monitor import OrderMonitor
+from MPW import OrderMonitor
+import os,sys,json
 from dotenv import load_dotenv
 from MPWizard_calc import get_high_low_range_and_update_json, get_average_range_and_update_json
 import datetime as dt
@@ -18,8 +19,9 @@ import Brokers.place_order_calc as place_order_calc
 import MarketUtils.general_calc as general_calc
 
 
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('MPWizard')
-strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
+_,strategy_path = place_order_calc.get_strategy_json('MPWizard')
+print("path",strategy_path)
+strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
 
 # Fetch the desired start time from the environment variables
 desired_start_time_str = strategy_obj.get_entry_params().get('EntryTime')
@@ -34,7 +36,7 @@ def main():
     Main function to execute the trading strategy.
     """
     # Update the JSON file with average range data
-    get_average_range_and_update_json(strategy_obj.get_general_params().get('ATRPeriod'))
+    # get_average_range_and_update_json(strategy_obj.get_general_params().get('ATRPeriod'))
     
     # Calculate the wait time before starting the bot
     now = dt.datetime.now()
@@ -46,19 +48,19 @@ def main():
         sleep(wait_time.total_seconds())
     
     # Update the JSON file with high-low range data
-    get_high_low_range_and_update_json()
+    # get_high_low_range_and_update_json()
     
     # Read the levels data from the JSON file
     # levels_data = general_calc.read_json_file(mpwizard_json)
 
-    instruments = strategy_obj.get_extra_information()
-    print(instruments)
+    with open(strategy_path,'r') as file:
+        instruments = file.read()
 
     # Create a list of Instrument objects from the levels data
     # instruments = [instru(data) for data in levels_data["indices"]]
     
     # Initialize the OrderMonitor with the users and instruments, then start monitoring
-    order_monitor = OrderMonitor(instruments=instruments) 
+    order_monitor = OrderMonitor(instruments,max_orders=2) 
     order_monitor.monitor_index()
 
 

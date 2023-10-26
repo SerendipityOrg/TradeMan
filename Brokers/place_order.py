@@ -11,8 +11,8 @@ import Brokers.Zerodha.kite_place_orders as zerodha
 import Brokers.Aliceblue.alice_place_orders as aliceblue
 import Brokers.place_order_calc as place_order_calc
 
+
 import Brokers.BrokerUtils.Broker as Broker
-from Brokers.instrument_monitor import InstrumentMonitor
 from MarketUtils.InstrumentBase import Instrument
 
 def start_monitoring(monitor):
@@ -21,7 +21,7 @@ def start_monitoring(monitor):
     monitor_thread.start()
 
 def add_token_to_monitor(order_details):
-    monitor = InstrumentMonitor()
+    monitor = place_order_calc.monitor()
     monitor.add_token(order_details)
     start_monitoring(monitor)
 
@@ -57,7 +57,7 @@ def place_order_for_broker(order_details):
 
 def place_stoploss_order(order_details=None,monitor=None):
     instrument_base = Instrument()
-    monitor = InstrumentMonitor()
+    monitor = place_order_calc.monitor()
 
     token = instrument_base.get_token_by_exchange_token(order_details.get('exchange_token'))
     option_ltp = monitor._fetch_ltp_for_token(token)
@@ -67,6 +67,9 @@ def place_stoploss_order(order_details=None,monitor=None):
     order_details['trigger_prc'] = place_order_calc.calculate_trigger_price(order_details.get('transaction_type'),order_details['limit_prc'])
     order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
     order_details['order_type'] = 'Stoploss'
+
+    if "TSL" in order_details['order_mode']:
+        order_details['target'] = place_order_calc.calculate_target(option_ltp,order_details.get('price_ref'))
 
     if order_details['broker'] == "aliceblue":
         aliceblue.place_aliceblue_order(order_details)
@@ -94,28 +97,7 @@ def place_tsl(order_details):
     order_details['target'] += (price_ref / 2)  # Adjust target by half of price_ref
     order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
     modify_stoploss(order_details=order_details)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return order_details['target'], order_details['limit_prc']
 
 
 def modify_orders(token=None,monitor=None,order_details=None):

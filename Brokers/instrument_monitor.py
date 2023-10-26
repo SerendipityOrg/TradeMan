@@ -1,123 +1,96 @@
-from datetime import datetime
-from dotenv import load_dotenv
-import os 
-import threading
+from typing import Dict, Callable, Any
+import time
 from kiteconnect import KiteConnect
-import sys
-from time import sleep
+import os,sys
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd
 sys.path.append(DIR_PATH)
 
-import MarketUtils.general_calc as general_calc
-import MarketUtils.Discord.discordchannels as discord
-import Brokers.place_order as place_order
 import Brokers.BrokerUtils.Broker as Broker
-from MarketUtils.InstrumentBase import Instrument
-
-active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
 
 api_key,access_token = Broker.get_primary_account()
 kite = KiteConnect(api_key=api_key)
 kite.set_access_token(access_token)
 
-class InstrumentMonitor:
-    """
-    Singleton class to monitor instruments and handle trading signals.
-    """    
-    _instance = None
-    
-    def __new__(cls, *args, **kwargs):
-        if not isinstance(cls._instance, cls):
-            cls._instance = super(InstrumentMonitor, cls).__new__(cls)
-        return cls._instance
-    
-    def __init__(self, callback=None):
-        self.lock = threading.Lock()
-        self.tokens_to_monitor = {}  # Using a dictionary to store token along with its target and limit price
-        self.callback = callback
-        
-    def add_token(self, order_details):
-        """Add a token to the monitoring list."""
-        instrument_obj = Instrument()
-        token = instrument_obj.get_token_by_exchange_token(order_details.get('exchange_token'))
-        if token not in self.tokens_to_monitor:
-            print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor}")
-        else:
-            print(f"Token {token} is already being monitored.")
-            
-        self.tokens_to_monitor[token] = {
-            'order_details': order_details
-        }
-        # Print the price_ref from the order_details
-        if self.tokens_to_monitor[token] is not None :
-            print("price_ref:" ,self.tokens_to_monitor[token])
-        print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor.keys()}")
 
-    def remove_token(self, token):
-        """Remove a token from the monitoring list."""
-        if token in self.tokens_to_monitor:
-            del self.tokens_to_monitor[token]
+class InstrumentMonitor:
+    def __init__(self):
+        self.instruments = {}
+        self.callback = None
+
+    def add_token(self, token: str, trigger_points: Dict[str, float], target: float = None, limit: float = None):
+        """Add a token to be monitored.
+        
+        Args:
+        token (str): The token of the instrument.
+        trigger_points (dict): A dictionary of trigger points.
+        target (float, optional): The target price.
+        limit (float, optional): The limit price.
+        """
+        self.instruments[token] = {
+            'trigger_points': trigger_points,
+            'target': target,
+            'limit': limit,
+            'ltp': None  # Last Traded Price
+        }
+
+    def remove_token(self, token: str):
+        """Remove a token from monitoring.
+        
+        Args:
+        token (str): The token of the instrument.
+        """
+        if token in self.instruments:
+            del self.instruments[token]
+
+    def set_callback(self, callback: Callable[[str, Any], None]):
+        """Set the callback function to be called on trigger events.
+        
+        Args:
+        callback (callable): The callback function.
+        """
+        self.callback = callback
+
+    def fetch_ltp(self, token: str) -> float:
+        """Fetch the Last Traded Price (LTP) for a given token using Kite API.
+        
+        Args:
+        token (str): The token of the instrument.
+        
+        Returns:
+        float: The LTP of the instrument.
+        """
+        ltp = kite.ltp(token)  # assuming 'kite' is accessible here or you may need to pass it
+        ltp = ltp[str(token)]['last_price']
+        print(f"LTP for token {token}: {ltp}")
+        return ltp
 
     def monitor(self):
-        """Monitor tokens and execute callback on LTP changes."""
+        """Monitor the instruments and handle triggers."""
+        for token, data in self.instruments.items():
+            # Fetch LTP
+            ltp = self.fetch_ltp(token)
+            data['ltp'] = ltp
+
+            # Check for trigger points
+            for trigger_name, trigger_value in data['trigger_points'].items():
+                if ltp == trigger_value and self.callback:
+                    self.callback(token, {'type': 'trigger', 'name': trigger_name, 'value': ltp})
+
+            # Check for target and limit
+            if data['target'] and ltp >= data['target'] and self.callback:
+                self.callback(token, {'type': 'target', 'value': ltp})
+
+            if data['limit'] and ltp <= data['limit'] and self.callback:
+                self.callback(token, {'type': 'limit', 'value': ltp})
+
+    def start_monitoring(self, interval: int = 10):
+        """Start the monitoring loop.
+        
+        Args:
+        interval (int, optional): The interval between monitoring in seconds. Defaults to 10.
+        """
         while True:
-            ltps = self._fetch_ltps()
-            for token, ltp in ltps.items():
-                if self.callback:
-                    self.callback(token, ltp)
-            sleep(10)
+            self.monitor()
+            time.sleep(interval)
 
-    def _fetch_ltp_for_token(self, token):
-        """Fetch the LTP for a given token."""
-        ltp = kite.ltp(token)  # assuming 'kite' is accessible here or you may need to pass it
-        return ltp[str(token)]['last_price']
-
-    def _fetch_ltps(self):
-        """Fetch LTPs for all monitored tokens."""
-        ltps = {}
-        for token in self.tokens_to_monitor.keys():
-            print(f"Fetching LTP for token {token}")
-            try:
-                ltp_data = self._fetch_ltp_for_token(token)
-                ltps[token] = ltp_data
-            except Exception as e:
-                print(f"Error fetching LTP for token {token}: {e}")
-        return ltps
-    
-    def fetch(self):
-        """Fetch and print LTPs for all monitored tokens and handle target/limit price scenarios."""
-        while True:
-            tokens = list(self.tokens_to_monitor.keys())
-            print(f"fetching {tokens}")
-            ltps = self._fetch_ltps()  # Using the class's method
-
-            for token, ltp in ltps.items():
-                print(f"The LTP for {token} is {ltp}")
-                token_data = self.tokens_to_monitor[token]
-                order_details = token_data['order_details']
-
-                # Check if the target is not None and if LTP has reached or exceeded it
-                if order_details['target'] is not None and ltp >= order_details['target']:
-                    print(f"Target reached for token {token}! LTP is {ltp}.")
-                    place_order.modify_tsl(order_details)
-                    print(f"New target for token {token} is {token_data['target']}.")
-                    print(f"New limit price for token {token} is {token_data['limit_prc']}.")
-                    message = f"Order modified! new target {token_data['target']}! and new stoploss is {token_data['limit_prc']} ."
-                    # discord.discord_bot(message,token_data['strategy'])
-
-                # Check if the limit_prc is not None and if LTP has fallen below it
-                elif token_data['limit_prc'] is not None and ltp <= token_data['limit_prc']:
-                    print(f"Limit price reached for token {token}! LTP is {ltp}.") # TODO: send discord msg after sl
-                    #remove the token from the list
-                    self.remove_token(token)
-                
-                # #check if the time is 3:10 pm and if yes then remove the token from the list
-                # elif datetime.now().strftime("%H:%M:%S") >= "15:57:00":
-                #     print("Time is 3:10 pm")
-                #     place_order.exit_order_details(token,monitor=self)
-                #     self.remove_token(token)
-                    
-                # TODO: Check if there any open orders for the token at 3:10 pm if yes then cancel the order and sqaure off that order
-                
-            sleep(10)

@@ -11,7 +11,7 @@ sys.path.append(DIR_PATH)
 env_file_path = os.path.join(DIR_PATH, '.env')
 load_dotenv(env_file_path)
 token = os.getenv('telegram_bot_token')
-import MarketUtils.general_calc as gc
+import MarketUtils.general_calc as general_calc
 import Brokers.place_order as place_order
 import Strategies.MPWizard.MPWizard_calc as mpw
 import MarketUtils.InstrumentBase as InstrumentBase

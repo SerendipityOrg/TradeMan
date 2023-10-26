@@ -93,6 +93,6 @@ orders_to_place = [
     }
 ]
 
-place_order.place_order_for_strategy(strategy_name,orders_to_place)
+# place_order.place_order_for_strategy(strategy_name,orders_to_place)
 
 

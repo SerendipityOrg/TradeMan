@@ -1,30 +1,18 @@
-import os,json
+from time import sleep
+import os,sys,json
 import datetime as dt
-from dotenv import load_dotenv
-import sys
-from typing import Optional, Dict, List
-
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
-ENV_PATH = os.path.join(DIR_PATH, '.env')
-load_dotenv(ENV_PATH)
-max_orders = os.getenv('max_orders')
-omkar_json = os.getenv('omkar_json_filepath')
-
 import Brokers.place_order_calc as place_order_calc
-import Brokers.instrument_monitor as instrument_monitor
-import Brokers.place_order as place_order
-import MarketUtils.general_calc as general_calc
-import MarketUtils.Discord.discordchannels as discord
 import MarketUtils.InstrumentBase as InstrumentBase
 import Strategies.StrategyBase as StrategyBase
+import MarketUtils.general_calc as general_calc
 
 _,mpwizard_json = place_order_calc.get_strategy_json('MPWizard')
 instrument_obj = InstrumentBase.Instrument()
 strategy_obj = StrategyBase.Strategy.read_strategy_json(mpwizard_json)
-
 
 class MPWInstrument:
     def __init__(self, name, token, trigger_points, price_ref):
@@ -45,11 +33,9 @@ class MPWInstrument:
     def get_price_ref(self):
         return self.price_ref
 
-
 class OrderMonitor:
     def __init__(self, json_data, max_orders):
-        self.monitor = place_order_calc.monitor()
-        self.mood_data = self._load_json_data(json_data)
+        self.mood_data = json.loads(json_data)
         self.instruments = self._create_instruments(self.mood_data['EntryParams'])
         self.orders_placed_today = 0
         self.max_orders_per_day = max_orders
@@ -57,20 +43,31 @@ class OrderMonitor:
         self.done_for_the_day = False
         self.indices_triggered_today = set()
         self.message_sent = {
-            instrument.get_name(): {level: False for level in instrument.get_trigger_points()}
+            instrument.get_name(): {level: False for level in instrument.get_trigger_points().keys()}
             for instrument in self.instruments
         }
-        self._add_tokens_from_json()
+        self.instrument_monitor = place_order_calc.monitor()
+        self.instrument_monitor.set_callback(self.handle_trigger)
+        self._add_tokens_to_instrument_monitor()
 
-    def _add_tokens_from_json(self):
-        indices_tokens = self.mood_data['GeneralParams']['IndicesTokens']
-        for token in indices_tokens.values():
-            self.monitor.add_token(token=str(token))
+    def _add_tokens_to_instrument_monitor(self):
+        for instrument in self.instruments:
+            self.instrument_monitor.add_token(
+                token=str(instrument.get_token()),
+                trigger_points=instrument.get_trigger_points(),
+                # Add additional parameters if needed
+            )
 
     @staticmethod
     def _load_json_data(json_data):
         return json.loads(json_data)
-
+    
+    def _reset_daily_counters(self):
+        self.today_date = dt.date.today()
+        self.orders_placed_today = 0
+        self.done_for_the_day = False
+        self.indices_triggered_today = set()
+    
     def _create_instruments(self, instruments_data):
         instruments = []
         for name, data in instruments_data.items():
@@ -88,12 +85,6 @@ class OrderMonitor:
             instrument = MPWInstrument(name, token, trigger_points,price_ref)
             instruments.append(instrument)
         return instruments
-
-    def _reset_daily_counters(self):
-        self.today_date = dt.date.today()
-        self.orders_placed_today = 0
-        self.done_for_the_day = False
-        self.indices_triggered_today = set()
 
     def _check_price_crossing(self, prev_ltp, ltp, levels):
         """Check if the price has crossed a certain level."""
@@ -150,7 +141,7 @@ class OrderMonitor:
         cross_type, level_name = self._check_price_crossing(prev_ltp[name], ltp, levels)
         if cross_type and not self.message_sent[instrument.get_name()][level_name]:
             order_to_place = self.create_order_details(name,cross_type,ltp,price_ref)
-            place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)  
+            # place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)  
             print(f"{cross_type} at {ltp} for {name}!")
             
             
@@ -181,34 +172,20 @@ class OrderMonitor:
         else:
             print(f"Unknown IB Level: {ib_level}")
         return None
+    
 
-    def monitor_index(self):       
-        """Monitor index and handle trading signals."""
-        def process_ltps(token, ltp):
-            instrument = next((i for i in self.instruments if str(i.get_token()) == token), None)
-            if instrument:
-                self._process_instrument(ltp, instrument, prev_ltp, message_sent)
-            print(f"The LTP for {token} is {ltp}")
+    def handle_trigger(self, token, data):
+        # Implement logic to handle triggers here
+        print(f"Trigger for token {token}: {data}")
 
-        print("Monitoring started...")  
-        prev_ltp = {instrument.get_name(): None for instrument in self.instruments}
-        message_sent = {
-            instrument.get_name(): {level: False for level in instrument.get_trigger_points()}
-            for instrument in self.instruments
-        } # This is will check if the message/ signal has been triggered for that level or not.
-
-        tokens = [str(instrument.get_token()) for instrument in self.instruments]
-        ltp_monitor = self.monitor
-        for token in tokens:
-            ltp_monitor.add_token(token=token)
-        ltp_monitor.callback = process_ltps
-
+    def monitor_index(self):
+        print("Monitoring started...")
         while True:
             if dt.date.today() != self.today_date:
                 self._reset_daily_counters()
                 self.message_sent = {
-                    instrument.get_name(): {level: False for level in instrument.get_trigger_points()}
+                    instrument.get_name(): {level: False for level in instrument.get_trigger_points().keys()}
                     for instrument in self.instruments
                 }
-            ltp_monitor.monitor()  
-            sleep(10)    
+            self.instrument_monitor.monitor()
+            sleep(10)

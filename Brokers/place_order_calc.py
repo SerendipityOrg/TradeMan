@@ -8,6 +8,10 @@ sys.path.append(DIR_PATH)
 import MarketUtils.general_calc as general_calc
 from MarketUtils.InstrumentBase import Instrument
 
+def monitor():
+    from Brokers.instrument_monitor import InstrumentMonitor
+    return InstrumentMonitor()
+
 def get_user_details(user):
     user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'UserJson', f'{user}.json')
     json_data = general_calc.read_json_file(user_json_path)
@@ -178,5 +182,8 @@ def calculate_transaction_type_sl(transaction_type):
     elif transaction_type == 'SELL':
         transaction_type_sl = 'BUY'
     return transaction_type_sl
+
+def calculate_target(option_ltp,price_ref):
+    return option_ltp+price_ref
 
 
