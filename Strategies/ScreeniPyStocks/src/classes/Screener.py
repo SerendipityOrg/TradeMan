@@ -9,7 +9,7 @@ import sys
 import math
 import numpy as np
 import pandas as pd
-# import talib
+import talib
 import joblib
 import keras
 import classes.Utility as Utility
@@ -18,7 +18,6 @@ from scipy.signal import argrelextrema
 from scipy.stats import linregress
 from classes.ColorText import colorText
 from classes.SuppressOutput import SuppressOutput
-from classes.ScreenipyTA import ScreenerTA
 
 
 # Exception for newly listed stocks with candle nos < daysToLookback
@@ -42,7 +41,7 @@ class tools:
     # Private method to find candle type
     # True = Bullish, False = Bearish
     def getCandleType(self, dailyData):
-        return bool(dailyData['Close'][0] >= dailyData['Open'][0])
+        return bool(dailyData['Close'].iloc[0] >= dailyData['Open'].iloc[0])
             
 
     # Preprocess the acquired data
@@ -50,8 +49,8 @@ class tools:
         if daysToLookback is None:
             daysToLookback = self.configManager.daysToLookback
         if self.configManager.useEMA:
-            sma = ScreenerTA.EMA(data['Close'],timeperiod=50)
-            lma = ScreenerTA.EMA(data['Close'],timeperiod=200)
+            sma = talib.EMA(data['Close'],timeperiod=50)
+            lma = talib.EMA(data['Close'],timeperiod=200)
             data.insert(6,'SMA',sma)
             data.insert(7,'LMA',lma)
         else:
@@ -60,7 +59,7 @@ class tools:
             data.insert(6,'SMA',sma['Close'])
             data.insert(7,'LMA',lma['Close'])
         vol = data.rolling(window=20).mean()
-        rsi = ScreenerTA.RSI(data['Close'], timeperiod=14)
+        rsi = talib.RSI(data['Close'], timeperiod=14)
         data.insert(8,'VolMA',vol['Volume'])
         data.insert(9,'RSI',rsi)
         data = data[::-1]               # Reverse the dataframe
@@ -88,7 +87,7 @@ class tools:
         else:
             pct_change = colorText.WARN + (" (%.1f%%)" % pct_change) + colorText.END
             
-        ltp = round(recent['Close'][0],2)
+        ltp = round(recent['Close'].iloc[0],2)
         saveDict['LTP'] = str(ltp)
         verifyStageTwo = True
         if self.configManager.stageTwo and len(data) > 250:
@@ -120,22 +119,22 @@ class tools:
         data = data.fillna(0)
         data = data.replace([np.inf, -np.inf], 0)
         recent = data.head(1)
-        if(recent['SMA'][0] > recent['LMA'][0] and recent['Close'][0] > recent['SMA'][0]):
+        if(recent['SMA'].iloc[0] > recent['LMA'].iloc[0] and recent['Close'].iloc[0] > recent['SMA'].iloc[0]):
             screenDict['MA-Signal'] = colorText.BOLD + colorText.GREEN + 'Bullish' + colorText.END
             saveDict['MA-Signal'] = 'Bullish'
-        elif(recent['SMA'][0] < recent['LMA'][0]):
+        elif(recent['SMA'].iloc[0] < recent['LMA'].iloc[0]):
             screenDict['MA-Signal'] = colorText.BOLD + colorText.FAIL + 'Bearish' + colorText.END
             saveDict['MA-Signal'] = 'Bearish'
-        elif(recent['SMA'][0] == 0):
+        elif(recent['SMA'].iloc[0] == 0):
             screenDict['MA-Signal'] = colorText.BOLD + colorText.WARN + 'Unknown' + colorText.END
             saveDict['MA-Signal'] = 'Unknown'
         else:
             screenDict['MA-Signal'] = colorText.BOLD + colorText.WARN + 'Neutral' + colorText.END
             saveDict['MA-Signal'] = 'Neutral'
 
-        smaDev = data['SMA'][0] * maRange / 100
-        lmaDev = data['LMA'][0] * maRange / 100
-        open, high, low, close, sma, lma = data['Open'][0], data['High'][0], data['Low'][0], data['Close'][0], data['SMA'][0], data['LMA'][0]
+        smaDev = data['SMA'].iloc[0] * maRange / 100
+        lmaDev = data['LMA'].iloc[0] * maRange / 100
+        open, high, low, close, sma, lma = data['Open'].iloc[0], data['High'].iloc[0], data['Low'].iloc[0], data['Close'].iloc[0], data['SMA'].iloc[0], data['LMA'].iloc[0]
         maReversal = 0
         # Taking Support 50
         if close > sma and low <= (sma + smaDev):
@@ -188,11 +187,11 @@ class tools:
         data = data.fillna(0)
         data = data.replace([np.inf, -np.inf], 0)
         recent = data.head(1)
-        if recent['VolMA'][0] == 0: # Handles Divide by 0 warning
+        if recent['VolMA'].iloc[0] == 0: # Handles Divide by 0 warning
             saveDict['Volume'] = "Unknown"
             screenDict['Volume'] = colorText.BOLD + colorText.WARN + "Unknown" + colorText.END
             return True
-        ratio = round(recent['Volume'][0]/recent['VolMA'][0],2)
+        ratio = round(recent['Volume'].iloc[0]/recent['VolMA'].iloc[0],2)
         saveDict['Volume'] = str(ratio)+"x"
         if(ratio >= volumeRatio and ratio != np.nan and (not math.isinf(ratio)) and (ratio != 20)):
             screenDict['Volume'] = colorText.BOLD + colorText.GREEN + str(ratio) + "x" + colorText.END
@@ -206,9 +205,9 @@ class tools:
         data = data.replace([np.inf, -np.inf], 0)
         recent = data.head(1)
         data = data[1:]
-        hs = round(data.describe()['High']['max'],2)
-        hc = round(data.describe()['Close']['max'],2)
-        rc = round(recent['Close'][0],2)
+        hs = round(data.describe()['High'].iloc['max'],2)
+        hc = round(data.describe()['Close'].iloc['max'],2)
+        rc = round(recent['Close'].iloc[0],2)
         if np.isnan(hc) or np.isnan(hs):
             saveDict['Breaking-Out'] = 'BO: Unknown'
             screenDict['Breaking-Out'] = colorText.BOLD + colorText.WARN + 'BO: Unknown' + colorText.END
@@ -287,7 +286,7 @@ class tools:
     def validateRSI(self, data, screenDict, saveDict, minRSI, maxRSI):
         data = data.fillna(0)
         data = data.replace([np.inf, -np.inf], 0)
-        rsi = int(data.head(1)['RSI'][0])
+        rsi = int(data.head(1)['RSI'].iloc[0])
         saveDict['RSI'] = rsi
         if(rsi >= minRSI and rsi <= maxRSI) and (rsi <= 70 and rsi >= 30):
             screenDict['RSI'] = colorText.BOLD + colorText.GREEN + str(rsi) + colorText.END
@@ -399,9 +398,9 @@ class tools:
             maLength = 20
         data = data[::-1]
         if self.configManager.useEMA:
-            maRev = ScreenerTA.EMA(data['Close'],timeperiod=maLength)
+            maRev = talib.EMA(data['Close'],timeperiod=maLength)
         else:
-            maRev = ScreenerTA.MA(data['Close'],timeperiod=maLength)
+            maRev = talib.MA(data['Close'],timeperiod=maLength)
         data.insert(10,'maRev',maRev)
         data = data[::-1].head(3)
         if data.equals(data[(data.Close >= (data.maRev - (data.maRev*percentage))) & (data.Close <= (data.maRev + (data.maRev*percentage)))]) and data.head(1)['Close'][0] >= data.head(1)['maRev'][0]:
@@ -604,7 +603,7 @@ class tools:
         data_tuple = fetcher.fetchFiveEmaData()
         for cnt in range(len(data_tuple)):
             d = data_tuple[cnt]
-            d['5EMA'] = ScreenerTA.EMA(d['Close'],timeperiod=5)
+            d['5EMA'] = talib.EMA(d['Close'],timeperiod=5)
             d = d[col_names]
             d = d.dropna().round(2)
 

@@ -154,26 +154,26 @@ def aliceblue_futures_taxes(qty, entry_prc, exit_prc, orders):
 
 
 def calculate_tax_from_excel(file_path):
-    columns = ["Trade ID", "Strategy", "Index", "Strike Price", "Option Type", "Date", "Entry Time", "Exit Time",
-               "Entry Price", "Exit Price", "Trade points", "Qty", "PnL", "Tax", "Net PnL"]
-    df = pd.read_excel(file_path, sheet_name='MPWizard',
+    columns = ["Trade ID", "Index", "Strike Prc", "Option", "Date", "Entry Time", "Exit Time",
+               "Entry Prc", "Exit Prc", "Hedge entry",	"Hedge exit", "Qty", "Trade points", "PnL", "Tax", "Net PnL", "Comments"]
+    df = pd.read_excel(file_path, sheet_name='ExpiryTrader',
                        names=columns)
 
     for index, row in df.iterrows():
         qty = row["Qty"]
-        entry_prc = row["Entry Price"]
-        exit_prc = row["Exit Price"]
-        orders = 1
+        entry_prc = row["Entry Prc"]
+        exit_prc = row["Exit Prc"]
+        orders = 2
 
         # Default to aliceblue tax calculation as we don't have broker name
-        tax = aliceblue_taxes(qty, entry_prc, exit_prc, orders)
+        tax = zerodha_taxes(qty, entry_prc, exit_prc, orders)
         # Added +2 to account for 0-indexing and header row
         # print(f"Tax for row {index + 2}: {tax}")
         print(tax)
 
 
 # Sample usage remains the same
-file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\vinod.xlsx"
+file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\omkar.xlsx"
 calculate_tax_from_excel(file_path)
 
 
