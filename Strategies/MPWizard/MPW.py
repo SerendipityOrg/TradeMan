@@ -9,6 +9,7 @@ import Brokers.place_order_calc as place_order_calc
 import MarketUtils.InstrumentBase as InstrumentBase
 import Strategies.StrategyBase as StrategyBase
 import MarketUtils.general_calc as general_calc
+import Brokers.place_order as place_order
 
 _,mpwizard_json = place_order_calc.get_strategy_json('MPWizard')
 instrument_obj = InstrumentBase.Instrument()
@@ -67,6 +68,15 @@ class OrderMonitor:
         self.orders_placed_today = 0
         self.done_for_the_day = False
         self.indices_triggered_today = set()
+
+    def create_single_instrument(self,instruments_data):
+        name =instruments_data['Name']
+        token = instruments_data['Token']
+        trigger_points = instruments_data['TriggerPoints']
+        price_ref = instruments_data['PriceRef']
+        instrument = MPWInstrument(name, token, trigger_points,price_ref)
+        return instrument
+
     
     def _create_instruments(self, instruments_data):
         instruments = []
@@ -173,19 +183,66 @@ class OrderMonitor:
             print(f"Unknown IB Level: {ib_level}")
         return None
     
+    def process_orders(self,instrument, cross_type, ltp):
+        index_tokens = strategy_obj.get_general_params().get("IndicesTokens")
+        token_to_index = {str(v): k for k, v in index_tokens.items()}
+        index_name = token_to_index.get(instrument)
+        print(index_name)
+        if index_name:
+            obj = self.create_single_instrument(self.mood_data['EntryParams'][index_name])
+            name = obj.get_name()
+            price_ref = obj.get_price_ref()
 
-    def handle_trigger(self, token, data):
-        # Implement logic to handle triggers here
-        print(f"Trigger for token {token}: {data}")
+            
+            if self.orders_placed_today >= self.max_orders_per_day:
+                print("Daily signal limit reached. No more signals will be generated today.")
+                return
+            order_to_place = self.create_order_details(name,cross_type,ltp,price_ref)
+            place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)  
+
+            self.indices_triggered_today.add(name) 
+            self.orders_placed_today += 1
+            if name in self.message_sent:
+                for level in self.message_sent[name]:
+                    self.message_sent[name][level] = True 
+        else:
+            print("Index name not found for token:", instrument)
+
+
+
+    def handle_trigger(self, instrument,data):
+        ltp = self.instrument_monitor.fetch_ltp(instrument)
+        
+        
+        if data['type'] == 'trigger':
+            cross_type = 'UpCross' if data['name'] == 'IBHigh' else 'DownCross'
+            self.process_orders(instrument, cross_type, ltp)
+            
+        elif data['type'] == 'target':
+            # print(f"Target reached for {instrument.get_name()} at {ltp}.")
+            order_details = data.get('order_details')
+            if order_details:
+                new_target, new_limit_prc = place_order.place_tsl(order_details)
+                data['target'] = new_target
+                data['limit'] = new_limit_prc
+                print(f"New target set to {new_target} and new limit price set to {new_limit_prc}.")
+            else:
+                print("No order details available to update target and limit prices.")
+                
+        elif data['type'] == 'limit':
+            print(f"Limit reached for {instrument.get_name()} at {ltp}. Handling accordingly.")
+            # Handle limit reached scenario here
+        
 
     def monitor_index(self):
         print("Monitoring started...")
-        while True:
-            if dt.date.today() != self.today_date:
-                self._reset_daily_counters()
-                self.message_sent = {
-                    instrument.get_name(): {level: False for level in instrument.get_trigger_points().keys()}
-                    for instrument in self.instruments
-                }
-            self.instrument_monitor.monitor()
-            sleep(10)
+        # while True:
+        if dt.date.today() != self.today_date:
+            self._reset_daily_counters()
+            self.message_sent = {
+                instrument.get_name(): {level: False for level in instrument.get_trigger_points().keys()}
+                for instrument in self.instruments
+            }
+        self.instrument_monitor.start_monitoring()
+
+        sleep(10)

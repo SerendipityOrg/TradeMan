@@ -1,21 +1,27 @@
 import pandas as pd
-import os
+import os,sys
 import numpy as np
 import datetime
 from collections import namedtuple
 import requests
 import json
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-filepath = os.path.join(script_dir, 'Amipy.json')
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
 
-with open(filepath, 'r') as file:
-    params = json.load(file)
+import Strategies.StrategyBase as StrategyBase
+import Brokers.place_order_calc as place_order_calc
 
-Heikin_Ashi_MA_period = params['Nifty'][0]["Heikin_Ashi_MA_period"]
-Supertrend_period = params['Nifty'][0]["Supertrend_period"]
-Supertrend_multiplier = params['Nifty'][0]["Supertrend_multiplier"]
-EMA_period = params['Nifty'][0]["EMA_period"]
+_,STRATEGY_PATH = place_order_calc.get_strategy_json('AmiPy')
+
+strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
+
+
+
+Heikin_Ashi_MA_period = strategy_obj.get_entry_params().get('HeikinAshiMAPeriod')
+Supertrend_period = strategy_obj.get_entry_params().get('SupertrendPeriod')
+Supertrend_multiplier = strategy_obj.get_entry_params().get('SupertrendMultiplier')
+EMA_period = strategy_obj.get_entry_params().get('EMAPeriod')
 
 
 

@@ -66,5 +66,3 @@ def place_orders(strike_prc, signal):
             "trade_id": "OF3_entry"  # TODO: fetch the order_tag from {strategy_name}.json
         })
     place_order.place_order_for_strategy(strategy_name, orders_to_place)
-
-print(place_orders(19800,"ShortSignal"))

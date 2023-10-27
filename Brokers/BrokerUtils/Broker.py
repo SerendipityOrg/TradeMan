@@ -21,7 +21,7 @@ def get_primary_account():
     primary_account = broker_json_filepath
     user_details = general_calc.read_json_file(primary_account)
     api_key = '6b0dp5ussukmo67h'
-    access_token = 'ahrbQm1s2HYRT4dDWTA3olg51R6BkrQ4'
+    access_token = 'JKTDjG377Y6UDXu4I6aYLqCBHM6g9znq'
     # api_key = user_details['zerodha']['omkar']['api_key'] ###TODO Create a broker class and extarct the api key and access token from the json file
     # access_token = user_details['zerodha']['omkar']['access_token']
     return api_key,access_token

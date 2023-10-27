@@ -20,7 +20,6 @@ import MarketUtils.general_calc as general_calc
 
 
 _,strategy_path = place_order_calc.get_strategy_json('MPWizard')
-print("path",strategy_path)
 strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
 
 # Fetch the desired start time from the environment variables
@@ -50,14 +49,9 @@ def main():
     # Update the JSON file with high-low range data
     # get_high_low_range_and_update_json()
     
-    # Read the levels data from the JSON file
-    # levels_data = general_calc.read_json_file(mpwizard_json)
 
     with open(strategy_path,'r') as file:
         instruments = file.read()
-
-    # Create a list of Instrument objects from the levels data
-    # instruments = [instru(data) for data in levels_data["indices"]]
     
     # Initialize the OrderMonitor with the users and instruments, then start monitoring
     order_monitor = OrderMonitor(instruments,max_orders=2) 

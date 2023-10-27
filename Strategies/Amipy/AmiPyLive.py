@@ -20,18 +20,19 @@ from straddlecalculation import *
 from chart import plotly_plot
 
 from dotenv import load_dotenv
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
 
 import Brokers.place_order_calc as place_order_calc
 import MarketUtils.general_calc as general_calc
 import MarketUtils.Discord.discordchannels as discord_bot
-import Brokers.place_order as place_order
 import Strategies.StrategyBase as StrategyBase
 import Brokers.BrokerUtils.Broker as Broker
 import amipy_place_orders as amipy_orders
+import MarketUtils.InstrumentBase as InstrumentBase
 
 
-DIR_PATH = os.getcwd()
-sys.path.append(DIR_PATH)
+
 
 ENV_PATH = os.path.join(DIR_PATH, '.env')
 load_dotenv(ENV_PATH)
@@ -39,18 +40,19 @@ load_dotenv(ENV_PATH)
 _,STRATEGY_PATH = place_order_calc.get_strategy_json('AmiPy')
 
 strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
+instrument_obj = InstrumentBase.Instrument()
 
 nifty_token = strategy_obj.get_general_params().get('NiftyToken')
 base_symbol = strategy_obj.get_instruments()[0]
 strike_prc = None
 trading_symbol = []
 
-
 omkar_filepath = os.getenv('omkar_json_filepath')
 expiry_date,_ = general_calc.get_expiry_dates("NIFTY")
 
+nifty = [nifty_token]
 
-hist_data = {token: pd.DataFrame(columns=['date', 'instrument_token', 'open', 'high', 'low', 'close']) for token in nifty_token}
+hist_data = {token: pd.DataFrame(columns=['date', 'instrument_token', 'open', 'high', 'low', 'close']) for token in nifty}
 from_date =  date.today()- pd.Timedelta(days=4)
 to_date = date.today()
 interval = 'minute'
@@ -129,7 +131,10 @@ else:
 print("Today's Strike Price:",strike_prc)
 
 
-trading_tokens,zerodha_list,alice_list = get_option_tokens(base_symbol,str(expiry_date),strike_prc)
+# trading_tokens,zerodha_list,alice_list = get_option_tokens(base_symbol,str(expiry_date),strike_prc)
+def get_tokens(strike_price):
+    trading_tokens = []
+
 
 for token in trading_tokens:
     # hist_data[token] = read_data_from_timescaleDB(token)
