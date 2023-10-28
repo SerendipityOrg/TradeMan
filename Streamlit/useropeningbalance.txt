@@ -1,11 +1,10 @@
-brijesh: 600000.00
-omkar: 2500000.00
-sridhar: 40000.00
-venkatesh:70000.00
-vinay: 50000.00
-vinod: 50000.00
-arjun: 75000.00
-gayathri: 50000.00
+omkar : 26,64,372.60
+brijesh : 5,93,930.90
+vinay : 33,180.06
+venkatesh : 78,490.08
+vinod : 51,931.08
+arjun : 75,853.92
+gayathri : 97,006.59
 
 
 

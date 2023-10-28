@@ -153,28 +153,28 @@ def aliceblue_futures_taxes(qty, entry_prc, exit_prc, orders):
     return round(total_charges, 2)
 
 
-def calculate_tax_from_excel(file_path):
-    columns = ["Trade ID", "Index", "Strike Prc", "Option", "Date", "Entry Time", "Exit Time",
-               "Entry Prc", "Exit Prc", "Hedge entry",	"Hedge exit", "Qty", "Trade points", "PnL", "Tax", "Net PnL", "Comments"]
-    df = pd.read_excel(file_path, sheet_name='ExpiryTrader',
-                       names=columns)
+# def calculate_tax_from_excel(file_path):
+#     columns = ["Trade ID", "Index", "Strike Prc", "Option", "Date", "Entry Time", "Exit Time",
+#                "Entry Prc", "Exit Prc", "Hedge entry",	"Hedge exit", "Qty", "Trade points", "PnL", "Tax", "Net PnL", "Comments"]
+#     df = pd.read_excel(file_path, sheet_name='ExpiryTrader',
+#                        names=columns)
 
-    for index, row in df.iterrows():
-        qty = row["Qty"]
-        entry_prc = row["Entry Prc"]
-        exit_prc = row["Exit Prc"]
-        orders = 2
+#     for index, row in df.iterrows():
+#         qty = row["Qty"]
+#         entry_prc = row["Entry Prc"]
+#         exit_prc = row["Exit Prc"]
+#         orders = 2
 
-        # Default to aliceblue tax calculation as we don't have broker name
-        tax = zerodha_taxes(qty, entry_prc, exit_prc, orders)
-        # Added +2 to account for 0-indexing and header row
-        # print(f"Tax for row {index + 2}: {tax}")
-        print(tax)
+#         # Default to aliceblue tax calculation as we don't have broker name
+#         tax = zerodha_taxes(qty, entry_prc, exit_prc, orders)
+#         # Added +2 to account for 0-indexing and header row
+#         # print(f"Tax for row {index + 2}: {tax}")
+#         print(tax)
 
 
-# Sample usage remains the same
-file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\omkar.xlsx"
-calculate_tax_from_excel(file_path)
+# # Sample usage remains the same
+# file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\omkar.xlsx"
+# calculate_tax_from_excel(file_path)
 
 
 # def calculate_and_print_tax_from_excel(file_path):
@@ -222,26 +222,33 @@ calculate_tax_from_excel(file_path)
 # update_tax_in_excel(file_path)
 
 
-# def calculate_and_print_tax_from_excel(file_path):
-#     columns = ["Trade ID", "Strategy", "Index", "Trade Type", "Strike Prc", "Date", "Entry Time", "Exit Time",
-#                "Entry Price", "Exit Price", "Hedge Entry", "Hedge Exit",  "Trade points", "Qty", "PnL", "Tax"]
+def calculate_and_print_tax_from_excel(file_path):
+    columns = ["Trade ID", "Strategy", "Index", "Trade Type", "Strike Prc", "Date", "Entry Time", "Exit Time",
+               "Entry Price", "Exit Price", "Hedge Entry", "Hedge Exit",  "Trade points", "Qty", "PnL", "Tax","Net PnL"]
 
-#     # Read the excel file
-#     df = pd.read_excel(file_path, sheet_name='AmiPy', names=columns)
+    # Read the excel file
+    df = pd.read_excel(file_path, sheet_name='AmiPy', names=columns)
 
-#     # Calculate and print the 'Tax' column
-#     for index, row in df.iterrows():
-#         qty = row["Qty"]
-#         entry_prc = row["Entry Price"]
-#         exit_prc = row["Exit Price"]
-#         orders = 2
-#         hedge_entry = row["Hedge Entry"]
-#         hedge_exit = row["Hedge Exit"]
+    # Calculate and print the 'Tax' column
+    for index, row in df.iterrows():
+        qty = row["Qty"]
+        entry_prc = row["Entry Price"]
+        exit_prc = row["Exit Price"]
+        orders = 2
+        hedge_entry = row["Hedge Entry"]
+        hedge_exit = row["Hedge Exit"]
 
-#         #  Calculate tax using aliceblue_taxes
-#         hedge_tax = zerodha_taxes(qty, hedge_entry, hedge_exit, 2)
-#         order_tax = zerodha_taxes(qty, entry_prc, exit_prc, 2)
-#         # futures_tax = aliceblue_futures_taxes(qty, orders, entry_prc, exit_prc)
+        #  Calculate tax using aliceblue_taxes
+        hedge_tax = aliceblue_taxes(qty, hedge_entry, hedge_exit, orders)
+        order_tax = aliceblue_taxes(qty, entry_prc, exit_prc, orders)
+        # futures_tax = aliceblue_futures_taxes(qty, entry_prc, exit_prc, orders)
+        tax = hedge_tax+order_tax
+        print(tax)
+
+
+file_path = r"C:\Users\vanis\OneDrive\Desktop\TRADEMAN\TradeMan\UserProfile\excel\brijesh.xlsx"
+calculate_and_print_tax_from_excel(file_path)
+
 
 # def calculate_and_print_tax_from_excel(file_path):
 #     columns = ["Trade ID", "Strategy", "Trade_Type", "Date", "Entry Time", "Exit Time",

@@ -59,7 +59,7 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
     # Add the Opening Balance row
     rows.append({
         'Sl NO': sl_no,
-        'Date': '01-Jul-23',
+        'Date': '28-Oct-23',
         'Day': 'Saturday',
         'Trade ID': '',
         'Details': 'Opening Balance',
@@ -68,7 +68,7 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
     })
     sl_no += 1
 
-    start_date = pd.Timestamp('2023-07-1')
+    start_date = pd.Timestamp('2023-10-28')
     for date in all_dates_sorted:
         if date < start_date:
             continue
