@@ -7,6 +7,8 @@ sys.path.append(DIR_PATH)
 
 import MarketUtils.general_calc as general_calc
 from MarketUtils.InstrumentBase import Instrument
+import Brokers.place_order_calc as place_order_calc
+
 
 def monitor():
     from Brokers.instrument_monitor import InstrumentMonitor
@@ -27,55 +29,89 @@ def get_strategy_json(strategy_name):
     strategy_json = general_calc.read_json_file(strategy_json_path)
     return strategy_json,strategy_json_path
 
-current_exit_signal_cache = {}
+# current_exit_signal_cache = {}
 
-def get_trade_id(strategy, signal=None, order_details=None):
-    global current_exit_signal_cache  # Use this only if the function is at the global scope
+# def get_trade_id(strategy, signal=None, order_details=None):
+#     global current_exit_signal_cache  # Use this only if the function is at the global scope
 
-    strategy_json, strategy_json_path = get_strategy_json(strategy)
+#     strategy_json, strategy_json_path = get_strategy_json(strategy)
 
-    next_trade_id_str = strategy_json["NextTradeId"]
-    strategy_prefix = ''.join([i for i in next_trade_id_str if not i.isdigit()])
-    next_trade_id_num = int(''.join([i for i in next_trade_id_str if i.isdigit()]))
+#     next_trade_id_str = strategy_json["NextTradeId"]
+#     strategy_prefix = ''.join([i for i in next_trade_id_str if not i.isdigit()])
+#     next_trade_id_num = int(''.join([i for i in next_trade_id_str if i.isdigit()]))
     
-    is_exit = False
+#     is_exit = False
 
-    if strategy in ["AmiPy", "Overnight_Options"]:
-        exit_signals = ["ShortCoverSignal", "LongCoverSignal", "Morning"]
-        if signal in exit_signals:
-            is_exit = True
-    else:
-        is_exit = order_details.get('transaction', '').lower() == 'sell' or order_details.get('transaction_type', '').lower() == 'sell'
-        print('is_exit',is_exit)
+#     if strategy in ["AmiPy", "Overnight_Options"]:
+#         exit_signals = ["ShortCoverSignal", "LongCoverSignal", "Morning"]
+#         if signal in exit_signals:
+#             is_exit = True
+#     else:
+#         is_exit = order_details.get('transaction', '').lower() == 'sell' or order_details.get('transaction_type', '').lower() == 'sell'
+#         print('is_exit',is_exit)
 
-    current_trade_id = strategy_prefix + str(next_trade_id_num)
+#     current_trade_id = strategy_prefix + str(next_trade_id_num)
 
-    if is_exit:
-        current_trade_id += "_exit"
-    else:
-        current_trade_id += "_entry"
+#     if is_exit:
+#         current_trade_id += "_exit"
+#     else:
+#         current_trade_id += "_entry"
     
-    # Store trade_ids that are placed today in the JSON under the `today_orders` tag
-    if "TodayOrders" not in strategy_json:
-        strategy_json["TodayOrders"] = []
+#     # Store trade_ids that are placed today in the JSON under the `today_orders` tag
+#     if "TodayOrders" not in strategy_json:
+#         strategy_json["TodayOrders"] = []
 
-    # Check if the signal is in our cache
-    if is_exit:
-        if signal in current_exit_signal_cache:
-            # Use the cached trade_id for the current signal
-            return current_exit_signal_cache[signal]
-        else:
-            # Store the current trade_id in the cache for this signal
-            current_exit_signal_cache[signal] = current_trade_id
+#     # Check if the signal is in our cache
+#     if is_exit:
+#         if signal in current_exit_signal_cache:
+#             # Use the cached trade_id for the current signal
+#             return current_exit_signal_cache[signal]
+#         else:
+#             # Store the current trade_id in the cache for this signal
+#             current_exit_signal_cache[signal] = current_trade_id
 
-        # Increment the trade_id after using it for the current exit order and update the JSON.
-        strategy_json["TodayOrders"].append(strategy_prefix + str(next_trade_id_num))
-        next_trade_id_num += 1
-        new_trade_id = strategy_prefix + str(next_trade_id_num)
-        strategy_json["NextTradeId"] = new_trade_id
-        general_calc.write_json_file(strategy_json_path, strategy_json)
-    print('current_trade_id',current_trade_id)
-    return current_trade_id
+#         # Increment the trade_id after using it for the current exit order and update the JSON.
+#         strategy_json["TodayOrders"].append(strategy_prefix + str(next_trade_id_num))
+#         next_trade_id_num += 1
+#         new_trade_id = strategy_prefix + str(next_trade_id_num)
+#         strategy_json["NextTradeId"] = new_trade_id
+#         general_calc.write_json_file(strategy_json_path, strategy_json)
+#     print('current_trade_id',current_trade_id)
+#     return current_trade_id
+
+def get_trade_id(strategy_name, trade_type):
+    print("in get_trade_id")
+    from Strategies.StrategyBase import Strategy
+
+    _, strategy_path = place_order_calc.get_strategy_json(strategy_name)
+    strategy_obj = Strategy.read_strategy_json(strategy_path)
+
+    current_trade_id = strategy_obj.get_next_trade_id()
+    
+    if trade_type.lower() == 'entry':
+        new_trade_id = f"{current_trade_id}_entry"
+    elif trade_type.lower() == 'exit':
+        new_trade_id = f"{current_trade_id}_exit"
+        
+        # Update TodayOrders with full trade ID
+        today_orders = strategy_obj.get_today_orders()
+        today_orders.append(current_trade_id)  # Append with prefix
+        strategy_obj.set_today_orders(today_orders)
+
+        # Update NextTradeId
+        next_trade_id_num = int(current_trade_id[2:]) + 1
+        next_trade_id = f"{current_trade_id[:2]}{next_trade_id_num:02}"
+        strategy_obj.set_next_trade_id(next_trade_id)
+
+        # Write changes to JSON
+        strategy_obj.write_strategy_json(strategy_path)
+    else:
+        raise ValueError("Invalid trade type. Must be 'entry' or 'exit'.")
+
+    return new_trade_id
+
+
+print(get_trade_id('MPWizard','entry'))
 
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, order_details):

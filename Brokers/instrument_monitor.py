@@ -32,12 +32,10 @@ class InstrumentMonitor:
             self._initialized = True  # Set the initialized flag
 
     def start_monitoring(self):
-        with self.lock:
-            if self.monitor_thread is None:
-                self.monitor_thread = threading.Thread(target=self.monitor)
-                self.monitor_thread.daemon = True
-                self.monitor_thread.start()
-                # self.monitor()
+        if self.monitor_thread is None or not self.monitor_thread.is_alive():
+            self.monitor_thread = threading.Thread(target=self.monitor)
+            self.monitor_thread.daemon = False
+            self.monitor_thread.start()
 
     def add_token(self, token: str = None, trigger_points: Dict[str, float] = None, order_details: Dict = None):
         """Add a token to be monitored.
@@ -87,60 +85,6 @@ class InstrumentMonitor:
         callback (callable): The callback function.
         """
         self.callback = callback
-
-    # def fetch_ltp(self, token: str) -> float:
-    #     """Fetch the Last Traded Price (LTP) for a given token using Kite API.
-        
-    #     Args:
-    #     token (str): The token of the instrument.
-        
-    #     Returns:
-    #     float: The LTP of the instrument.
-    #     """
-    #     ltp = kite.ltp(token)  # assuming 'kite' is accessible here or you may need to pass it
-    #     ltp = ltp[str(token)]['last_price']
-    #     print(f"LTP for token {token}: {ltp}")
-    #     return ltp
-
-    # def monitor(self):
-    #     while True:
-    #         with self.lock:
-    #             tokens = list(self.tokens_to_monitor.keys())
-    #             print("before", tokens)            
-    #         for token in tokens:
-    #             print("after",token)
-    #             # Fetch LTP
-    #             data = self.tokens_to_monitor[token]
-    #             ltp = self.fetch_ltp(token)
-    #             data['ltp'] = ltp
-                
-    #             trigger_points = data.get('trigger_points')
-    #             if trigger_points:
-    #                 # Initialize trigger states if not already done
-    #                 if 'IBHigh_triggered' not in data:
-    #                     data['IBHigh_triggered'] = False
-    #                 if 'IBLow_triggered' not in data:
-    #                     data['IBLow_triggered'] = False
-
-    #                 # Check for upward crossing of IBHigh
-    #                 if ltp >= data['trigger_points']['IBHigh'] and not data['IBHigh_triggered']:
-    #                     if self.callback:
-    #                         self.callback(token, {'type': 'trigger', 'name': 'IBHigh', 'value': ltp})
-    #                     data['IBHigh_triggered'] = True
-
-    #                 # Check for downward crossing of IBLow
-    #                 if ltp <= data['trigger_points']['IBLow'] and not data['IBLow_triggered']:
-    #                     if self.callback:
-    #                         self.callback(token, {'type': 'trigger', 'name': 'IBLow', 'value': ltp})
-    #                     data['IBLow_triggered'] = True
-
-    #             # Check for target and limit
-    #             if data['target'] and ltp >= data['target'] and self.callback:
-    #                 self.callback(token, {'type': 'target', 'value': ltp})
-
-    #             if data['limit'] and ltp <= data['limit'] and self.callback:
-    #                 self.callback(token, {'type': 'limit', 'value': ltp})
-    #             sleep(10)
 
     def fetch_ltp(self, token):
         """Fetch the LTP for a given token."""

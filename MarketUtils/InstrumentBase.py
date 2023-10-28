@@ -125,9 +125,5 @@ class Instrument:
             return filtered_data.iloc[0]['exchange']
         else:
             return None
-    
-
-# instrument_obj = Instrument()
-# print(instrument_obj.get_expiry_by_criteria('BANKNIFTY', 'CE', 43800, "current_week"))
 
 # print(instrument_obj.get_expiry_by_criteria('BANKNIFTY', 'CE', 44100, "current_week"))

@@ -15,7 +15,6 @@ load_dotenv(ENV_PATH)
 import MarketUtils.general_calc as general_calc
 import Brokers.BrokerUtils.Broker as Broker
 import Brokers.Zerodha.kite_utils as kite_utils
-import Brokers.Aliceblue.alice_utils as alice_utils
 import Strategies.StrategyBase as StrategyBase
 import Brokers.place_order_calc as place_order_calc
 
@@ -92,29 +91,26 @@ def get_high_low_range_and_update_json():
             continue
 
         data = kite.historical_data(instrument_token, start_time, end_time, 'hour')
-        high, low = data[0]['high'], data[0]['low']
-        range_ = high - low
+        if data:
+            high, low = data[0]['high'], data[0]['low']
+            range_ = high - low
 
-
-        entry_params = strategy_obj.get_entry_params()
-        entry_params[instrument]['TriggerPoints']['IBHigh'] = high
-        entry_params[instrument]['TriggerPoints']['IBLow'] = low
-        entry_params[instrument]['IBValue'] = range_
-        entry_params[instrument]['IBLevel'] = determine_ib_level(range_ / entry_params[instrument]['ATR5D'])
-        entry_params[instrument]["PriceRef"] = get_weekday_price_ref(instrument)
-        strategy_obj.write_strategy_json(STRATEGY_PATH)
+            entry_params = strategy_obj.get_entry_params()
+            entry_params[instrument]['TriggerPoints']['IBHigh'] = high
+            entry_params[instrument]['TriggerPoints']['IBLow'] = low
+            entry_params[instrument]['IBValue'] = range_
+            entry_params[instrument]['IBLevel'] = determine_ib_level(range_ / entry_params[instrument]['ATR5D'])
+            entry_params[instrument]["PriceRef"] = get_weekday_price_ref(instrument)
+            strategy_obj.write_strategy_json(STRATEGY_PATH)
 
 
 def get_weekday_price_ref(base_symbol):
     """
     Fetch the PriceRef from the ExtraInformation for each base symbol based on the day.
     """
-    # Read the strategy JSON file
 
-    # Get the current weekday (0: Monday, 1: Tuesday, ..., 6: Sunday)
     weekday = dt.datetime.now().weekday()
     
-    # Get the ExtraInformation from the strategy JSON
     extra_information = strategy_obj.get_extra_information()
 
     # Form the key to fetch from ExtraInformation

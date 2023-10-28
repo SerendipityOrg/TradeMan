@@ -20,53 +20,40 @@ from straddlecalculation import *
 from chart import plotly_plot
 
 from dotenv import load_dotenv
+import amipy_place_orders as amipy_orders
+
+
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
-
-import Brokers.place_order_calc as place_order_calc
-import MarketUtils.general_calc as general_calc
-import MarketUtils.Discord.discordchannels as discord_bot
-import Strategies.StrategyBase as StrategyBase
-import Brokers.BrokerUtils.Broker as Broker
-import amipy_place_orders as amipy_orders
-import MarketUtils.InstrumentBase as InstrumentBase
-
-
-
 
 ENV_PATH = os.path.join(DIR_PATH, '.env')
 load_dotenv(ENV_PATH)
 
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('AmiPy')
+import MarketUtils.general_calc as gc
+import MarketUtils.Discord.discordchannels as discord_bot
+from Strategies.StrategyBase import Strategy
+import Brokers.BrokerUtils.Broker as Broker
 
-strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
-instrument_obj = InstrumentBase.Instrument()
+
+strategy_obj = Strategy.read_strategy_json(STRATEGY_PATH)
 
 nifty_token = strategy_obj.get_general_params().get('NiftyToken')
 base_symbol = strategy_obj.get_instruments()[0]
 strike_prc = None
-trading_symbol = []
+interval = strategy_obj.get_extra_information().get('Interval')
 
-omkar_filepath = os.getenv('omkar_json_filepath')
-expiry_date,_ = general_calc.get_expiry_dates("NIFTY")
 
-nifty = [nifty_token]
+entry = strategy_obj.get_entry_params().get('EntryTime')
+last = strategy_obj.get_exit_params().get('LastBuyTime')
+sqroff = strategy_obj.get_exit_params().get('SquareOffTime')
 
-hist_data = {token: pd.DataFrame(columns=['date', 'instrument_token', 'open', 'high', 'low', 'close']) for token in nifty}
-from_date =  date.today()- pd.Timedelta(days=4)
-to_date = date.today()
-interval = 'minute'
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-amipy_json = os.path.join(script_dir, 'AmiPy.json')
-broker_filepath = os.path.join(script_dir, '..', '..', 'Utils', 'broker.json')
-
-omkar_zerodha = general_calc.read_json_file(omkar_filepath)
+entry_time = pd.Timestamp(entry).time()
+last_buy_time = pd.Timestamp(last).time()
+sqroff_time = pd.Timestamp(sqroff).time()
 
 kite_api_key,kite_access_token = Broker.get_primary_account()
 
-kite = KiteConnect(api_key=kite_api_key)
-kite.set_access_token(kite_access_token)
+kite = KiteConnect(api_key=kite_api_key,access_token=kite_access_token)
 
 
 # Define your global DataFrame
@@ -97,7 +84,8 @@ def job():
     global strike_prc , nifty_token
     from_date = datetime.datetime.strptime(f'{date.today()} 09:18:59', '%Y-%m-%d %H:%M:%S')
     to_date = datetime.datetime.strptime(f'{date.today()} 09:19:59', '%Y-%m-%d %H:%M:%S')
-    nifty_data = kite.historical_data(instrument_token=nifty_token,from_date=from_date,to_date=to_date,interval='minute', oi=True)[0]['close']
+    # nifty_data = kite.historical_data(instrument_token=nifty_token,from_date=from_date,to_date=to_date,interval='minute', oi=True)[0]['close']
+    nifty_data = kite.historical_data(instrument_token=nifty_token,from_date="2023-10-27 09:18:59",to_date="2023-10-27 09:19:59",interval='minute', oi=True)[0]['close']
     strike_prc = round(nifty_data/100)*100
     return strike_prc
 
@@ -131,10 +119,13 @@ else:
 print("Today's Strike Price:",strike_prc)
 
 
-# trading_tokens,zerodha_list,alice_list = get_option_tokens(base_symbol,str(expiry_date),strike_prc)
-def get_tokens(strike_price):
-    trading_tokens = []
 
+trading_tokens = get_option_tokens(strike_prc)
+print(type(trading_tokens[0]))
+
+hist_data = {token: pd.DataFrame(columns=['date', 'instrument_token', 'open', 'high', 'low', 'close']) for token in nifty_token}
+from_date =  date.today()- pd.Timedelta(days=4)
+to_date = date.today()
 
 for token in trading_tokens:
     # hist_data[token] = read_data_from_timescaleDB(token)
@@ -145,13 +136,6 @@ for token in trading_tokens:
     hist_data[token]['instrument_token'] = token
     hist_data[token]= hist_data[token].drop(['volume'], axis=1)
   
-with open(amipy_json , 'r') as f:
-    parameters = json.load(f)
-
-entry = parameters['Nifty'][0]['entry_time']
-last = parameters['Nifty'][0]['last_buy_time']
-sqroff = parameters['Nifty'][0]['sqroff_time']
-
 
 long_indices = []
 longcover_indices = []
@@ -163,8 +147,8 @@ trade_state_df = pd.DataFrame(columns=['in_trade', 'strike_price', 'trade_type',
 # Time params ### TTTT
 entry_time = pd.Timestamp(entry).time()
 last_buy_time = pd.Timestamp(last).time()
-sqroff_time = pd.Timestamp(sqroff).time()
 
+sqroff_time = pd.Timestamp(sqroff).time()
 
 def genSignals(resultdf):
     counter = 0
@@ -322,13 +306,11 @@ def updateSignalDf(last_signal):
         signals.append(signal)
         signals_df = pd.DataFrame(signal, index=[0])
         signals_df.to_csv(trade_sig_path, index=True)
-        if 'SignalEntry' not in params['Nifty'][0]:
-            params['Nifty'][0]['SignalEntry'] = {}
-        params['Nifty'][0]['SignalEntry'][trade_type] = signal
-        with open('AmiPy.json' , 'w') as f:
-            json.dump(params, f, indent=4)
+        signal_entry = strategy_obj.get_signal_entry()
+        signal_entry[trade_type] = signal
+        strategy_obj.set_signal_entry(signal_entry)
+        strategy_obj.write_strategy_json(STRATEGY_PATH)
         amipy_orders.place_orders(strike_prc,trade_type) 
-            
 
     elif trade_type == 'LongCoverSignal' or trade_type == 'ShortCoverSignal':
         signal = signals.pop()  # Retrieve the last signal
@@ -339,13 +321,11 @@ def updateSignalDf(last_signal):
         signal['NetTradePoints'] = signal['TradeExitPrice'] - signal['TradeEntryPrice']
         signals_df = pd.DataFrame(signal, index=[0])
         signals_df.to_csv(trade_sig_path, index=True)
-        params['Nifty'][0]['SignalEntry'][trade_type] = signal
-        #update the json file
-        with open('AmiPy.json' , 'w') as f:
-            json.dump(params, f, indent=4)
-        amipy_orders.place_orders(strike_prc,trade_type) 
-
-           
+        signal_entry = strategy_obj.get_signal_entry()
+        signal_entry[trade_type] = signal
+        strategy_obj.set_signal_entry(signal_entry)
+        strategy_obj.write_strategy_json(STRATEGY_PATH)
+        amipy_orders.place_orders(strike_prc,trade_type)
 
     try:
         if trade_type is not None:  # check that a signal was generated

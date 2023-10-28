@@ -35,8 +35,8 @@ def place_orders(strike_prc, signal):
         hedge_PE_exchange_token = instrument_obj.get_exchange_token_by_criteria(base_symbol, hedge_pe_strike_prc, "PE", expiry_date)
 
         hedge_orders = [
-            {"exchange_token": hedge_CE_exchange_token, "order_mode": "Hedge"},
-            {"exchange_token": hedge_PE_exchange_token, "order_mode": "Hedge"}
+            {"exchange_token": hedge_CE_exchange_token, "order_mode": ["Hedge"]},
+            {"exchange_token": hedge_PE_exchange_token, "order_mode": ["Hedge"]}
         ]
         orders_to_place.extend(hedge_orders)
         hedge_transaction_type = "BUY" if "Signal" in signal else "SELL"
@@ -50,8 +50,8 @@ def place_orders(strike_prc, signal):
     main_PE_exchange_token = instrument_obj.get_exchange_token_by_criteria(base_symbol, strike_prc, "PE", expiry_date)
 
     main_orders = [
-        {"exchange_token": main_CE_exchange_token, "order_mode": "Main"},
-        {"exchange_token": main_PE_exchange_token, "order_mode": "Main"}
+        {"exchange_token": main_CE_exchange_token, "order_mode": ["Main"]},
+        {"exchange_token": main_PE_exchange_token, "order_mode": ["Main"]}
     ]
     orders_to_place.extend(main_orders)
 

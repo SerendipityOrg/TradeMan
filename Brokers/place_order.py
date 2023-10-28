@@ -22,11 +22,10 @@ def add_token_to_monitor(order_details):
     monitor = place_order_calc.monitor()
     monitor.add_token(order_details=order_details)
     monitor.start_monitoring()
-    monitor.monitor_thread.join() 
     
 
-order_details = {'strategy': 'MPWizard', 'exchange_token': 47956, 'segment': 'NFO', 'transaction_type': 'SELL', 'order_type': 'Stoploss', 'product_type': 'MIS', 'price_ref': 5, 'order_mode': ['Main', 'TSL'], 'trade_id': 'MP3_entry', 'broker': 'aliceblue', 'username': 'amol', 'qty': 15, 'limit_prc': 188.8, 'trigger_prc': 189.8, 'target': 198.75}
-print(add_token_to_monitor(order_details))
+# order_details = {'strategy': 'MPWizard', 'exchange_token': 47956, 'segment': 'NFO', 'transaction_type': 'SELL', 'order_type': 'Stoploss', 'product_type': 'MIS', 'price_ref': 5, 'order_mode': ['Main', 'TSL'], 'trade_id': 'MP3_entry', 'broker': 'aliceblue', 'username': 'amol', 'qty': 15, 'limit_prc': 188.8, 'trigger_prc': 189.8, 'target': 198.75}
+# print(add_token_to_monitor(order_details))
 
 def place_order_for_strategy(strategy_name,order_details):
     active_users = Broker.get_active_subscribers(strategy_name)

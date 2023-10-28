@@ -26,8 +26,6 @@ strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
 desired_start_time_str = strategy_obj.get_entry_params().get('EntryTime')
 start_hour, start_minute, start_second = map(int, desired_start_time_str.split(':'))
 
-
-
 # Fetch the list of users to trade with the strategy
 
 def main():
@@ -35,7 +33,7 @@ def main():
     Main function to execute the trading strategy.
     """
     # Update the JSON file with average range data
-    # get_average_range_and_update_json(strategy_obj.get_general_params().get('ATRPeriod'))
+    get_average_range_and_update_json(strategy_obj.get_general_params().get('ATRPeriod'))
     
     # Calculate the wait time before starting the bot
     now = dt.datetime.now()
@@ -47,7 +45,7 @@ def main():
         sleep(wait_time.total_seconds())
     
     # Update the JSON file with high-low range data
-    # get_high_low_range_and_update_json()
+    get_high_low_range_and_update_json()
     
 
     with open(strategy_path,'r') as file:
