@@ -158,7 +158,7 @@ def main():
         save_all_sheets_to_excel(all_dfs, excel_path)
         dtd.update_dtd_sheets()
 
-        # # Assuming you want to save to Firebase and send messages as in the original script
+        # Assuming you want to save to Firebase and send messages as in the original script
         save_to_firebase(user, excel_path)  # Existing function
         send_telegram_message(phone_number, message)  # Separate into a function
 
