@@ -1,33 +1,41 @@
 import pandas as pd
-import os
+import os,sys
 import numpy as np
 import datetime
 from collections import namedtuple
 import requests
 import json
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-filepath = os.path.join(script_dir, 'Amipy.json')
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
+import MarketUtils.InstrumentBase as InstrumentBase
 
-with open(filepath, 'r') as file:
-    params = json.load(file)
+import Strategies.StrategyBase as StrategyBase
+import Brokers.place_order_calc as place_order_calc
 
-Heikin_Ashi_MA_period = params['Nifty'][0]["Heikin_Ashi_MA_period"]
-Supertrend_period = params['Nifty'][0]["Supertrend_period"]
-Supertrend_multiplier = params['Nifty'][0]["Supertrend_multiplier"]
-EMA_period = params['Nifty'][0]["EMA_period"]
+_,STRATEGY_PATH = place_order_calc.get_strategy_json('AmiPy')
+
+strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
+instrument_obj = InstrumentBase.Instrument()
+
+
+Heikin_Ashi_MA_period = strategy_obj.get_entry_params().get('HeikinAshiMAPeriod')
+Supertrend_period = strategy_obj.get_entry_params().get('SupertrendPeriod')
+Supertrend_multiplier = strategy_obj.get_entry_params().get('SupertrendMultiplier')
+EMA_period = strategy_obj.get_entry_params().get('EMAPeriod')
 
 
 
-Instrument = namedtuple("Instrument", ['exchange', 'token', 'symbol', 'name', 'expiry', 'lot_size'])
-
-def get_option_tokens(base_symbol, expiry_date, strike_prc):
+def get_option_tokens(strike_prc):
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    instruments_df = pd.read_csv(os.path.join(script_dir, '..', '..', 'Utils', 'instruments.csv'))
+    instruments_df = pd.read_csv(os.path.join(script_dir, '..', '..', 'MarketUtils', 'instruments.csv'))
 
     instruments_df = instruments_df[
         ["instrument_token", "exchange_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike"]
     ]
+
+    base_symbol = strategy_obj.get_instruments()[0]
+    expiry_date = instrument_obj.get_expiry_by_criteria(base_symbol,strike_prc,"CE","current_week")
 
     nfo_ins_df = instruments_df[
         (instruments_df["exchange"] == "NFO")
@@ -37,61 +45,13 @@ def get_option_tokens(base_symbol, expiry_date, strike_prc):
     ]
 
     tokens = [256265]
-    trading_symbol_list = []
-    exchange_token = []
+
 
     tokens.append(int(nfo_ins_df['instrument_token'].values[0]))  # CE token
     tokens.append(int(nfo_ins_df['instrument_token'].values[1]))  # PE token
 
-    exchange_token.append(int(nfo_ins_df['exchange_token'].values[0]))  # CE exchange token
-    exchange_token.append(int(nfo_ins_df['exchange_token'].values[1]))  # PE exchange token
 
-    trading_symbol_list.append(nfo_ins_df['tradingsymbol'].values[0])  # CE trading symbol
-    trading_symbol_list.append(nfo_ins_df['tradingsymbol'].values[1])  # PE trading symbol
-
-    # Extract the token from the trading symbol
-    token_CE = nfo_ins_df['tradingsymbol'].values[0]
-    token_PE = nfo_ins_df['tradingsymbol'].values[1]
-
-    digits = int(token_CE[10:-2])
-    new_numeric_part_CE = digits + 500
-    new_numeric_part_PE = digits - 500
-
-    new_token_CE = token_CE.replace(str(digits), str(new_numeric_part_CE))
-    new_token_PE = token_PE.replace(str(digits), str(new_numeric_part_PE))
-
-    # Get tokens for new_token_CE with instrument_type 'CE'
-    new_token_CE_df = instruments_df[
-        (instruments_df["tradingsymbol"] == new_token_CE)
-        & (instruments_df["instrument_type"] == "CE")
-    ]
-    tokens.append(int(new_token_CE_df['instrument_token'].values[0]))
-    exchange_token.append(int(new_token_CE_df['exchange_token'].values[0]))
-
-    # Get tokens for new_token_PE with instrument_type 'PE'
-    new_token_PE_df = instruments_df[
-        (instruments_df["tradingsymbol"] == new_token_PE)
-        & (instruments_df["instrument_type"] == "PE")
-    ]
-    tokens.append(int(new_token_PE_df['instrument_token'].values[0]))
-    exchange_token.append(int(new_token_PE_df['exchange_token'].values[0]))
-
-    trading_symbol_list.append(new_token_CE)  # CE trading symbol
-    trading_symbol_list.append(new_token_PE)
-    print("Trading symbol: ",trading_symbol_list)
-
-
-    exchange = 'NFO'
-
-    trading_symbol_aliceblue = []
-    for token, single_trading_symbol in zip(exchange_token, trading_symbol_list):
-        trading_symbol_aliceblue.append(Instrument(exchange, token, base_symbol, single_trading_symbol, expiry_date, 50))
-
-    return tokens, trading_symbol_list, trading_symbol_aliceblue
-
-# tokens = get_option_tokens("NIFTY","2023-10-19",19800)
-# tokens[1].reverse()
-# print(tokens[1])
+    return tokens
 
 
 def callputmergeddf(hist_data,tokens):

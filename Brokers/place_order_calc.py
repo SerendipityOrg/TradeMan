@@ -1,16 +1,25 @@
 import datetime as dt
 import os,re
 import sys
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Navigate to the Brokers and Utils directories relative to the current script's location
-UTILS_DIR = os.path.join(CURRENT_DIR, '..','Utils')
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
 
-sys.path.append(UTILS_DIR)
-import general_calc as general_calc
+import MarketUtils.general_calc as general_calc
+from MarketUtils.InstrumentBase import Instrument
+import Strategies.StrategyBase as Strategy
+
+def monitor():
+    from Brokers.instrument_monitor import InstrumentMonitor
+    return InstrumentMonitor()
 
 def get_user_details(user):
-    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'json', f'{user}.json')
+    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'UserJson', f'{user}.json')
+    json_data = general_calc.read_json_file(user_json_path)
+    return json_data, user_json_path
+
+def get_orders_json(user):
+    user_json_path = os.path.join(DIR_PATH,'UserProfile','OrdersJson', f'{user}.json')
     json_data = general_calc.read_json_file(user_json_path)
     return json_data, user_json_path
 
@@ -19,150 +28,158 @@ def get_strategy_json(strategy_name):
     strategy_json = general_calc.read_json_file(strategy_json_path)
     return strategy_json,strategy_json_path
 
-current_exit_signal_cache = {}
-# Global cache for trade IDs
-trade_id_cache = {}
+# Initialize a global cache for trade IDs and exit flags
+trade_cache = {}
 
-def get_trade_id(strategy, signal=None, order_details=None):
-    global current_exit_signal_cache
-    global trade_id_cache  # Use the global cache
+def get_trade_id(strategy_name, trade_type):
+    global trade_cache
 
-    # Create a unique key for the current set of input parameters
-    cache_key = f"{strategy}-{signal}-{order_details.get('transaction', '')}-{order_details.get('transaction_type', '')}"
-    if cache_key in trade_id_cache:
-        return trade_id_cache[cache_key]  # Return the cached ID if it exists
+    print("in get_trade_id")
 
-    strategy_json, strategy_json_path = get_strategy_json(strategy)
+    _, strategy_path = get_strategy_json(strategy_name)
+    strategy_obj = Strategy.Strategy.read_strategy_json(strategy_path)
 
-    next_trade_id_str = strategy_json["next_trade_id"]
-    strategy_prefix = ''.join([i for i in next_trade_id_str if not i.isdigit()])
-    next_trade_id_num = int(''.join([i for i in next_trade_id_str if i.isdigit()]))
-    
-    is_exit = False
+    # If the strategy is not in the cache, initialize it
+    if strategy_name not in trade_cache:
+        next_trade_id = strategy_obj.get_next_trade_id()
+        trade_cache[strategy_name] = {'trade_id': next_trade_id, 'exit_placed': False}
 
-    if strategy in ["AmiPy", "Overnight_Options"]:
-        exit_signals = ["ShortCoverSignal", "LongCoverSignal", "Morning"]
-        if signal in exit_signals:
-            is_exit = True
+    current_trade_id = trade_cache[strategy_name]['trade_id']
+
+    if trade_type.lower() == 'entry':
+        today_orders = strategy_obj.get_today_orders()
+
+        # If the last exit order was placed with the current trade ID, increment the trade ID
+        if f"{current_trade_id}_exit" in today_orders or trade_cache[strategy_name]['exit_placed']:
+            next_trade_id_num = int(current_trade_id[2:]) + 1
+            current_trade_id = f"{current_trade_id[:2]}{next_trade_id_num:02}"
+            trade_cache[strategy_name]['trade_id'] = current_trade_id
+
+        new_trade_id = f"{current_trade_id}_entry"
+        trade_cache[strategy_name]['exit_placed'] = False
+
+        # Update TodayOrders, NextTradeId, and write changes to JSON
+        today_orders.append(current_trade_id)  # Append with prefix
+        strategy_obj.set_today_orders(today_orders)
+        strategy_obj.set_next_trade_id(current_trade_id)
+        strategy_obj.write_strategy_json(strategy_path)
+
+    elif trade_type.lower() == 'exit':
+        new_trade_id = f"{current_trade_id}_exit"
+        trade_cache[strategy_name]['exit_placed'] = True
     else:
-        is_exit = order_details.get('transaction', '').lower() == 'sell' or order_details.get('transaction_type', '').lower() == 'sell'
+        raise ValueError("Invalid trade type. Must be 'entry' or 'exit'.")
 
-    current_trade_id = strategy_prefix + str(next_trade_id_num)
-
-    if is_exit:
-        current_trade_id += "_exit"
-    else:
-        current_trade_id += "_entry"
-    
-    # Store trade_ids that are placed today in the JSON under the `today_orders` tag
-    if "today_orders" not in strategy_json:
-        strategy_json["today_orders"] = []
-
-    # Check if the signal is in our cache
-    if is_exit:
-        if signal in current_exit_signal_cache:
-            # Use the cached trade_id for the current signal
-            return current_exit_signal_cache[signal]
-        else:
-            # Store the current trade_id in the cache for this signal
-            current_exit_signal_cache[signal] = current_trade_id
-
-        # Increment the trade_id after using it for the current exit order and update the JSON.
-        strategy_json["today_orders"].append(strategy_prefix + str(next_trade_id_num))
-        next_trade_id_num += 1
-        new_trade_id = strategy_prefix + str(next_trade_id_num)
-        strategy_json["next_trade_id"] = new_trade_id
-        general_calc.write_json_file(strategy_json_path, strategy_json)
-    print('current_trade_id', current_trade_id)
-
-    # Cache the generated trade ID before returning it
-    trade_id_cache[cache_key] = current_trade_id
-
-    return current_trade_id
+    return new_trade_id
 
 # 1. Renamed the function to avoid clash with the logging module
-def log_order(order_id, avg_price, order_details, user_details,strategy):
-    user, json_path = get_user_details(order_details['user'])
-    if 'strike_prc' in order_details:
-        strike_prc = order_details['strike_prc']
-    else:
-        strike_prc = 0
+def log_order(order_id, order_details):
+    print("in log_order")
+    # Getting the json data and path for the user
+    user_data, json_path = get_orders_json(order_details['username'])
 
-    #check if order_details['tradingsymbol'] is a string or a dict, if dict then get the name attribute
-    if isinstance(order_details['tradingsymbol'], str):
-        tradesymbol = order_details['tradingsymbol']
-    else:
-        tradesymbol = order_details['tradingsymbol'].name
-
-
+    # Creating the order_dict structure
     order_dict = {
         "order_id": order_id,
-        "avg_prc": avg_price,
         "qty": order_details['qty'],
         "timestamp": str(dt.datetime.now()),
-        "strike_price": strike_prc,
-        "tradingsymbol": tradesymbol
+        "exchange_token": int(order_details['exchange_token'])
     }
 
-    if 'signal' in order_details and strategy == "AmiPy":
-        print(type(strike_prc))
-        print(order_details['tradingsymbol'].name[-7:-2])
-        if str(strike_prc) == order_details['tradingsymbol'].name[-7:-2] or str(strike_prc) == order_details['tradingsymbol'][-7:-2]:
-            order_dict['trade_type'] = order_details['signal']
-        else:
-            order_dict['trade_type'] = "HedgeOrder"
-    else:
-        order_dict['trade_type'] = order_details['transaction_type']
-
-    if 'direction' in order_details:
-        order_dict['direction'] = order_details['direction']
+    # Checking for 'signal' and 'transaction_type' and setting the trade_type accordingly
+    trade_type = order_details.get('signal', order_details.get('transaction_type'))
     
-    if 'signal' in order_details:
-        order_dict['signal'] = order_details['signal']
-    
-    broker = list(user.keys())[0]
-    broker = user_details.setdefault(broker, {})
-    orders = broker.setdefault('orders', {})
-    strategy_orders = orders.setdefault(strategy, {})
-
-    #if trade_type is present in order_dict it should setdefault to that else it should setdefault to order_details['transaction_type']
-    if 'signal' in order_dict:
-        order_type_list = strategy_orders.setdefault(order_dict['signal'], [])
-    else:
-        order_type_list = strategy_orders.setdefault(order_details['transaction_type'], [])
+    # Constructing the user_data JSON structure
+    orders = user_data.setdefault('orders', {})
+    strategy_orders = orders.setdefault(order_details.get("strategy"), {})
+    order_type_list = strategy_orders.setdefault(trade_type, [])
     order_type_list.append(order_dict)
+    general_calc.write_json_file(json_path, user_data)
 
-    log_details = general_calc.write_json_file(json_path, user_details)
-    
-def get_quantity(user_data, broker, strategy, tradingsymbol=None):
-    strategy_key = f"{strategy}_qty"
-    user_data_specific = user_data[broker]  # Access the specific user's data
-    
-    if strategy_key not in user_data_specific:
-        return None
-    
-    quantity_data = user_data_specific[strategy_key]
+def assign_user_details(username):
+    user_details = general_calc.read_json_file(os.path.join(DIR_PATH,'MarketUtils','active_users.json'))
+    for user in user_details:
+        if user['account_name'] == username:
+            user_details = user
+    return user_details
 
-    if strategy == 'MPWizard' or strategy == 'Siri':
-        if broker == 'aliceblue':
-            tradesymbol = tradingsymbol.name
-        else:
-            tradesymbol = tradingsymbol
+def fetch_orders_json(username):
+    return general_calc.read_json_file(os.path.join(DIR_PATH,'UserProfile','OrdersJson', f'{username}.json'))
 
-        if isinstance(tradesymbol, str):
-            ma = re.match(r"(NIFTY|BANKNIFTY|FINNIFTY)", tradesymbol)
-            return ma and quantity_data.get(f"{ma.group(1)}_qty")
-    return quantity_data if isinstance(quantity_data, dict) else quantity_data
+def retrieve_order_id(user,strategy, trade_type, exchange_token):
 
-def retrieve_order_id(user, broker,strategy, trade_type, tradingsymbol):
-    print(tradingsymbol)
-    user_details, _ = get_user_details(user)
+    orders_json = fetch_orders_json(user)
     # Navigate through the JSON structure to retrieve the desired order_id
-    orders_dict = user_details.get(broker, {})
-    strategy_orders = orders_dict.get('orders', {}).get(strategy, {})
+    strategy_orders = orders_json.get('orders', {}).get(strategy, {})
     orders = strategy_orders.get(trade_type, [])
     for order in orders:
-        if order['tradingsymbol'] == tradingsymbol:
+        if order['exchange_token'] == exchange_token:
             return order['order_id']
 
     return None
+
+def get_qty(order_details):
+    userdetails = assign_user_details(order_details["username"])
+    strategy = order_details["strategy"]
+    if strategy not in userdetails["qty"]:
+        print(f"Strategy {strategy} not found in userdetails")
+        return None
+    
+    if strategy == "MPWizard":
+        base_symbol = Instrument().get_base_symbol_by_exchange_token(order_details["exchange_token"])    
+        if base_symbol is None:
+            return None
+        
+        return userdetails["qty"]["MPWizard"].get(base_symbol)
+    
+    return userdetails["qty"].get(strategy)
+
+def calculate_stoploss(order_details,ltp):#TODo split this function into two parts
+    if 'stoploss_mutiplier' in order_details:
+        stoploss = calculate_multipler_stoploss(order_details,ltp)
+    elif 'price_ref' in order_details:
+        stoploss = calculate_priceref_stoploss(order_details,ltp)
+    else:
+        raise ValueError("Invalid stoploss calculation in order_details")
+    return stoploss
+
+def calculate_multipler_stoploss(order_details,ltp):
+    if order_details.get('transaction_type') == 'BUY':
+        stoploss = round(float(ltp - (ltp * order_details.get('stoploss_mutiplier'))),1)
+    elif order_details.get('transaction_type') == 'SELL':
+        stoploss = round(float(ltp + (ltp * order_details.get('stoploss_mutiplier'))),1)
+
+    if stoploss < 0:
+        return 1
+    
+    return stoploss
+
+def calculate_priceref_stoploss(order_details,ltp):
+    if order_details.get('transaction_type') == 'BUY':
+        stoploss = round(float(ltp - order_details.get('price_ref')),1)
+    elif order_details.get('transaction_type') == 'SELL':
+        stoploss = round(float(ltp + order_details.get('price_ref')),1)
+
+    if stoploss < 0:
+        return 1
+    
+    return stoploss
+
+def calculate_trigger_price(transaction_type,stoploss):
+    if transaction_type == 'BUY':
+        trigger_price = round(float(stoploss + 1),1)
+    elif transaction_type == 'SELL':
+        trigger_price = round(float(stoploss - 1),1)
+    return trigger_price
+
+def calculate_transaction_type_sl(transaction_type):
+    if transaction_type == 'BUY':
+        transaction_type_sl = 'SELL'
+    elif transaction_type == 'SELL':
+        transaction_type_sl = 'BUY'
+    return transaction_type_sl
+
+def calculate_target(option_ltp,price_ref):
+    return option_ltp+price_ref
+
+

@@ -1,131 +1,100 @@
-import aliceblue.alice_place_orders as aliceblue
-import zerodha.kite_place_orders as zerodha
-import os
-import sys,threading
-from functools import partial
-from datetime import datetime
-import place_order_calc as place_order_calc
+import os,sys
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
 
-# Navigate to the Brokers and Utils directories relative to the current script's location
-UTILS_DIR = os.path.join(CURRENT_DIR, '..','Utils')
+import MarketUtils.general_calc as general_calc
+import Brokers.Zerodha.kite_place_orders as zerodha
+import Brokers.Aliceblue.alice_place_orders as aliceblue
+import Brokers.place_order_calc as place_order_calc
+from Strategies.StrategyBase import Strategy
 
 sys.path.append(UTILS_DIR)
 import general_calc as gc
 import Discord.discordchannels as discordchannels
 
-def start_monitoring(monitor):
-    monitor_thread = threading.Thread(target=monitor.fetch)
-    monitor_thread.daemon = True  # This ensures the thread will exit when the main program exits
-    monitor_thread.start()
+import Brokers.BrokerUtils.Broker as Broker
+from MarketUtils.InstrumentBase import Instrument
+
+def add_token_to_monitor(order_details):
+    monitor = place_order_calc.monitor()
+    monitor.add_token(order_details=order_details)
+    monitor.start_monitoring()
+    
+def place_order_for_strategy(strategy_name,order_details):
+    active_users = Broker.get_active_subscribers(strategy_name)
+    for broker, usernames in active_users.items():
+        for username in usernames:
+            for order in order_details:
+                order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
+                order_with_user["broker"] = broker
+                order_with_user["username"] = username
+                order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
+                place_order_for_broker(order_with_user)
 
 #TODO: write documentation
-def place_order_for_broker(strategy, order_details=None, qty =None,monitor = None, trading_symbol = None, signal = None):
-    from instrument_monitor import InstrumentMonitor
-
-    if trading_symbol is not None:
-        trading_symbol_list, trading_symbol_aliceblue = trading_symbol
+def place_order_for_broker(order_details):
+    if order_details['broker'] == "aliceblue":  #TODO make this a list of brokers and fetch them in the form of enum
+        aliceblue.place_aliceblue_order(order_details=order_details)
+    elif order_details['broker'] == "zerodha":
+        zerodha.place_zerodha_order(order_details=order_details)
     else:
-        weeklyexpiry, monthlyexpiry = gc.get_expiry_dates(order_details['base_symbol']) # TODO: Process before 10:15 at the start of the script
+        print("Unknown broker")
+        return
 
+    if "SL" in order_details['order_mode']:
+        order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
+        place_stoploss_order(order_details=order_details)
+    elif "Trailing" in order_details['order_mode']:
+        order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
+        place_stoploss_order(order_details=order_details)
+        add_token_to_monitor(order_details)
         
-        if strategy == "Overnight_Options" and order_details['strike_prc'] == 0:
-            expiry = monthlyexpiry
-        elif strategy == "Overnight_Options" and datetime.now().weekday() == 3 and order_details['strike_prc'] != 0 and signal=='Afternoon':
-            expiry = gc.get_next_week_expiry(order_details['base_symbol'])
-        else:
-            expiry = weeklyexpiry
-        token, trading_symbol_list, trading_symbol_aliceblue = gc.get_tokens(
-                                                                order_details['base_symbol'], 
-                                                                expiry, 
-                                                                order_details['option_type'], 
-                                                                order_details['strike_prc']
-                                                            )
-        
-    users_to_trade = gc.get_strategy_users(strategy)
-    token_added = False
+
+
+def place_stoploss_order(order_details=None,monitor=None):
+    _,strategy_path = place_order_calc.get_strategy_json(order_details['strategy'])
+    instrument_base = Instrument()
+    strategy_obj = Strategy.read_strategy_json(strategy_path)
+
+    token = instrument_base.get_token_by_exchange_token(order_details.get('exchange_token'))
+    option_ltp = strategy_obj.get_single_ltp(str(token))
+    # option_ltp = monitor.fetch_ltp(token)
+
+
+    order_details['limit_prc'] = place_order_calc.calculate_stoploss(order_details,option_ltp)
+    order_details['trigger_prc'] = place_order_calc.calculate_trigger_price(order_details.get('transaction_type'),order_details['limit_prc'])
+    order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
+    order_details['order_type'] = 'Stoploss'
     
-    for broker,user in users_to_trade:
-        if broker == 'zerodha':
-            trading_symbol = trading_symbol_list
-            place_order_func = zerodha.place_zerodha_order
-        elif broker == 'aliceblue':
-            trading_symbol = trading_symbol_aliceblue
-            place_order_func = aliceblue.place_aliceblue_order
-        else:
-            print(f"Unknown broker: {broker}")
-            return
-        
-        details = {
-            'transaction_type': order_details['transaction'],
-            'base_symbol': order_details['base_symbol'],
-            'strike_prc': order_details['strike_prc'],
-            'tradingsymbol': trading_symbol,
-            'user': user,
-            'order_trade_type': 'Market'}
-        
-        if 'option_type' in order_details:
-            details['option_type'] = order_details['option_type']
+    if "Trailing" in order_details['order_mode']:
+        order_details['target'] = place_order_calc.calculate_target(option_ltp,order_details.get('price_ref'))
 
-        if 'direction' in order_details:
-            details['direction'] = order_details['direction']
+    if order_details['broker'] == "aliceblue":
+        aliceblue.place_aliceblue_order(order_details)
+    elif order_details['broker'] == "zerodha":
+        zerodha.place_zerodha_order(order_details)
+    else:
+        print("Unknown broker")
+        return
 
-        if 'strike_prc' in order_details:
-            details['strike_price'] = order_details['strike_prc']
-        
-        if signal is not None:
-            details['signal'] = signal
-        
-        order_tag = place_order_calc.get_trade_id(strategy, signal=signal, order_details=order_details)
-        if order_tag is not None:
-                details['order_tag'] = order_tag
-        _,avg_prc = place_order_func(strategy, details, qty=qty)
-        #######################price ref can be none 
-        
-        if strategy == 'MPWizard' or strategy == 'Siri':
-            option_ltp = InstrumentMonitor._fetch_ltp_for_token(monitor, token)
-            if 'target' not in order_details:
-                order_details['target'] = round(float(option_ltp) + (order_details['stoploss_points'] / 2))
-            limit_prc = float(option_ltp) - order_details['stoploss_points']
-            limit_prc = round(limit_prc)
-            if limit_prc < 0:
-                limit_prc = 1.0
-            #change the order_details['transaction] to 'SELL'
-            order_details['transaction'] = 'SELL'
-            
-            order_func ={
-                        'transaction_type': order_details['transaction'],
-                        'tradingsymbol': trading_symbol,
-                        'user': user,
-                        'broker': broker,
-                        'base_symbol': order_details['base_symbol'],
-                        'strike_prc': order_details['strike_prc'],
-                        'option_type': order_details['option_type'],
-                        'order_trade_type': 'Stoploss',
-                        'limit_prc': round(limit_prc),
-                        'price_ref' : order_details['stoploss_points']
-                    }
-            order_tag = place_order_calc.get_trade_id(strategy, signal=signal, order_details=order_details)
-            if order_tag is not None:
-                order_func['order_tag'] = order_tag
-            place_order_func(strategy, order_func , qty=qty)
-            order_details['transaction'] = 'BUY'
-        #calculate the target based on the priceref
-            target = order_details.get('target', round(float(avg_prc) + (order_details['stoploss_points'] / 2)))
-            print(f"Target is {target}")
-            print(f"Limit price is {limit_prc}")
-            
-             # Add token only if it's not added yet
-            if not token_added:
-                monitor.add_token(token, target, limit_prc, order_func, strategy)
-                token_added = True  # Update the flag to indicate the token was added
-    if strategy == 'MPWizard' or strategy == 'Siri':
-        if not monitor:
-            monitor = InstrumentMonitor(callback=partial(modify_orders,monitor=monitor))
-        start_monitoring(monitor) 
-               
+def modify_stoploss(order_details=None,monitor=None):
+    if order_details['broker'] == "aliceblue":
+        aliceblue.update_alice_stoploss(order_details)
+    elif order_details['broker'] == "zerodha":
+        zerodha.update_kite_stoploss(order_details) #TODO
+    else:
+        print("Unknown broker")
     
+
+def place_tsl(order_details):
+    print("in place tsl")
+    price_ref = order_details['price_ref'] # TODO: This is related to MPwizard. Generalize this function
+    order_details['target'] += (price_ref / 2)  # Adjust target by half of price_ref
+    order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
+    modify_stoploss(order_details=order_details)
+    return order_details['target'], order_details['limit_prc']
+
 
 def modify_orders(token=None,monitor=None,order_details=None):
     print("in modify orders")
@@ -141,8 +110,8 @@ def modify_orders(token=None,monitor=None,order_details=None):
     # print(order_details['target'],"target ",order_details['limit_prc'],"limit prc")
 
     
-    weeklyexpiry, _ = gc.get_expiry_dates(order_details['base_symbol'])
-    token, trading_symbol_list, trading_symbol_aliceblue = gc.get_tokens(
+    weeklyexpiry, _ = general_calc.get_expiry_dates(order_details['base_symbol'])
+    token, trading_symbol_list, trading_symbol_aliceblue = general_calc.get_tokens(
                                                             order_details['base_symbol'], 
                                                             weeklyexpiry, 
                                                             order_details['option_type'], 
@@ -150,7 +119,7 @@ def modify_orders(token=None,monitor=None,order_details=None):
                                                         )
 
 
-    users_to_trade = gc.get_strategy_users(order_details['strategy'])
+    users_to_trade = general_calc.get_strategy_users(order_details['strategy'])
     
     for broker,user in users_to_trade:
         user_details,_ = place_order_calc.get_user_details(user)
@@ -187,7 +156,7 @@ def exit_order_details(token=None,monitor=None):
                                                         )
     
 
-    users_to_trade = gc.get_strategy_users(token_data['strategy'])
+    users_to_trade = general_calc.get_strategy_users(token_data['strategy'])
 
     for broker,user in users_to_trade:
         exit_order_func = {

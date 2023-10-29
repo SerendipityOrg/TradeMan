@@ -1,0 +1,51 @@
+import os
+import sys
+from dotenv import load_dotenv
+
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
+ENV_PATH = os.path.join(DIR_PATH, '.env')
+load_dotenv(ENV_PATH)
+
+
+import MarketUtils.general_calc as general_calc
+import Brokers.Aliceblue.alice_utils as alice_utils
+import Brokers.Zerodha.kite_utils as kite_utils
+
+broker_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'broker.json')
+active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
+active_users_json_details = general_calc.read_json_file(active_users_json_path)
+
+def get_active_users(active_users_json_details):
+    active_users = []
+    for user in active_users_json_details:
+        if 'LiveData1' in user['account_type']:
+            active_users.append(user)
+    return active_users
+
+def get_primary_account(): 
+    users = get_active_users(active_users_json_details)
+    for user in users:
+        api_key = user['api_key']
+        access_token = user['access_token']
+    return api_key,access_token
+
+def get_secondary_account():
+    #apikey,access_token
+    return
+
+def get_active_subscribers(strategy_name):
+    #read the broker json file and get the active subscribers for the strategy
+    active_users_data = general_calc.read_json_file(active_users_json_path)
+    
+    zerodha_users = kite_utils.get_kite_active_users(active_users_data, strategy_name)
+    alice_users = alice_utils.get_alice_active_users(active_users_data, strategy_name)
+    
+    #create a dict with a list of zerodha and alice users
+    active_subscribers = {}
+    active_subscribers['zerodha'] = zerodha_users
+    active_subscribers['aliceblue'] = alice_users
+
+    return active_subscribers
+
+
