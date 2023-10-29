@@ -14,7 +14,7 @@ from MarketUtils.InstrumentBase import Instrument
 
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
 
-def alice_place_order(alice, order_details, user_details=None):
+def alice_place_order(alice, order_details):
     """
     Place an order with Aliceblue broker.
 
@@ -84,7 +84,7 @@ def place_aliceblue_order(order_details: dict):
     alice = alice_utils.create_alice_obj(user_details)   
 
     try:
-        order_id = alice_place_order(alice, order_details, user_details)
+        order_id = alice_place_order(alice, order_details)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
         # You can set default or fallback values if needed
@@ -98,7 +98,6 @@ def place_aliceblue_order(order_details: dict):
 
 def update_alice_stoploss(order_details):
     print("in update stoploss")
-    print(order_details)
     user_details = place_order_calc.assign_user_details(order_details.get('username'))
     alice = alice_utils.create_alice_obj(user_details)
     order_id = place_order_calc.retrieve_order_id(
@@ -117,44 +116,21 @@ def update_alice_stoploss(order_details):
     new_stoploss = order_details.get('limit_prc', 0.0)
     trigger_price = order_details.get('trigger_prc', None)
 
-    modify_order =  alice.modify_order(transaction_type = transaction_type,
-                order_id=str(order_id),
-                instrument = alice.get_instrument_by_token(segment, exchange_token),
-                quantity = qty,
-                order_type = order_type,
-                product_type = product_type,
-                price=new_stoploss,
-                trigger_price = trigger_price)
+    try:
+        modify_order =  alice.modify_order(transaction_type = transaction_type,
+                    order_id=str(order_id),
+                    instrument = alice.get_instrument_by_token(segment, exchange_token),
+                    quantity = qty,
+                    order_type = order_type,
+                    product_type = product_type,
+                    price=new_stoploss,
+                    trigger_price = trigger_price)
+    except Exception as e:
+        message = f"Order placement failed: {e} for {order_details['username']}"
+        print(message)
+        # general_calc.discord_bot(message)
+        return None
     print("alice modify_order",modify_order)
-
-
-
-
-# def update_stoploss(order_details):
-#     print("in update stoploss")
-#     global alice
-#     if alice is None:
-#         user_details,_ = get_user_details(order_details.get('user'))
-#         alice = create_alice(user_details)
-#     print(order_details.get('token'))
-#     order_id = retrieve_order_id(
-#             order_details.get('user'),
-#             order_details.get('broker'),
-#             order_details.get('strategy'),
-#             order_details.get('trade_type'),
-#             order_details.get('token').name
-#         )
-#     new_stoploss = round(float(order_details.get('limit_prc')),1)
-#     trigger_price = round((float(new_stoploss)+1.00),1)
-#     modify_order =  alice.modify_order(transaction_type = TransactionType.Sell,
-#                     order_id=str(order_id),
-#                     instrument = order_details.get('token'),
-#                     quantity = int(order_details.get('qty')),
-#                     order_type = OrderType.StopLossLimit,
-#                     product_type = ProductType.Intraday,
-#                     price=new_stoploss,
-#                     trigger_price = trigger_price)
-#     print("alice modify_order",modify_order)
 
 def exit_order(exit_order_func):
     order_id = retrieve_order_id(
@@ -165,8 +141,3 @@ def exit_order(exit_order_func):
         exit_order_func.get('token')
     )
     print("order_id",order_id)
-
-def get_order_details(user_details):
-    alice = create_alice(user_details)
-    order_details = alice.get_order_history('')
-    return order_details

@@ -1,5 +1,4 @@
 import os,sys
-from pprint import pprint
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)

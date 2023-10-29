@@ -7,21 +7,27 @@ sys.path.append(DIR_PATH)
 ENV_PATH = os.path.join(DIR_PATH, '.env')
 load_dotenv(ENV_PATH)
 
-broker_json_filepath = os.getenv('broker_json_filepath')
 
 import MarketUtils.general_calc as general_calc
 import Brokers.Aliceblue.alice_utils as alice_utils
 import Brokers.Zerodha.kite_utils as kite_utils
 
+broker_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'broker.json')
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
+active_users_json_details = general_calc.read_json_file(active_users_json_path)
 
-def get_primary_account():
-    primary_account = broker_json_filepath
-    user_details = general_calc.read_json_file(primary_account)
-    api_key = '6b0dp5ussukmo67h'
-    access_token = 'pRp6OQgZxlRVrFenolNemN8vvXPibHxf'
-    # api_key = user_details['zerodha']['omkar']['api_key'] ###TODO Create a broker class and extarct the api key and access token from the json file
-    # access_token = user_details['zerodha']['omkar']['access_token']
+def get_active_users(active_users_json_details):
+    active_users = []
+    for user in active_users_json_details:
+        if 'LiveData1' in user['account_type']:
+            active_users.append(user)
+    return active_users
+
+def get_primary_account(): 
+    users = get_active_users(active_users_json_details)
+    for user in users:
+        api_key = user['api_key']
+        access_token = user['access_token']
     return api_key,access_token
 
 def get_secondary_account():

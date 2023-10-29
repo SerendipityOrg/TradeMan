@@ -1,7 +1,4 @@
-import os
-import sys,threading
-from functools import partial
-from datetime import datetime
+import os,sys
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -43,8 +40,10 @@ def place_order_for_broker(order_details):
         return
 
     if "SL" in order_details['order_mode']:
+        order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
         place_stoploss_order(order_details=order_details)
     elif "Trailing" in order_details['order_mode']:
+        order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
         place_stoploss_order(order_details=order_details)
         add_token_to_monitor(order_details)
         
@@ -64,7 +63,7 @@ def place_stoploss_order(order_details=None,monitor=None):
     order_details['trigger_prc'] = place_order_calc.calculate_trigger_price(order_details.get('transaction_type'),order_details['limit_prc'])
     order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
     order_details['order_type'] = 'Stoploss'
-
+    
     if "Trailing" in order_details['order_mode']:
         order_details['target'] = place_order_calc.calculate_target(option_ltp,order_details.get('price_ref'))
 
@@ -76,15 +75,11 @@ def place_stoploss_order(order_details=None,monitor=None):
         print("Unknown broker")
         return
 
-
-
 def modify_stoploss(order_details=None,monitor=None):
-    # if monitor is None:
-        # monitor = instrument_monitor.Instrument()
     if order_details['broker'] == "aliceblue":
         aliceblue.update_alice_stoploss(order_details)
     elif order_details['broker'] == "zerodha":
-        zerodha.modify_zerodha_order(order_details)
+        zerodha.update_kite_stoploss(order_details) #TODO
     else:
         print("Unknown broker")
     

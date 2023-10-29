@@ -68,7 +68,6 @@ class InstrumentMonitor:
             'order_details' : order_details
         }
         
-
     def remove_token(self, token: str):
         """Remove a token from monitoring.
         

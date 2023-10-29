@@ -99,51 +99,16 @@ def place_zerodha_order(order_details: dict):
     except Exception as e:
         print(f"Failed to log the order: {e}")
         
-
-# def update_stoploss(monitor_order_func):
-#     print("in update stoploss")
-#     global kite
-#     if kite is None:
-#         user_details,_ = get_user_details(monitor_order_func.get('user'))
-#         kite = KiteConnect(api_key=user_details['zerodha']['api_key'])
-#         kite.set_access_token(user_details['zerodha']['access_token'])
-    
-#     order_id = retrieve_order_id(
-#             monitor_order_func.get('user'),
-#             monitor_order_func.get('broker'),
-#             monitor_order_func.get('strategy'),
-#             monitor_order_func.get('trade_type'),
-#             monitor_order_func.get('token')
-#         )
-
-#     new_stoploss = round(float(monitor_order_func.get('limit_prc')),1)
-#     trigger_price = round((float(new_stoploss)+1.00),1)
-#     try:
-#         modify_order = kite.modify_order(variety=kite.VARIETY_REGULAR, 
-#                                     order_id=order_id, 
-#                                     price = new_stoploss,
-#                                     trigger_price = trigger_price)
-#     except Exception as e:
-#         print(f"Failed to modify the order: {e}")
-#     print("zerodha order modified")
-
 def update_kite_stoploss(order_details):
     user_details = place_order_calc.assign_user_details(order_details.get('username'))
     kite = kite_utils.create_kite_obj(user_details)
     order_id = place_order_calc.retrieve_order_id(
-            order_details.get('user'),
-            order_details.get('broker'),
+            order_details.get('username'),
             order_details.get('strategy'),
-            order_details.get('trade_type'),
-            order_details.get('token').name
-        ) 
+            order_details.get('transaction_type'),
+            order_details.get('exchange_token')
+        )
 
-    # transaction_type = kite_utils.calculate_transaction_type(order_details.get('transaction_type'))
-    # order_type = kite_utils.calculate_order_type(order_details.get('order_type'))
-    # product_type = kite_utils.calculate_product_type(order_details.get('product_type'))
-    # segment = order_details.get('segment')
-    # exchange_token = order_details.get('exchange_token')
-    # qty = int(order_details.get('qty'))
     new_stoploss = order_details.get('limit_prc', 0.0)
     trigger_price = order_details.get('trigger_prc', None)
 
@@ -153,7 +118,11 @@ def update_kite_stoploss(order_details):
                                     price = new_stoploss,
                                     trigger_price = trigger_price)
     except Exception as e:
-        print(f"Failed to modify the order: {e}")
+        message = f"Order placement failed: {e} for {order_details['username']}"
+        print(message)
+        # general_calc.discord_bot(message)
+        return None
+        
     print("zerodha order modified")
 
 
@@ -168,7 +137,3 @@ def exit_order(exit_order_func):
     )
     print("order_id",order_id)
     
-def get_order_details(user_details):
-    kite = create_kite(user_details)
-    orders = kite.orders()
-    return orders

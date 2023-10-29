@@ -81,8 +81,8 @@ def job():
     global strike_prc , nifty_token
     from_date = datetime.datetime.strptime(f'{date.today()} 09:18:59', '%Y-%m-%d %H:%M:%S')
     to_date = datetime.datetime.strptime(f'{date.today()} 09:19:59', '%Y-%m-%d %H:%M:%S')
-    # nifty_data = kite.historical_data(instrument_token=nifty_token,from_date=from_date,to_date=to_date,interval='minute', oi=True)[0]['close']
-    nifty_data = kite.historical_data(instrument_token=nifty_token,from_date="2023-10-27 09:18:59",to_date="2023-10-27 09:19:59",interval='minute', oi=True)[0]['close']
+    nifty_data = kite.historical_data(instrument_token=nifty_token,from_date=from_date,to_date=to_date,interval='minute', oi=True)[0]['close']
+    # nifty_data = kite.historical_data(instrument_token=nifty_token,from_date="2023-10-27 09:18:59",to_date="2023-10-27 09:19:59",interval='minute', oi=True)[0]['close']
     strike_prc = round(nifty_data/100)*100
     return strike_prc
 

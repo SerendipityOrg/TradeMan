@@ -28,31 +28,45 @@ def get_strategy_json(strategy_name):
     strategy_json = general_calc.read_json_file(strategy_json_path)
     return strategy_json,strategy_json_path
 
+# Initialize a global cache for trade IDs and exit flags
+trade_cache = {}
+
 def get_trade_id(strategy_name, trade_type):
+    global trade_cache
+
     print("in get_trade_id")
 
     _, strategy_path = get_strategy_json(strategy_name)
     strategy_obj = Strategy.Strategy.read_strategy_json(strategy_path)
 
-    current_trade_id = strategy_obj.get_next_trade_id()
-    
+    # If the strategy is not in the cache, initialize it
+    if strategy_name not in trade_cache:
+        next_trade_id = strategy_obj.get_next_trade_id()
+        trade_cache[strategy_name] = {'trade_id': next_trade_id, 'exit_placed': False}
+
+    current_trade_id = trade_cache[strategy_name]['trade_id']
+
     if trade_type.lower() == 'entry':
-        new_trade_id = f"{current_trade_id}_entry"
-    elif trade_type.lower() == 'exit':
-        new_trade_id = f"{current_trade_id}_exit"
-        
-        # Update TodayOrders with full trade ID
         today_orders = strategy_obj.get_today_orders()
+
+        # If the last exit order was placed with the current trade ID, increment the trade ID
+        if f"{current_trade_id}_exit" in today_orders or trade_cache[strategy_name]['exit_placed']:
+            next_trade_id_num = int(current_trade_id[2:]) + 1
+            current_trade_id = f"{current_trade_id[:2]}{next_trade_id_num:02}"
+            trade_cache[strategy_name]['trade_id'] = current_trade_id
+
+        new_trade_id = f"{current_trade_id}_entry"
+        trade_cache[strategy_name]['exit_placed'] = False
+
+        # Update TodayOrders, NextTradeId, and write changes to JSON
         today_orders.append(current_trade_id)  # Append with prefix
         strategy_obj.set_today_orders(today_orders)
-
-        # Update NextTradeId
-        next_trade_id_num = int(current_trade_id[2:]) + 1
-        next_trade_id = f"{current_trade_id[:2]}{next_trade_id_num:02}"
-        strategy_obj.set_next_trade_id(next_trade_id)
-
-        # Write changes to JSON
+        strategy_obj.set_next_trade_id(current_trade_id)
         strategy_obj.write_strategy_json(strategy_path)
+
+    elif trade_type.lower() == 'exit':
+        new_trade_id = f"{current_trade_id}_exit"
+        trade_cache[strategy_name]['exit_placed'] = True
     else:
         raise ValueError("Invalid trade type. Must be 'entry' or 'exit'.")
 

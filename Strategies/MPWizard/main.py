@@ -1,7 +1,6 @@
 # Import necessary libraries and modules
-# from MPWizard_monitor import OrderMonitor
-from MPW import OrderMonitor
-import os,sys,json
+from MPWizard_monitor import OrderMonitor
+import os,sys
 from dotenv import load_dotenv
 from MPWizard_calc import get_high_low_range_and_update_json, get_average_range_and_update_json
 import datetime as dt
@@ -11,7 +10,6 @@ DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
 ENV_PATH = os.path.join(DIR_PATH, '.env')
-# Load environment variables from .env file
 load_dotenv(ENV_PATH)
 
 import Strategies.StrategyBase as StrategyBase
