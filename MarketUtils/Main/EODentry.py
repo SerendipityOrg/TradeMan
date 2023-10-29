@@ -98,9 +98,9 @@ def assign_short_and_long_orders(orders):
         # Determine which orders are main and which are hedge
         for _, orders in strike_prices.items():
             if len(orders) == 2:
-                hedge_orders.extend(orders)
-            else:
                 main_orders.extend(orders)
+            else:
+                hedge_orders.extend(orders)
         return main_orders, hedge_orders
     
     entry_orders = [order for order in orders if "_entry" in order["trade_id"]]
@@ -262,11 +262,11 @@ for user in users_with_strategies:
 
     # # Output combined user orders
     if combined_user_orders:
-        user_final_orders = {"orders": combined_user_orders}
+        user_final_orders = {"today_orders" : combined_user_orders}
         pprint(user_final_orders)
 
-    # user_json_data = general_calc.read_json_file(user_json_path)
+    user_json_data = general_calc.read_json_file(user_json_path)
         
-    # user_json_data[user["broker"]]["today_orders"] = user_final_orders
+    user_json_data[user["broker"]]['orders'] = user_final_orders
 
-    # general_calc.write_json_file(user_json_path, user_json_data)
+    general_calc.write_json_file(user_json_path, user_json_data)
