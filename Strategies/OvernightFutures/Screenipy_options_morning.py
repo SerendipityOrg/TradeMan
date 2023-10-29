@@ -27,12 +27,12 @@ prediction = strategy_obj.get_extra_information().get('prediction')
 hedge_exchange_token = strategy_obj.get_extra_information().get('hedge_exchange_token')
 futures_exchange_token = strategy_obj.get_extra_information().get('futures_exchange_token')
 
-hedge_transcation_type = "SELL"
+hedge_transcation_type = strategy_obj.get_general_params().get('HedgeTransactionType')
 
 order_type = strategy_obj.get_general_params().get('OrderType')
 segment_type = strategy_obj.get_general_params().get('Segment')
 product_type = strategy_obj.get_general_params().get('ProductType')
-
+trade_id = place_order_calc.get_trade_id(strategy_name, "exit")
 
 
 orders_to_place = [
@@ -44,7 +44,7 @@ orders_to_place = [
         "order_type" : order_type, 
         "product_type" : product_type,
         "order_mode" : ["Hedge"],
-        "trade_id" : "OF3_entry" #TODO fetch the order_tag from {strategy_name}.json
+        "trade_id" : trade_id
     },
     {
         "strategy": strategy_name,
@@ -54,7 +54,7 @@ orders_to_place = [
         "order_type" : order_type, 
         "product_type" : product_type,
         "order_mode" : ["Main"],
-        "trade_id" : "OF3_entry" #TODO fetch the order_tag from {strategy_name}.json
+        "trade_id" : trade_id
     }
 ]
 

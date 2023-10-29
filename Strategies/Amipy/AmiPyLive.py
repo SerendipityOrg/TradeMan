@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
-import json
 import os,sys
-import logging
 
 from datetime import timedelta,datetime,date
 from time import sleep
@@ -29,7 +27,6 @@ sys.path.append(DIR_PATH)
 ENV_PATH = os.path.join(DIR_PATH, '.env')
 load_dotenv(ENV_PATH)
 
-import MarketUtils.general_calc as gc
 import MarketUtils.Discord.discordchannels as discord_bot
 from Strategies.StrategyBase import Strategy
 import Brokers.BrokerUtils.Broker as Broker
@@ -118,11 +115,7 @@ else:
 
 print("Today's Strike Price:",strike_prc)
 
-
-
 trading_tokens = get_option_tokens(strike_prc)
-print(type(trading_tokens[0]))
-
 hist_data = {token: pd.DataFrame(columns=['date', 'instrument_token', 'open', 'high', 'low', 'close']) for token in nifty_token}
 from_date =  date.today()- pd.Timedelta(days=4)
 to_date = date.today()
@@ -147,7 +140,6 @@ trade_state_df = pd.DataFrame(columns=['in_trade', 'strike_price', 'trade_type',
 # Time params ### TTTT
 entry_time = pd.Timestamp(entry).time()
 last_buy_time = pd.Timestamp(last).time()
-
 sqroff_time = pd.Timestamp(sqroff).time()
 
 def genSignals(resultdf):

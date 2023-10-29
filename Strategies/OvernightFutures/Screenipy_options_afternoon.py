@@ -54,11 +54,12 @@ weekly_expiry_type = instrument_obj.weekly_expiry_type()
 monthly_expiry_type = instrument_obj.monthly_expiry_type()
 
 weekly_expiry = instrument_obj.get_expiry_by_criteria(strategy_index,strikeprc,option_type, weekly_expiry_type)
-monthly_expiry = instrument_obj.get_expiry_by_criteria(strategy_index,strikeprc,option_type, monthly_expiry_type)
+monthly_expiry = instrument_obj.get_expiry_by_criteria(strategy_index,0,"FUT", monthly_expiry_type)
+
 
 hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(strategy_index,strikeprc, option_type,weekly_expiry)   
-futures_exchange_token = instrument_obj.get_exchange_token_by_criteria(strategy_index,futures_strikeprc, futures_option_type,weekly_expiry)
-
+futures_exchange_token = instrument_obj.get_exchange_token_by_criteria(strategy_index,futures_strikeprc, futures_option_type,monthly_expiry)
+trade_id = place_order_calc.get_trade_id(strategy_name, "entry")
 
 orders_to_place = [
     {  
@@ -69,7 +70,7 @@ orders_to_place = [
         "order_type" : order_type, 
         "product_type" : product_type,
         "order_mode" : ["Hedge"],
-        "trade_id" : "OF3_entry" #TODO fetch the order_tag from {strategy_name}.json
+        "trade_id" : trade_id
     },
     {
         "strategy": strategy_name,
@@ -79,7 +80,7 @@ orders_to_place = [
         "order_type" : order_type, 
         "product_type" : product_type,
         "order_mode" : ["Main"],
-        "trade_id" : "OF3_entry" #TODO fetch the order_tag from {strategy_name}.json
+        "trade_id" : trade_id
     }
 ]
 

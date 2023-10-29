@@ -22,14 +22,13 @@ def place_orders(strike_prc, signal):
     product_type = strategy_obj.get_general_params().get("ProductType")
 
     base_symbol = strategy_obj.get_instruments()[0]
-    print(base_symbol)
     expiry_date = instrument_obj.get_expiry_by_criteria(base_symbol, strike_prc, "CE", "current_week")
 
     orders_to_place = []
     
     if "Short" in signal:
-        hedge_ce_strike_prc = strike_prc + 500
-        hedge_pe_strike_prc = strike_prc - 500
+        hedge_ce_strike_prc = strike_prc + strategy_obj.get_extra_information().get("HedgeDistance")
+        hedge_pe_strike_prc = strike_prc - strategy_obj.get_extra_information().get("HedgeDistance")
 
         hedge_CE_exchange_token = instrument_obj.get_exchange_token_by_criteria(base_symbol, hedge_ce_strike_prc, "CE", expiry_date)
         hedge_PE_exchange_token = instrument_obj.get_exchange_token_by_criteria(base_symbol, hedge_pe_strike_prc, "PE", expiry_date)
@@ -55,6 +54,9 @@ def place_orders(strike_prc, signal):
     ]
     orders_to_place.extend(main_orders)
 
+    trade_type  = "entry" if signal == "ShortSignal" or signal == "LongSignal" else "exit"
+    trade_id = place_order_calc.get_trade_id(strategy_name, trade_type)
+
     for order in orders_to_place:
         transaction_type = hedge_transaction_type if order["order_mode"] == "Hedge" else main_transaction_type
         order.update({
@@ -63,6 +65,6 @@ def place_orders(strike_prc, signal):
             "transaction_type": transaction_type,
             "order_type": order_type,
             "product_type": product_type,
-            "trade_id": "OF3_entry"  # TODO: fetch the order_tag from {strategy_name}.json
+            "trade_id": trade_id
         })
     place_order.place_order_for_strategy(strategy_name, orders_to_place)

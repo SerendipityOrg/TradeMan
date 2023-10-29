@@ -128,42 +128,11 @@ class OrderMonitor:
         "order_type" : strategy_obj.get_general_params().get('OrderType'), 
         "product_type" : strategy_obj.get_general_params().get('ProductType'),
         "price_ref" : price_ref,
-        "order_mode" : ["Main","TSL"],
+        "order_mode" : ["Main","Trailing"],
         "trade_id" : "MP3_entry" #TODO fetch the order_tag from {strategy_name}.json
         }]
         return order_details
 
-    def _process_instrument(self, ltp, instrument, prev_ltp, message_sent):
-        """Process an instrument's data and handle trading signals."""
-        if self.orders_placed_today >= self.max_orders_per_day:
-            print("Daily signal limit reached. No more signals will be generated today.")
-            return
-        
-        token = instrument.get_token()
-        levels = instrument.get_trigger_points()
-        name = instrument.get_name()
-        price_ref = instrument.get_price_ref()
-
-        #check if the index has been triggered today
-        if name in self.indices_triggered_today:
-            return
-        
-        cross_type, level_name = self._check_price_crossing(prev_ltp[name], ltp, levels)
-        if cross_type and not self.message_sent[instrument.get_name()][level_name]:
-            order_to_place = self.create_order_details(name,cross_type,ltp,price_ref)
-            # place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)  
-            print(f"{cross_type} at {ltp} for {name}!")
-            
-            
-            # place_order.place_order_for_broker("MPWizard", order_details, monitor=self.monitor)
-            self.indices_triggered_today.add(name) 
-            
-            message = f"{cross_type} {self._get_mood_data_for_instrument(name)['IBLevel']} {self.mood_data['GeneralParams']['TradeView']} at {ltp} for {name}!"
-            print(message)
-            # discord.discord_bot(message,"MPWizard") 
-            self.orders_placed_today += 1
-            self.message_sent[name][level_name] = True
-        prev_ltp[name] = ltp
 
     def _get_mood_data_for_instrument(self, name):
         return self.mood_data['EntryParams'].get(name)
@@ -187,13 +156,11 @@ class OrderMonitor:
         index_tokens = strategy_obj.get_general_params().get("IndicesTokens")
         token_to_index = {str(v): k for k, v in index_tokens.items()}
         index_name = token_to_index.get(instrument)
-        print(index_name)
         if index_name:
             obj = self.create_single_instrument(self.mood_data['EntryParams'][index_name])
             name = obj.get_name()
             price_ref = obj.get_price_ref()
 
-            
             if self.orders_placed_today >= self.max_orders_per_day:
                 print("Daily signal limit reached. No more signals will be generated today.")
                 return
@@ -210,7 +177,7 @@ class OrderMonitor:
 
 
 
-    def handle_trigger(self, instrument,data):
+    def handle_trigger(self, instrument,data,order_details=None):
         ltp = self.instrument_monitor.fetch_ltp(instrument)
         
         
@@ -219,8 +186,6 @@ class OrderMonitor:
             self.process_orders(instrument, cross_type, ltp)
             
         elif data['type'] == 'target':
-            # print(f"Target reached for {instrument.get_name()} at {ltp}.")
-            order_details = data.get('order_details')
             if order_details:
                 new_target, new_limit_prc = place_order.place_tsl(order_details)
                 data['target'] = new_target

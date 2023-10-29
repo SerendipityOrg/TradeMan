@@ -14,7 +14,6 @@ max_orders = os.getenv('max_orders')
 omkar_json = os.getenv('omkar_json_filepath')
 
 import Brokers.place_order_calc as place_order_calc
-import Brokers.instrument_monitor as instrument_monitor
 import Brokers.place_order as place_order
 import MarketUtils.general_calc as general_calc
 import MarketUtils.Discord.discordchannels as discord
@@ -127,12 +126,13 @@ class OrderMonitor:
         "order_type" : strategy_obj.get_general_params().get('OrderType'), 
         "product_type" : strategy_obj.get_general_params().get('ProductType'),
         "price_ref" : price_ref,
-        "order_mode" : ["Main","TSL"],
-        "trade_id" : "MP3_entry" #TODO fetch the order_tag from {strategy_name}.json
+        "order_mode" : ["Main","Trailing"],
+        "trade_id" : place_order_calc.get_trade_id(strategy_obj.get_strategy_name(), "entry")
         }]
         return order_details
 
     def _process_instrument(self, ltp, instrument, prev_ltp, message_sent):
+        print("here")
         """Process an instrument's data and handle trading signals."""
         if self.orders_placed_today >= self.max_orders_per_day:
             print("Daily signal limit reached. No more signals will be generated today.")
@@ -150,6 +150,7 @@ class OrderMonitor:
         cross_type, level_name = self._check_price_crossing(prev_ltp[name], ltp, levels)
         if cross_type and not self.message_sent[instrument.get_name()][level_name]:
             order_to_place = self.create_order_details(name,cross_type,ltp,price_ref)
+            print("in",order_to_place)
             place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)  
             print(f"{cross_type} at {ltp} for {name}!")
             

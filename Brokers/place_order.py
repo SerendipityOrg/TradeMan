@@ -16,17 +16,11 @@ from Strategies.StrategyBase import Strategy
 import Brokers.BrokerUtils.Broker as Broker
 from MarketUtils.InstrumentBase import Instrument
 
-
-
 def add_token_to_monitor(order_details):
     monitor = place_order_calc.monitor()
     monitor.add_token(order_details=order_details)
     monitor.start_monitoring()
     
-
-# order_details = {'strategy': 'MPWizard', 'exchange_token': 47956, 'segment': 'NFO', 'transaction_type': 'SELL', 'order_type': 'Stoploss', 'product_type': 'MIS', 'price_ref': 5, 'order_mode': ['Main', 'TSL'], 'trade_id': 'MP3_entry', 'broker': 'aliceblue', 'username': 'amol', 'qty': 15, 'limit_prc': 188.8, 'trigger_prc': 189.8, 'target': 198.75}
-# print(add_token_to_monitor(order_details))
-
 def place_order_for_strategy(strategy_name,order_details):
     active_users = Broker.get_active_subscribers(strategy_name)
     for broker, usernames in active_users.items():
@@ -50,17 +44,16 @@ def place_order_for_broker(order_details):
 
     if "SL" in order_details['order_mode']:
         place_stoploss_order(order_details=order_details)
-
-    if "TSL" in order_details['order_mode']:
+    elif "Trailing" in order_details['order_mode']:
         place_stoploss_order(order_details=order_details)
         add_token_to_monitor(order_details)
         
 
 
 def place_stoploss_order(order_details=None,monitor=None):
-    _,mpwizard_json = place_order_calc.get_strategy_json('MPWizard')
+    _,strategy_path = place_order_calc.get_strategy_json(order_details['strategy'])
     instrument_base = Instrument()
-    strategy_obj = Strategy.read_strategy_json(mpwizard_json)
+    strategy_obj = Strategy.read_strategy_json(strategy_path)
 
     token = instrument_base.get_token_by_exchange_token(order_details.get('exchange_token'))
     option_ltp = strategy_obj.get_single_ltp(str(token))
@@ -72,7 +65,7 @@ def place_stoploss_order(order_details=None,monitor=None):
     order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
     order_details['order_type'] = 'Stoploss'
 
-    if "TSL" in order_details['order_mode']:
+    if "Trailing" in order_details['order_mode']:
         order_details['target'] = place_order_calc.calculate_target(option_ltp,order_details.get('price_ref'))
 
     if order_details['broker'] == "aliceblue":
@@ -97,6 +90,7 @@ def modify_stoploss(order_details=None,monitor=None):
     
 
 def place_tsl(order_details):
+    print("in place tsl")
     price_ref = order_details['price_ref'] # TODO: This is related to MPwizard. Generalize this function
     order_details['target'] += (price_ref / 2)  # Adjust target by half of price_ref
     order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref

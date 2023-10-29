@@ -97,14 +97,15 @@ def place_aliceblue_order(order_details: dict):
 
 
 def update_alice_stoploss(order_details):
-    user_details = place_order_calc.assign_user_details(active_users_json_path,order_details)
+    print("in update stoploss")
+    print(order_details)
+    user_details = place_order_calc.assign_user_details(order_details.get('username'))
     alice = alice_utils.create_alice_obj(user_details)
     order_id = place_order_calc.retrieve_order_id(
-            order_details.get('user'),
-            order_details.get('broker'),
+            order_details.get('username'),
             order_details.get('strategy'),
-            order_details.get('trade_type'),
-            order_details.get('token').name
+            order_details.get('transaction_type'),
+            order_details.get('exchange_token')
         ) 
 
     transaction_type = alice_utils.calculate_transaction_type(order_details.get('transaction_type'))

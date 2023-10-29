@@ -2,7 +2,7 @@ import json,os,sys
 from kiteconnect import KiteConnect
 import datetime as dt
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
 from Brokers.BrokerUtils import Broker

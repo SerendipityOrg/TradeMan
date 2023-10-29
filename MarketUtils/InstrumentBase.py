@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 insrument_csv_path = os.path.join(DIR_PATH, 'MarketUtils', 'instruments.csv')
 
 from datetime import datetime
@@ -52,12 +52,23 @@ class Instrument:
             weekly_expiry_type = "current_week"
         return weekly_expiry_type
 
-    def monthly_expiry_type(self):
-        if datetime.today().weekday() == 3 and datetime.today().day > 21:
-            monthly_expiry_type = "next_month"
+    def monthly_expiry_type(self): #TODO generalise the weekday
+        today = datetime.today()
+        last_day_of_month = today.replace(day=28) + timedelta(days=4)
+        last_day_of_month = last_day_of_month - timedelta(days=last_day_of_month.day)
+        
+        # Find the last Thursday of the month
+        last_thursday_of_month = last_day_of_month
+        while last_thursday_of_month.weekday() != 3:
+            last_thursday_of_month -= timedelta(days=1)
+        
+        # Check the conditions
+        if today.weekday() == 3 and today.day > 21:
+            return "next_month"
+        elif today > last_thursday_of_month and today.month == last_thursday_of_month.month:
+            return "next_month"
         else:
-            monthly_expiry_type = "current_month"
-        return monthly_expiry_type
+            return "current_month"
 
     def get_expiry_by_criteria(self, base_symbol, strike_price, option_type,expiry_type="current_week"):
         filtered_data = self._filter_data(base_symbol, option_type, strike_price)
@@ -85,6 +96,7 @@ class Instrument:
         return expiry_strategies[expiry_type]()
     
     def get_exchange_token_by_criteria(self, base_symbol,strike_price, option_type,expiry):
+        print(base_symbol,strike_price, option_type,expiry)
         filtered_data = self._filter_data(base_symbol, option_type, strike_price, expiry)
         if not filtered_data.empty:
             return filtered_data.iloc[0]['exchange_token']
@@ -125,5 +137,3 @@ class Instrument:
             return filtered_data.iloc[0]['exchange']
         else:
             return None
-
-# print(instrument_obj.get_expiry_by_criteria('BANKNIFTY', 'CE', 44100, "current_week"))

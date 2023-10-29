@@ -31,8 +31,8 @@ class ExpiryTrader(StrategyBase.Strategy):
 expiry_trader_obj = ExpiryTrader.read_strategy_json(STRATEGY_PATH)  
 instrument_obj = InstrumentBase.Instrument()
 
-hedge_transcation_type = "BUY"
-main_transcation_type = "SELL"
+hedge_transcation_type = expiry_trader_obj.get_general_params().get('HedgeTransactionType')
+main_transcation_type = expiry_trader_obj.get_general_params().get('MainTransactionType')
 
 # Extract strategy parameters
 today_expiry_symbol, today_expiry_token = expiry_trader_obj.determine_expiry_index()
@@ -64,7 +64,7 @@ hedge_option_type = expiry_trader_obj.get_hedge_option_type(prediction)
 today_expiry = instrument_obj.get_expiry_by_criteria(today_expiry_symbol,main_strikeprc,main_option_type, "current_week")
 main_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol,main_strikeprc, main_option_type,today_expiry)
 hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol,hedge_strikeprc,hedge_option_type, today_expiry)
-
+trade_id = place_order_calc.get_trade_id(strategy_name, "entry")
 
 print(f"Main Strike Price: {main_strikeprc}", f"main_option_type: {main_option_type}")
 print(f"Hedge Strike Price: {hedge_strikeprc}", f"hedge_option_type: {hedge_option_type}")
@@ -78,7 +78,7 @@ orders_to_place = [
         "order_type" : order_type, 
         "product_type" : product_type,
         "order_mode" : ["Hedge"],
-        "trade_id" : "ET1" #TODO fetch the order_tag from {strategy_name}.json
+        "trade_id" : trade_id 
     },
     {
         "strategy": strategy_name,
@@ -89,10 +89,10 @@ orders_to_place = [
         "product_type" : product_type,
         "stoploss_mutiplier": stoploss_mutiplier,
         "order_mode" : ["Main","SL"],
-        "trade_id" : "ET1" #TODO fetch the order_tag from {strategy_name}.json
+        "trade_id" : trade_id
     }
 ]
-
-# place_order.place_order_for_strategy(strategy_name,orders_to_place)
+print(orders_to_place)
+place_order.place_order_for_strategy(strategy_name,orders_to_place)
 
 

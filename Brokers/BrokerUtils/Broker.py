@@ -2,18 +2,16 @@ import os
 import sys
 from dotenv import load_dotenv
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
 ENV_PATH = os.path.join(DIR_PATH, '.env')
 load_dotenv(ENV_PATH)
 
 broker_json_filepath = os.getenv('broker_json_filepath')
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
-sys.path.append(DIR_PATH)
 import MarketUtils.general_calc as general_calc
 import Brokers.Aliceblue.alice_utils as alice_utils
 import Brokers.Zerodha.kite_utils as kite_utils
-
 
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
 
@@ -21,7 +19,7 @@ def get_primary_account():
     primary_account = broker_json_filepath
     user_details = general_calc.read_json_file(primary_account)
     api_key = '6b0dp5ussukmo67h'
-    access_token = '3IE37ECuWhjDlLsCPAvC41fGLmePACVl'
+    access_token = 'pRp6OQgZxlRVrFenolNemN8vvXPibHxf'
     # api_key = user_details['zerodha']['omkar']['api_key'] ###TODO Create a broker class and extarct the api key and access token from the json file
     # access_token = user_details['zerodha']['omkar']['access_token']
     return api_key,access_token

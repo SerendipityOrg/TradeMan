@@ -48,10 +48,9 @@
 #     json.dump(a, f, indent=4)
 
 
-from kiteconnect import KiteConnect
+# from kiteconnect import KiteConnect
 
-kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='3IE37ECuWhjDlLsCPAvC41fGLmePACVl')
-
+# kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='3IE37ECuWhjDlLsCPAvC41fGLmePACVl')
 
 
 

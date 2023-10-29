@@ -120,6 +120,7 @@ class InstrumentMonitor:
             sleep(10)
 
     def _process_token(self, token, ltp, data):
+        order_details = data.get('order_details')
         trigger_points = data.get('trigger_points')
         if trigger_points:
             # Initialize trigger states if not already done
@@ -142,10 +143,10 @@ class InstrumentMonitor:
 
         # Check for target and limit
         if data['target'] and ltp >= data['target'] and self.callback:
-            self.callback(token, {'type': 'target', 'value': ltp})
+            self.callback(token, {'type': 'target', 'value': ltp},order_details=order_details)
 
         if data['limit'] and ltp <= data['limit'] and self.callback:
-            self.callback(token, {'type': 'limit', 'value': ltp})
+            self.callback(token, {'type': 'limit', 'value': ltp},order_details=order_details)
 
             
 

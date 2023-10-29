@@ -16,7 +16,6 @@ load_dotenv(ENV_PATH)
 
 import Strategies.StrategyBase as StrategyBase
 import Brokers.place_order_calc as place_order_calc
-import MarketUtils.general_calc as general_calc
 
 
 _,strategy_path = place_order_calc.get_strategy_json('MPWizard')
