@@ -23,7 +23,7 @@ def get_price_reference(strategy_name, instrument):
     else:
         return 0 
 # Function to calculate quantity based on capital, risk, price reference, and lot size
-def calculate_quantity(capital, risk, prc_ref, lot_size, strategy_name):
+def calculate_quantity(capital, risk, prc_ref, lot_size, strategy_name,user):
     if strategy_name == "MPWizard" and prc_ref is not None:
         if prc_ref == 0:
             print("Price reference is 0")
@@ -61,7 +61,7 @@ def calculate_lots(active_users):
                 instrument = instruments[0]
                 prc_ref = get_price_reference(strategy_name, instrument) if strategy_name == "MPWizard" else None
                 lot_size = indices_lot_sizes.get(instrument, 1)
-                quantity = calculate_quantity(current_capital, risk, prc_ref, lot_size, strategy_name)
+                quantity = calculate_quantity(current_capital, risk, prc_ref, lot_size, strategy_name,user)
                 qty[strategy_name] = quantity
             else:
                 # If there are multiple instruments, store the quantities in a nested dictionary
@@ -69,9 +69,9 @@ def calculate_lots(active_users):
                 for instrument in instruments:
                     prc_ref = get_price_reference(strategy_name, instrument) if strategy_name == "MPWizard" else None
                     lot_size = indices_lot_sizes.get(instrument, 1)
-                    quantity = calculate_quantity(current_capital, risk, prc_ref, lot_size, strategy_name)
+                    quantity = calculate_quantity(current_capital, risk, prc_ref, lot_size, strategy_name,user)
                     qty[strategy_name][instrument] = quantity
-
+                    
     return qty
 
 

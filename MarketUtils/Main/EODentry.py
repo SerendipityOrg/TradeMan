@@ -1,15 +1,15 @@
 import os,sys
-import general_calc as general_calc 
 from datetime import datetime
 from pprint import pprint
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-calc_dir = os.path.join(script_dir, '..',"Brokers")
-sys.path.append(calc_dir)
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
 
-import place_order_calc as place_order_calc
-import zerodha.kite_place_orders as zerodha
-import aliceblue.alice_place_orders as aliceblue
+import Brokers.place_order_calc as place_order_calc
+import Brokers.Zerodha.kite_utils as kite_utils
+import Brokers.Aliceblue.alice_utils as alice_utils
+import MarketUtils.general_calc as general_calc
+import Strategies.StrategyBase as StrategyBase
 
 def simplify_zerodha_order(detail):
     trade_symbol = detail['tradingsymbol']
@@ -66,7 +66,7 @@ def simplify_aliceblue_order(detail):
 
 
 def load_userdata():
-    return general_calc.read_json_file(os.path.join(script_dir,"broker.json"))
+    return general_calc.read_json_file(os.path.join(DIR_PATH,'MarketUtils','active_users.json'))
 
 json_data = load_userdata()
 
@@ -208,28 +208,32 @@ strategy_to_function = {
 }
 
 
-
-
-# 1. Read broker.json and make a note of the strategies
 users_with_strategies = []
-for broker, accounts in json_data.items():
-    accounts_to_trade = accounts.get("accounts_to_trade", [])
-    for account_name in accounts_to_trade:
-        if account_name in accounts:
-            strategies = list(accounts[account_name]["percentageRisk"].keys())
-            users_with_strategies.append({
-                "user": account_name,
-                "broker": broker,
-                "strategies": strategies
-            })
+for user in json_data:
+    if user['broker'] == 'zerodha':
+        users_with_strategies.append({
+            "user": user['account_name'],
+            "broker": user['broker'],
+            "strategies": user['qty']
+        })
+    elif user['broker'] == 'aliceblue':
+        users_with_strategies.append({
+            "user": user['account_name'],
+            "broker": user['broker'],
+            "strategies": user['qty']
+        })
+
+
 
 # Placeholder function to segregate orders
 def segregate_by_strategy(details, strategies, broker):
+    print(details)
     combined_details = {}
     for strategy in strategies:
+        _,strategy_path = place_order_calc.get_strategy_json(strategy)
+        strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
         # 3. Get today_orders from the strategy's JSON and add _entry and _exit suffixes
-        strategy_json, _ = place_order_calc.get_strategy_json(strategy)
-        trade_ids = strategy_json.get('today_orders', [])
+        trade_ids = strategy_obj.get_today_orders()
         entry_ids = [tid + "_entry" for tid in trade_ids]
         exit_ids = [tid + "_exit" for tid in trade_ids]
         
@@ -245,28 +249,32 @@ def segregate_by_strategy(details, strategies, broker):
 
 # 2. Process each user's strategies
 for user in users_with_strategies:
-    user_details, user_json_path = place_order_calc.get_user_details(user["user"])
-    
-    if user["broker"] == "zerodha":
-        details = zerodha.get_order_details(user_details)
-    elif user["broker"] == "aliceblue":
-        details = aliceblue.get_order_details(user_details)
-    
-    # 5. Segregate and process the orders
-    strategy_based_details = segregate_by_strategy(details, user["strategies"], user["broker"])
-    combined_user_orders = {}
-    for strategy, order_list in strategy_based_details.items():
-        if strategy in strategy_to_function:
-            processed_orders = strategy_to_function[strategy](order_list, user["broker"], user["user"])
-            combined_user_orders.update(processed_orders)
-
-    # # Output combined user orders
-    if combined_user_orders:
-        user_final_orders = {"today_orders" : combined_user_orders}
-        pprint(user_final_orders)
-
-    user_json_data = general_calc.read_json_file(user_json_path)
+    for strategy in user["strategies"]:
+        _,strategy_path = place_order_calc.get_strategy_json(strategy)
+        strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
+        # 3. Get today_orders from the strategy's JSON and add _entry and _exit suffixes
+        trade_ids = strategy_obj.get_today_orders()
+        print(f"Processing {trade_ids} for {user['user']}")
+        if user["broker"] == "zerodha":
+            details = kite_utils.get_order_details(trade_ids, user["user"])
+        elif user["broker"] == "aliceblue":
+            details = alice_utils.get_order_details(trade_ids, user["user"])
         
-    user_json_data[user["broker"]]['orders'] = user_final_orders
+        # 5. Segregate and process the orders
+        strategy_based_details = segregate_by_strategy(details, user["strategies"], user["broker"])
+        combined_user_orders = {}
+        for strategy, order_list in strategy_based_details.items():
+            if strategy in strategy_to_function:
+                processed_orders = strategy_to_function[strategy](order_list, user["broker"], user["user"])
+                combined_user_orders.update(processed_orders)
 
-    general_calc.write_json_file(user_json_path, user_json_data)
+        # # Output combined user orders
+        if combined_user_orders:
+            user_final_orders = {"today_orders" : combined_user_orders}
+            pprint(user_final_orders)
+
+        # user_json_data = general_calc.read_json_file(user_json_path)
+            
+        # user_json_data[user["broker"]]['orders'] = user_final_orders
+
+        # general_calc.write_json_file(user_json_path, user_json_data)

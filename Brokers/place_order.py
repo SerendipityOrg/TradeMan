@@ -8,10 +8,9 @@ import Brokers.Zerodha.kite_place_orders as zerodha
 import Brokers.Aliceblue.alice_place_orders as aliceblue
 import Brokers.place_order_calc as place_order_calc
 from Strategies.StrategyBase import Strategy
+import MarketUtils.Discord.discordchannels as discordchannels
+import MarketUtils.general_calc as general_calc
 
-sys.path.append(UTILS_DIR)
-import general_calc as gc
-import Discord.discordchannels as discordchannels
 
 import Brokers.BrokerUtils.Broker as Broker
 from MarketUtils.InstrumentBase import Instrument
@@ -147,8 +146,8 @@ def modify_orders(token=None,monitor=None,order_details=None):
 def exit_order_details(token=None,monitor=None):
     token_data = monitor.tokens_to_monitor[token]
     order_details = token_data['order_details']
-    weeklyexpiry, _ = gc.get_expiry_dates(order_details['base_symbol'])
-    token, trading_symbol_list, trading_symbol_aliceblue = gc.get_tokens(
+    weeklyexpiry, _ = general_calc.get_expiry_dates(order_details['base_symbol'])
+    token, trading_symbol_list, trading_symbol_aliceblue = general_calc.get_tokens(
                                                             order_details['base_symbol'], 
                                                             weeklyexpiry, 
                                                             order_details['option_type'], 

@@ -2,10 +2,9 @@ import pandas as pd
 import os,sys
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-utils_dir = os.path.join(script_dir, "..","calculations")
+utils_dir = os.path.join(script_dir, "..","Calculations")
 sys.path.append(utils_dir)
 import taxcalculation as tc
-
 
 def process_mpwizard_trades(broker,mpwizard_trades):
     if not mpwizard_trades:
@@ -20,7 +19,7 @@ def process_mpwizard_trades(broker,mpwizard_trades):
 
         if broker == "zerodha":
             charges = tc.zerodha_taxes(
-                buy_trade["qty"], buy_trade["avg_price"], sell_trade["avg_price"], 1)
+                buy_trade["qty"], float(buy_trade["avg_price"]), float(sell_trade["avg_price"]), 1)
             index = buy_trade["trading_symbol"][:-12]
             strike_price = buy_trade["trading_symbol"][-7:-2]
             option_type = buy_trade["trading_symbol"][-2:]

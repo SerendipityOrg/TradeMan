@@ -1,9 +1,10 @@
 from pya3 import *
 import sys
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 import Brokers.place_order_calc as place_order_calc
+import MarketUtils.general_calc as general_calc
 # import MarketUtils.Calculations.qty_calc as qty_calc
 # import Brokers.BrokerUtils.Broker as Broker
 # import Brokers.Aliceblue.alice_login as alice_login
@@ -65,15 +66,17 @@ def get_avg_prc(alice,order_id):
     avg_prc = avg_prc_data.get('Avgprc')
     return avg_prc
 
-def get_order_details(user, trade_id):
-    user_details = place_order_calc.assign_user_details(user)
-    alice = create_alice_obj(user_details)
-    orders = alice.get_order_history('')
-    orders_to_exit = []
-    for order in orders:
-        if order['remarks'] == trade_id:
-            orders_to_exit.append(order)
-    return orders_to_exit
-
+def get_order_details( trade_id):
+    active_users = general_calc.read_json_file(os.path.join(DIR_PATH,'MarketUtils','active_users.json'))
+    for user in active_users:
+        if user['account_name'] == user and user['broker'] == 'aliceblue':
+            
+            alice = create_alice_obj(user)
+            orders = alice.get_order_history('')
+            orders_to_exit = []
+            for order in orders:
+                if order['remarks'] == trade_id:
+                    orders_to_exit.append(order)
+            return orders_to_exit
 
 

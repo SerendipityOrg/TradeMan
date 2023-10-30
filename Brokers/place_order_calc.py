@@ -28,6 +28,13 @@ def get_strategy_json(strategy_name):
     strategy_json = general_calc.read_json_file(strategy_json_path)
     return strategy_json,strategy_json_path
 
+def get_active_users(active_user_json_details):
+    active_users = []
+    for user in active_user_json_details:
+        if 'Active' in user['account_type']:
+            active_users.append(user)
+    return active_users
+
 # Initialize a global cache for trade IDs and exit flags
 trade_cache = {}
 

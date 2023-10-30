@@ -26,7 +26,7 @@ while true; do
     # Source conda, activate the environment and run the script
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
     conda activate tradingenv && \
-    cd /Users/traderscafe/Desktop/Main/TradeMan/Strategies/Amipy  && \
+    cd /Users/traderscafe/Desktop/Main/Strategies/AmiPy  && \
     /Users/traderscafe/miniconda3/envs/tradingenv/bin/python AmiPyLive.py && \
     echo "Program started successfully" && break
 

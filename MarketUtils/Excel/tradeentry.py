@@ -24,8 +24,8 @@ import general_calc as gc
 # broker_filepath = os.path.join(utils_dir, "broker.json")
 broker_filepath = os.path.join(script_dir,"..", "broker.json")
 
-userprofile_dir = os.path.join(script_dir, "..","..", "UserProfile")
-json_dir = os.path.join(userprofile_dir, "json")
+userprofile_dir = os.path.join(script_dir, "..","..", "UserProfile","OrdersJson")
+json_dir = os.path.join(userprofile_dir)
 # excel_dir = os.path.join(userprofile_dir, "excel")
 excel_dir = os.getenv('excel_filepath')
 
@@ -34,8 +34,9 @@ def custom_format(amount):
     return formatted.replace('₹', '₹')
 
 def process_strategy_data(user_data, broker, strategy_name, process_func):
-    if strategy_name in user_data[broker]["orders"]:
-        data = process_func(broker,user_data[broker]["orders"][strategy_name])
+    
+    if strategy_name in user_data["orders"]:
+        data = process_func(broker,user_data["orders"][strategy_name])
         df = pd.DataFrame(data)
         pnl = round(df["PnL"].sum(), 2)
         tax = round(df["Tax"].sum(), 2)
@@ -120,19 +121,24 @@ def send_telegram_message(phone_number, message):
 
 
 def main():
-    data = gc.read_json_file(broker_filepath)
-    user_list = []
-    # Go through each broker
-    for broker, broker_data in data.items():
-        # Check if 'accounts_to_trade' is in the broker data
-        if 'accounts_to_trade' in broker_data:
-            # Add each account to the list
-            for account in broker_data['accounts_to_trade']:
-                user_list.append((broker, account))
+    data = gc.read_json_file(os.path.join(script_dir, "..", "active_users.json"))
+    # user_list = []
+    # # Go through each broker
+    # for broker, broker_data in data.items():
+    #     # Check if 'accounts_to_trade' is in the broker data
+    #     if 'accounts_to_trade' in broker_data:
+    #         # Add each account to the list
+    #         for account in broker_data['accounts_to_trade']:
+    #             user_list.append((broker, account))
 
-    for broker, user in user_list:
-        user_data = gc.read_json_file(os.path.join(json_dir, f"{user}.json"))
-        phone_number = data[broker][user]["mobile_number"]
+    # for broker, user in user_list:
+    #     user_data = gc.read_json_file(os.path.join(json_dir, f"{user}.json"))
+    #     phone_number = data[broker][user]["mobile_number"]
+    
+    for user in data:
+        user_data = gc.read_json_file(os.path.join(json_dir, f"{user['account_name']}.json"))
+        phone_number = user["mobile_number"]
+        broker = user["broker"]
         
         mpwizard_df, mpwizard_pnl, mpwizard_tax = process_strategy_data(user_data, broker, "MPWizard", sc.process_mpwizard_trades)
         amipy_df, amipy_pnl, amipy_tax = process_strategy_data(user_data, broker, "AmiPy", sc.process_amipy_trades)  # Implement a function that processes Amipy trades
@@ -142,25 +148,25 @@ def main():
         tax = mpwizard_tax + amipy_tax + overnight_tax
         net_pnl = gross_pnl - tax
 
-        current_capital = data[broker][user]['current_capital']
+        current_capital = user['current_capital']
         expected_capital = current_capital + net_pnl if net_pnl > 0 else current_capital - abs(net_pnl)
 
-        message_parts = build_message(user, mpwizard_pnl, amipy_pnl, overnight_pnl, gross_pnl, tax, current_capital, expected_capital)
+        message_parts = build_message(user['account_name'], mpwizard_pnl, amipy_pnl, overnight_pnl, gross_pnl, tax, current_capital, expected_capital)
         message = "\n".join(message_parts).replace('\u20b9', '₹')
         print(message)
 
-        update_json_data(data, broker, user, net_pnl, expected_capital, broker_filepath)
+        # update_json_data(data, broker, user, net_pnl, expected_capital, broker_filepath)
 
-        excel_path = os.path.join(excel_dir, f"{user}.xlsx")
-        all_dfs = load_existing_excel(excel_path)
+        # excel_path = os.path.join(excel_dir, f"{user}.xlsx")
+        # all_dfs = load_existing_excel(excel_path)
 
-        update_excel_data(all_dfs, mpwizard_df, amipy_df, overnight_df)
-        save_all_sheets_to_excel(all_dfs, excel_path)
-        dtd.update_dtd_sheets()
+        # update_excel_data(all_dfs, mpwizard_df, amipy_df, overnight_df)
+        # save_all_sheets_to_excel(all_dfs, excel_path)
+        # dtd.update_dtd_sheets()
 
-        # Assuming you want to save to Firebase and send messages as in the original script
-        save_to_firebase(user, excel_path)  # Existing function
-        send_telegram_message(phone_number, message)  # Separate into a function
+        # # Assuming you want to save to Firebase and send messages as in the original script
+        # save_to_firebase(user, excel_path)  # Existing function
+        # send_telegram_message(phone_number, message)  # Separate into a function
 
 # Add other necessary helper functions...
 
