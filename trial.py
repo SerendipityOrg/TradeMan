@@ -14,6 +14,9 @@
 # alice = Aliceblue(user_id='929016',api_key='NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
 # session = alice.get_session_id()
 
+# orders = alice.get_order_history('')
+# pprint(orders)
+
 # orders = alice.get_daywise_positions()
 # pprint(orders)
 # overnight = []

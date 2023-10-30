@@ -23,11 +23,16 @@ def get_active_users(active_users_json_details):
             active_users.append(user)
     return active_users
 
-def get_primary_account(): 
-    users = get_active_users(active_users_json_details)
-    for user in users:
-        api_key = user['api_key']
-        access_token = user['access_token']
+# def get_primary_account(): 
+#     users = get_active_users(active_users_json_details)
+#     for user in users:
+#         api_key = user['api_key']
+#         access_token = user['access_token']
+#     return api_key,access_token
+
+def get_primary_account():
+    api_key = '6b0dp5ussukmo67h'
+    access_token = 'BvifbYLtzJgWKYEFUof10DB2V6tKEChw'
     return api_key,access_token
 
 def get_secondary_account():

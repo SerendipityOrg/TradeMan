@@ -64,6 +64,8 @@ def place_stoploss_order(order_details=None,monitor=None):
     order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
     order_details['order_type'] = 'Stoploss'
     
+    print("stoploss",order_details['limit_prc'])
+
     if "Trailing" in order_details['order_mode']:
         order_details['target'] = place_order_calc.calculate_target(option_ltp,order_details.get('price_ref'))
 
@@ -86,10 +88,10 @@ def modify_stoploss(order_details=None,monitor=None):
 
 def place_tsl(order_details):
     print("in place tsl")
+    modify_stoploss(order_details=order_details)
     price_ref = order_details['price_ref'] # TODO: This is related to MPwizard. Generalize this function
     order_details['target'] += (price_ref / 2)  # Adjust target by half of price_ref
     order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
-    modify_stoploss(order_details=order_details)
     return order_details['target'], order_details['limit_prc']
 
 

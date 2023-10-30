@@ -37,7 +37,7 @@ class InstrumentMonitor:
             self.monitor_thread.daemon = False
             self.monitor_thread.start()
 
-    def add_token(self, token: str = None, trigger_points: Dict[str, float] = None, order_details: Dict = None):
+    def add_token(self, token: str = None, trigger_points: Dict[str, float] = None, order_details: Dict = None,ib_level=None):
         """Add a token to be monitored.
         
         Args:
@@ -47,10 +47,9 @@ class InstrumentMonitor:
         limit (float, optional): The limit price.
         """
         if order_details:
-            print(order_details)
             instrument_obj = Instrument()
             token = str(instrument_obj.get_token_by_exchange_token(order_details.get('exchange_token')))
-            target = order_details.get('trigger_prc')
+            target = order_details.get('target')
             limit = order_details.get('limit_prc')
         else:
             target = None
@@ -65,7 +64,8 @@ class InstrumentMonitor:
             'target': target,
             'limit': limit,
             'ltp': None,  # Last Traded Price
-            'order_details' : order_details
+            'order_details' : order_details,
+            'ib_level': ib_level
         }
         
     def remove_token(self, token: str):
@@ -131,21 +131,28 @@ class InstrumentMonitor:
             # Check for upward crossing of IBHigh
             if ltp >= data['trigger_points']['IBHigh'] and not data['IBHigh_triggered']:
                 if self.callback:
-                    self.callback(token, {'type': 'trigger', 'name': 'IBHigh', 'value': ltp})
+                    self.callback(token, {'type': 'trigger', 'name': 'IBHigh', 'value': ltp, 'ib_level': data['ib_level']})
                 data['IBHigh_triggered'] = True
 
             # Check for downward crossing of IBLow
             if ltp <= data['trigger_points']['IBLow'] and not data['IBLow_triggered']:
                 if self.callback:
-                    self.callback(token, {'type': 'trigger', 'name': 'IBLow', 'value': ltp})
+                    self.callback(token, {'type': 'trigger', 'name': 'IBLow', 'value': ltp, 'ib_level': data['ib_level']})
                 data['IBLow_triggered'] = True
 
-        # Check for target and limit
-        if data['target'] and ltp >= data['target'] and self.callback:
-            self.callback(token, {'type': 'target', 'value': ltp},order_details=order_details)
+        if 'target_triggered' not in data:
+            data['target_triggered'] = False
+        if 'limit_triggered' not in data:
+            data['limit_triggered'] = False
 
-        if data['limit'] and ltp <= data['limit'] and self.callback:
+        # Check for target and limit
+        if data['order_details']['target'] and ltp >= data['order_details']['target'] and self.callback:
+            self.callback(token, {'type': 'target', 'value': ltp},order_details=order_details)
+            data['target_triggered'] = True
+
+        if data['order_details']['limit_prc'] and ltp <= data['order_details']['limit_prc'] and self.callback:
             self.callback(token, {'type': 'limit', 'value': ltp},order_details=order_details)
+            data['limit_triggered'] = True
 
             
 

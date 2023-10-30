@@ -37,11 +37,11 @@ def place_orders(strike_prc, signal):
             {"exchange_token": hedge_PE_exchange_token, "order_mode": ["Hedge"]}
         ]
         orders_to_place.extend(hedge_orders)
-        hedge_transaction_type = "BUY" if "Signal" in signal else "SELL"
-        main_transaction_type = "SELL" if "Signal" in signal else "BUY"
+        hedge_transaction_type = "BUY" if "ShortSignal" in signal else "SELL"
+        main_transaction_type = "SELL" if "ShortSignal" in signal else "BUY"
     
     else:  # Long Orders
-        main_transaction_type = "BUY" if "Signal" in signal else "SELL"
+        main_transaction_type = "BUY" if "LongSignal" in signal else "SELL"
         hedge_transaction_type = None  # No hedge orders for long positions
 
     main_CE_exchange_token = instrument_obj.get_exchange_token_by_criteria(base_symbol, strike_prc, "CE", expiry_date)
@@ -57,7 +57,7 @@ def place_orders(strike_prc, signal):
     trade_id = place_order_calc.get_trade_id(strategy_name, trade_type)
 
     for order in orders_to_place:
-        transaction_type = hedge_transaction_type if order["order_mode"] == "Hedge" else main_transaction_type
+        transaction_type = hedge_transaction_type if "Hedge" in order['order_mode'] else main_transaction_type
         order.update({
             "strategy": strategy_name,
             "segment": segment_type,
@@ -66,4 +66,5 @@ def place_orders(strike_prc, signal):
             "product_type": product_type,
             "trade_id": trade_id
         })
-    place_order.place_order_for_strategy(strategy_name, orders_to_place)
+    print(orders_to_place)
+    # place_order.place_order_for_strategy(strategy_name, orders_to_place)
