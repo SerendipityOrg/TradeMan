@@ -37,14 +37,14 @@ def all_broker_login(active_users):
 
 active_users = all_broker_login(place_order_calc.get_active_users(broker_json_details))
 
-def calculate_lot(active_users):
-    lots = qty_calc.calculate_lots(active_users)
+def calculate_qty(active_users):
     for user in active_users:
-        print(lots)
+        lots = qty_calc.calculate_lots(user)
         user['qty'] = lots
     return active_users
 
-active_users = calculate_lot(active_users)
+
+active_users = calculate_qty(active_users)
 
 general_calc.write_json_file(active_users_json_path, active_users)
 

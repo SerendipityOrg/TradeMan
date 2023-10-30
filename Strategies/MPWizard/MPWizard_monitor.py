@@ -10,17 +10,19 @@ import MarketUtils.InstrumentBase as InstrumentBase
 import Strategies.StrategyBase as StrategyBase
 import MarketUtils.general_calc as general_calc
 import Brokers.place_order as place_order
+import MarketUtils.Discord.discordchannels as discordbot
 
 _,mpwizard_json = place_order_calc.get_strategy_json('MPWizard')
 instrument_obj = InstrumentBase.Instrument()
 strategy_obj = StrategyBase.Strategy.read_strategy_json(mpwizard_json)
 
 class MPWInstrument:
-    def __init__(self, name, token, trigger_points, price_ref):
+    def __init__(self, name, token, trigger_points, price_ref,ib_level=None):
         self.name = name
         self.token = token
         self.trigger_points = trigger_points
         self.price_ref = price_ref
+        self.ib_level = ib_level
     
     def get_name(self):
         return self.name
@@ -33,6 +35,9 @@ class MPWInstrument:
     
     def get_price_ref(self):
         return self.price_ref
+
+    def get_ib_level(self):
+        return self.ib_level
 
 class OrderMonitor:
     def __init__(self, json_data, max_orders):
@@ -55,7 +60,8 @@ class OrderMonitor:
         for instrument in self.instruments:
             self.instrument_monitor.add_token(
                 token=str(instrument.get_token()),
-                trigger_points=instrument.get_trigger_points()
+                trigger_points=instrument.get_trigger_points(),
+                ib_level=instrument.get_ib_level()
             )
 
     @staticmethod
@@ -91,7 +97,8 @@ class OrderMonitor:
 
             trigger_points = data['TriggerPoints']
             price_ref = data['PriceRef']
-            instrument = MPWInstrument(name, token, trigger_points,price_ref)
+            ib_level = data['IBLevel']
+            instrument = MPWInstrument(name, token, trigger_points,price_ref,ib_level)
             instruments.append(instrument)
         return instruments
 
@@ -150,10 +157,13 @@ class OrderMonitor:
             print(f"Unknown IB Level: {ib_level}")
         return None
     
-    def process_orders(self,instrument, cross_type, ltp):
+    def get_index_name(self,token):
         index_tokens = strategy_obj.get_general_params().get("IndicesTokens")
         token_to_index = {str(v): k for k, v in index_tokens.items()}
-        index_name = token_to_index.get(instrument)
+        return token_to_index.get(token)
+
+    def process_orders(self,instrument, cross_type, ltp):
+        index_name = self.get_index_name(instrument)
         if index_name:
             obj = self.create_single_instrument(self.mood_data['EntryParams'][index_name])
             name = obj.get_name()
@@ -175,24 +185,27 @@ class OrderMonitor:
 
     def handle_trigger(self, instrument,data,order_details=None):
         ltp = self.instrument_monitor.fetch_ltp(instrument)
-        
+        instru_mood = self.mood_data['GeneralParams']['TradeView']
+        index_name = self.get_index_name(instrument)
         if data['type'] == 'trigger':
             cross_type = 'UpCross' if data['name'] == 'IBHigh' else 'DownCross'
+            message = f"Index : {index_name} \nCross Type : {cross_type} \nIB Level : {data['ib_level']} \nMood : {instru_mood} \nLTP : {ltp}"
+            discordbot.discord_bot(message,strategy_obj.get_strategy_name())
             self.process_orders(instrument, cross_type, ltp)
             
         elif data['type'] == 'target':
             if order_details:
                 new_target, new_limit_prc = place_order.place_tsl(order_details)
-                data['target'] = new_target
-                data['limit'] = new_limit_prc
-                print(f"New target set to {new_target} and new limit price set to {new_limit_prc}.")
+                order_details['target'] = new_target
+                order_details['limit'] = new_limit_prc
+                message = f"New target set to {new_target} and new limit price set to {new_limit_prc}."
+                discordbot.discord_bot(message,strategy_obj.get_strategy_name())
             else:
                 print("No order details available to update target and limit prices.")
                 
         elif data['type'] == 'limit':
-            print(f"Limit reached for {instrument.get_name()} at {ltp}. Handling accordingly.")
-            # Handle limit reached scenario here
-        
+            message = f"Limit reached for {index_name} at {ltp}. Handling accordingly."
+            discordbot.discord_bot(message,strategy_obj.get_strategy_name())        
 
     def monitor_index(self):
         print("Monitoring started...")

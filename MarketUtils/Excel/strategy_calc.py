@@ -19,40 +19,33 @@ def process_mpwizard_trades(broker,mpwizard_trades):
 
         if broker == "zerodha":
             charges = tc.zerodha_taxes(
-                buy_trade["qty"], float(buy_trade["avg_price"]), float(sell_trade["avg_price"]), 1)
-            index = buy_trade["trading_symbol"][:-12]
-            strike_price = buy_trade["trading_symbol"][-7:-2]
-            option_type = buy_trade["trading_symbol"][-2:]
+                buy_trade["qty"], buy_trade["avg_price"], sell_trade["avg_price"], 1)
         elif broker == "aliceblue":
             charges = tc.aliceblue_taxes(buy_trade["qty"], float(
                 buy_trade["avg_price"]), float(sell_trade["avg_price"]), 1)
-            index = buy_trade["trading_symbol"][:-13]
-            strike_price = buy_trade["trading_symbol"][-5::]
-            option_type = "PE" if buy_trade["trading_symbol"][-6] == "P" else "CE"
+        trade_points = float(sell_trade["avg_price"]) - float(buy_trade["avg_price"])
+        pnl = trade_points * int(buy_trade["qty"])
+        net_pnl = pnl - charges
+        signal = "LongSignal"
 
         trade_data = {
-            "Trade ID": buy_trade["trade_id"],
-            "Strategy": "MPWizard",
-            "Index": index,
-            "Strike Prc": strike_price,
-            "Option Type": option_type,
-            "Date": pd.to_datetime(buy_trade["time"]).strftime('%d-%b-%y'),
-            "Entry Time": pd.to_datetime(buy_trade["time"]).strftime('%H:%M'),
-            "Exit Time": pd.to_datetime(sell_trade["time"]).strftime('%H:%M'),
-            "Entry Price": buy_trade["avg_price"],
-            "Exit Price": sell_trade["avg_price"],
-            "Trade points": float(sell_trade["avg_price"]) - float(buy_trade["avg_price"]),
-            "Qty": buy_trade["qty"],
-            "PnL": round((float(sell_trade["avg_price"]) - float(buy_trade["avg_price"])) * int(buy_trade["qty"]),2),
-            "Tax": round(charges,2),
-            "Net PnL" : round(((float(sell_trade["avg_price"]) - float(buy_trade["avg_price"])) * int(buy_trade["qty"]) - charges),2)
-        }
+                "trade_id": buy_trade["trade_id"],
+                "trading_symbol": buy_trade["trading_symbol"],
+                "signal": signal,
+                "entry_time": pd.to_datetime(buy_trade["time"]).strftime('%d-%b-%y %H:%M'),
+                "exit_time": pd.to_datetime(sell_trade["time"]).strftime('%d-%b-%y %H:%M'),
+                "entry_price": round(buy_trade["avg_price"],2),
+                "exit_price": round(sell_trade["avg_price"],2),
+                "hedge_entry_price": 0,  # Assuming no hedge for this example
+                "hedge_exit_price": 0,   # Assuming no hedge for this example
+                "trade_points": round(trade_points,2),
+                "qty": buy_trade["qty"],
+                "pnl": round(pnl,2),
+                "tax": round(charges,2),
+                "net_pnl": round(net_pnl,2)
+            } 
         result.append(trade_data)
     return result
-
-# def custom_format(amount):
-#     formatted = format_currency(amount,'INR', locale='en_IN')
-#     return formatted.replace('₹','₹')
 
 def process_amipy_trades(broker,amipy_trades):
     amipy_data_short = []
@@ -70,7 +63,6 @@ def process_amipy_trades(broker,amipy_trades):
     elif amipy_data_long is not None:
         return amipy_data_long
     
-
 def process_short_trades(broker,short_signals, short_cover_signals,signal):
     if len(short_signals) != len(short_cover_signals):
         print("Mismatch in the number of ShortSignal and ShortCoverSignal trades.")
@@ -107,24 +99,21 @@ def process_short_trades(broker,short_signals, short_cover_signals,signal):
         charges = charges + hedge_charges
 
         trade_data = {
-            "Trade ID": short_signal_group[0]["trade_id"],
-            "Strategy": "Nifty Straddle",
-            "Index": "NIFTY",
-            "Trade Type": signal,
-            "Strike Prc": short_signal_group[0]["strike_price"],
-            "Date": pd.to_datetime(short_signal_group[0]["time"]).strftime('%d-%b-%y'),
-            "Entry Time": pd.to_datetime(short_signal_group[0]["time"]).strftime('%H:%M'),
-            "Exit Time": pd.to_datetime(short_cover_signal_group[0]["time"]).strftime('%H:%M'),
-            "Entry Price": entry_price,
-            "Exit Price": exit_price,
-            "Hedge Entry": hedge_entry,
-            "Hedge Exit": hedge_exit,
-            "Trade points": trade_points,
-            "Qty": short_signal_group[0]["qty"],
-            "PnL": round(trade_points * int(short_signal_group[0]["qty"]),2),
-            "Tax": round(charges,2),
-            "Net PnL" : round((trade_points * int(short_signal_group[0]["qty"]) - charges),2)
-        }
+            "trade_id": short_signal_group[0]["trade_id"],
+            "trading_symbol Symbol": short_signal_group[0]["trading_symbol"],
+            "signal": signal,
+            "entry_time": pd.to_datetime(short_signal_group[0]["time"]).strftime('%d-%b-%y %H:%M'),
+            "exit_time": pd.to_datetime(short_cover_signal_group[0]["time"]).strftime('%d-%b-%y %H:%M'),
+            "entry_price": round(entry_price,2),
+            "exit_price": round(exit_price,2),
+            "hedge_entry_price": round(hedge_entry,2),
+            "hedge_exit_price": round(hedge_exit,2),
+            "trade_points": round(trade_points,2),
+            "qty": short_signal_group[0]["qty"],
+            "pnl": round(trade_points * int(short_signal_group[0]["qty"]),2),
+            "tax": round(charges,2),
+            "net_pnl" : round((trade_points * int(short_signal_group[0]["qty"]) - charges),2)
+        }           
         result.append(trade_data)
     return result
 
@@ -136,55 +125,52 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
 
     result = []
     for i in range(0, len(long_signals), 2):  # Process each pair of trades together
-        long_signal_pair = long_signals[i:i+2]
-        long_cover_signal_pair = long_cover_signals[i:i+2]
+        long_signal_group = long_signals[i:i+2]
+        long_cover_signal_group = long_cover_signals[i:i+2]
 
         entry_price = sum(float(trade["avg_price"])
-                          for trade in long_signal_pair)
+                          for trade in long_signal_group)
         exit_price = sum(float(trade["avg_price"])
-                         for trade in long_cover_signal_pair)
+                         for trade in long_cover_signal_group)
         trade_points = entry_price - exit_price
 
         if broker == "zerodha":
             charges = tc.zerodha_taxes(
-                long_signal_pair[0]["qty"], entry_price, exit_price, 2)
+                long_signal_group[0]["qty"], entry_price, exit_price, 2)
         elif broker == "aliceblue":
             charges = tc.aliceblue_taxes(
-                long_signal_pair[0]["qty"], entry_price, exit_price, 2)
+                long_signal_group[0]["qty"], entry_price, exit_price, 2)
 
         trade_data = {
-            "Trade ID": long_signal_pair[0]["trade_id"],
-            "Strategy": "Amipy",
-            "Index": "NIFTY",
-            "Trade Type": signal,
-            "Strike Prc": long_signal_pair[0]["strike_price"],
-            "Date": pd.to_datetime(long_signal_pair[0]["time"]).strftime('%d-%b-%y'),
-            "Entry Time": pd.to_datetime(long_signal_pair[0]["time"]).strftime('%H:%M'),
-            "Exit Time": pd.to_datetime(long_cover_signal_pair[0]["time"]).strftime('%H:%M'),
-            "Entry Price": entry_price,
-            "Exit Price": exit_price,
-            "Hedge Entry": 0.0,
-            "Hedge Exit": 0.0,
-            "Trade points": trade_points,
-            "Qty": long_signal_pair[0]["qty"],
-            "PnL": round(trade_points * int(long_signal_pair[0]["qty"]),2),
-            "Tax": round(charges,2),
-            "Net PnL" : round((trade_points * int(long_signal_pair[0]["qty"]) - charges),2)
+            "trade_id": long_signal_group[0]["trade_id"],
+            "trading_symbol": long_signal_group[0]["trading_symbol"],
+            "signal": signal,
+            "entry_time": pd.to_datetime(long_signal_group[0]["time"]).strftime('%d-%b-%y %H:%M'),
+            "exit_time": pd.to_datetime(long_cover_signal_group[0]["time"]).strftime('%d-%b-%y %H:%M'),
+            "entry_price": round(entry_price,2),
+            "entry_price": round(exit_price,2),
+            "hedge_entry_price": 0,
+            "hedge_exit_price": 0,
+            "trade_points": round(trade_points,2),
+            "qty": long_signal_group[0]["qty"],
+            "pnl": round(trade_points * int(long_signal_group[0]["qty"]),2),
+            "tax": round(charges,2),
+            "net_pnl" : round((trade_points * int(long_signal_group[0]["qty"]) - charges),2)
         }
         result.append(trade_data)
     return result
 
 
-def process_overnight_options_trades(broker,overnight_options_trades):
-    if not overnight_options_trades:
+def process_overnight_futures_trades(broker,overnight_futures_trades):
+    if not overnight_futures_trades:
         print("No Overnight_Options trades found.")
         return []
 
     result = []
 
     # Extracting trade details from Afternoon and Morning
-    afternoon_trades = overnight_options_trades.get("Afternoon", [])
-    morning_trades = overnight_options_trades.get("Morning", [])
+    afternoon_trades = overnight_futures_trades.get("Afternoon", [])
+    morning_trades = overnight_futures_trades.get("Morning", [])
     qty = afternoon_trades[0]["qty"]
     
     if afternoon_trades[0]["direction"] == "BULLISH":
@@ -219,24 +205,74 @@ def process_overnight_options_trades(broker,overnight_options_trades):
     elif direction == "BEARISH":  # Assuming BEARISH
         trade_points = (future_entry - future_exit) + (option_exit - option_entry)
     PnL = trade_points * qty
-
+    signal = "LongSignal" if direction == "BULLISH" else "ShortSignal"
     # Appending to result list
     trade_data = {
-        "Trade ID": afternoon_trades[0]["trade_id"],
-        "Strategy": "Overnight_Options",
-        "Trade_Type": direction,
-        "Date": pd.to_datetime(morning_trades[0]["time"]).strftime('%d-%b-%y'),
-        "Entry Time": pd.to_datetime(afternoon_trades[0]["time"]).strftime('%H:%M'),
-        "Exit Time": pd.to_datetime(morning_trades[0]["time"]).strftime('%H:%M'),
-        "Future_Entry": future_entry,
-        "Future_Exit": future_exit,
-        "Option_Entry": option_entry,
-        "Option_Exit": option_exit,
-        "Trade_Points": trade_points,
-        "Qty": qty,
-        "PnL": round(PnL,2),
-        "Tax": round(total_tax,2),
-        "Net PnL" : round((PnL - total_tax),2)
-    }
+            "trade_id": afternoon_trades[0]["trade_id"],
+            "trading_symbol": afternoon_trades[0]["trading_symbol"],
+            "signal": signal,
+            "entry_time": pd.to_datetime(afternoon_trades[0]["time"]).strftime('%d-%b-%y %H:%M'),
+            "exit_time": pd.to_datetime(morning_trades[0]["time"]).strftime('%d-%b-%y %H:%M'),
+            "entry_price": round(future_entry,2) ,
+            "exit_price": round(future_exit,2) ,
+            "hedge_entry_price": round(option_entry,2),
+            "hedge_exit_price": round(option_exit,2),
+            "trade_points": round(trade_points,2),
+            "qty": qty,
+            "pnl": round(PnL,2),
+            "tax": round(total_tax,2),
+            "net_pnl": round((PnL - total_tax),2)
+        }
     result.append(trade_data)
+    return result
+
+
+def process_expiry_trades(broker, expiry_trades):
+    if not expiry_trades:
+        print("No ExpiryTrades trades found.")
+        return []
+
+    result = []
+    trade_ids = set(trade["trade_id"] for trade in expiry_trades["SELL"])
+    
+    for trade_id in trade_ids:
+        sell_trades = [trade for trade in expiry_trades["SELL"] if trade["trade_id"] == trade_id]
+        buy_trades = [trade for trade in expiry_trades["BUY"] if trade["trade_id"] == trade_id]
+        
+        regular_sell = next((trade for trade in sell_trades if trade["trade_type"] == "SELL"), None)
+        hedge_sell = next((trade for trade in sell_trades if trade["trade_type"] == "HedgeOrder"), None)
+        regular_buy = next((trade for trade in buy_trades if trade["trade_type"] == "BUY"), None)
+        hedge_buy = next((trade for trade in buy_trades if trade["trade_type"] == "HedgeOrder"), None)
+        
+        if broker == "zerodha":
+            charges = tc.zerodha_taxes(regular_sell["qty"], float(regular_sell["avg_price"]), float(regular_buy["avg_price"]), 1)
+        elif broker == "aliceblue":
+            charges = tc.aliceblue_taxes(regular_sell["qty"], float(regular_sell["avg_price"]), float(regular_buy["avg_price"]), 1)
+            
+        hedge_entry = float(hedge_sell["avg_price"]) if hedge_sell else 0
+        hedge_exit = float(hedge_buy["avg_price"]) if hedge_buy else 0
+        
+        trade_points = (float(regular_sell["avg_price"]) - float(regular_buy["avg_price"])) - (hedge_exit - hedge_entry)
+        pnl = trade_points * regular_sell["qty"] 
+        net_pnl = pnl - charges
+
+        trade_data = {
+            "trade_id": trade_id,
+            "trading_symbol": regular_sell["trading_symbol"],
+            "signal": "SELL",
+            "entry_time": pd.to_datetime(regular_sell["time"]).strftime('%d-%b-%y %H:%M'),
+            "exit_time": pd.to_datetime(regular_buy["time"]).strftime('%d-%b-%y %H:%M'),
+            "entry_price": round(float(regular_sell["avg_price"]),2),
+            "exit_price": round(float(regular_buy["avg_price"]),2),
+            "hedge_entry_price": round(hedge_entry,2),
+            "hedge_exit_price": round(hedge_exit,2),
+            "trade_points": round(trade_points,2),
+            "qty": regular_sell["qty"],
+            "pnl": round(pnl,2),
+            "tax": round(charges,2),
+            "net_pnl": round(net_pnl,2)
+        }
+
+        result.append(trade_data)
+        
     return result
