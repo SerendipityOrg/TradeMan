@@ -7,13 +7,14 @@ from formats import custom_format
 
 def format_running_balance_column(df):
     df['Running Balance'] = df['Running Balance'].apply(custom_format)
+    df['Amount'] = df['Amount'].apply(custom_format)
     return df
 
 # Function to check if DataFrame has required columns
 
 
 def has_required_columns(df):
-    required_columns = ['Date', 'Net PnL', 'Trade ID']
+    required_columns = ['entry_time', 'net_pnl', 'trade_id']
     return all(col in df.columns for col in required_columns)
 
 # Function to fetch data from Excel and return a dictionary of DataFrames
@@ -24,7 +25,7 @@ def fetch_data_from_excel(file_name, sheet_mappings):
     for internal_name, actual_sheet_name in sheet_mappings.items():
         try:
             temp_df = pd.read_excel(
-                file_name, sheet_name=actual_sheet_name, parse_dates=['Date'])
+                file_name, sheet_name=actual_sheet_name, parse_dates=['entry_time'])
             if has_required_columns(temp_df):
                 data_mappings[internal_name] = temp_df
             else:
@@ -35,22 +36,21 @@ def fetch_data_from_excel(file_name, sheet_mappings):
                 f"Sheet '{actual_sheet_name}' not found in {file_name}. Skipping...")
     return data_mappings
 
-
 # Function to create and return the DTD DataFrame with individual transactions and formatted columns
 
 
-def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
+def create_dtd_dataframe_updated(data_mappings, opening_balance):
     if not data_mappings:
         print("No valid DataFrames found!")
         return pd.DataFrame(), 0
 
-    all_dates = pd.concat([df['Date']
-                          for df in data_mappings.values()]).unique()
+    all_dates = pd.concat(
+        [df['entry_time'].dt.date for df in data_mappings.values()]).unique()
     all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
 
     rows = []
     default_details = ['MPWizard', 'AmiPy', 'ZRM',
-                       'Overnight Options', 'ExpiryTrader', 'ErrorTrade']
+                       'OvernightFutures', 'ExpiryTrader', 'ErrorTrade', 'Transactions']
     sl_no = 1
 
     # Initialize the running balance with the opening balance
@@ -68,45 +68,41 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
     })
     sl_no += 1
 
-    start_date = pd.Timestamp('2023-10-28')
+    start_date = pd.Timestamp('2023-10-30')
     for date in all_dates_sorted:
-        if date < start_date:
+        if pd.isna(date):  # Check for NaT values and skip them
+            continue
+        if pd.Timestamp(date) < start_date:
             continue
 
-        date_str = pd.Timestamp(date).strftime('%d-%b-%y')
-        day_str = pd.Timestamp(date).strftime('%A')
+        # Ensuring the date format is as '31-OCT-23'
+        date_str = date.strftime('%d-%b-%y').upper()
+        day_str = date.strftime('%A')
 
         for transaction_id in default_details:
             if transaction_id in data_mappings:
                 df = data_mappings[transaction_id]
-                sub_df = df[df['Date'] == date]
+                sub_df = df[df['entry_time'].dt.date == date]
 
                 for _, row in sub_df.iterrows():
-                    trade_id = row['Trade ID']
-                    amount = row['Net PnL']
+                    trade_id = row['trade_id']
+                    amount = row['net_pnl']
                     # Check if amount is not NaN and not 0.00
                     if pd.notna(amount) and amount != 0.00:
                         running_balance += amount
-                        formatted_amount = custom_format(amount)
-                        formatted_running_balance = custom_format(
-                            running_balance)
-                        if formatted_running_balance == "NaN":
-                            print(
-                                f"Warning: Running balance is NaN for Trade ID: {trade_id}")
                         rows.append({
                             'Sl NO': sl_no,
                             'Date': date_str,
                             'Day': day_str,
                             'Trade ID': trade_id,
                             'Details': transaction_id,
-                            'Amount': formatted_amount,
-                            'Running Balance': formatted_running_balance
+                            'Amount': custom_format(amount),
+                            'Running Balance': custom_format(running_balance)
                         })
                         sl_no += 1
 
     dtd_df = pd.DataFrame(rows)
     return dtd_df, running_balance
-
 
 # Function to retrieve existing 'Opening Balance' from the DTD sheet
 
@@ -192,19 +188,19 @@ if __name__ == "__main__":
         'MPWizard': 'MPWizard',
         'AmiPy': 'AmiPy',
         'ZRM': 'ZRM',
-        'Overnight Options': 'Overnight_options',
+        'OvernightFutures': 'OvernightFutures',
         'ExpiryTrader': 'ExpiryTrader',
-        'ErrorTrade': 'ErrorTrade'
+        'ErrorTrade': 'ErrorTrade',
+        'Transactions': 'Transactions'
     }
 
-    for root, dirs, files in os.walk(excel_dir):
-        for file in files:
-            if file.endswith(".xlsx"):
-                file_name = os.path.join(root, file)
-                user_name = os.path.splitext(file)[0]
-                opening_balance = opening_balances.get(user_name, 0.0)
-                data_mappings = fetch_data_from_excel(
-                    file_name, sheet_mappings)
-                dtd_df, _ = create_dtd_dataframe_updated_v10(
-                    data_mappings, opening_balance)
-                check_and_update_dtd_sheet(file_name, dtd_df)
+    for file_name in os.listdir(excel_dir):
+        file_path = os.path.join(excel_dir, file_name)
+        if file_name.endswith('.xlsx'):
+            print(f"Processing file: {file_name}")
+            data_mappings = fetch_data_from_excel(file_path, sheet_mappings)
+            user_name = os.path.splitext(file_name)[0]
+            opening_balance = opening_balances.get(user_name, 0)
+            new_dtd_df, _ = create_dtd_dataframe_updated(
+                data_mappings, opening_balance)
+            check_and_update_dtd_sheet(file_path, new_dtd_df)
