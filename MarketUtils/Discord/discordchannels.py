@@ -1,12 +1,14 @@
 import requests
-import os
-import json
+import os,sys
 from dotenv import load_dotenv
 
-def discord_bot(message, strategy):
-    env_file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'Brokers', '.env'))
-    load_dotenv(env_file_path)
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
 
+ENV_PATH = os.path.join(DIR_PATH, '.env')
+load_dotenv(ENV_PATH)
+
+def discord_bot(message, strategy):
     token = os.getenv('discord_bot_token')
     channel_id = os.getenv(f"{strategy.lower()}_channel_id")
 

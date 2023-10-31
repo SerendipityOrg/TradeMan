@@ -8,6 +8,8 @@ import Brokers.Zerodha.kite_place_orders as zerodha
 import Brokers.Aliceblue.alice_place_orders as aliceblue
 import Brokers.place_order_calc as place_order_calc
 from Strategies.StrategyBase import Strategy
+import MarketUtils.Discord.discordchannels as discordchannels
+import MarketUtils.general_calc as general_calc
 
 
 import Brokers.BrokerUtils.Broker as Broker
@@ -97,6 +99,9 @@ def place_tsl(order_details):
 
 def modify_orders(token=None,monitor=None,order_details=None):
     print("in modify orders")
+    #send discord message
+    discordchannels.discord_bot(f"Target reached for {token}", order_details['strategy'])
+
     if token:
         token_data = monitor.tokens_to_monitor[token] #change monitor to intruMonitor
         order_details = token_data['order_details']
@@ -143,11 +148,14 @@ def modify_orders(token=None,monitor=None,order_details=None):
 def exit_order_details(token=None,monitor=None):
     token_data = monitor.tokens_to_monitor[token]
     order_details = token_data['order_details']
-    if isinstance(order_details['tradingsymbol'], str):
-        trading_symbol = order_details['tradingsymbol']
-    else:
-        trading_symbol = order_details['tradingsymbol'].name
-    print("trading_symbol",trading_symbol)
+    weeklyexpiry, _ = general_calc.get_expiry_dates(order_details['base_symbol'])
+    token, trading_symbol_list, trading_symbol_aliceblue = general_calc.get_tokens(
+                                                            order_details['base_symbol'], 
+                                                            weeklyexpiry, 
+                                                            order_details['option_type'], 
+                                                            order_details['strike_prc']
+                                                        )
+    
 
     users_to_trade = general_calc.get_strategy_users(token_data['strategy'])
 
@@ -157,12 +165,13 @@ def exit_order_details(token=None,monitor=None):
                     'broker': broker,
                     'limit_prc': order_details['limit_prc'],
                     'strategy': token_data['strategy'],
-                    'trade_type': 'SELL',
-                    'token' : trading_symbol
+                    'trade_type': 'SELL'
                 }
         if broker == 'zerodha' :
+            exit_order_func['token'] = trading_symbol_list
             zerodha.exit_order(exit_order_func)
         elif broker == 'aliceblue':
+            exit_order_func['token'] = trading_symbol_aliceblue.name
             aliceblue.exit_order(exit_order_func)
 
 

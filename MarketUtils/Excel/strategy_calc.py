@@ -2,10 +2,9 @@ import pandas as pd
 import os,sys
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-utils_dir = os.path.join(script_dir, "..","calculations")
+utils_dir = os.path.join(script_dir, "..","Calculations")
 sys.path.append(utils_dir)
 import taxcalculation as tc
-
 
 def process_mpwizard_trades(broker,mpwizard_trades):
     if not mpwizard_trades:

@@ -1,17 +1,17 @@
 from kiteconnect import KiteConnect
 import pandas as pd
-import json,sys
+import os,sys
 
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 import MarketUtils.Calculations.qty_calc as qty_calc
 # import Brokers.BrokerUtils.Broker as Broker
 import Brokers.Zerodha.kite_login as kite_login
 import Brokers.place_order_calc as place_order_calc
+import MarketUtils.general_calc as general_calc
 
 def create_kite_obj(user_details=None,api_key=None,access_token=None):
-    print(user_details)
     if api_key and access_token:
         return KiteConnect(api_key=api_key,access_token=access_token)
     elif user_details:
@@ -72,13 +72,15 @@ def get_avg_prc(kite,order_id):
             break 
     return avg_prc
 
-def get_order_details(user,trade_id):
-    user_details = place_order_calc.get_user_details(user)
-    kite = create_kite_obj(user_details)
-    orders = kite.orders()
-    orders_to_exit = []
-    for order in orders:
-        if order['remarks'] == trade_id:
-            orders_to_exit.append(order)
-    return orders_to_exit
-
+def get_order_details(trade_id,username):
+    active_users = general_calc.read_json_file(os.path.join(DIR_PATH,'MarketUtils','active_users.json'))
+    for user in active_users:
+        if user['account_name'] == username and user['broker'] == 'zerodha':
+            kite = create_kite_obj(api_key=user['api_key'],access_token=user['access_token'])
+            orders = kite.orders()
+            orders_to_exit = []
+            for order in orders:
+                if order['remarks'] == trade_id:
+                    orders_to_exit.append(order)
+            return orders_to_exit
+            

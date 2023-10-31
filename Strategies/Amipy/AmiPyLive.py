@@ -113,6 +113,7 @@ else:
     sleep(time_until(target_time).seconds)
     get_ltp()
 
+
 print("Today's Strike Price:",strike_prc)
 
 trading_tokens = get_option_tokens(strike_prc)
@@ -317,7 +318,7 @@ def updateSignalDf(last_signal):
         signal_entry[trade_type] = signal
         strategy_obj.set_signal_entry(signal_entry)
         strategy_obj.write_strategy_json(STRATEGY_PATH)
-        amipy_orders.place_orders(strike_prc,trade_type)
+        # amipy_orders.place_orders(strike_prc,trade_type)
 
     try:
         if trade_type is not None:  # check that a signal was generated
