@@ -1,84 +1,91 @@
-from datetime import datetime
-from dotenv import load_dotenv
-import os 
-import threading
+from typing import Dict, Callable, Any
+from time import sleep
 from kiteconnect import KiteConnect
-import sys
+import os,sys
+from MarketUtils.InstrumentBase import Instrument
+import threading
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-UTILS_DIR = os.path.join(CURRENT_DIR, '..', 'Utils')
+DIR_PATH = os.getcwd
+sys.path.append(DIR_PATH)
 
-sys.path.append(UTILS_DIR)
-from general_calc import *
+import Brokers.BrokerUtils.Broker as Broker
 
-BROKERS_DIR = os.path.join(CURRENT_DIR,'..','..', 'Brokers')
-sys.path.append(BROKERS_DIR)
-import aliceblue.alice_place_orders as aliceblue
-import zerodha.kite_place_orders as zerodha
-import place_order as place_order
+api_key,access_token = Broker.get_primary_account()
+kite = KiteConnect(api_key=api_key)
+kite.set_access_token(access_token)
 
-sys.path.append(os.path.join(UTILS_DIR, 'Discord'))
-import discordchannels as discord
-
-env_file_path = os.path.join(CURRENT_DIR, '.env')
-env_file_path = os.path.abspath(env_file_path)
-
-load_dotenv(env_file_path)
-
-file_path = os.getenv('omkar_json_filepath')
-omkar_details = read_json_file(file_path)
-kite = KiteConnect(api_key=omkar_details['zerodha']['api_key'])
-kite.set_access_token(omkar_details['zerodha']['access_token'])
 
 class InstrumentMonitor:
-    """
-    Singleton class to monitor instruments and handle trading signals.
-    """    
     _instance = None
     
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls._instance, cls):
             cls._instance = super(InstrumentMonitor, cls).__new__(cls)
         return cls._instance
-    
-    def __init__(self, callback=None):
-        self.lock = threading.Lock()
-        self.tokens_to_monitor = {}  # Using a dictionary to store token along with its target and limit price
-        self.callback = callback
+
+    def __init__(self):
+        if not hasattr(self, '_initialized'):  # Check if the instance is already initialized
+            self.lock = threading.Lock()
+            self.tokens_to_monitor = {}
+            self.callback = None
+            self.monitor_thread = None
+            self._initialized = True  # Set the initialized flag
+
+    def start_monitoring(self):
+        if self.monitor_thread is None or not self.monitor_thread.is_alive():
+            self.monitor_thread = threading.Thread(target=self.monitor)
+            self.monitor_thread.daemon = False
+            self.monitor_thread.start()
+
+    def add_token(self, token: str = None, trigger_points: Dict[str, float] = None, order_details: Dict = None,ib_level=None):
+        """Add a token to be monitored.
         
-    def add_token(self, token, target=None, limit_prc=None,order_details = None,strategy = None):
-        """Add a token to the monitoring list."""
-        if token not in self.tokens_to_monitor:
-            print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor}")
+        Args:
+        token (str): The token of the instrument.
+        trigger_points (dict): A dictionary of trigger points.
+        target (float, optional): The target price.
+        limit (float, optional): The limit price.
+        """
+        if order_details:
+            instrument_obj = Instrument()
+            token = str(instrument_obj.get_token_by_exchange_token(order_details.get('exchange_token')))
+            target = order_details.get('target')
+            limit = order_details.get('limit_prc')
         else:
-            print(f"Token {token} is already being monitored.")
-            
-        self.tokens_to_monitor[token] = {
-            'target': target,
-            'limit_prc': limit_prc,
-            'order_details': order_details,
-            'strategy': strategy
-        }
-        # Print the price_ref from the order_details
-        if self.tokens_to_monitor[token] is not None :
-            print("price_ref:" ,self.tokens_to_monitor[token])
-        print(f"Added token {token} to monitor. Current tokens: {self.tokens_to_monitor.keys()}")
-
-    def remove_token(self, token):
-        """Remove a token from the monitoring list."""
+            target = None
+            limit = None
+        
         if token in self.tokens_to_monitor:
-            del self.tokens_to_monitor[token]
+            print("Token already present:", token)
+            return
+        
+        self.tokens_to_monitor[token] = {
+            'trigger_points': trigger_points or {},
+            'target': target,
+            'limit': limit,
+            'ltp': None,  # Last Traded Price
+            'order_details' : order_details,
+            'ib_level': ib_level
+        }
+        
+    def remove_token(self, token: str):
+        """Remove a token from monitoring.
+        
+        Args:
+        token (str): The token of the instrument.
+        """
+        if token in self.instruments:
+            del self.instruments[token]
 
-    def monitor(self):
-        """Monitor tokens and execute callback on LTP changes."""
-        while True:
-            ltps = self._fetch_ltps()
-            for token, ltp in ltps.items():
-                if self.callback:
-                    self.callback(token, ltp)
-            sleep(10)
+    def set_callback(self, callback: Callable[[str, Any], None]):
+        """Set the callback function to be called on trigger events.
+        
+        Args:
+        callback (callable): The callback function.
+        """
+        self.callback = callback
 
-    def _fetch_ltp_for_token(self, token):
+    def fetch_ltp(self, token):
         """Fetch the LTP for a given token."""
         ltp = kite.ltp(token)  # assuming 'kite' is accessible here or you may need to pass it
         return ltp[str(token)]['last_price']
@@ -87,48 +94,65 @@ class InstrumentMonitor:
         """Fetch LTPs for all monitored tokens."""
         ltps = {}
         for token in self.tokens_to_monitor.keys():
+            print("in",self.tokens_to_monitor.keys())
+            print(f"Fetching LTP for token {token}")
             try:
-                ltp_data = self._fetch_ltp_for_token(token)
+                ltp_data = self.fetch_ltp(token)
                 ltps[token] = ltp_data
             except Exception as e:
                 print(f"Error fetching LTP for token {token}: {e}")
         return ltps
-    
-    def fetch(self):
-        """Fetch and print LTPs for all monitored tokens and handle target/limit price scenarios."""
+
+
+    def monitor(self):
         while True:
             tokens = list(self.tokens_to_monitor.keys())
-            print(f"fetching {tokens}")
-            ltps = self._fetch_ltps()  # Using the class's method
-
-            for token, ltp in ltps.items():
-                print(f"The LTP for {token} is {ltp}")
-                token_data = self.tokens_to_monitor[token]
-
-                # Check if the target is not None and if LTP has reached or exceeded it
-                if token_data['target'] is not None and ltp >= token_data['target']:
-                    print(f"Target reached for token {token}! LTP is {ltp}.")
-                    price_ref = token_data['order_details']['price_ref'] # TODO: This is related to MPwizard. Generalize this function
-                    token_data['target'] += (price_ref / 2)  # Adjust target by half of price_ref
-                    token_data['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
-                    place_order.modify_orders(token,monitor=self)
-                    print(f"New target for token {token} is {token_data['target']}.")
-                    print(f"New limit price for token {token} is {token_data['limit_prc']}.")
-                    message = f"Order modified! new target {token_data['target']}! and new stoploss is {token_data['limit_prc']} ."
-                    # discord.discord_bot(message,token_data['strategy'])
-
-                # Check if the limit_prc is not None and if LTP has fallen below it
-                elif token_data['limit_prc'] is not None and ltp <= token_data['limit_prc']:
-                    print(f"Limit price reached for token {token}! LTP is {ltp}.") # TODO: send discord msg after sl
-                    #remove the token from the list
-                    self.remove_token(token)
-                
-                #check if the time is 3:10 pm and if yes then remove the token from the list
-                elif datetime.now().strftime("%H:%M:%S") >= "15:57:00":
-                    print("Time is 3:10 pm")
-                    place_order.exit_order_details(token,monitor=self)
-                    self.remove_token(token)
-                    
-                # TODO: Check if there any open orders for the token at 3:10 pm if yes then cancel the order and sqaure off that order
-                
+            print(f"Monitoring tokens: {tokens}")
+            for token in tokens:
+                try:
+                    ltp = self.fetch_ltp(token)
+                    print(f"The LTP for {token} is {ltp}")
+                    data = self.tokens_to_monitor[token]
+                    self._process_token(token, ltp, data)
+                except Exception as e:
+                    print(f"Error processing token {token}: {e}")
             sleep(10)
+
+    def _process_token(self, token, ltp, data):
+        order_details = data.get('order_details')
+        trigger_points = data.get('trigger_points')
+        if trigger_points:
+            # Initialize trigger states if not already done
+            if 'IBHigh_triggered' not in data:
+                data['IBHigh_triggered'] = False
+            if 'IBLow_triggered' not in data:
+                data['IBLow_triggered'] = False
+
+            # Check for upward crossing of IBHigh
+            if ltp >= data['trigger_points']['IBHigh'] and not data['IBHigh_triggered']:
+                if self.callback:
+                    self.callback(token, {'type': 'trigger', 'name': 'IBHigh', 'value': ltp, 'ib_level': data['ib_level']})
+                data['IBHigh_triggered'] = True
+
+            # Check for downward crossing of IBLow
+            if ltp <= data['trigger_points']['IBLow'] and not data['IBLow_triggered']:
+                if self.callback:
+                    self.callback(token, {'type': 'trigger', 'name': 'IBLow', 'value': ltp, 'ib_level': data['ib_level']})
+                data['IBLow_triggered'] = True
+
+        if 'target_triggered' not in data:
+            data['target_triggered'] = False
+        if 'limit_triggered' not in data:
+            data['limit_triggered'] = False
+
+        # Check for target and limit
+        if data['order_details']['target'] and ltp >= data['order_details']['target'] and self.callback:
+            self.callback(token, {'type': 'target', 'value': ltp},order_details=order_details)
+            data['target_triggered'] = True
+
+        if data['order_details']['limit_prc'] and ltp <= data['order_details']['limit_prc'] and self.callback:
+            self.callback(token, {'type': 'limit', 'value': ltp},order_details=order_details)
+            data['limit_triggered'] = True
+
+            
+
