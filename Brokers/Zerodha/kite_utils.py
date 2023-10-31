@@ -1,6 +1,6 @@
 from kiteconnect import KiteConnect
 import pandas as pd
-import json,sys,os
+import os,sys
 
 
 DIR_PATH = os.getcwd()
@@ -8,9 +8,9 @@ sys.path.append(DIR_PATH)
 import MarketUtils.Calculations.qty_calc as qty_calc
 import Brokers.Zerodha.kite_login as kite_login
 import Brokers.place_order_calc as place_order_calc
+import MarketUtils.general_calc as general_calc
 
 def create_kite_obj(user_details=None,api_key=None,access_token=None):
-    print(user_details)
     if api_key and access_token:
         return KiteConnect(api_key=api_key,access_token=access_token)
     elif user_details:

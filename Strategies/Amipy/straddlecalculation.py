@@ -8,6 +8,7 @@ import json
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
+print(DIR_PATH)
 import MarketUtils.InstrumentBase as InstrumentBase
 
 import Strategies.StrategyBase as StrategyBase

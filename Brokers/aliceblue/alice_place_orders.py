@@ -1,7 +1,6 @@
 import logging
 from pya3 import *
 import sys
-import icecream as ic
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)

@@ -113,6 +113,7 @@ else:
     sleep(time_until(target_time).seconds)
     get_ltp()
 
+
 print("Today's Strike Price:",strike_prc)
 
 trading_tokens = get_option_tokens(strike_prc)
@@ -324,7 +325,7 @@ def updateSignalDf(last_signal):
             signal_prc = str(last_signal['close'])
             message = f"Signal: {trade_type}\nStrikePrc: {strike_prc} \nDate: {trade_date}\nTime: {trade_time}\nClose: {signal_prc}"
             print(message)
-            # discord_bot.discord_bot(message, "AmiPy")
+            discord_bot.discord_bot(message, "AmiPy")
     except Exception as e:
         print(f"Error in sending telegram message: {e}")
 

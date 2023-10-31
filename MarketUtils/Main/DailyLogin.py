@@ -4,6 +4,7 @@ import os, sys
 print("Today's date:", dt.datetime.today())
 
 DIR_PATH = os.getcwd()
+print(DIR_PATH)
 sys.path.append(DIR_PATH)
 
 import Brokers.Aliceblue.alice_login as alice_login

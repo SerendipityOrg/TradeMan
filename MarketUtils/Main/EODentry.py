@@ -227,6 +227,7 @@ strategy_to_function = {
 
 # Placeholder function to segregate orders
 def segregate_by_strategy(details, strategies, broker):
+    print(details)
     combined_details = {}
     for strategy in strategies:
         print(strategy)

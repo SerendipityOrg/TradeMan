@@ -162,7 +162,7 @@ class OrderMonitor:
         token_to_index = {str(v): k for k, v in index_tokens.items()}
         return token_to_index.get(token)
 
-    def process_orders(self,instrument, cross_type, ltp):
+    def process_orders(self,instrument, cross_type, ltp,message=None):
         index_name = self.get_index_name(instrument)
         if index_name:
             obj = self.create_single_instrument(self.mood_data['EntryParams'][index_name])
@@ -173,7 +173,9 @@ class OrderMonitor:
                 print("Daily signal limit reached. No more signals will be generated today.")
                 return
             order_to_place = self.create_order_details(name,cross_type,ltp,price_ref)
-            place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)  
+            place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)
+            if message:  
+                discordbot.discord_bot(message,strategy_obj.get_strategy_name())
 
             self.indices_triggered_today.add(name) 
             self.orders_placed_today += 1
@@ -190,8 +192,7 @@ class OrderMonitor:
         if data['type'] == 'trigger':
             cross_type = 'UpCross' if data['name'] == 'IBHigh' else 'DownCross'
             message = f"Index : {index_name} \nCross Type : {cross_type} \nIB Level : {data['ib_level']} \nMood : {instru_mood} \nLTP : {ltp}"
-            discordbot.discord_bot(message,strategy_obj.get_strategy_name())
-            self.process_orders(instrument, cross_type, ltp)
+            self.process_orders(instrument, cross_type, ltp,message)
             
         elif data['type'] == 'target':
             if order_details:

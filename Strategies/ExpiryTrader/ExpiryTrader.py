@@ -101,7 +101,7 @@ orders_to_place = [
         "trade_id" : trade_id
     }
 ]
-
-# place_order.place_order_for_strategy(strategy_name,orders_to_place)
+print(orders_to_place)
+place_order.place_order_for_strategy(strategy_name,orders_to_place)
 
 
