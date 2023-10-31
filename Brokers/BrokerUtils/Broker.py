@@ -32,7 +32,7 @@ def get_active_users(active_users_json_details):
 
 def get_primary_account():
     api_key = '6b0dp5ussukmo67h'
-    access_token = 'BvifbYLtzJgWKYEFUof10DB2V6tKEChw'
+    access_token = 'PmH7ei2AlgxzPR2Vzgw5VX84P9luWHdB'
     return api_key,access_token
 
 def get_secondary_account():

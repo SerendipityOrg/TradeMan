@@ -57,11 +57,11 @@ desired_start_time_str = expiry_trader_obj.get_entry_params().get('EntryTime')
 start_hour, start_minute, start_second = map(int, desired_start_time_str.split(':'))
 
 # Main logic
-# now = dt.datetime.now()
-# wait_time = dt.datetime(now.year, now.month, now.day, start_hour, start_minute) - now
-# if wait_time.total_seconds() > 0:
-#     print(f"Waiting for {wait_time} before starting the bot")
-#     sleep(wait_time.total_seconds())
+now = dt.datetime.now()
+wait_time = dt.datetime(now.year, now.month, now.day, start_hour, start_minute) - now
+if wait_time.total_seconds() > 0:
+    print(f"Waiting for {wait_time} before starting the bot")
+    sleep(wait_time.total_seconds())
 
 
 main_strikeprc = expiry_trader_obj.calculate_current_atm_strike_prc(today_expiry_token, today_expiry_symbol, prediction, strike_prc_multiplier)
@@ -101,7 +101,7 @@ orders_to_place = [
         "trade_id" : trade_id
     }
 ]
-
-# place_order.place_order_for_strategy(strategy_name,orders_to_place)
+print(orders_to_place)
+place_order.place_order_for_strategy(strategy_name,orders_to_place)
 
 

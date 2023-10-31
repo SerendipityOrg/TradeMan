@@ -318,14 +318,14 @@ def updateSignalDf(last_signal):
         signal_entry[trade_type] = signal
         strategy_obj.set_signal_entry(signal_entry)
         strategy_obj.write_strategy_json(STRATEGY_PATH)
-        # amipy_orders.place_orders(strike_prc,trade_type)
+        amipy_orders.place_orders(strike_prc,trade_type)
 
     try:
         if trade_type is not None:  # check that a signal was generated
             signal_prc = str(last_signal['close'])
             message = f"Signal: {trade_type}\nStrikePrc: {strike_prc} \nDate: {trade_date}\nTime: {trade_time}\nClose: {signal_prc}"
             print(message)
-            # discord_bot.discord_bot(message, "AmiPy")
+            discord_bot.discord_bot(message, "AmiPy")
     except Exception as e:
         print(f"Error in sending telegram message: {e}")
 
