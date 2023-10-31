@@ -10,7 +10,7 @@
 # from pya3 import *
 # from pprint import pprint
 
-# # alice = Aliceblue(user_id="BY1424",api_key="yn6YMylMSOa7Qmp9OPYhtFWSE4OL7hTMTIptvx1Odl1DkVOxqCFuboLnTCJiEd2IoEQolWY7G1JlABIkPxsvDL81hcAcOa08zszFj7DFgqPkNKGJAll3tP3OZjvmIYH6")
+# # # alice = Aliceblue(user_id="BY1424",api_key="yn6YMylMSOa7Qmp9OPYhtFWSE4OL7hTMTIptvx1Odl1DkVOxqCFuboLnTCJiEd2IoEQolWY7G1JlABIkPxsvDL81hcAcOa08zszFj7DFgqPkNKGJAll3tP3OZjvmIYH6")
 # alice = Aliceblue(user_id='929016',api_key='NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
 # session = alice.get_session_id()
 
@@ -51,9 +51,12 @@
 #     json.dump(a, f, indent=4)
 
 
-# from kiteconnect import KiteConnect
+from kiteconnect import KiteConnect
+from pprint import pprint
+kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='PmH7ei2AlgxzPR2Vzgw5VX84P9luWHdB')
 
-# kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='3IE37ECuWhjDlLsCPAvC41fGLmePACVl')
+pprint(kite.orders())
+
 
 
 
