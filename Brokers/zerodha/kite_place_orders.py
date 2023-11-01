@@ -55,7 +55,7 @@ def kite_place_order(kite, order_details, user_details=None):
             trigger_price=trigger_price,
             product=product_type,
             order_type=order_type,
-            tag= order_details.get('order_tag', None)
+            tag= order_details.get('trade_id', None)
         )
         print(f"Order placed. ID is: {order_id}")
         print("order_id",order_id)

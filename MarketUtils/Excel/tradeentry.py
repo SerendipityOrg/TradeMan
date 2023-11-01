@@ -35,8 +35,8 @@ class TradingStrategy:
         self.process_func = process_func
     
     def process_data(self, user_data, broker):
-        if self.name in user_data["orders"]:
-            data = self.process_func(broker, user_data["orders"][self.name])
+        if self.name in user_data["today_orders"]:
+            data = self.process_func(broker, user_data["today_orders"][self.name])
             df = pd.DataFrame(data)
             if 'pnl' in df.columns:
                 PnL = round(df['pnl'].sum(), 1)
@@ -68,10 +68,11 @@ def update_excel_data(all_dfs, df, strategy_name):
     if not df.empty:
         all_dfs[strategy_name] = pd.concat([all_dfs.get(strategy_name, pd.DataFrame()), df])
 
-def update_json_data(data, broker, user, net_pnl, expected_capital, broker_filepath):
+def update_json_data(data, broker, user, net_pnl, current_capital,expected_capital, broker_filepath):
     for username in data:
         if user["account_name"] == username["account_name"]:
             user_details = username
+            user_details["current_capital"] = round(current_capital, 2)
             user_details["yesterday_PnL"] = net_pnl
             user_details["expected_morning_balance"] = round(expected_capital, 2)
     general_calc.write_json_file(broker_filepath,data )
@@ -141,6 +142,7 @@ def main():
 
     for user in data:
         user_data = general_calc.read_json_file(os.path.join(userprofile_dir, f"{user['account_name']}.json"))
+        broker_json = general_calc.read_json_file(broker_filepath)
         phone_number = user["mobile_number"]
         broker = user["broker"]
 
@@ -159,16 +161,19 @@ def main():
             update_excel_data(all_dfs, df, strategy.name)
 
         net_pnl = gross_pnl - total_tax
-        current_capital = user['current_capital']
+        for account in broker_json:
+            if account["account_name"] == user["account_name"]:
+                current_capital = account["expected_morning_balance"]
+
         expected_capital = current_capital + net_pnl if net_pnl > 0 else current_capital - abs(net_pnl)
 
         message_parts = build_message(user['account_name'], strategy_results, gross_pnl, total_tax, current_capital, expected_capital)
         message = "\n".join(message_parts).replace('\u20b9', '₹')
         print(message)
 
-        update_json_data(data, broker, user, net_pnl, expected_capital, broker_filepath)
-        save_all_sheets_to_excel(all_dfs, excel_path)
-        # dtd.update_dtd_sheets()
+        update_json_data(data, broker, user, net_pnl, current_capital,expected_capital, broker_filepath)
+        # save_all_sheets_to_excel(all_dfs, excel_path)
+        # # dtd.update_dtd_sheets()
 
 
         # # save_to_firebase(user, excel_path)  # Existing function

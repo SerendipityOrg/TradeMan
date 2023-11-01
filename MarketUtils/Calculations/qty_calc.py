@@ -23,7 +23,7 @@ def get_price_reference(strategy_name, instrument):
     else:
         return 0 
 # Function to calculate quantity based on capital, risk, price reference, and lot size
-def calculate_quantity(capital, risk, prc_ref, lot_size, strategy_name,user):
+def calculate_quantity(capital, risk, prc_ref, lot_size, strategy_name):
     if strategy_name == "MPWizard" and prc_ref is not None:
         if prc_ref == 0:
             print("Price reference is 0")
