@@ -11,8 +11,8 @@ import Brokers.place_order as place_order
 import Brokers.place_order_calc as place_order_calc
 import Strategies.StrategyBase as StrategyBase
 import MarketUtils.InstrumentBase as InstrumentBase
-import Brokers.BrokerUtils.Broker as Broker
 import MarketUtils.Calculations.qty_calc as qty_calc
+import MarketUtils.Discord.discordchannels as discord 
 
 ENV_PATH = os.path.join(DIR_PATH, '.env')
 _,STRATEGY_PATH = place_order_calc.get_strategy_json('ExpiryTrader')
@@ -38,7 +38,7 @@ main_transcation_type = expiry_trader_obj.get_general_params().get('MainTransact
 def calculate_qty(main_exchange_token,base_symbol):
     token = instrument_obj.get_token_by_exchange_token(main_exchange_token)
     ltp = expiry_trader_obj.get_single_ltp(token)
-    qty = qty_calc.calculate_quantity_based_on_ltp(ltp,expiry_trader_obj.get_strategy_name(),base_symbol)
+    qty_calc.calculate_quantity_based_on_ltp(ltp,expiry_trader_obj.get_strategy_name(),base_symbol)
 
 
 # Extract strategy parameters
@@ -75,8 +75,13 @@ hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expir
 calculate_qty(main_exchange_token,today_expiry_symbol)
 trade_id = place_order_calc.get_trade_id(strategy_name, "entry")
 
-print(f"Main Strike Price: {main_strikeprc}", f"main_option_type: {main_option_type}")
-print(f"Hedge Strike Price: {hedge_strikeprc}", f"hedge_option_type: {hedge_option_type}")
+
+message = ( f"Trade for {dt.date.today()}\n"
+            f"Direction : {prediction}\n"
+            f"Main Trade {instrument_obj.get_trading_symbol_by_exchange_token(main_exchange_token)} \n"
+            f"Hedge Trade {instrument_obj.get_trading_symbol_by_exchange_token(hedge_exchange_token)} \n")
+
+discord.discord_bot(message, strategy_name)
 
 orders_to_place = [
     {  

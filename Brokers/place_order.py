@@ -58,15 +58,12 @@ def place_stoploss_order(order_details=None,monitor=None):
 
     token = instrument_base.get_token_by_exchange_token(order_details.get('exchange_token'))
     option_ltp = strategy_obj.get_single_ltp(str(token))
-    # option_ltp = monitor.fetch_ltp(token)
-
 
     order_details['limit_prc'] = place_order_calc.calculate_stoploss(order_details,option_ltp)
     order_details['trigger_prc'] = place_order_calc.calculate_trigger_price(order_details.get('transaction_type'),order_details['limit_prc'])
     order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
+
     order_details['order_type'] = 'Stoploss'
-    
-    print("stoploss",order_details['limit_prc'])
 
     if "Trailing" in order_details['order_mode']:
         order_details['target'] = place_order_calc.calculate_target(option_ltp,order_details.get('price_ref'))
@@ -79,7 +76,7 @@ def place_stoploss_order(order_details=None,monitor=None):
         print("Unknown broker")
         return
 
-def modify_stoploss(order_details=None,monitor=None):
+def modify_stoploss(order_details=None):
     if order_details['broker'] == "aliceblue":
         aliceblue.update_alice_stoploss(order_details)
     elif order_details['broker'] == "zerodha":
@@ -88,91 +85,18 @@ def modify_stoploss(order_details=None,monitor=None):
         print("Unknown broker")
     
 
-def place_tsl(order_details):
-    print("in place tsl")
-    modify_stoploss(order_details=order_details)
-    price_ref = order_details['price_ref'] # TODO: This is related to MPwizard. Generalize this function
-    order_details['target'] += (price_ref / 2)  # Adjust target by half of price_ref
-    order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
-    return order_details['target'], order_details['limit_prc']
+def modify_orders(order_details=None):
+    active_users = Broker.get_active_subscribers(order_details[0]['strategy'])
+    for broker, usernames in active_users.items():
+        for username in usernames:
+            for order in order_details:
+                order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
+                order_with_user["broker"] = broker
+                order_with_user["username"] = username
+                order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
+                modify_stoploss(order_with_user)
 
 
-def modify_orders(token=None,monitor=None,order_details=None):
-    print("in modify orders")
-    #send discord message
-    discordchannels.discord_bot(f"Target reached for {token}", order_details['strategy'])
-
-    if token:
-        token_data = monitor.tokens_to_monitor[token] #change monitor to intruMonitor
-        order_details = token_data['order_details']
-        order_details['target'] = token_data['target']
-        order_details['limit_prc'] = token_data['limit_prc']
-        order_details['strategy'] = token_data['strategy']
-    # print(order_details['target'],"target ",order_details['limit_prc'],"limit prc")
-
-    
-    weeklyexpiry, _ = general_calc.get_expiry_dates(order_details['base_symbol'])
-    token, trading_symbol_list, trading_symbol_aliceblue = general_calc.get_tokens(
-                                                            order_details['base_symbol'], 
-                                                            weeklyexpiry, 
-                                                            order_details['option_type'], 
-                                                            order_details['strike_prc']
-                                                        )
-
-
-    users_to_trade = general_calc.get_strategy_users(order_details['strategy'])
-    
-    for broker,user in users_to_trade:
-        user_details,_ = place_order_calc.get_user_details(user)
-        if broker == 'zerodha':
-            trading_symbol = trading_symbol_list
-        elif broker == 'aliceblue':
-            trading_symbol = trading_symbol_aliceblue
-        qty = place_order_calc.get_quantity(user_details, broker, order_details['strategy'], trading_symbol)
-
-        monitor_order_func = {
-                    'user': user,
-                    'broker': broker,
-                    'qty' : qty,
-                    'limit_prc': order_details['limit_prc'],
-                    'strategy': order_details['strategy'],
-                    'trade_type': 'SELL'
-                }
-        if broker == 'zerodha' :
-            monitor_order_func['token'] = trading_symbol_list
-            zerodha.update_stoploss(monitor_order_func)
-        elif broker == 'aliceblue':
-            monitor_order_func['token'] = trading_symbol_aliceblue
-            aliceblue.update_stoploss(monitor_order_func)
-
-def exit_order_details(token=None,monitor=None):
-    token_data = monitor.tokens_to_monitor[token]
-    order_details = token_data['order_details']
-    weeklyexpiry, _ = general_calc.get_expiry_dates(order_details['base_symbol'])
-    token, trading_symbol_list, trading_symbol_aliceblue = general_calc.get_tokens(
-                                                            order_details['base_symbol'], 
-                                                            weeklyexpiry, 
-                                                            order_details['option_type'], 
-                                                            order_details['strike_prc']
-                                                        )
-    
-
-    users_to_trade = general_calc.get_strategy_users(token_data['strategy'])
-
-    for broker,user in users_to_trade:
-        exit_order_func = {
-                    'user': user,
-                    'broker': broker,
-                    'limit_prc': order_details['limit_prc'],
-                    'strategy': token_data['strategy'],
-                    'trade_type': 'SELL'
-                }
-        if broker == 'zerodha' :
-            exit_order_func['token'] = trading_symbol_list
-            zerodha.exit_order(exit_order_func)
-        elif broker == 'aliceblue':
-            exit_order_func['token'] = trading_symbol_aliceblue.name
-            aliceblue.exit_order(exit_order_func)
 
 
 

@@ -61,8 +61,6 @@ class InstrumentMonitor:
         
         self.tokens_to_monitor[token] = {
             'trigger_points': trigger_points or {},
-            'target': target,
-            'limit': limit,
             'ltp': None,  # Last Traded Price
             'order_details' : order_details,
             'ib_level': ib_level
@@ -74,8 +72,8 @@ class InstrumentMonitor:
         Args:
         token (str): The token of the instrument.
         """
-        if token in self.instruments:
-            del self.instruments[token]
+        if token in self.tokens_to_monitor:
+            del self.tokens_to_monitor[token]
 
     def set_callback(self, callback: Callable[[str, Any], None]):
         """Set the callback function to be called on trigger events.
@@ -89,20 +87,6 @@ class InstrumentMonitor:
         """Fetch the LTP for a given token."""
         ltp = kite.ltp(token)  # assuming 'kite' is accessible here or you may need to pass it
         return ltp[str(token)]['last_price']
-
-    def _fetch_ltps(self):
-        """Fetch LTPs for all monitored tokens."""
-        ltps = {}
-        for token in self.tokens_to_monitor.keys():
-            print("in",self.tokens_to_monitor.keys())
-            print(f"Fetching LTP for token {token}")
-            try:
-                ltp_data = self.fetch_ltp(token)
-                ltps[token] = ltp_data
-            except Exception as e:
-                print(f"Error fetching LTP for token {token}: {e}")
-        return ltps
-
 
     def monitor(self):
         while True:
@@ -121,6 +105,7 @@ class InstrumentMonitor:
     def _process_token(self, token, ltp, data):
         order_details = data.get('order_details')
         trigger_points = data.get('trigger_points')
+
         if trigger_points:
             # Initialize trigger states if not already done
             if 'IBHigh_triggered' not in data:
@@ -144,15 +129,17 @@ class InstrumentMonitor:
             data['target_triggered'] = False
         if 'limit_triggered' not in data:
             data['limit_triggered'] = False
+        
+        if order_details:
+            # Check for target and limit
+            if order_details['target'] and ltp >= order_details['target'] and self.callback:
+                self.callback(token, {'type': 'target', 'value': ltp},order_details=order_details)
+                data['target_triggered'] = True
 
-        # Check for target and limit
-        if data['order_details']['target'] and ltp >= data['order_details']['target'] and self.callback:
-            self.callback(token, {'type': 'target', 'value': ltp},order_details=order_details)
-            data['target_triggered'] = True
-
-        if data['order_details']['limit_prc'] and ltp <= data['order_details']['limit_prc'] and self.callback:
-            self.callback(token, {'type': 'limit', 'value': ltp},order_details=order_details)
-            data['limit_triggered'] = True
+            if order_details['limit_prc'] and ltp <= order_details['limit_prc'] and self.callback:
+                self.callback(token, {'type': 'limit', 'value': ltp},order_details=order_details)
+                self.remove_token(token)
+                data['limit_triggered'] = True
 
             
 

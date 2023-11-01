@@ -2,6 +2,7 @@ import os, sys
 import urllib
 from dotenv import load_dotenv
 import numpy as np
+import datetime as dt
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -14,6 +15,7 @@ import Strategies.StrategyBase as StrategyBase
 import MarketUtils.InstrumentBase as InstrumentBase
 import Brokers.place_order_calc as place_order_calc
 import Strategies.OvernightFutures.OvernightFutures_calc as OF_calc
+import MarketUtils.Discord.discordchannels as discord
 
 _,STRATEGY_PATH = place_order_calc.get_strategy_json('OvernightFutures')
 
@@ -60,6 +62,13 @@ monthly_expiry = instrument_obj.get_expiry_by_criteria(strategy_index,0,"FUT", m
 hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(strategy_index,strikeprc, option_type,weekly_expiry)   
 futures_exchange_token = instrument_obj.get_exchange_token_by_criteria(strategy_index,futures_strikeprc, futures_option_type,monthly_expiry)
 trade_id = place_order_calc.get_trade_id(strategy_name, "entry")
+
+message = ( f"Trade for {dt.date.today()}\n"
+            f"Direction : {prediction}\n"
+            f"Future : {instrument_obj.get_trading_symbol_by_exchange_token(futures_exchange_token)}\n"
+            f"Hedge : {instrument_obj.get_trading_symbol_by_exchange_token(hedge_exchange_token)}\n")
+
+discord.discord_bot(message, strategy_name)
 
 orders_to_place = [
     {  

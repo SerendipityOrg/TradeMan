@@ -138,6 +138,21 @@ class OrderMonitor:
         "trade_id" : place_order_calc.get_trade_id(strategy_obj.get_strategy_name(), "entry")
         }]
         return order_details
+    
+    def create_modify_order_details(self,order_details):
+        modify_order_details = [
+        {
+            "strategy": strategy_obj.get_strategy_name(),
+            "exchange_token" : order_details['exchange_token'],
+            "transaction_type": order_details['transaction_type'],   #TODO remove hardcode
+            "target": order_details['target'],
+            "limit": order_details['limit_prc'],
+            "order_type" : 'Stoploss',
+            "product_type" : order_details['product_type'],
+            "segment" : order_details['segment']
+        }
+        ]
+        return modify_order_details
 
     def _get_mood_data_for_instrument(self, name):
         return self.mood_data['EntryParams'].get(name)
@@ -162,6 +177,9 @@ class OrderMonitor:
         token_to_index = {str(v): k for k, v in index_tokens.items()}
         return token_to_index.get(token)
 
+    def get_instrument_by_token(self,token):
+        return instrument_obj.get_trading_symbol_by_exchange_token(token)
+        
     def process_orders(self,instrument, cross_type, ltp,message=None):
         index_name = self.get_index_name(instrument)
         if index_name:
@@ -174,7 +192,8 @@ class OrderMonitor:
                 return
             order_to_place = self.create_order_details(name,cross_type,ltp,price_ref)
             place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)
-            if message:  
+            if message:
+                print(message)  
                 discordbot.discord_bot(message,strategy_obj.get_strategy_name())
 
             self.indices_triggered_today.add(name) 
@@ -184,6 +203,15 @@ class OrderMonitor:
                     self.message_sent[name][level] = True 
         else:
             print("Index name not found for token:", instrument)
+
+    def process_modify_orders(self,order_details, message=None):
+        order_to_modify = self.create_modify_order_details(order_details)
+        place_order.modify_orders(order_details=order_to_modify)
+
+        price_ref = order_details['price_ref'] # TODO: This is related to MPwizard. Generalize this function
+        order_details['target'] += (price_ref / 2)  # Adjust target by half of price_ref
+        order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
+        return order_details['target'], order_details['limit_prc']
 
     def handle_trigger(self, instrument,data,order_details=None):
         ltp = self.instrument_monitor.fetch_ltp(instrument)
@@ -196,21 +224,24 @@ class OrderMonitor:
             
         elif data['type'] == 'target':
             if order_details:
-                new_target, new_limit_prc = place_order.place_tsl(order_details)
+                new_target, new_limit_prc = self.process_modify_orders(order_details=order_details)
                 order_details['target'] = new_target
                 order_details['limit'] = new_limit_prc
-                message = f"New target set to {new_target} and new limit price set to {new_limit_prc}."
+                trading_symbol = self.get_instrument_by_token(order_details['exchange_token'])
+                message = f"New target for {trading_symbol} set to {new_target} and new limit price set to {new_limit_prc}."
+                print(message)
                 discordbot.discord_bot(message,strategy_obj.get_strategy_name())
             else:
                 print("No order details available to update target and limit prices.")
                 
         elif data['type'] == 'limit':
-            message = f"Limit reached for {index_name} at {ltp}. Handling accordingly."
+            trading_symbol = self.get_instrument_by_token(order_details['exchange_token'])
+            message = f"Limit reached for {trading_symbol} at {ltp}. Handling accordingly."
+            print(message)
             discordbot.discord_bot(message,strategy_obj.get_strategy_name())        
 
     def monitor_index(self):
         print("Monitoring started...")
-        # while True:
         if dt.date.today() != self.today_date:
             self._reset_daily_counters()
             self.message_sent = {
