@@ -96,7 +96,6 @@ def place_aliceblue_order(order_details: dict):
 
 
 def update_alice_stoploss(order_details):
-    print("in update stoploss")
     user_details = place_order_calc.assign_user_details(order_details.get('username'))
     alice = alice_utils.create_alice_obj(user_details)
     order_id = place_order_calc.retrieve_order_id(

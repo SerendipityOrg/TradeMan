@@ -2,7 +2,7 @@ import os,sys
 import json
 import pandas as pd
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment,NamedStyle
 from babel.numbers import format_currency
 import strategy_calc as sc
 import firebase_admin
@@ -79,15 +79,28 @@ def update_json_data(data, broker, user, net_pnl, current_capital,expected_capit
 
 def save_all_sheets_to_excel(all_dfs, excel_path):
     with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+        # Check if the named style already exists in the workbook
+        if 'number_style' not in writer.book.named_styles:
+            # If the style does not exist, create and add it to the workbook
+            number_style = NamedStyle(name='number_style', number_format='0.00')
+            writer.book.add_named_style(number_style)
+
         for sheet_name, df in all_dfs.items():
             df.to_excel(writer, sheet_name=sheet_name, index=False)
 
             # Now that the data is written, get the worksheet to apply styles
             worksheet = writer.sheets[sheet_name]
 
-            for row in worksheet.iter_rows():
-                for cell in row:
+            # List of columns (by header name) that should be formatted with two decimal places
+            rounded_columns = ['entry_price', 'exit_price', 'hedge_entry_price', 'hedge_exit_price', 'trade_points', 'pnl', 'tax', 'net_pnl']
+
+            for row_index, row in enumerate(worksheet.iter_rows(min_row=2), start=2):  # Start from the second row
+                for col_index, cell in enumerate(row, start=1):
                     cell.alignment = Alignment(horizontal='center')
+                    header = worksheet.cell(row=1, column=col_index).value
+                    if header in rounded_columns and isinstance(cell.value, (int, float)):
+                        cell.style = 'number_style'
+
 
 def build_message(user, strategy_results, gross_pnl, tax, current_capital, expected_capital):
     message_parts = [f"Hello {user},We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"]
@@ -161,6 +174,7 @@ def main():
             update_excel_data(all_dfs, df, strategy.name)
 
         net_pnl = gross_pnl - total_tax
+
         for account in broker_json:
             if account["account_name"] == user["account_name"]:
                 current_capital = account["expected_morning_balance"]
@@ -172,7 +186,7 @@ def main():
         print(message)
 
         update_json_data(data, broker, user, net_pnl, current_capital,expected_capital, broker_filepath)
-        # save_all_sheets_to_excel(all_dfs, excel_path)
+        save_all_sheets_to_excel(all_dfs, excel_path)
         # # dtd.update_dtd_sheets()
 
 
