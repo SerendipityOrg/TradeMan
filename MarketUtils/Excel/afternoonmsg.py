@@ -1,25 +1,33 @@
-import os
-import general_calc
+import os, sys
 import pandas as pd
 from datetime import datetime
 from openpyxl import load_workbook
 from babel.numbers import format_currency
+from telethon.sync import TelegramClient
+from dotenv import load_dotenv
 
-# Set up the directory paths
+
+# Setting up directory paths
 DIR = os.getcwd()
+sys.path.append(DIR)
+
+import MarketUtils.general_calc as general_calc
+import Streamlitapp.formats as custom_format
+import dtdautomation as dtd
+
 script_dir = os.path.dirname(os.path.realpath(__file__))
 broker_filepath = os.path.join(DIR, "MarketUtils", "broker.json")
 excel_dir = os.path.join(DIR, "UserProfile", "excel")
+ENV_PATH = os.path.join(DIR,'Streamlitapp', '.env')
+
+# Loading environment variables
+load_dotenv(ENV_PATH)
+api_id = os.getenv('telethon_api_id')
+api_hash = os.getenv('telethon_api_hash')
 
 
-def custom_format(amount):
-    """Format the currency amount in INR format and replace the default symbol."""
-    formatted = format_currency(amount, 'INR', locale='en_IN')
-    return formatted.replace('₹', '₹ ')
-
-
+# Function to load an existing Excel file and return its data as a dictionary of pandas DataFrames
 def load_existing_excel(excel_path):
-    """Load an existing Excel file and return its data as a dictionary of pandas DataFrames."""
     if not os.path.exists(excel_path):
         raise FileNotFoundError(f"Excel file not found: {excel_path}")
 
@@ -32,22 +40,71 @@ def load_existing_excel(excel_path):
         return {}
 
 
+# Function to send a message via Telegram
+def send_telegram_message(phone_number, message):
+    session_filepath = os.path.join(script_dir, "..", '..', '..', "+918618221715.session")
+    with TelegramClient(session_filepath, api_id, api_hash) as client:
+        client.send_message(phone_number, message, parse_mode='md')
+
+
+# The main function which processes user data and sends PNL messages
+def main():
+    broker_data = general_calc.read_json_file(broker_filepath)
+    active_users = [user for user in broker_data if "Active" in user['account_type']]
+    today = datetime.now().strftime('%Y-%m-%d')
+
+    for user in active_users:
+        excel_path = os.path.join(excel_dir, f"{user['account_name']}.xlsx")
+        all_dfs = load_existing_excel(excel_path)
+
+        strategy_results = {}
+        gross_pnl = 0
+        total_tax = 0
+
+        for strategy, df in all_dfs.items():
+            if 'entry_time' in df.columns and 'exit_time' in df.columns:
+                df_today = df[(df['entry_time'] == today) | (df['exit_time'] == today)]
+                if not df_today.empty:
+                    pnl = df_today['pnl'].sum()
+                    tax = df_today['tax'].sum()
+
+                    strategy_results[strategy] = pnl
+                    gross_pnl += pnl
+                    total_tax += tax
+
+        net_pnl = gross_pnl - total_tax
+        current_capital = next(account["expected_morning_balance"] for account in broker_data if account["account_name"] == user["account_name"])
+        expected_capital = current_capital + net_pnl if net_pnl > 0 else current_capital - abs(net_pnl)
+        
+        message = build_message(user['account_name'], strategy_results, gross_pnl, total_tax, current_capital, expected_capital)
+        print(message)
+        
+        # Sending the message via Telegram
+        send_telegram_message(user['phone_number'], message)
+
+
+# Function to update JSON data with new PNL, capital values, etc.
 def update_json_data(data, broker, user, net_pnl, current_capital, expected_capital, broker_filepath):
-    """Update the JSON data with new PNL, capital values, etc."""
     for username in data:
         if user["account_name"] == username["account_name"]:
-            user_details = username
-            user_details["current_capital"] = round(current_capital, 2)
-            user_details["yesterday_PnL"] = net_pnl
-            user_details["expected_morning_balance"] = round(
-                expected_capital, 2)
+            if "Active" in user['account_type']:
+                user_details = username
+                user_details["current_capital"] = round(current_capital, 2)
+                user_details["yesterday_PnL"] = net_pnl
+                user_details["expected_morning_balance"] = round(expected_capital, 2)
     general_calc.write_json_file(broker_filepath, data)
 
 
-def build_message(user, gross_pnl, tax, current_capital, expected_capital):
-    """Construct and return the message for the user based on their PNL and other metrics."""
+# Function to construct a PNL message for the user
+def build_message(user, strategy_results, gross_pnl, tax, current_capital, expected_capital,total_tax):
     message_parts = [
-        f"Hello {user},We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"]
+        f"Hello {user}, We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"
+    ]
+
+    for strategy_name, pnl in strategy_results.items():
+        if pnl != 0:
+            message_parts.append(f"{strategy_name}: {custom_format(pnl)}")
+
     message_parts.extend([
         f"\n**Gross PnL: {custom_format(gross_pnl)}**",
         f"**Expected Tax: {custom_format(tax)}**",
@@ -56,57 +113,7 @@ def build_message(user, gross_pnl, tax, current_capital, expected_capital):
         "\nBest Regards,\nSerendipity Trading Firm"
     ])
 
-    return message_parts
-
-
-def main():
-    # Load active users data
-    data = general_calc.read_json_file(
-        os.path.join(script_dir, "..", "active_users.json"))
-    today = datetime.now().strftime('%Y-%m-%d')  # Get today's date
-
-    for user in data:
-        excel_path = os.path.join(excel_dir, f"{user['account_name']}.xlsx")
-        broker_json = general_calc.read_json_file(broker_filepath)
-        broker = user["broker"]
-
-        # Load the existing Excel data
-        all_dfs = load_existing_excel(excel_path)
-
-        # Initialize counters for the PNL and tax calculations
-        strategy_results = {}
-        gross_pnl = 0
-        total_tax = 0
-
-        # Calculate PNL and Tax for today for each strategy
-        for strategy, df in all_dfs.items():
-            df_today = df[df['entry_time'] == today]
-            if not df_today.empty:
-                pnl = df_today['pnl'].sum()
-                tax = df_today['tax'].sum()
-                strategy_results[strategy] = pnl  # Store PNL for each strategy
-                gross_pnl += pnl
-                total_tax += tax
-
-        # Calculate Net PNL
-        net_pnl = gross_pnl - total_tax
-
-        for account in broker_json:
-            if account["account_name"] == user["account_name"]:
-                current_capital = account["expected_morning_balance"]
-
-        expected_capital = current_capital + \
-            net_pnl if net_pnl > 0 else current_capital - abs(net_pnl)
-
-        # Construct the message and print
-        message_parts = build_message(
-            user['account_name'], gross_pnl, total_tax, current_capital, expected_capital)
-        message = "\n".join(message_parts).replace('\u20b9', '₹')
-        print(message)
-
-        # Update the JSON data
-        update_json_data(data, broker, user, net_pnl,
-                         current_capital, expected_capital, broker_filepath)
+    return "\n".join(message_parts).replace('\u20b9', '₹')
 
 
 # Execute the main function when script is run
