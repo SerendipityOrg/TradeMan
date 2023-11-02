@@ -90,30 +90,30 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
     return message
 
 
-
-active_users = general_calc.read_json_file(active_users_json_path)
 broker_data = general_calc.read_json_file(broker_filepath)
 updated_users = []
 
-for user in active_users:
-    # Calculate investment values
-    user_data = user
-    invested_value = get_invested_value(user, user_data['broker'], user)
-    for client in broker_data:
-        if user_data['account_name'] == client['account_name']:
-            user_data['expected_morning_balance'] = client['expected_morning_balance']
-            user_data['yesterday_PnL'] = client['yesterday_PnL']
-            user_data['current_capital'] = client['current_capital']
-            user_data['mobile_number'] = client['mobile_number']
+for user in broker_data:
+    # Check if the account type is Active
+    if "Active" in user['account_type']:
+        # Calculate investment values
+        user_data = user
+        invested_value = get_invested_value(user, user_data['broker'], user)
+        for client in broker_data:
+            if user_data['account_name'] == client['account_name']:
+                user_data['expected_morning_balance'] = client['expected_morning_balance']
+                user_data['yesterday_PnL'] = client['yesterday_PnL']
+                user_data['current_capital'] = client['current_capital']
+                user_data['mobile_number'] = client['mobile_number']
 
-    cash_balance = user_data['expected_morning_balance'] - invested_value
-    current_capital = cash_balance + invested_value
-    formatted_date = date.today().strftime("%d %b %Y")
-    message = generate_message(user, formatted_date, user_data,cash_balance , invested_value, current_capital)
+        cash_balance = user_data['expected_morning_balance'] - invested_value
+        current_capital = cash_balance + invested_value
+        formatted_date = date.today().strftime("%d %b %Y")
+        message = generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital)
 
-    user_data['current_capital'] = current_capital
-    phone_number = user_data['mobile_number']
-    print(message)
+        user_data['current_capital'] = current_capital
+        phone_number = user_data['mobile_number']
+        print(message)
 #     updated_users.append(user_data)
 
 #     with TelegramClient(session_filepath, api_id, api_hash) as client:
