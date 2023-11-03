@@ -52,20 +52,27 @@ class Instrument:
             weekly_expiry_type = "current_week"
         return weekly_expiry_type
 
-    def monthly_expiry_type(self): #TODO generalise the weekday
+    def monthly_expiry_type(self):
         today = datetime.today()
-        last_day_of_month = today.replace(day=28) + timedelta(days=4)
-        last_day_of_month = last_day_of_month - timedelta(days=last_day_of_month.day)
         
-        # Find the last Thursday of the month
-        last_thursday_of_month = last_day_of_month
-        while last_thursday_of_month.weekday() != 3:
-            last_thursday_of_month -= timedelta(days=1)
+        # Find the last day of the previous month
+        last_day_of_previous_month = today.replace(day=1) - timedelta(days=1)
+        
+        # Find the last Thursday of the previous month
+        last_thursday_of_previous_month = last_day_of_previous_month
+        while last_thursday_of_previous_month.weekday() != 3:
+            last_thursday_of_previous_month -= timedelta(days=1)
+        
+        # Find the first Thursday of the current month
+        first_day_of_current_month = today.replace(day=1)
+        days_until_thursday = (3 - first_day_of_current_month.weekday() + 7) % 7
+        first_thursday_of_current_month = first_day_of_current_month + timedelta(days=days_until_thursday)
+        
+        # Find the first day of the last week of the previous month
+        first_day_of_last_week_of_previous_month = last_day_of_previous_month - timedelta(days=last_day_of_previous_month.weekday())
         
         # Check the conditions
-        if today.weekday() == 3 and today.day > 21:
-            return "next_month"
-        elif today > last_thursday_of_month and today.month == last_thursday_of_month.month:
+        if today >= first_day_of_last_week_of_previous_month or (today > last_thursday_of_previous_month and today <= first_thursday_of_current_month):
             return "next_month"
         else:
             return "current_month"
@@ -96,7 +103,6 @@ class Instrument:
         return expiry_strategies[expiry_type]()
     
     def get_exchange_token_by_criteria(self, base_symbol,strike_price, option_type,expiry):
-        print(base_symbol,strike_price, option_type,expiry)
         filtered_data = self._filter_data(base_symbol, option_type, strike_price, expiry)
         if not filtered_data.empty:
             return filtered_data.iloc[0]['exchange_token']

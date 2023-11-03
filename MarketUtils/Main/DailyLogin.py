@@ -4,7 +4,6 @@ import os, sys
 print("Today's date:", dt.datetime.today())
 
 DIR_PATH = os.getcwd()
-print(DIR_PATH)
 sys.path.append(DIR_PATH)
 
 import Brokers.Aliceblue.alice_login as alice_login
@@ -12,6 +11,8 @@ import Brokers.Zerodha.kite_login as kite_login
 import MarketUtils.general_calc as general_calc
 import MarketUtils.Calculations.qty_calc as qty_calc
 import Brokers.place_order_calc as place_order_calc
+import Brokers.Aliceblue.alice_utils as alice_utils
+import Brokers.Zerodha.kite_utils as kite_utils
 
 broker_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'broker.json')
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
@@ -48,12 +49,13 @@ active_users = calculate_qty(active_users)
 
 general_calc.write_json_file(active_users_json_path, active_users)
 
+def download_csv(active_users):
+    for user in active_users:
+        if user['broker'] == 'zerodha':
+            kite_utils.get_csv_kite(active_users[0])
+        elif user['broker'] == 'aliceblue':
+            alice_utils.get_csv_alice(active_users[0])
 
-
-
-
-# if datetime.today().weekday() == 4:
-    # kite_utils.get_csv_kite(user_details)
-    # alice_utils.get_csv_alice()
+download_csv(active_users)
 
 

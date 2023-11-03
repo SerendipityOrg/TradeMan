@@ -56,14 +56,6 @@ desired_start_time_str = expiry_trader_obj.get_entry_params().get('EntryTime')
 
 start_hour, start_minute, start_second = map(int, desired_start_time_str.split(':'))
 
-# Main logic
-now = dt.datetime.now()
-wait_time = dt.datetime(now.year, now.month, now.day, start_hour, start_minute) - now
-if wait_time.total_seconds() > 0:
-    print(f"Waiting for {wait_time} before starting the bot")
-    sleep(wait_time.total_seconds())
-
-
 main_strikeprc = expiry_trader_obj.calculate_current_atm_strike_prc(today_expiry_token, today_expiry_symbol, prediction, strike_prc_multiplier)
 hedge_strikeprc = expiry_trader_obj.get_hedge_strikeprc(today_expiry_token, today_expiry_symbol, prediction, hedge_multiplier)
 main_option_type = expiry_trader_obj.get_option_type(prediction, "OS")
@@ -76,12 +68,8 @@ calculate_qty(main_exchange_token,today_expiry_symbol)
 trade_id = place_order_calc.get_trade_id(strategy_name, "entry")
 
 
-message = ( f"Trade for {dt.date.today()}\n"
-            f"Direction : {prediction}\n"
-            f"Main Trade {instrument_obj.get_trading_symbol_by_exchange_token(main_exchange_token)} \n"
-            f"Hedge Trade {instrument_obj.get_trading_symbol_by_exchange_token(hedge_exchange_token)} \n")
-
-discord.discord_bot(message, strategy_name)
+main_trade_symbol = instrument_obj.get_trading_symbol_by_exchange_token(main_exchange_token)
+hedge_trade_symbol = instrument_obj.get_trading_symbol_by_exchange_token(hedge_exchange_token)
 
 orders_to_place = [
     {  
@@ -105,8 +93,35 @@ orders_to_place = [
         "order_mode" : ["Main","SL"],
         "trade_id" : trade_id
     }
-]
-print(orders_to_place)
-place_order.place_order_for_strategy(strategy_name,orders_to_place)
+    ]
+
+def message_for_orders(trade_type,prediction,main_trade_symbol,hedge_trade_symbol):
+    if trade_type == "Test":
+        strategy_name = "TestOrders"
+    message = ( f"{trade_type} Trade for {expiry_trader_obj.get_strategy_name()}\n"
+            f"Direction : {prediction}\n"
+            f"Main Trade : {main_trade_symbol}\n"
+            f"Hedge Trade {hedge_trade_symbol} \n")    
+    # discord.discord_bot(message, strategy_name)
+    
+
+def main():
+    now = dt.datetime.now()
+
+    if now.time() < dt.time(15, 0):
+        print("Time is before 9:00 AM, placing test orders.")
+        message_for_orders("Test",prediction,main_trade_symbol,hedge_trade_symbol)
+    else:
+        wait_time = dt.datetime(now.year, now.month, now.day, start_hour, start_minute) - now
+        if wait_time.total_seconds() > 0:
+            print(f"Waiting for {wait_time} before starting the bot")
+            sleep(wait_time.total_seconds())
+        
+        print(orders_to_place)
+        message_for_orders("Live",prediction,main_trade_symbol,hedge_trade_symbol)
+        place_order.place_order_for_strategy(strategy_name,orders_to_place)
 
 
+
+if __name__ == "__main__":
+    main()

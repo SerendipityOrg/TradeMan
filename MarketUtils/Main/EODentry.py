@@ -24,10 +24,10 @@ def simplify_zerodha_order(detail):
         option_type = trade_symbol[-2:]
 
     trade_id = detail['tag']
-    # if trade_id.endswith('_entry'):
-    #     trade_id = trade_id.rsplit('_entry', 1)[0]
-    # elif trade_id.endswith('_exit'):
-    #     trade_id = trade_id.rsplit('_exit', 1)[0]
+    if trade_id.endswith('_entry'):
+        order_type = "entry"
+    elif trade_id.endswith('_exit'):
+        order_type = "exit"
     
     return {
         'trade_id' : trade_id,  # This is the order_id for zerodha
@@ -37,7 +37,8 @@ def simplify_zerodha_order(detail):
         'strike_price': strike_price,
         'option_type': option_type,
         'trading_symbol': trade_symbol,
-        'trade_type': detail['transaction_type']
+        'trade_type': detail['transaction_type'],
+        'order_type' : order_type
     }
 
 def simplify_aliceblue_order(detail):
@@ -49,10 +50,11 @@ def simplify_aliceblue_order(detail):
         option_type = detail['optionType']
 
     trade_id = detail['remarks']
-    # if trade_id.endswith('_entry'):
-    #     trade_id = trade_id.rsplit('_entry', 1)[0]
-    # elif trade_id.endswith('_exit'):
-    #     trade_id = trade_id.rsplit('_exit', 1)[0]
+
+    if trade_id.endswith('_entry'):
+        order_type = "entry"
+    elif trade_id.endswith('_exit'):
+        order_type = "exit"
 
     return {
         'trade_id' : trade_id,
@@ -62,7 +64,8 @@ def simplify_aliceblue_order(detail):
         'strike_price': strike_price,
         'option_type': option_type,
         'trading_symbol': detail['Trsym'],
-        'trade_type': 'BUY' if detail['Trantype'] == 'B' else 'SELL'
+        'trade_type': 'BUY' if detail['Trantype'] == 'B' else 'SELL',
+        'order_type' : order_type
     }
 
 users_with_strategies = []
@@ -177,42 +180,55 @@ def mpwizard_details(orders, broker, user):
 def overnight_futures_details(orders, broker, user):
     results = {}
     morning_trade_orders = []
+    afternoon_trade_orders = []
 
     # Simplify the orders and collect them
     for order in orders:
         simplified_order = simplify_zerodha_order(order) if broker == "zerodha" else simplify_aliceblue_order(order) if broker == "aliceblue" else order
-        simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
-        morning_trade_orders.append(simplified_order)
+        
+        if simplified_order['order_type'] == 'entry':
+            simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
+            morning_trade_orders.append(simplified_order)
+        elif simplified_order['order_type'] == 'exit':
+            simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
+            afternoon_trade_orders.append(simplified_order)
 
     # Check if there are 2 orders and group them under "Morning Trade"
     # Afternoon orders are entered after placing the orders in the afternoon
     results = {
         "OvernightFutures": {
-            "Morning": morning_trade_orders
+            "Morning": morning_trade_orders,
+            "Afternoon": afternoon_trade_orders
         }
     }
     return results
 
 def expiry_trader_details(orders,broker,user):
     results = {}
-    buy_orders = []
-    sell_orders = []
+    entry_orders = []
+    exit_orders = []
 
     # Simplify the orders and segregate them
     for order in orders:
         simplified_order = simplify_zerodha_order(order) if broker == "zerodha" else simplify_aliceblue_order(order) if broker == "aliceblue" else order
 
-        if simplified_order["trade_type"] == "BUY":
+        if simplified_order["order_type"] == "entry":
+            if simplified_order["trade_type"]=="BUY":
+                simplified_order["trade_type"] = "HedgeOrder"
+            elif simplified_order["trade_type"]=="SELL":
+                simplified_order["trade_type"] = "MainOrder"
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
-            buy_orders.append(simplified_order)
-        elif simplified_order["trade_type"] == "SELL":
+            entry_orders.append(simplified_order)
+        elif simplified_order["order_type"] == "exit":
+            if simplified_order["trade_type"]=="BUY":
+                simplified_order["trade_type"] = "MainOrder"
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
-            sell_orders.append(simplified_order)
+            exit_orders.append(simplified_order)
 
     results = {
         "ExpiryTrader": {
-            "BUY": buy_orders,
-            "SELL": sell_orders
+            "Entry": entry_orders,
+            "Exit": exit_orders
         }
     }
     return results
@@ -227,17 +243,14 @@ strategy_to_function = {
 
 # Placeholder function to segregate orders
 def segregate_by_strategy(details, strategies, broker):
-    print(details)
     combined_details = {}
     for strategy in strategies:
-        print(strategy)
         # 3. Get today_orders from the strategy's JSON and add _entry and _exit suffixes
         _, strategy_path = place_order_calc.get_strategy_json(strategy)
         strategy_obj = Strategy.read_strategy_json(strategy_path)
         trade_ids = strategy_obj.get_today_orders()
         entry_ids = [tid + "_entry" for tid in trade_ids]
         exit_ids = [tid + "_exit" for tid in trade_ids]
-        print(trade_ids)
         # 4. Search for the orders in the details list
         for detail in details:
             key_to_check = 'remarks' if broker == 'aliceblue' else 'tag' if broker == 'zerodha' else None

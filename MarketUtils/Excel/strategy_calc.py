@@ -1,10 +1,9 @@
 import pandas as pd
 import os,sys
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-utils_dir = os.path.join(script_dir, "..","Calculations")
-sys.path.append(utils_dir)
-import taxcalculation as tc
+DIR = os.getcwd()
+sys.path.append(DIR)
+import MarketUtils.Calculations.taxcalculation as tc
 
 def process_mpwizard_trades(broker,mpwizard_trades):
     if not mpwizard_trades:
@@ -233,11 +232,11 @@ def process_expiry_trades(broker, expiry_trades):
         return []
 
     result = []
-    trade_ids = set(trade["trade_id"] for trade in expiry_trades["SELL"])
+    trade_ids = set(trade["trade_id"] for trade in expiry_trades["Entry"])
     
     for trade_id in trade_ids:
-        sell_trades = [trade for trade in expiry_trades["SELL"] if trade["trade_id"] == trade_id]
-        buy_trades = [trade for trade in expiry_trades["BUY"] if trade["trade_id"] == trade_id]
+        sell_trades = [trade for trade in expiry_trades["Entry"] if trade["trade_id"] == trade_id]
+        buy_trades = [trade for trade in expiry_trades["Exit"] if trade["trade_id"] == trade_id]
         
         regular_sell = next((trade for trade in sell_trades if trade["trade_type"] == "SELL"), None)
         hedge_sell = next((trade for trade in sell_trades if trade["trade_type"] == "HedgeOrder"), None)

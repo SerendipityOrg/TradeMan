@@ -41,8 +41,14 @@ def kite_place_order(kite, order_details, user_details=None):
     product_type = kite_utils.calculate_product_type(kite,product)
 
 
-    limit_prc = order_details.get('limit_prc', 0.0)
+    limit_prc = round(float(order_details.get('limit_prc', 0.0)), 2)
     trigger_price = order_details.get('trigger_prc', None)
+    if trigger_price is not None:
+        trigger_price = round(float(trigger_price), 2)
+
+    limit_prc = max(limit_prc, 1.0)
+    if trigger_price is not None and trigger_price < 0:
+        trigger_price = 1.5
 
     try:
         order_id = kite.place_order(

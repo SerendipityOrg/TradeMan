@@ -5,10 +5,7 @@ import os,sys
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
-import MarketUtils.Calculations.qty_calc as qty_calc
-import Brokers.Zerodha.kite_login as kite_login
-import Brokers.place_order_calc as place_order_calc
-import MarketUtils.general_calc as general_calc
+
 
 def create_kite_obj(user_details=None,api_key=None,access_token=None):
     if api_key and access_token:
@@ -19,11 +16,11 @@ def create_kite_obj(user_details=None,api_key=None,access_token=None):
         raise ValueError("Either user_details or api_key and access_token must be provided")
 
 def get_csv_kite(user_details):
-    kite = KiteConnect(api_key=user_details['zerodha']['omkar']['api_key'])
-    kite.set_access_token(user_details['zerodha']['omkar']['access_token'])
+    kite = KiteConnect(api_key=user_details['api_key'])
+    kite.set_access_token(user_details['access_token'])
     instrument_dump = kite.instruments()
     instrument_df = pd.DataFrame(instrument_dump)
-    instrument_df.to_csv(r'kite_instruments.csv') 
+    instrument_df.to_csv(r'instruments.csv') 
 
 def get_kite_active_users(active_users, strategy_name):
     subscribed_users = []
@@ -72,13 +69,8 @@ def get_avg_prc(kite,order_id):
     return avg_prc
 
 def get_order_details(user):
-    # user_details = place_order_calc.get_user_details(user)
     kite = create_kite_obj(api_key=user['api_key'],access_token=user['access_token'])
     orders = kite.orders()
     return orders
-    # orders_to_exit = []
-    # for order in orders:
-    #     if order['remarks'] == trade_id:
-    #         orders_to_exit.append(order)
-    # return orders_to_exit
+
 

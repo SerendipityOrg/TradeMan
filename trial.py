@@ -53,15 +53,54 @@
 
 from kiteconnect import KiteConnect
 from pprint import pprint
-kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='PmH7ei2AlgxzPR2Vzgw5VX84P9luWHdB')
+kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='OMVPi2Wcsuo3VSGEkuQHmYAKTQlen26C')
 
 pprint(kite.orders())
 
+# from datetime import datetime, timedelta
+
+# def monthly_expiry_type():
+#     # Convert today to a date object to remove the time component
+#     now = datetime.today()
+
+#     today = now.date()
+    
+#     # Check if today is the 2nd day of the month
+#     if today.day == 2:
+#         return "next_month"
+    
+#     # Find the last day of the current month
+#     last_day_of_current_month = today.replace(day=28) + timedelta(days=4)
+#     last_day_of_current_month -= timedelta(days=last_day_of_current_month.day)
+    
+#     # Find the last Thursday of the current month
+#     last_thursday_of_current_month = last_day_of_current_month
+#     while last_thursday_of_current_month.weekday() != 3:
+#         last_thursday_of_current_month -= timedelta(days=1)
+    
+#     # Find the first Thursday of the next month
+#     first_day_of_next_month = last_day_of_current_month + timedelta(days=1)
+#     days_until_thursday = (3 - first_day_of_next_month.weekday() + 7) % 7
+#     first_thursday_of_next_month = first_day_of_next_month + timedelta(days=days_until_thursday)
+    
+#     # Find the first day of the last week of the current month
+#     first_day_of_last_week_of_current_month = last_day_of_current_month - timedelta(days=last_day_of_current_month.weekday())
+    
+#     # Print relevant dates for debugging
+#     print("Today:", today)
+#     print("Last Thursday of Current Month:", last_thursday_of_current_month)
+#     print("First Thursday of Next Month:", first_thursday_of_next_month)
+#     print("First Day of Last Week of Current Month:", first_day_of_last_week_of_current_month)
+    
+#     # Check the conditions
+#     if today >= first_day_of_last_week_of_current_month or (today > last_thursday_of_current_month and today < first_thursday_of_next_month):
+#         return "next_month"
+#     else:
+#         return "current_month"
+
+# result = monthly_expiry_type()
 
 
-
-
-
-
+# print(result)
 
 

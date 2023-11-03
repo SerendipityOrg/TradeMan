@@ -26,7 +26,7 @@ import general_calc as general_calc
 broker_filepath = os.path.join(DIR,"MarketUtils", "broker.json")
 userprofile_dir = os.path.join(DIR, "UserProfile","OrdersJson")
 # excel_dir = os.path.join(DIR, "UserProfile","Excel")
-excel_dir = '/Users/amolkittur/Library/CloudStorage/OneDrive-Personal/DONOTTOUCH/excel'
+excel_dir = '/Users/amolkittur/Desktop/Dev/UserProfile/Excel'
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 class TradingStrategy:
@@ -185,8 +185,8 @@ def main():
         message = "\n".join(message_parts).replace('\u20b9', '₹')
         print(message)
 
-        update_json_data(data, broker, user, net_pnl, current_capital,expected_capital, broker_filepath)
-        save_all_sheets_to_excel(all_dfs, excel_path)
+        # update_json_data(data, broker, user, net_pnl, current_capital,expected_capital, broker_filepath)
+        # save_all_sheets_to_excel(all_dfs, excel_path)
         # # dtd.update_dtd_sheets()
 
 
