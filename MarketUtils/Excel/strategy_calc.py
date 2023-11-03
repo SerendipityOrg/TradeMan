@@ -1,10 +1,23 @@
 import pandas as pd
 import os,sys
+from babel.numbers import format_currency
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 utils_dir = os.path.join(script_dir, "..","Calculations")
 sys.path.append(utils_dir)
 import taxcalculation as tc
+
+def custom_format(amount):
+    if isinstance(amount, (int, float)):
+        formatted = format_currency(amount, 'INR', locale='en_IN')
+        return formatted.replace('₹', '₹ ')
+    elif isinstance(amount, str):
+        # Handle the case where 'amount' is already a formatted string
+        return amount
+    else:
+        # Return the value as is (not formatted)
+        return amount
+
 
 def process_mpwizard_trades(broker,mpwizard_trades):
     if not mpwizard_trades:

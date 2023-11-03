@@ -3,7 +3,7 @@ import json
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment,NamedStyle
-from babel.numbers import format_currency
+
 import strategy_calc as sc
 import firebase_admin
 from firebase_admin import credentials, storage
@@ -47,10 +47,6 @@ class TradingStrategy:
                 Tax = 0
             return df, PnL, Tax
         return pd.DataFrame(), 0, 0
-
-def custom_format(amount):
-    formatted = format_currency(amount, 'INR', locale='en_IN')
-    return formatted.replace('₹', '₹')
 
 def load_existing_excel(excel_path):
     if not os.path.exists(excel_path):

@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from formats import custom_format
+from strategy_calc import custom_format
 
 # Function to format the 'Running Balance' column
 
@@ -23,7 +23,7 @@ def fetch_data_from_excel(file_name, sheet_mappings):
     for internal_name, actual_sheet_name in sheet_mappings.items():
         try:
             # Choose column based on the specific sheet
-            time_col = 'exit_time' if internal_name == 'OvernightFutures' else 'entry_time'
+            time_col = 'exit_time' if internal_name in 'OvernightFutures' else 'entry_time' # <-- Change here
             temp_df = pd.read_excel(
                 file_name, sheet_name=actual_sheet_name, parse_dates=[time_col])
 
@@ -45,13 +45,17 @@ def create_dtd_dataframe_updated(data_mappings, opening_balance):
         print("No valid DataFrames found!")
         return pd.DataFrame(), 0
 
-    # Consider the appropriate time column based on the specific sheet
-    all_dates = pd.concat(
-        [df['exit_time' if key == 'OvernightFutures' else 'entry_time'].dt.date for key, df in data_mappings.items()]).unique()
+    # Extract all unique dates from the data mappings
+    all_dates = pd.concat([df['exit_time' if key in 'OvernightFutures' else 'entry_time'].dt.date for key, df in data_mappings.items()]).unique()
+
+    # Filter out any NaT values (Not a Time) from the all_dates list to prevent errors during processing
+    all_dates = [date for date in all_dates if pd.notna(date)]
+    
+    # Sort the dates
     all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
     rows = []
-    default_details = ['MPWizard', 'AmiPy', 'ZRM', 'OvernightFutures',
-                       'ExpiryTrader', 'ErrorTrade', 'Transactions']
+    default_details = ['MPWizard', 'AmiPy', 'ZRM', 'OvernightFutures', 'ExtraTrades',
+                       'ExpiryTrader', 'ErrorTrade', 'ErrorTrades','Transactions']
     sl_no = 1
 
     # Initialize the running balance with the opening balance
@@ -181,9 +185,9 @@ def read_opening_balances(file_path):
 
 
 # Main execution
-if __name__ == "__main__":
+def main():
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    user_profile = os.path.join(script_dir, '..', 'UserProfile')
+    user_profile = os.path.join(script_dir, '..','..', 'UserProfile')
     excel_dir = os.path.join(user_profile, 'excel')
     opening_balances = read_opening_balances(
         os.path.join(script_dir, 'useropeningbalance.txt'))
@@ -195,6 +199,7 @@ if __name__ == "__main__":
         'OvernightFutures': 'OvernightFutures',
         'ExpiryTrader': 'ExpiryTrader',
         'ErrorTrade': 'ErrorTrade',
+        'ExtraTrades' : 'ExtraTrades',
         'Transactions': 'Transactions'
     }
 
@@ -209,3 +214,6 @@ if __name__ == "__main__":
                 dtd_df, _ = create_dtd_dataframe_updated(
                     data_mappings, opening_balance)
                 check_and_update_dtd_sheet(file_name, dtd_df)
+
+if __name__ == "__main__":
+    main()
