@@ -37,9 +37,15 @@ def alice_place_order(alice, order_details):
     order_type = alice_utils.calculate_order_type(order_details.get('order_type'))
     product_type = alice_utils.calculate_product_type(product)
 
-    limit_prc = order_details.get('limit_prc', 0.0)
+    limit_prc = round(float(order_details.get('limit_prc', 0.0)), 2)
     trigger_price = order_details.get('trigger_prc', None)
-    
+    if trigger_price is not None:
+        trigger_price = round(float(trigger_price), 2)
+
+    limit_prc = max(limit_prc, 1.0)
+    if trigger_price is not None and trigger_price < 0:
+        trigger_price = 1.5
+
     try:
         order_id = alice.place_order(transaction_type = transaction_type, 
                                         instrument = alice.get_instrument_by_token(segment, int(exchange_token)),
@@ -130,12 +136,12 @@ def update_alice_stoploss(order_details):
         return None
     print("alice modify_order",modify_order)
 
-def exit_order(exit_order_func):
-    order_id = retrieve_order_id(
-        exit_order_func.get('user'),
-        exit_order_func.get('broker'),
-        exit_order_func.get('strategy'),
-        exit_order_func.get('trade_type'),
-        exit_order_func.get('token')
-    )
-    print("order_id",order_id)
+# def exit_order(exit_order_func):
+#     order_id = retrieve_order_id(
+#         exit_order_func.get('user'),
+#         exit_order_func.get('broker'),
+#         exit_order_func.get('strategy'),
+#         exit_order_func.get('trade_type'),
+#         exit_order_func.get('token')
+#     )
+#     print("order_id",order_id)

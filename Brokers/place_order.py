@@ -43,13 +43,13 @@ def place_order_for_broker(order_details):
 
     if "SL" in order_details['order_mode']:
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
+        print("order_details",order_details['trade_id'])
         place_stoploss_order(order_details=order_details)
     elif "Trailing" in order_details['order_mode']:
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
         place_stoploss_order(order_details=order_details)
         add_token_to_monitor(order_details)
         
-
 
 def place_stoploss_order(order_details=None,monitor=None):
     _,strategy_path = place_order_calc.get_strategy_json(order_details['strategy'])
@@ -95,9 +95,3 @@ def modify_orders(order_details=None):
                 order_with_user["username"] = username
                 order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
                 modify_stoploss(order_with_user)
-
-
-
-
-
-

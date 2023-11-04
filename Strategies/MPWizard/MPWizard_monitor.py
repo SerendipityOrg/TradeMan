@@ -190,6 +190,7 @@ class OrderMonitor:
             if self.orders_placed_today >= self.max_orders_per_day:
                 print("Daily signal limit reached. No more signals will be generated today.")
                 return
+            
             order_to_place = self.create_order_details(name,cross_type,ltp,price_ref)
             place_order.place_order_for_strategy(strategy_obj.get_strategy_name(),order_to_place)
             if message:
@@ -236,7 +237,7 @@ class OrderMonitor:
                 
         elif data['type'] == 'limit':
             trading_symbol = self.get_instrument_by_token(order_details['exchange_token'])
-            message = f"Limit reached for {trading_symbol} at {ltp}. Handling accordingly."
+            message = f"Stoploss reached for {trading_symbol}."
             print(message)
             discordbot.discord_bot(message,strategy_obj.get_strategy_name())        
 

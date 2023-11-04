@@ -3,10 +3,7 @@ import sys
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
-import Brokers.place_order_calc as place_order_calc
-import MarketUtils.general_calc as general_calc
-# import MarketUtils.Calculations.qty_calc as qty_calc
-# import Brokers.Aliceblue.alice_login as alice_login
+
 
 def create_alice_obj(user_details):
     return Aliceblue(user_id=user_details['username'],api_key=user_details['api_key'],session_id=user_details['session_id'])
@@ -16,9 +13,10 @@ def recreate_alice_obj(user_details):
     pass
 
 def get_csv_alice(user_details):
-    alice = Aliceblue(user_id=user_details['aliceblue']['brijesh']['username'], api_key=user_details['aliceblue']['brijesh']['api_key'])
+    alice = Aliceblue(user_id=user_details['username'], api_key=user_details['api_key'])
     alice.get_session_id()
     alice.get_contract_master("NFO") #TODO rename the NFO.csv to alice_instruments.csv
+    alice.get_contract_master("BFO") #TODO rename the NSE.csv to alice_instruments.csv
 
 
 def get_alice_active_users(active_users, strategy_name):
@@ -69,11 +67,7 @@ def get_order_details(user):
     alice = create_alice_obj(user)
     orders = alice.get_order_history('')
     return orders
-    # orders_to_exit = []
-    # for order in orders:
-    #     if order['remarks'] == trade_id:
-    #         orders_to_exit.append(order)
-    # return orders_to_exit
+
 
 
 
