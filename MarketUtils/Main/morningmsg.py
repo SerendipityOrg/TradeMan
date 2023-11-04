@@ -24,7 +24,6 @@ import MarketUtils.general_calc as general_calc
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def aliceblue_invested_value(user_data):
-    
     alice = Aliceblue(user_data['username'], user_data['api_key'])
     session_id = alice.get_session_id()
     holdings = alice.get_holding_positions()
@@ -41,22 +40,18 @@ def aliceblue_invested_value(user_data):
     return invested_value
 
 
-def zerodha_invested_value(broker_data, broker, user):
-    user_details = broker_data
-    kite = KiteConnect(api_key=user_details['api_key'])
-    kite.set_access_token(user_details['access_token'])
+def zerodha_invested_value(user_data, broker):
+    kite = KiteConnect(api_key=user_data['api_key'])
+    kite.set_access_token(user_data['access_token'])
     holdings = kite.holdings()
     return sum(stock['average_price'] * stock['quantity'] for stock in holdings)
 
 # Fetch invested value based on broker type
-
-
-def get_invested_value(broker_data, broker, user):
-    user_details = broker_data
+def get_invested_value(broker_data, broker):
     if broker == "aliceblue":
-        return aliceblue_invested_value(user_details)
+        return aliceblue_invested_value(broker_data)
     elif broker == "zerodha":
-        return zerodha_invested_value(broker_data, broker, user)
+        return zerodha_invested_value(broker_data, broker)
 
 # Function to format currency in custom style
 
@@ -91,20 +86,34 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
 
 
 broker_data = general_calc.read_json_file(broker_filepath)
+active_users_data = general_calc.read_json_file(active_users_json_path)  # Reading active users data
+
 updated_users = []
 
 for user in broker_data:
     # Check if the account type is Active
     if "Active" in user['account_type']:
-        # Calculate investment values
-        user_data = user
-        invested_value = get_invested_value(user, user_data['broker'], user)
+        # Fetch details from active_users.json for the user
+        user_data_active = next((item for item in active_users_data if item['account_name'] == user['account_name']), None)
+
+        # If the user exists in active_users_data, merge the data from both JSON files
+        if user_data_active:
+            user_data = {**user_data_active, **user}
+        else:
+            user_data = user
+
         for client in broker_data:
             if user_data['account_name'] == client['account_name']:
                 user_data['expected_morning_balance'] = client['expected_morning_balance']
                 user_data['yesterday_PnL'] = client['yesterday_PnL']
                 user_data['current_capital'] = client['current_capital']
                 user_data['mobile_number'] = client['mobile_number']
+
+        for active_user in active_users_data:
+            if user_data['account_name'] == active_user['account_name']:
+                invested_value = get_invested_value(active_user, active_user['broker'])
+
+
 
         cash_balance = user_data['expected_morning_balance'] - invested_value
         current_capital = cash_balance + invested_value
@@ -118,7 +127,6 @@ for user in broker_data:
 
 #     with TelegramClient(session_filepath, api_id, api_hash) as client:
 #         client.send_message(phone_number, message, parse_mode='md')
-
 
 
 # general_calc.write_json_file(broker_filepath, updated_users)
