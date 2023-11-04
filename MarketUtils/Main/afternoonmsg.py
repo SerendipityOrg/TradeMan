@@ -13,23 +13,18 @@ sys.path.append(DIR)
 
 # Import custom modules
 import MarketUtils.general_calc as general_calc
-import dtdautomation as dtd
-import Streamlitapp.formats as custom_format
+import MarketUtils.Main.dtdautomation as dtd
 
 # Get the script directory and file paths
-script_dir = os.path.dirname(os.path.realpath(__file__))
 broker_filepath = os.path.join(DIR, "MarketUtils", "broker.json")
-# excel_dir = os.path.join(DIR, "UserProfile", "excel")
-
 ENV_PATH = os.path.join(DIR, '.env')
 
 # Loading environment variables from .env file
 load_dotenv(ENV_PATH)
 excel_dir = os.getenv('onedrive_excel_folder')
-print(excel_dir)
+# excel_dir = '/Users/amolkittur/Desktop/Dev/UserProfile/Excel'
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
-
 
 # Function to load an existing Excel file and return its data as a dictionary of pandas DataFrames
 def load_existing_excel(excel_path):
@@ -78,7 +73,7 @@ def build_message(user, strategy_results, gross_pnl, total_tax, current_capital,
 # Function to send a message via Telegram
 def send_telegram_message(phone_number, message):
     # Define the session file path
-    session_filepath = os.path.join(script_dir, "..", '..', '..', "+918618221715.session")
+    session_filepath = os.path.join(DIR, "MarketUtils", "Telegram", "+918618221715.session")
     
     # Create a Telegram client and send the message
     with TelegramClient(session_filepath, api_id, api_hash) as client:
@@ -139,12 +134,11 @@ def main():
         expected_capital = current_capital + net_pnl if net_pnl > 0 else current_capital - abs(net_pnl)
 
         message = build_message(user['account_name'], strategy_results, gross_pnl, expected_tax, current_capital, expected_capital)
-        update_json_data(broker_data, user, net_pnl, current_capital, expected_capital, broker_filepath)
         print(message)
+        update_json_data(broker_data, user, net_pnl, current_capital, expected_capital, broker_filepath)
 
-        
         # Sending the message via Telegram is currently commented out, remove the comments to enable.
-        # send_telegram_message(user['phone_number'], message)
+        send_telegram_message(user['mobile_number'], message)
 
 
 # Execute the main function when the script is run

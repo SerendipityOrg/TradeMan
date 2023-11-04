@@ -1,5 +1,4 @@
 import os,sys
-import json
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment,NamedStyle
@@ -9,25 +8,26 @@ import firebase_admin
 from firebase_admin import credentials, storage
 from telethon.sync import TelegramClient
 from dotenv import load_dotenv
-import dtdautomation as dtd
 
 
 DIR = os.getcwd()
+sys.path.append(DIR)
+
+import MarketUtils.general_calc as general_calc
+
 ENV_PATH = os.path.join(DIR, '.env')
 load_dotenv(ENV_PATH)
 
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
-
-marketutils_dir = os.path.join(DIR, "MarketUtils")
-sys.path.append(marketutils_dir)
-import general_calc as general_calc
+excel_dir = os.getenv('onedrive_excel_folder')
 
 broker_filepath = os.path.join(DIR,"MarketUtils", "broker.json")
 userprofile_dir = os.path.join(DIR, "UserProfile","OrdersJson")
+active_users_filepath = os.path.join(DIR,"MarketUtils", "active_users.json")
+credentials_filepath = os.path.join(DIR,"MarketUtils","Excel","credentials.json")
+
 # excel_dir = os.path.join(DIR, "UserProfile","Excel")
-excel_dir = '/Users/amolkittur/Desktop/Dev/UserProfile/Excel'
-script_dir = os.path.dirname(os.path.realpath(__file__))
 
 class TradingStrategy:
     def __init__(self, name, process_func):
@@ -64,16 +64,6 @@ def update_excel_data(all_dfs, df, strategy_name):
     if not df.empty:
         all_dfs[strategy_name] = pd.concat([all_dfs.get(strategy_name, pd.DataFrame()), df])
 
-def update_json_data(data, broker, user, net_pnl, current_capital,expected_capital, broker_filepath):
-    for username in data:
-        if user["account_name"] == username["account_name"]:
-            user_details = username
-            user_details["current_capital"] = round(current_capital, 2)
-            user_details["yesterday_PnL"] = net_pnl
-            user_details["expected_morning_balance"] = round(expected_capital, 2)
-    general_calc.write_json_file(broker_filepath,data )
-
-
 def save_all_sheets_to_excel(all_dfs, excel_path):
     with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
         if 'number_style' not in writer.book.named_styles:
@@ -105,13 +95,13 @@ def build_message(user, strategy_results, gross_pnl, tax, current_capital, expec
     
     for strategy_name, pnl in strategy_results.items():
         if pnl != 0:
-            message_parts.append(f"{strategy_name}: {custom_format(pnl)}")
+            message_parts.append(f"{strategy_name}: {sc.custom_format(pnl)}")
     
     message_parts.extend([
-        f"\n**Gross PnL: {custom_format(gross_pnl)}**",
-        f"**Expected Tax: {custom_format(tax)}**",
-        f"**Current Capital: {custom_format(current_capital)}**",
-        f"**Expected Morning Balance : {custom_format(expected_capital)}**",
+        f"\n**Gross PnL: {sc.custom_format(gross_pnl)}**",
+        f"**Expected Tax: {sc.custom_format(tax)}**",
+        f"**Current Capital: {sc.custom_format(current_capital)}**",
+        f"**Expected Morning Balance : {sc.custom_format(expected_capital)}**",
         "\nBest Regards,\nSerendipity Trading Firm"
     ])
     
@@ -125,7 +115,6 @@ strategy_config = {
     "ExpiryTrader": sc.process_expiry_trades
     # Add new strategies here as needed
 }
-credentials_filepath = os.path.join(script_dir  ,"credentials.json")
 cred = credentials.Certificate(credentials_filepath)
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
@@ -139,14 +128,8 @@ def save_to_firebase(user, excel_path):
         blob.upload_from_file(my_file)
     print(f"Excel file for {user} has been uploaded to Firebase.")
 
-def send_telegram_message(phone_number, message):
-    session_filepath = os.path.join(script_dir, "..",'..','..', "+918618221715.session")
-    with TelegramClient(session_filepath, api_id, api_hash) as client:
-        client.send_message(phone_number, message, parse_mode='md')
-
-
 def main():
-    data = general_calc.read_json_file(os.path.join(script_dir, "..", "active_users.json"))
+    data = general_calc.read_json_file(active_users_filepath)
     
     # Initialize TradingStrategy objects based on the configuration
     strategies = [TradingStrategy(name, func) for name, func in strategy_config.items()]
@@ -154,7 +137,6 @@ def main():
     for user in data:
         user_data = general_calc.read_json_file(os.path.join(userprofile_dir, f"{user['account_name']}.json"))
         broker_json = general_calc.read_json_file(broker_filepath)
-        phone_number = user["mobile_number"]
         broker = user["broker"]
 
         strategy_results = {}
@@ -163,7 +145,6 @@ def main():
         
         excel_path = os.path.join(excel_dir, f"{user['account_name']}.xlsx")
         all_dfs = load_existing_excel(excel_path)
-        print(f"Excel data loaded for {user['account_name']}: {all_dfs.keys()}")
 
         for strategy in strategies:
             if strategy.name == "OvernightFutures":
@@ -208,7 +189,6 @@ def main():
                 total_tax += tax
                 update_excel_data(all_dfs, df, strategy.name)
                 
-
         net_pnl = gross_pnl - total_tax
 
         for account in broker_json:
@@ -221,13 +201,7 @@ def main():
         message = "\n".join(message_parts).replace('\u20b9', '₹')
         print(message)
 
-        # update_json_data(data, broker, user, net_pnl, current_capital,expected_capital, broker_filepath)
         save_all_sheets_to_excel(all_dfs, excel_path)
-        # dtd.update_dtd_sheets()
-
-
-        # # save_to_firebase(user, excel_path)  # Existing function
-        # send_telegram_message(phone_number, message)  # Existing function
 
 if __name__ == "__main__":
     main()

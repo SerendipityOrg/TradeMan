@@ -50,7 +50,7 @@ def main():
     """
     now = dt.datetime.now()
     
-    if now.time() < dt.time(13, 0):
+    if now.time() < dt.time(9, 0):
         print("Time is before 9:00 AM, placing test orders.")
         place_test_orders()
     else:
@@ -67,7 +67,7 @@ def main():
             sleep(wait_time.total_seconds())
         
         # Update the JSON file with high-low range data
-        # get_high_low_range_and_update_json()
+        get_high_low_range_and_update_json()
         
         with open(strategy_path,'r') as file:
             instruments = file.read()

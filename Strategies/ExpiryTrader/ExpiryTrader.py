@@ -98,10 +98,14 @@ orders_to_place = [
 def message_for_orders(trade_type,prediction,main_trade_symbol,hedge_trade_symbol):
     if trade_type == "Test":
         strategy_name = "TestOrders"
+    else:
+        strategy_name = expiry_trader_obj.get_strategy_name()
+
     message = ( f"{trade_type} Trade for {expiry_trader_obj.get_strategy_name()}\n"
             f"Direction : {prediction}\n"
             f"Main Trade : {main_trade_symbol}\n"
             f"Hedge Trade {hedge_trade_symbol} \n")    
+    
     discord.discord_bot(message, strategy_name)
     
 

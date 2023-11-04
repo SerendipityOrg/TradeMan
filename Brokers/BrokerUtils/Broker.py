@@ -14,7 +14,6 @@ import Brokers.Zerodha.kite_utils as kite_utils
 
 broker_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'broker.json')
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
-# active_users_json_details = general_calc.read_json_file(active_users_json_path)
 
 def get_primary_user_details(active_users_json_path):
     details  = []
@@ -36,7 +35,7 @@ def get_primary_account():
 
 # def get_primary_account():
 #     api_key = '6b0dp5ussukmo67h'
-#     access_token = 'OMVPi2Wcsuo3VSGEkuQHmYAKTQlen26C'
+#     access_token = 'X7FMC5TulIoUy3sEsTn1nplcC6LCPf2i'
 #     return api_key,access_token
 
 def get_secondary_account():

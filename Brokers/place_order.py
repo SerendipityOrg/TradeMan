@@ -1,19 +1,13 @@
 import os,sys
 from time import sleep
-import datetime as dt
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
-import MarketUtils.general_calc as general_calc
 import Brokers.Zerodha.kite_place_orders as zerodha
 import Brokers.Aliceblue.alice_place_orders as aliceblue
 import Brokers.place_order_calc as place_order_calc
 from Strategies.StrategyBase import Strategy
-import MarketUtils.Discord.discordchannels as discordchannels
-import MarketUtils.general_calc as general_calc
-
-
 import Brokers.BrokerUtils.Broker as Broker
 from MarketUtils.InstrumentBase import Instrument
 
@@ -44,11 +38,8 @@ def place_order_for_broker(order_details):
         return
 
     if "SL" in order_details['order_mode']:
-        print("before timestamp",dt.datetime.now())
         sleep(1)
-        print("after timestamp",dt.datetime.now())
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
-        print("order_details",order_details['trade_id'])
         place_stoploss_order(order_details=order_details)
     elif "Trailing" in order_details['order_mode']:
         sleep(1)
@@ -56,7 +47,6 @@ def place_order_for_broker(order_details):
         place_stoploss_order(order_details=order_details)
         add_token_to_monitor(order_details)
         
-
 def place_stoploss_order(order_details=None,monitor=None):
     _,strategy_path = place_order_calc.get_strategy_json(order_details['strategy'])
     instrument_base = Instrument()
@@ -86,11 +76,10 @@ def modify_stoploss(order_details=None):
     if order_details['broker'] == "aliceblue":
         aliceblue.update_alice_stoploss(order_details)
     elif order_details['broker'] == "zerodha":
-        zerodha.update_kite_stoploss(order_details) #TODO
+        zerodha.update_kite_stoploss(order_details) 
     else:
         print("Unknown broker")
     
-
 def modify_orders(order_details=None):
     active_users = Broker.get_active_subscribers(order_details[0]['strategy'])
     for broker, usernames in active_users.items():

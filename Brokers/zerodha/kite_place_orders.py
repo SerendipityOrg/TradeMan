@@ -1,5 +1,3 @@
-import logging
-from kiteconnect import KiteConnect
 import sys,os
 
 DIR_PATH = os.getcwd()
@@ -99,11 +97,11 @@ def place_zerodha_order(order_details: dict):
         order_id = kite_place_order(kite, order_details)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
-        # You can set default or fallback values if needed
         order_id = None
     
     try:
-        place_order_calc.log_order(order_id, order_details)
+        if order_details.get('strategy') == 'MPWizard':
+            place_order_calc.log_order(order_id, order_details)
     except Exception as e:
         print(f"Failed to log the order: {e}")
         

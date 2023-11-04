@@ -1,21 +1,15 @@
 import pandas as pd
-import os
-from strategy_calc import custom_format
+import os,sys
+from dotenv import load_dotenv
 
-# Function to format the 'Running Balance' column
+DIR = os.getcwd()
+sys.path.append(DIR)
 
-
-def format_running_balance_column(df):
-    df['Running Balance'] = df['Running Balance'].apply(custom_format)
-    return df
-
-# Function to check if DataFrame has required columns
-
+from MarketUtils.Excel.strategy_calc import custom_format
 
 def has_required_columns(df):
     required_columns = ['entry_time', 'net_pnl', 'trade_id']
     return all(col in df.columns for col in required_columns)
-
 
 # Function to fetch data from Excel and return a dictionary of DataFrames
 def fetch_data_from_excel(file_name, sheet_mappings):
@@ -38,7 +32,6 @@ def fetch_data_from_excel(file_name, sheet_mappings):
     return data_mappings
 
 # Function to create and return the DTD DataFrame with individual transactions and formatted columns
-
 
 def create_dtd_dataframe_updated(data_mappings, opening_balance):
     if not data_mappings:
@@ -144,7 +137,6 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df):
 
         if 'DTD' in writer.book.sheetnames:
             existing_dtd = pd.read_excel(file_name, sheet_name='DTD')
-            existing_dtd = format_running_balance_column(existing_dtd)
             if 'Date' in existing_dtd.columns and 'Date' in new_dtd_df.columns:
                 last_existing_date = pd.to_datetime(
                     existing_dtd['Date'].iloc[-1])
@@ -164,8 +156,6 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df):
 
         updated_dtd_df.to_excel(writer, sheet_name='DTD', index=False)
 
-# Function to read opening balances from useropeningbalance.txt and return as a dictionary
-
 
 def read_opening_balances(file_path):
     opening_balances = {}
@@ -183,14 +173,13 @@ def read_opening_balances(file_path):
         print("useropeningbalance.txt not found.")
     return opening_balances
 
-
 # Main execution
 def main():
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    user_profile = os.path.join(script_dir, '..','..', 'UserProfile')
-    excel_dir = os.path.join(user_profile, 'excel')
-    opening_balances = read_opening_balances(
-        os.path.join(script_dir, 'useropeningbalance.txt'))
+    ENV_PATH = os.path.join(DIR, '.env')
+    load_dotenv(ENV_PATH)
+    excel_dir = os.getenv('onedrive_excel_folder')
+    # excel_dir = '/Users/amolkittur/Desktop/Dev/UserProfile/Excel'
+    opening_balances = read_opening_balances(os.path.join(DIR, 'MarketUtils', 'Main', 'useropeningbalance.txt'))
 
     sheet_mappings = {
         'MPWizard': 'MPWizard',

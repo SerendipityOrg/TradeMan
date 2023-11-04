@@ -39,8 +39,7 @@ def aliceblue_invested_value(user_data):
 
     return invested_value
 
-
-def zerodha_invested_value(user_data, broker):
+def zerodha_invested_value(user_data):
     kite = KiteConnect(api_key=user_data['api_key'])
     kite.set_access_token(user_data['access_token'])
     holdings = kite.holdings()
@@ -51,16 +50,11 @@ def get_invested_value(broker_data, broker):
     if broker == "aliceblue":
         return aliceblue_invested_value(broker_data)
     elif broker == "zerodha":
-        return zerodha_invested_value(broker_data, broker)
-
-# Function to format currency in custom style
-
+        return zerodha_invested_value(broker_data)
 
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
     return formatted.replace('₹', '₹ ')
-
-# Generate a morning report message for a user
 
 
 def generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital):
@@ -91,42 +85,37 @@ active_users_data = general_calc.read_json_file(active_users_json_path)  # Readi
 updated_users = []
 
 for user in broker_data:
+    # Initialize user_data as a copy of user to carry over data for both Active and Inactive accounts
+    user_data = user.copy()
+
     # Check if the account type is Active
     if "Active" in user['account_type']:
-        # Fetch details from active_users.json for the user
+        # Fetch details from active_users_data for the user
         user_data_active = next((item for item in active_users_data if item['account_name'] == user['account_name']), None)
 
         # If the user exists in active_users_data, merge the data from both JSON files
-        if user_data_active:
-            user_data = {**user_data_active, **user}
-        else:
-            user_data = user
-
-        for client in broker_data:
-            if user_data['account_name'] == client['account_name']:
-                user_data['expected_morning_balance'] = client['expected_morning_balance']
-                user_data['yesterday_PnL'] = client['yesterday_PnL']
-                user_data['current_capital'] = client['current_capital']
-                user_data['mobile_number'] = client['mobile_number']
-
         for active_user in active_users_data:
-            if user_data['account_name'] == active_user['account_name']:
+            if user['account_name'] == active_user['account_name']:  # Merge active user data into user_data
+                # Calculate invested value for the active user
                 invested_value = get_invested_value(active_user, active_user['broker'])
 
-
-
+        # Calculate cash balance and current capital
         cash_balance = user_data['expected_morning_balance'] - invested_value
         current_capital = cash_balance + invested_value
+
+        # Generate message and print
         formatted_date = date.today().strftime("%d %b %Y")
         message = generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital)
-
         user_data['current_capital'] = current_capital
         phone_number = user_data['mobile_number']
         print(message)
-#     updated_users.append(user_data)
 
-#     with TelegramClient(session_filepath, api_id, api_hash) as client:
-#         client.send_message(phone_number, message, parse_mode='md')
+        # Uncomment to send messages
+        with TelegramClient(session_filepath, api_id, api_hash) as client:
+            client.send_message(phone_number, message, parse_mode='md')
+
+    # Append the updated user_data to updated_users list
+    updated_users.append(user_data)
 
 
-# general_calc.write_json_file(broker_filepath, updated_users)
+general_calc.write_json_file(broker_filepath, updated_users)

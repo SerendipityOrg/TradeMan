@@ -188,10 +188,21 @@ def overnight_futures_details(orders, broker, user):
         
         if simplified_order['order_type'] == 'entry':
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
-            morning_trade_orders.append(simplified_order)
+            afternoon_trade_orders.append(simplified_order)
         elif simplified_order['order_type'] == 'exit':
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
-            afternoon_trade_orders.append(simplified_order)
+            morning_trade_orders.append(simplified_order)
+        
+
+    if afternoon_trade_orders is not None:
+        # Assign direction after all orders are appended to the afternoon_trade_orders list
+        for order in afternoon_trade_orders:
+            order['direction'] = 'BEARISH' if order.get('trade_type') == 'sell' else 'BULLISH'
+
+    if morning_trade_orders is not None:
+        # Assign direction after all orders are appended to the morning_trade_orders list
+        for order in morning_trade_orders:
+            order['direction'] = 'BEARISH' if order.get('trade_type') == 'buy' else 'BULLISH'
 
     # Check if there are 2 orders and group them under "Morning Trade"
     # Afternoon orders are entered after placing the orders in the afternoon

@@ -1,5 +1,3 @@
-import logging
-from pya3 import *
 import sys,os
 
 DIR_PATH = os.getcwd()
@@ -67,7 +65,7 @@ def alice_place_order(alice, order_details):
                                         order_tag = order_details.get('trade_id', None))
         
         print(f"Order placed. ID is: {order_id}")
-        return order_id['NOrdNo'] # Merge place_order  #TODO retrun only order_id for all the brokers
+        return order_id['NOrdNo'] 
   
     except Exception as e:
         message = f"Order placement failed: {e} for {order_details['username']}"
@@ -98,13 +96,12 @@ def place_aliceblue_order(order_details: dict):
         order_id = alice_place_order(alice, order_details)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
-        # You can set default or fallback values if needed
         order_id = None
     try:
-        place_order_calc.log_order(order_id, order_details)
+        if order_details.get('strategy') == 'MPWizard':
+            place_order_calc.log_order(order_id, order_details)
     except Exception as e:
-        print(f"Failed to log the order: {e}")
-        
+        print(f"Failed to log the order: {e}")  
 
 
 def update_alice_stoploss(order_details):

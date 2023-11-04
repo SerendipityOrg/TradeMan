@@ -16,8 +16,6 @@ import Brokers.Zerodha.kite_utils as kite_utils
 
 broker_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'broker.json')
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
-mpwizard_json_path = os.path.join(DIR_PATH, 'Strategies','MPWizard', 'MPWizard.json')
-amipy_json_path = os.path.join(DIR_PATH, 'Strategies','Amipy', 'AmiPy.json')
 
 alice = None
 kite = None
@@ -36,18 +34,23 @@ def all_broker_login(active_users):
         
     return active_users
 
+def clear_json_file(user_name):
+    order_json_folderpath = os.path.join(DIR_PATH, 'UserProfile','OrdersJson')
+    order_json_filepath = os.path.join(order_json_folderpath, f'{user_name}.json')
+    general_calc.write_json_file(order_json_filepath, {})
+
 active_users = all_broker_login(place_order_calc.get_active_users(broker_json_details))
 
 def calculate_qty(active_users):
     for user in active_users:
         lots = qty_calc.calculate_lots(user)
         user['qty'] = lots
+        clear_json_file(user['account_name'])
     return active_users
 
+active_users_json = calculate_qty(active_users)
 
-active_users = calculate_qty(active_users)
-
-general_calc.write_json_file(active_users_json_path, active_users)
+general_calc.write_json_file(active_users_json_path, active_users_json)
 
 def download_csv(active_users):
     # Flags to check if we have downloaded for each broker
@@ -67,5 +70,3 @@ def download_csv(active_users):
             break
 
 download_csv(active_users)
-
-
