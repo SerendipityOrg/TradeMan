@@ -44,7 +44,7 @@ def get_trade_id(strategy_name, trade_type):
     _, strategy_path = get_strategy_json(strategy_name)
     strategy_obj = Strategy.Strategy.read_strategy_json(strategy_path)
 
-    if dt.datetime.now().time() < dt.datetime.strptime("11:00", "%H:%M").time():
+    if dt.datetime.now().time() < dt.datetime.strptime("09:00", "%H:%M").time():
         return "test_order"
 
     # If the strategy is not in the cache, initialize it

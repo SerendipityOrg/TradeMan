@@ -77,29 +77,31 @@ def update_json_data(data, broker, user, net_pnl, current_capital,expected_capit
             user_details["expected_morning_balance"] = round(expected_capital, 2)
     general_calc.write_json_file(broker_filepath,data )
 
+
 def save_all_sheets_to_excel(all_dfs, excel_path):
     with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-        # Check if the named style already exists in the workbook
         if 'number_style' not in writer.book.named_styles:
-            # If the style does not exist, create and add it to the workbook
             number_style = NamedStyle(name='number_style', number_format='0.00')
             writer.book.add_named_style(number_style)
+        
+        center_alignment = Alignment(horizontal='center')
 
         for sheet_name, df in all_dfs.items():
             df.to_excel(writer, sheet_name=sheet_name, index=False)
-
-            # Now that the data is written, get the worksheet to apply styles
             worksheet = writer.sheets[sheet_name]
 
-            # List of columns (by header name) that should be formatted with two decimal places
+            # Apply number formatting and center alignment to specified columns
             rounded_columns = ['entry_price', 'exit_price', 'hedge_entry_price', 'hedge_exit_price', 'trade_points', 'pnl', 'tax', 'net_pnl']
 
-            for row_index, row in enumerate(worksheet.iter_rows(min_row=2), start=2):  # Start from the second row
-                for col_index, cell in enumerate(row, start=1):
-                    cell.alignment = Alignment(horizontal='center')
-                    header = worksheet.cell(row=1, column=col_index).value
-                    if header in rounded_columns and isinstance(cell.value, (int, float)):
-                        cell.style = 'number_style'
+            for row in worksheet.iter_rows(min_row=1, max_row=worksheet.max_row, min_col=1, max_col=worksheet.max_column):
+                for cell in row:
+                    # Apply center alignment to all cells
+                    cell.alignment = center_alignment
+
+                    # Apply number formatting to specified columns
+                    if cell.col_idx - 1 < len(df.columns) and df.columns[cell.col_idx - 1] in rounded_columns:
+                        cell.number_format = number_style.number_format
+
 
 
 def build_message(user, strategy_results, gross_pnl, tax, current_capital, expected_capital):
@@ -165,13 +167,51 @@ def main():
         
         excel_path = os.path.join(excel_dir, f"{user['account_name']}.xlsx")
         all_dfs = load_existing_excel(excel_path)
+        print(f"Excel data loaded for {user['account_name']}: {all_dfs.keys()}")
 
         for strategy in strategies:
-            df, pnl, tax = strategy.process_data(user_data, broker)
-            strategy_results[strategy.name] = pnl
-            gross_pnl += pnl
-            total_tax += tax
-            update_excel_data(all_dfs, df, strategy.name)
+            if strategy.name == "OvernightFutures":
+                overnight_futures_df = all_dfs.get("OvernightFutures", pd.DataFrame())
+
+                # Check if there are OvernightFutures trades for today
+                if "OvernightFutures" in user_data["today_orders"]:
+                    overnight_trades = user_data["today_orders"]["OvernightFutures"]
+
+                    # Process morning trades
+                    if "Morning" in overnight_trades:
+                        trade_id = overnight_trades["Morning"][0]["trade_id"]
+                        trade_index = overnight_futures_df.index[overnight_futures_df['trade_id'] == trade_id].tolist()
+
+                        if trade_index:
+                            row_index = trade_index[0]
+                            entry_trade = overnight_futures_df.loc[row_index]
+                            if entry_trade is not None:
+                                # Process morning trades
+                                updated_trade_data = sc.process_overnight_futures_trades(None, overnight_trades["Morning"], broker, entry_trade=entry_trade)
+                                
+                                # Update the strategy results with the morning trade PnL and tax
+                                strategy_results[strategy.name] = updated_trade_data[0]['pnl']
+                                gross_pnl += updated_trade_data[0]['pnl']
+                                total_tax += updated_trade_data[0]['tax']
+
+                                # Update the existing row in the DataFrame
+                                for key, value in updated_trade_data[0].items():
+                                    overnight_futures_df.at[row_index, key] = value
+                                all_dfs["OvernightFutures"] = overnight_futures_df
+                                
+                    # Process afternoon trades
+                    if "Afternoon" in overnight_trades:
+                        new_trade_data = sc.process_overnight_futures_trades(overnight_trades["Afternoon"], None, broker)
+                        # Append the new row to the DataFrame
+                        all_dfs["OvernightFutures"] = pd.concat([overnight_futures_df, pd.DataFrame([new_trade_data[-1]])], ignore_index=True)
+
+            else:
+                df, pnl, tax = strategy.process_data(user_data, broker)
+                strategy_results[strategy.name] = pnl
+                gross_pnl += pnl
+                total_tax += tax
+                update_excel_data(all_dfs, df, strategy.name)
+                
 
         net_pnl = gross_pnl - total_tax
 
@@ -186,8 +226,8 @@ def main():
         print(message)
 
         # update_json_data(data, broker, user, net_pnl, current_capital,expected_capital, broker_filepath)
-        # save_all_sheets_to_excel(all_dfs, excel_path)
-        # # dtd.update_dtd_sheets()
+        save_all_sheets_to_excel(all_dfs, excel_path)
+        # dtd.update_dtd_sheets()
 
 
         # # save_to_firebase(user, excel_path)  # Existing function

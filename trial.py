@@ -53,7 +53,7 @@
 
 from kiteconnect import KiteConnect
 from pprint import pprint
-kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='OMVPi2Wcsuo3VSGEkuQHmYAKTQlen26C')
+kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='1T1QyNIboYIINZf7j2PzPcXrTjxf3mph')
 
 pprint(kite.orders())
 
