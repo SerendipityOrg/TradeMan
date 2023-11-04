@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from babel.numbers import format_currency
+from strategy_calc import custom_format
 
 # Function to format the 'Running Balance' column
 
@@ -13,18 +13,20 @@ def format_running_balance_column(df):
 
 
 def has_required_columns(df):
-    required_columns = ['Date', 'Net PnL', 'Trade ID']
+    required_columns = ['entry_time', 'net_pnl', 'trade_id']
     return all(col in df.columns for col in required_columns)
 
+
 # Function to fetch data from Excel and return a dictionary of DataFrames
-
-
 def fetch_data_from_excel(file_name, sheet_mappings):
     data_mappings = {}
     for internal_name, actual_sheet_name in sheet_mappings.items():
         try:
+            # Choose column based on the specific sheet
+            time_col = 'exit_time' if internal_name in 'OvernightFutures' else 'entry_time' # <-- Change here
             temp_df = pd.read_excel(
-                file_name, sheet_name=actual_sheet_name, parse_dates=['Date'])
+                file_name, sheet_name=actual_sheet_name, parse_dates=[time_col])
+
             if has_required_columns(temp_df):
                 data_mappings[internal_name] = temp_df
             else:
@@ -35,34 +37,25 @@ def fetch_data_from_excel(file_name, sheet_mappings):
                 f"Sheet '{actual_sheet_name}' not found in {file_name}. Skipping...")
     return data_mappings
 
-# Custom format function for currency
-
-
-def custom_format(amount):
-    if isinstance(amount, (int, float)):
-        formatted = format_currency(amount, 'INR', locale='en_IN')
-        return formatted.replace('₹', '₹ ')
-    elif isinstance(amount, str):
-        # Handle the case where 'amount' is already a formatted string
-        return amount
-    else:
-        # Return the value as is (not formatted)
-        return amount
-
 # Function to create and return the DTD DataFrame with individual transactions and formatted columns
 
 
-def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
+def create_dtd_dataframe_updated(data_mappings, opening_balance):
     if not data_mappings:
         print("No valid DataFrames found!")
         return pd.DataFrame(), 0
 
-    all_dates = pd.concat([df['Date']
-                           for df in data_mappings.values()]).unique()
-    all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
+    # Extract all unique dates from the data mappings
+    all_dates = pd.concat([df['exit_time' if key in 'OvernightFutures' else 'entry_time'].dt.date for key, df in data_mappings.items()]).unique()
 
+    # Filter out any NaT values (Not a Time) from the all_dates list to prevent errors during processing
+    all_dates = [date for date in all_dates if pd.notna(date)]
+    
+    # Sort the dates
+    all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
     rows = []
-    default_details = ['MP Wizard', 'AmiPy', 'ZRM', 'Overnight Options']
+    default_details = ['MPWizard', 'AmiPy', 'ZRM', 'OvernightFutures', 'ExtraTrades',
+                       'ExpiryTrader', 'ErrorTrade', 'ErrorTrades','Transactions']
     sl_no = 1
 
     # Initialize the running balance with the opening balance
@@ -71,7 +64,7 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
     # Add the Opening Balance row
     rows.append({
         'Sl NO': sl_no,
-        'Date': '01-Jul-23',
+        'Date': '28-Oct-23',
         'Day': 'Saturday',
         'Trade ID': '',
         'Details': 'Opening Balance',
@@ -79,32 +72,37 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
         'Running Balance': custom_format(running_balance)
     })
     sl_no += 1
+    start_date = pd.Timestamp('2023-10-28')
 
-    start_date = pd.Timestamp('2023-07-1')
     for date in all_dates_sorted:
-        if date < start_date:
+        if pd.Timestamp(date) < start_date:
             continue
-        date_ts = pd.Timestamp(date)  # Convert to pandas.Timestamp
-        date = date_ts.to_pydatetime()
         date_str = date.strftime('%d-%b-%y')
         day_str = date.strftime('%A')
-
         for transaction_id in default_details:
             if transaction_id in data_mappings:
                 df = data_mappings[transaction_id]
-                sub_df = df[df['Date'] == date]
+                time_col = 'exit_time' if transaction_id == 'OvernightFutures' else 'entry_time'
+                sub_df = df[df[time_col].dt.date == date]
 
                 for _, row in sub_df.iterrows():
-                    trade_id = row['Trade ID']
-                    amount = row['Net PnL']
-                    if amount != 0.00:
+                    trade_id = row['trade_id']
+                    amount = row['net_pnl']
+                    detail = transaction_id  # Default detail
+
+                    # If the transaction_id is 'Transactions', use the 'transaction_type' for details
+                    if transaction_id == 'Transactions' and 'transaction_type' in row:
+                        detail = row['transaction_type']
+
+                    # Check if amount is not NaN and not 0.00
+                    if pd.notna(amount) and amount != 0.00:
                         running_balance += amount
                         rows.append({
                             'Sl NO': sl_no,
                             'Date': date_str,
                             'Day': day_str,
                             'Trade ID': trade_id,
-                            'Details': transaction_id,
+                            'Details': detail,
                             'Amount': custom_format(amount),
                             'Running Balance': custom_format(running_balance)
                         })
@@ -112,6 +110,7 @@ def create_dtd_dataframe_updated_v10(data_mappings, opening_balance):
 
     dtd_df = pd.DataFrame(rows)
     return dtd_df, running_balance
+
 
 # Function to retrieve existing 'Opening Balance' from the DTD sheet
 
@@ -186,14 +185,7 @@ def read_opening_balances(file_path):
 
 
 # Main execution
-# if __name__ == "__main__":
-#     user_profile = os.path.join(script_dir, '..', 'UserProfile')
-#     excel_dir = os.path.join(user_profile, 'excel')
-#     opening_balances = read_opening_balances(
-#         os.path.join(script_dir, 'useropeningbalance.txt'))
-
-#     
-def update_dtd_sheets():
+def main():
     script_dir = os.path.dirname(os.path.realpath(__file__))
     user_profile = os.path.join(script_dir, '..','..', 'UserProfile')
     excel_dir = os.path.join(user_profile, 'excel')
@@ -201,10 +193,14 @@ def update_dtd_sheets():
         os.path.join(script_dir, 'useropeningbalance.txt'))
 
     sheet_mappings = {
-        'MP Wizard': 'MPWizard',
+        'MPWizard': 'MPWizard',
         'AmiPy': 'AmiPy',
         'ZRM': 'ZRM',
-        'Overnight Options': 'Overnight_options'
+        'OvernightFutures': 'OvernightFutures',
+        'ExpiryTrader': 'ExpiryTrader',
+        'ErrorTrade': 'ErrorTrade',
+        'ExtraTrades' : 'ExtraTrades',
+        'Transactions': 'Transactions'
     }
 
     for root, dirs, files in os.walk(excel_dir):
@@ -215,6 +211,9 @@ def update_dtd_sheets():
                 opening_balance = opening_balances.get(user_name, 0.0)
                 data_mappings = fetch_data_from_excel(
                     file_name, sheet_mappings)
-                dtd_df, _ = create_dtd_dataframe_updated_v10(
+                dtd_df, _ = create_dtd_dataframe_updated(
                     data_mappings, opening_balance)
                 check_and_update_dtd_sheet(file_name, dtd_df)
+
+if __name__ == "__main__":
+    main()

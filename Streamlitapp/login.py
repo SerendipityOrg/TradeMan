@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from streamlit_calendar import calendar
 from firebase_admin import storage
 from streamlit_option_menu import option_menu
-from script import display_performance_dashboard,table_style
+from script import display_performance_dashboard, table_style, display_profile_picture
 from formats import format_value, format_stat_value, indian_format
 
 
@@ -36,6 +36,8 @@ if not firebase_admin._apps:
     })
 
 # Create a SessionState class to manage session state variables
+
+
 class SessionState:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -105,7 +107,8 @@ def show_app_contents():
         else:
             st.warning("No client data available.")
     elif selected == "Performance Dashboard":
-        display_for_login(session_state.client_data)  # Modified this line to use display_for_login
+        # Modified this line to use display_for_login
+        display_for_login(session_state.client_data)
     elif selected == "Logout":
         logout()
         st.experimental_rerun()
@@ -116,10 +119,12 @@ def display_for_login(client_data):
         client_username = client_data.get("Username", '')
         client_username = client_username[0].lower() + client_username[1:]
         excel_file_name = f"{client_username}.xlsx"
-        display_performance_dashboard(client_data, client_username, excel_file_name)
+        display_profile_picture(client_data)
+        display_performance_dashboard(
+            client_data, client_username, excel_file_name)
+
     else:
         st.warning("No client data available.")
-
 
 
 def logout():
