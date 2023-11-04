@@ -1,4 +1,6 @@
 import os,sys
+from time import sleep
+import datetime as dt
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -42,10 +44,14 @@ def place_order_for_broker(order_details):
         return
 
     if "SL" in order_details['order_mode']:
+        print("before timestamp",dt.datetime.now())
+        sleep(1)
+        print("after timestamp",dt.datetime.now())
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
         print("order_details",order_details['trade_id'])
         place_stoploss_order(order_details=order_details)
     elif "Trailing" in order_details['order_mode']:
+        sleep(1)
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
         place_stoploss_order(order_details=order_details)
         add_token_to_monitor(order_details)

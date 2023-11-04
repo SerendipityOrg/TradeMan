@@ -1,11 +1,10 @@
 import logging
 from pya3 import *
-import sys
+import sys,os
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
-import MarketUtils.general_calc as general_calc
 import MarketUtils.Discord.discordchannels as discord
 import Brokers.place_order_calc as place_order_calc
 import Brokers.Aliceblue.alice_utils as alice_utils
@@ -28,6 +27,7 @@ def alice_place_order(alice, order_details):
     Raises:
         Exception: If the order placement fails.
     """  
+    strategy = order_details.get('strategy')
     exchange_token = order_details.get('exchange_token')
     segment = Instrument().get_segment_by_exchange_token(exchange_token)
     qty = int(order_details.get('qty'))
@@ -37,15 +37,21 @@ def alice_place_order(alice, order_details):
     order_type = alice_utils.calculate_order_type(order_details.get('order_type'))
     product_type = alice_utils.calculate_product_type(product)
 
-    limit_prc = round(float(order_details.get('limit_prc', 0.0)), 2)
+    limit_prc = order_details.get('limit_prc', None) 
     trigger_price = order_details.get('trigger_prc', None)
+
+    if limit_prc is not None:
+        limit_prc = round(float(limit_prc), 2)
+        if limit_prc < 0:
+            limit_prc = 1.0
+    else:
+        limit_prc = 0.0
+    
     if trigger_price is not None:
         trigger_price = round(float(trigger_price), 2)
-
-    limit_prc = max(limit_prc, 1.0)
-    if trigger_price is not None and trigger_price < 0:
-        trigger_price = 1.5
-
+        if trigger_price < 0:
+            trigger_price = 1.5
+    
     try:
         order_id = alice.place_order(transaction_type = transaction_type, 
                                         instrument = alice.get_instrument_by_token(segment, int(exchange_token)),
@@ -59,14 +65,14 @@ def alice_place_order(alice, order_details):
                                         trailing_sl = None,
                                         is_amo = False,
                                         order_tag = order_details.get('trade_id', None))
-        print("order_id",order_id)
-
+        
+        print(f"Order placed. ID is: {order_id}")
         return order_id['NOrdNo'] # Merge place_order  #TODO retrun only order_id for all the brokers
   
     except Exception as e:
         message = f"Order placement failed: {e} for {order_details['username']}"
         print(message)
-        # general_calc.discord_bot(message)
+        discord.discord_bot(message,strategy)
         return None
 
 def place_aliceblue_order(order_details: dict):
@@ -129,19 +135,10 @@ def update_alice_stoploss(order_details):
                     product_type = product_type,
                     price=new_stoploss,
                     trigger_price = trigger_price)
+        print("alice modify_order",modify_order)
     except Exception as e:
         message = f"Order placement failed: {e} for {order_details['username']}"
         print(message)
-        # general_calc.discord_bot(message)
+        discord.discord_bot(message, order_details.get('strategy'))
         return None
-    print("alice modify_order",modify_order)
-
-# def exit_order(exit_order_func):
-#     order_id = retrieve_order_id(
-#         exit_order_func.get('user'),
-#         exit_order_func.get('broker'),
-#         exit_order_func.get('strategy'),
-#         exit_order_func.get('trade_type'),
-#         exit_order_func.get('token')
-#     )
-#     print("order_id",order_id)
+    

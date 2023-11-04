@@ -102,13 +102,13 @@ def message_for_orders(trade_type,prediction,main_trade_symbol,hedge_trade_symbo
             f"Direction : {prediction}\n"
             f"Main Trade : {main_trade_symbol}\n"
             f"Hedge Trade {hedge_trade_symbol} \n")    
-    # discord.discord_bot(message, strategy_name)
+    discord.discord_bot(message, strategy_name)
     
 
 def main():
     now = dt.datetime.now()
 
-    if now.time() < dt.time(15, 0):
+    if now.time() < dt.time(9, 0):
         print("Time is before 9:00 AM, placing test orders.")
         message_for_orders("Test",prediction,main_trade_symbol,hedge_trade_symbol)
     else:

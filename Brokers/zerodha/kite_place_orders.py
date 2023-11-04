@@ -2,20 +2,17 @@ import logging
 from kiteconnect import KiteConnect
 import sys,os
 
-
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
-import MarketUtils.general_calc as general_calc
 import MarketUtils.Discord.discordchannels as discord
 import Brokers.place_order_calc as place_order_calc
 import Brokers.Zerodha.kite_utils as kite_utils
 from MarketUtils.InstrumentBase import Instrument
 
-
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
 
-def kite_place_order(kite, order_details, user_details=None):
+def kite_place_order(kite, order_details):
     """
     Place an order with Zerodha broker.
 
@@ -30,9 +27,10 @@ def kite_place_order(kite, order_details, user_details=None):
     Raises:
         Exception: If the order placement fails.
     """
+    strategy = order_details.get('strategy')
     exchange_token = order_details.get('exchange_token')
     segment = Instrument().get_segment_by_exchange_token(exchange_token)
-    strategy = order_details.get('strategy')
+    segment_type = kite_utils.calculate_segment_type(kite,segment)
     qty = int(order_details.get('qty'))
     product = order_details.get('product_type')
 
@@ -40,20 +38,25 @@ def kite_place_order(kite, order_details, user_details=None):
     order_type = kite_utils.calculate_order_type(kite,order_details.get('order_type'))
     product_type = kite_utils.calculate_product_type(kite,product)
 
-
-    limit_prc = round(float(order_details.get('limit_prc', 0.0)), 2)
+    limit_prc = order_details.get('limit_prc', None) 
     trigger_price = order_details.get('trigger_prc', None)
+
+    if limit_prc is not None:
+        limit_prc = round(float(limit_prc), 2)
+        if limit_prc < 0:
+            limit_prc = 1.0
+    else:
+        limit_prc = 0.0
+    
     if trigger_price is not None:
         trigger_price = round(float(trigger_price), 2)
-
-    limit_prc = max(limit_prc, 1.0)
-    if trigger_price is not None and trigger_price < 0:
-        trigger_price = 1.5
+        if trigger_price < 0:
+            trigger_price = 1.5
 
     try:
         order_id = kite.place_order(
             variety=kite.VARIETY_REGULAR,
-            exchange=kite.EXCHANGE_NFO,  #TODO check for SENSEX
+            exchange= segment_type, 
             price= limit_prc,
             tradingsymbol=Instrument().get_trading_symbol_by_exchange_token(exchange_token),
             transaction_type=transaction_type, 
@@ -64,13 +67,12 @@ def kite_place_order(kite, order_details, user_details=None):
             tag= order_details.get('trade_id', None)
         )
         print(f"Order placed. ID is: {order_id}")
-        print("order_id",order_id)
         return order_id
     
     except Exception as e:
         message = f"Order placement failed: {e} for {order_details['username']}"
         print(message)
-        # general_calc.discord_bot(message)
+        discord.discord_bot(message,strategy)
         return None
 
 
@@ -94,7 +96,7 @@ def place_zerodha_order(order_details: dict):
     kite = kite_utils.create_kite_obj(user_details)
     
     try:
-        order_id = kite_place_order(kite, order_details, user_details)
+        order_id = kite_place_order(kite, order_details)
     except TypeError:
         print("Failed to place the order and retrieve the order ID and average price.")
         # You can set default or fallback values if needed
@@ -123,23 +125,11 @@ def update_kite_stoploss(order_details):
                                     order_id=order_id, 
                                     price = new_stoploss,
                                     trigger_price = trigger_price)
+        print("zerodha order modified", modify_order)
     except Exception as e:
         message = f"Order placement failed: {e} for {order_details['username']}"
         print(message)
-        # general_calc.discord_bot(message)
+        discord.discord_bot(message, order_details.get('strategy'))
         return None
         
     print("zerodha order modified")
-
-
-
-def exit_order(exit_order_func):
-    order_id = retrieve_order_id(
-        exit_order_func.get('user'),
-        exit_order_func.get('broker'),
-        exit_order_func.get('strategy'),
-        exit_order_func.get('trade_type'),
-        exit_order_func.get('token')
-    )
-    print("order_id",order_id)
-    

@@ -50,11 +50,21 @@ active_users = calculate_qty(active_users)
 general_calc.write_json_file(active_users_json_path, active_users)
 
 def download_csv(active_users):
+    # Flags to check if we have downloaded for each broker
+    zerodha_downloaded = False
+    aliceblue_downloaded = False
+
     for user in active_users:
-        if user['broker'] == 'zerodha':
-            kite_utils.get_csv_kite(active_users[0])
-        elif user['broker'] == 'aliceblue':
-            alice_utils.get_csv_alice(active_users[0])
+        if not zerodha_downloaded and user['broker'] == 'zerodha':
+            kite_utils.get_csv_kite(user)  # Get CSV for this user
+            zerodha_downloaded = True  # Set the flag to True after download
+        elif not aliceblue_downloaded and user['broker'] == 'aliceblue':
+            alice_utils.get_csv_alice(user)  # Get CSV for this user
+            aliceblue_downloaded = True  # Set the flag to True after download
+
+        # If we have downloaded both, we can break the loop
+        if zerodha_downloaded and aliceblue_downloaded:
+            break
 
 download_csv(active_users)
 

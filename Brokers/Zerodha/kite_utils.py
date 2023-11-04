@@ -57,6 +57,19 @@ def calculate_product_type(kite,product_type):
         raise ValueError("Invalid product_type in order_details")
     return product_type
 
+def calculate_segment_type(kite, segment_type):
+    # Prefix to indicate the exchange type
+    prefix = "EXCHANGE_"
+    
+    # Construct the attribute name
+    attribute_name = prefix + segment_type
+    
+    # Get the attribute from the kite object, or raise an error if it doesn't exist
+    if hasattr(kite, attribute_name):
+        return getattr(kite, attribute_name)
+    else:
+        raise ValueError(f"Invalid segment_type '{segment_type}' in order_details")
+
 def get_avg_prc(kite,order_id):
     if not order_id:
         raise Exception("Order_id not found")
