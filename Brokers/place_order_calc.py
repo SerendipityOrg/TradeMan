@@ -80,7 +80,8 @@ def log_order(order_id, order_details):
         "order_id": order_id,
         "qty": order_details['qty'],
         "timestamp": str(dt.datetime.now()),
-        "exchange_token": int(order_details['exchange_token'])
+        "exchange_token": int(order_details['exchange_token']),
+        "trade_id" : order_details['trade_id']
     }
 
     # Checking for 'signal' and 'transaction_type' and setting the trade_type accordingly

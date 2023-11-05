@@ -2,7 +2,7 @@
 from MPWizard_monitor import OrderMonitor
 import os,sys
 from dotenv import load_dotenv
-from MPWizard_calc import get_high_low_range_and_update_json, get_average_range_and_update_json
+import MPWizard_calc as MPWizard_calc
 import datetime as dt
 from time import sleep
 
@@ -14,6 +14,9 @@ load_dotenv(ENV_PATH)
 
 import Strategies.StrategyBase as StrategyBase
 import Brokers.place_order_calc as place_order_calc
+import MarketUtils.general_calc as general_calc
+from MarketUtils.InstrumentBase import Instrument
+import MarketUtils.Discord.discordchannels as discord
 
 
 _,strategy_path = place_order_calc.get_strategy_json('MPWizard')
@@ -29,6 +32,8 @@ def place_test_orders():
     indices = ["NIFTY", "BANKNIFTY", "FINNIFTY"]
     cross_types = ["UpCross", "DownCross"]
     ib_levels = ["Big", "Medium", "Small"]
+    _,STRATEGY_PATH = place_order_calc.get_strategy_json('MPWizard')
+    strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
 
     for index in indices:
         for cross_type in cross_types:
@@ -37,12 +42,17 @@ def place_test_orders():
                 
                 # Fetch the token for the index
                 token = strategy_obj.get_general_params()['IndicesTokens'][index]
+                ltp = strategy_obj.get_single_ltp(token)
+                trade_view = strategy_obj.get_general_params()['TradeView']
+                option_type = MPWizard_calc.calculate_option_type(ib_level,cross_type, trade_view)
+                strikeprc = general_calc.round_strike_prc(ltp,index)
+                expiry_date = Instrument().get_expiry_by_criteria(index,strikeprc,option_type,'current_week')
+                exchange_token = Instrument().get_exchange_token_by_criteria(index,strikeprc,option_type,expiry_date)
+                trade_symbol = Instrument().get_trading_symbol_by_exchange_token(exchange_token)
+
+                message = f"Test message for {index} {trade_view} {cross_type} {ib_level} {trade_symbol}"
                 
-                # Set the IB level in the strategy object (this might depend on your implementation)
-                # strategy_obj.set_ib_level(ib_level)  # Uncomment and modify this line as needed
-                
-                # Place a test order (this function needs to be implemented)
-                print(index, token, cross_type, ib_level)
+                discord.discord_bot(message, 'TestOrders')
 
 def main():
     """
@@ -55,7 +65,7 @@ def main():
         place_test_orders()
     else:
         # Update the JSON file with average range data
-        get_average_range_and_update_json(strategy_obj.get_general_params().get('ATRPeriod'))
+        MPWizard_calc.get_average_range_and_update_json(strategy_obj.get_general_params().get('ATRPeriod'))
         
         # Calculate the wait time before starting the bot
         desired_start_time = dt.datetime(now.year, now.month, now.day, start_hour, start_minute)
@@ -67,7 +77,7 @@ def main():
             sleep(wait_time.total_seconds())
         
         # Update the JSON file with high-low range data
-        get_high_low_range_and_update_json()
+        MPWizard_calc.get_high_low_range_and_update_json()
         
         with open(strategy_path,'r') as file:
             instruments = file.read()

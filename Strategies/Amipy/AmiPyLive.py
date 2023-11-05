@@ -104,7 +104,11 @@ def time_until(target_time):
 current_time = datetime.datetime.now().time()
 target_time = datetime.time(9, 19)
 
-if current_time > target_time:
+
+if current_time < datetime.time(9, 0):
+    strike_prc = get_ltp()
+    amipy_orders.place_orders(strike_prc,'Short')
+elif current_time > target_time:
     print('Running job()...')
     job()
 else:
@@ -499,8 +503,12 @@ def update_graph_scatter(n):
 
     return fig
 
-# Run app
-if __name__ == '__main__':
+
+
+if current_time > datetime.time(9, 0):
+#  __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True, use_reloader=False)
 
-print("Waiting for ticks...")
+    print("Waiting for ticks...")
+
+# Run app
