@@ -47,27 +47,36 @@ def get_trade_id(strategy_name, trade_type):
     if dt.datetime.now().time() < dt.datetime.strptime("09:00", "%H:%M").time():
         return "test_order"
 
-    # If the strategy is not in the cache, initialize it
     if strategy_name not in trade_cache:
         next_trade_id = strategy_obj.get_next_trade_id()
-        trade_cache[strategy_name] = {'trade_id': next_trade_id}
+        trade_cache[strategy_name] = {
+            'initial_trade_id': next_trade_id,  # Store the initial trade ID
+            'trade_id': next_trade_id,
+            'exit_made': False
+        }
 
     current_trade_id = trade_cache[strategy_name]['trade_id']
     new_trade_id = f"{current_trade_id}_{trade_type.lower()}"
 
     if trade_type.lower() == 'exit':
-        # Update trade ID for future orders
-        next_trade_id_num = int(current_trade_id[2:]) + 1
-        trade_cache[strategy_name]['trade_id'] = f"{current_trade_id[:2]}{next_trade_id_num:02}"
+        if not trade_cache[strategy_name]['exit_made']:
+            # Only set exit_made to True but do not change the trade_id
+            trade_cache[strategy_name]['exit_made'] = True
 
-        # Update TodayOrders and NextTradeId, and write changes to JSON
-        today_orders = strategy_obj.get_today_orders()
-        today_orders.append(current_trade_id)
-        strategy_obj.set_today_orders(today_orders)
-        strategy_obj.set_next_trade_id(trade_cache[strategy_name]['trade_id'])
-        strategy_obj.write_strategy_json(strategy_path)
+            today_orders = strategy_obj.get_today_orders()
+            if current_trade_id not in today_orders:
+                today_orders.append(current_trade_id)
+                strategy_obj.set_today_orders(today_orders)
+                strategy_obj.write_strategy_json(strategy_path)
+
+        # Use the initial trade ID for all exit trades
+        new_trade_id = f"{trade_cache[strategy_name]['initial_trade_id']}_exit"
+
     print(f"Trade ID: {new_trade_id}")
     return new_trade_id
+
+
+
 
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, order_details):

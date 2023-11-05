@@ -174,10 +174,10 @@ def read_opening_balances(file_path):
     return opening_balances
 
 # Main execution
-def main():
+def main(excel_dir):
     ENV_PATH = os.path.join(DIR, '.env')
     load_dotenv(ENV_PATH)
-    excel_dir = os.getenv('onedrive_excel_folder')
+    
     # excel_dir = '/Users/amolkittur/Desktop/Dev/UserProfile/Excel'
     opening_balances = read_opening_balances(os.path.join(DIR, 'MarketUtils', 'Main', 'useropeningbalance.txt'))
 

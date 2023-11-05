@@ -22,7 +22,7 @@ ENV_PATH = os.path.join(DIR, '.env')
 # Loading environment variables from .env file
 load_dotenv(ENV_PATH)
 excel_dir = os.getenv('onedrive_excel_folder')
-# excel_dir = '/Users/amolkittur/Desktop/Dev/UserProfile/Excel'
+# excel_dir = os.path.join(DIR, "UserProfile","Excel")
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
 
@@ -97,7 +97,7 @@ def main():
         all_dfs = load_existing_excel(excel_path)
         
         # Update the DTD sheet in the loaded Excel file
-        dtd.main()  # I'm assuming the function's name and it requires the excel path
+        dtd.main(excel_dir)  
 
         # Create a dictionary to store the aggregated results for each strategy
         strategy_results = {}
