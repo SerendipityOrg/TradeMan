@@ -1,4 +1,5 @@
 import os,sys
+import datetime as dt
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -7,6 +8,7 @@ import MarketUtils.InstrumentBase as InstrumentBase
 import Strategies.StrategyBase as StrategyBase
 import Brokers.place_order_calc as place_order_calc
 import Brokers.place_order as place_order
+import MarketUtils.Discord.discordchannels as discord
 
 _,STRATEGY_PATH = place_order_calc.get_strategy_json('AmiPy')
 
@@ -54,7 +56,11 @@ def place_orders(strike_prc, signal):
     orders_to_place.extend(main_orders)
 
     trade_type  = "entry" if signal == "ShortSignal" or signal == "LongSignal" else "exit"
-    trade_id = place_order_calc.get_trade_id(strategy_name, trade_type)
+
+    if dt.datetime.now().time() > dt.time(9, 0):
+        trade_id = place_order_calc.get_trade_id(strategy_name, trade_type)
+    else:
+        trade_id = "test_order"
 
     for order in orders_to_place:
         transaction_type = hedge_transaction_type if "Hedge" in order['order_mode'] else main_transaction_type
@@ -67,4 +73,36 @@ def place_orders(strike_prc, signal):
             "trade_id": trade_id
         })
     # print(orders_to_place)
-    place_order.place_order_for_strategy(strategy_name, orders_to_place)
+    if dt.datetime.now().time() < dt.time(9, 0):
+        if signal == "Short":
+            message_for_orders("Test",signal,main_CE_exchange_token,main_PE_exchange_token, hedge_CE_exchange_token, hedge_PE_exchange_token)
+        else:
+            message_for_orders("Test",signal,main_CE_exchange_token,main_PE_exchange_token, None, None)
+    else:
+        place_order.place_order_for_strategy(strategy_name, orders_to_place)
+
+
+def message_for_orders(trade_type,signal,main_CE_exchange_token,main_PE_exchange_token, hedge_CE_exchange_token, hedge_PE_exchange_token):
+    if trade_type == "Test":
+        strategy_name = "TestOrders"
+    
+    main_trade_CE_symbol = instrument_obj.get_trading_symbol_by_exchange_token(main_CE_exchange_token)
+    main_trade_PE_symbol = instrument_obj.get_trading_symbol_by_exchange_token(main_PE_exchange_token)
+    if hedge_CE_exchange_token:
+        hedge_trade_CE_symbol = instrument_obj.get_trading_symbol_by_exchange_token(hedge_CE_exchange_token)
+    else:
+        hedge_trade_CE_symbol = None 
+    if hedge_PE_exchange_token:
+        hedge_trade_PE_symbol = instrument_obj.get_trading_symbol_by_exchange_token(hedge_PE_exchange_token)
+    else:
+        hedge_trade_PE_symbol = None
+
+    message = ( f"{trade_type} Order for Amipy\n"
+            f"signal : {signal}\n"
+            f"main_CE_symbol : {main_trade_CE_symbol}\n"
+            f"main_PE_symbol : {main_trade_PE_symbol}\n"
+            f"Hedge CE Trade {hedge_trade_CE_symbol} \n"
+            f"Hedge PE Trade {hedge_trade_PE_symbol} \n")
+    print(message)    
+    
+    # discord.discord_bot(message, strategy_name)

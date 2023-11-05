@@ -13,8 +13,9 @@ alice = Aliceblue(user_id='929016',api_key='NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVB
 session = alice.get_session_id()
 
 
-orders = alice.get_order_history('')
-pprint(orders)
+# orders = alice.get_order_history('')
+print(alice.get_daywise_positions())
+# pprint(orders)
 
 
 

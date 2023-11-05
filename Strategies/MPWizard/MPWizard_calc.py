@@ -128,3 +128,15 @@ def get_weekday_price_ref(base_symbol):
 
     price_ref = ref_data[weekday]
     return price_ref
+
+def calculate_option_type(ib_level,cross_type,trade_view):
+    
+    if ib_level == 'Big':
+        return 'PE' if cross_type == 'UpCross' else 'CE'
+    elif ib_level == 'Small':
+        return 'PE' if cross_type == 'DownCross' else 'CE'
+    elif ib_level == 'Medium':
+        return 'PE' if trade_view == 'Bearish' else 'CE'
+    else:
+        print(f"Unknown IB Level: {ib_level}")
+    return None
