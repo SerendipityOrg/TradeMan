@@ -17,7 +17,7 @@ def fetch_data_from_excel(file_name, sheet_mappings):
     for internal_name, actual_sheet_name in sheet_mappings.items():
         try:
             # Choose column based on the specific sheet
-            time_col = 'exit_time' if internal_name in 'OvernightFutures' else 'entry_time' # <-- Change here
+            time_col = 'exit_time' 
             temp_df = pd.read_excel(
                 file_name, sheet_name=actual_sheet_name, parse_dates=[time_col])
 
@@ -39,7 +39,7 @@ def create_dtd_dataframe_updated(data_mappings, opening_balance):
         return pd.DataFrame(), 0
 
     # Extract all unique dates from the data mappings
-    all_dates = pd.concat([df['exit_time' if key in 'OvernightFutures' else 'entry_time'].dt.date for key, df in data_mappings.items()]).unique()
+    all_dates = pd.concat([df['exit_time'].dt.date for key, df in data_mappings.items()]).unique()
 
     # Filter out any NaT values (Not a Time) from the all_dates list to prevent errors during processing
     all_dates = [date for date in all_dates if pd.notna(date)]
@@ -75,7 +75,7 @@ def create_dtd_dataframe_updated(data_mappings, opening_balance):
         for transaction_id in default_details:
             if transaction_id in data_mappings:
                 df = data_mappings[transaction_id]
-                time_col = 'exit_time' if transaction_id == 'OvernightFutures' else 'entry_time'
+                time_col = 'exit_time'
                 sub_df = df[df[time_col].dt.date == date]
 
                 for _, row in sub_df.iterrows():
@@ -177,7 +177,9 @@ def read_opening_balances(file_path):
 def main():
     ENV_PATH = os.path.join(DIR, '.env')
     load_dotenv(ENV_PATH)
-    excel_dir = os.getenv('onedrive_excel_folder')
+    excel_dir = os.path.join(DIR, 'UserProfile','excel')
+    print(excel_dir)
+    # excel_dir = os.getenv('onedrive_excel_folder')
     # excel_dir = '/Users/amolkittur/Desktop/Dev/UserProfile/Excel'
     opening_balances = read_opening_balances(os.path.join(DIR, 'MarketUtils', 'Main', 'useropeningbalance.txt'))
 
