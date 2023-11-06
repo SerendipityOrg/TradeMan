@@ -105,4 +105,4 @@ def message_for_orders(trade_type,signal,main_CE_exchange_token,main_PE_exchange
             f"Hedge PE Trade {hedge_trade_PE_symbol} \n")
     print(message)    
     
-    # discord.discord_bot(message, strategy_name)
+    discord.discord_bot(message, strategy_name)

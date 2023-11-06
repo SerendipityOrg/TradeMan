@@ -6,4 +6,4 @@ sridhar: 27,292.28
 vinod : 51,931.61
 arjun : 75,853.92
 gayathri : 97,006.55
-amol : 500000.00
+amol : 15,000.00

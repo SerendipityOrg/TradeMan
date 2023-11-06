@@ -50,8 +50,8 @@ def place_test_orders():
                 exchange_token = Instrument().get_exchange_token_by_criteria(index,strikeprc,option_type,expiry_date)
                 trade_symbol = Instrument().get_trading_symbol_by_exchange_token(exchange_token)
 
-                message = f"Test message for {index} {trade_view} {cross_type} {ib_level} {trade_symbol}"
-                
+                message = f"Test order for {index} {trade_view} {cross_type} {ib_level} {trade_symbol}"
+                print(message)
                 discord.discord_bot(message, 'TestOrders')
 
 def main():
