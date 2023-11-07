@@ -144,9 +144,10 @@ class OrderMonitor:
         {
             "strategy": strategy_obj.get_strategy_name(),
             "exchange_token" : order_details['exchange_token'],
-            "transaction_type": order_details['transaction_type'],   #TODO remove hardcode
+            "transaction_type": order_details['transaction_type'],  
             "target": order_details['target'],
             "limit": order_details['limit_prc'],
+            "trigger_prc" : order_details['trigger_prc'],
             "order_type" : 'Stoploss',
             "product_type" : order_details['product_type'],
             "segment" : order_details['segment']
@@ -209,10 +210,11 @@ class OrderMonitor:
         order_to_modify = self.create_modify_order_details(order_details)
         place_order.modify_orders(order_details=order_to_modify)
 
-        price_ref = order_details['price_ref'] # TODO: This is related to MPwizard. Generalize this function
+        price_ref = order_details['price_ref'] 
         order_details['target'] += (price_ref / 2)  # Adjust target by half of price_ref
         order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
-        return order_details['target'], order_details['limit_prc']
+        order_details['trigger_prc'] = order_details['limit_prc'] + 1.0  
+        return order_details['target'], order_details['limit_prc'], order_details['trigger_prc']
 
     def handle_trigger(self, instrument,data,order_details=None):
         ltp = self.instrument_monitor.fetch_ltp(instrument)
@@ -225,13 +227,11 @@ class OrderMonitor:
             
         elif data['type'] == 'target':
             if order_details:
-                new_target, new_limit_prc = self.process_modify_orders(order_details=order_details)
-                order_details['target'] = new_target
-                order_details['limit'] = new_limit_prc
+                new_target, new_limit_prc, new_trigger_prc = self.process_modify_orders(order_details=order_details)
                 trading_symbol = self.get_instrument_by_token(order_details['exchange_token'])
-                message = f"New target for {trading_symbol} set to {new_target} and new limit price set to {new_limit_prc}."
+                message = f"New target for {trading_symbol} set to {new_target} and new limit price set to {new_limit_prc} and new trigger price is {new_trigger_prc}."
                 print(message)
-                discordbot.discord_bot(message,strategy_obj.get_strategy_name())
+                # discordbot.discord_bot(message,strategy_obj.get_strategy_name())
             else:
                 print("No order details available to update target and limit prices.")
                 
