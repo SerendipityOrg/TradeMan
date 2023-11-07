@@ -526,7 +526,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
         # Extract unique strategies from data
         unique_strategies = set([record[3] for record in data])
-        categories = ["MPWizard", "AmiPy", "ZRM", "Overnight Options"]
+        categories = ["MPWizard", "AmiPy", "ZRM", "OvernightFutures", "ExpiryTrader"]
         available_strategies = [
             strategy for strategy in categories if strategy in unique_strategies]
 
