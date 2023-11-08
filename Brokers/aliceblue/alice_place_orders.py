@@ -103,10 +103,10 @@ def place_aliceblue_order(order_details: dict):
     except Exception as e:
         print(f"Failed to log the order: {e}")  
 
-
-def update_alice_stoploss(order_details):
+def update_alice_stoploss(order_details,alice= None):
     user_details = place_order_calc.assign_user_details(order_details.get('username'))
-    alice = alice_utils.create_alice_obj(user_details)
+    if alice is None:
+        alice = alice_utils.create_alice_obj(user_details)
     order_id = place_order_calc.retrieve_order_id(
             order_details.get('username'),
             order_details.get('strategy'),
@@ -138,4 +138,50 @@ def update_alice_stoploss(order_details):
         print(message)
         discord.discord_bot(message, order_details.get('strategy'))
         return None
+    
+def sweep_alice_orders(userdetails):
+    try:
+        alice = alice_utils.create_alice_obj(userdetails)
+        orders = alice.get_order_history('')
+        positions = alice.get_daywise_positions()
+    except Exception as e:
+        print(f"Failed to fetch orders and positions: {e}")
+        return None
+
+    tokens = []
+    if positions['stat'] != 'Not_Ok':
+        for position in positions:
+            if position['Pcode'] == 'MIS' and position['realisedprofitloss'] == '0.00':
+                tokens.append(position['Token'])
+
+    sweep_orders = []
+    if tokens:
+        for token in tokens:
+            for order in orders:
+                if token == order['token'] and order['remarks'] is not None:
+                    order_details = {
+                        'trade_id': order['remarks'],
+                        'exchange_token': order['token'],
+                        'transaction_type' : order['Trantype']
+                    }
+                    sweep_orders.append(order_details)
+    
+    for pending_order in orders:
+        if orders[0]['stat'] == 'Not_Ok':
+            print("No orders found")
+        elif pending_order['Status'] == 'trigger pending':
+            print(pending_order['Nstordno'])
+            # alice.cancel_order(pending_order['Nstordno'])
+
+    for sweep_order in sweep_orders:
+        order_details = place_order_calc.create_sweep_order_details(userdetails, sweep_order)
+        print("order_details",order_details)
+        # place_aliceblue_order(order_details,alice)
+
+
+
+
+    
+                
+
     

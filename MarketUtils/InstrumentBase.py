@@ -143,3 +143,14 @@ class Instrument:
             return filtered_data.iloc[0]['exchange']
         else:
             return None
+
+    def _filter_data_by_token(self, token):
+        return self._dataframe[self._dataframe['instrument_token'] == token]
+
+    def get_exchange_token_by_token(self, token):
+        filtered_data = self._filter_data_by_token(token)
+        if not filtered_data.empty:
+            return filtered_data.iloc[0]['exchange_token']
+        else:
+            return None
+        

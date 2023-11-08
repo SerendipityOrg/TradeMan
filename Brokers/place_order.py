@@ -10,6 +10,7 @@ import Brokers.place_order_calc as place_order_calc
 from Strategies.StrategyBase import Strategy
 import Brokers.BrokerUtils.Broker as Broker
 from MarketUtils.InstrumentBase import Instrument
+import MarketUtils.general_calc as general_calc
 
 def add_token_to_monitor(order_details):
     monitor = place_order_calc.monitor()
@@ -38,12 +39,12 @@ def place_order_for_broker(order_details):
         return
 
     if "SL" in order_details['order_mode']:
-        sleep(1)
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
+        sleep(1)
         place_stoploss_order(order_details=order_details)
     elif "Trailing" in order_details['order_mode']:
-        sleep(1)
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
+        sleep(1)
         place_stoploss_order(order_details=order_details)
         add_token_to_monitor(order_details)
         
@@ -62,7 +63,7 @@ def place_stoploss_order(order_details=None,monitor=None):
     order_details['order_type'] = 'Stoploss'
 
     if "Trailing" in order_details['order_mode']:
-        order_details['target'] = place_order_calc.calculate_target(option_ltp,order_details.get('price_ref'))
+        order_details['target'] = place_order_calc.calculate_target(option_ltp,order_details.get('price_ref'),order_details.get('strategy'))
 
     if order_details['broker'] == "aliceblue":
         aliceblue.place_aliceblue_order(order_details)
@@ -90,3 +91,14 @@ def modify_orders(order_details=None):
                 order_with_user["username"] = username
                 order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
                 modify_stoploss(order_with_user)
+
+def sweep_open_orders():
+    active_users = general_calc.read_json_file(os.path.join(DIR_PATH,"MarketUtils","active_users.json"))
+    for user in active_users:
+        if user['broker'] == "aliceblue":
+            aliceblue.sweep_alice_orders(user)
+        elif user['broker'] == "zerodha":
+            zerodha.sweep_kite_orders(user)
+        else:
+            print("Unknown broker")
+            return

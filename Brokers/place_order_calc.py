@@ -186,7 +186,46 @@ def calculate_transaction_type_sl(transaction_type):
         transaction_type_sl = 'BUY'
     return transaction_type_sl
 
-def calculate_target(option_ltp,price_ref):
-    return option_ltp+price_ref
+def calculate_target(option_ltp,price_ref,strategy):
+    if strategy == 'MPWizard':
+        target = option_ltp+(price_ref/2)
+    return target
 
+def get_strategy_name(trade_id):
+    # Define the mapping between trade_id prefix and strategy name
+    strategy_map = {
+        'AP': 'AmiPy',
+        'MP': 'MPWizard',
+        'ET': 'ExpiryTrader' 
+    }
+    
+    # Extract the prefix from the trade_id
+    prefix = trade_id[:2]  # assuming all prefixes are two characters long
+    
+    # Return the strategy name based on the prefix, or a default value if not found
+    return strategy_map.get(prefix, "Unknown Strategy")
 
+def get_exit_trade_id(trade_id):
+    # Replace '_entry' with '_exit' in the trade_id
+    if '_entry' in trade_id:
+        return trade_id.replace('_entry', '_exit')
+    else:
+        return trade_id
+
+def create_sweep_order_details(user,order_details):
+    strategy_name = get_strategy_name(order_details['trade_id'])
+    transaction_type_sl = calculate_transaction_type_sl(order_details['transaction_type'])
+    trade_id_sl = get_exit_trade_id(order_details['trade_id'])
+    sweep_orders_dict = {
+            'username': user['username'],
+            'broker' : user['broker'],
+            'strategy': strategy_name,
+            'transaction_type': transaction_type_sl,
+            'exchange_token': order_details['exchange_token'],
+            'qty': order_details['qty'],
+            'order_type': 'Market',
+            'product_type': 'MIS',
+            'trade_id': trade_id_sl         
+
+        }
+    return sweep_orders_dict

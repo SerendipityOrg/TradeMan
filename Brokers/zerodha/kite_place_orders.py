@@ -1,4 +1,5 @@
 import sys,os
+from pprint import pprint
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -73,8 +74,7 @@ def kite_place_order(kite, order_details):
         discord.discord_bot(message,strategy)
         return None
 
-
-def place_zerodha_order(order_details: dict):
+def place_zerodha_order(order_details: dict, kite=None):
     """
     Place an order with Zerodha broker.
 
@@ -91,7 +91,8 @@ def place_zerodha_order(order_details: dict):
     """
     
     user_details = place_order_calc.assign_user_details(order_details.get('username'))
-    kite = kite_utils.create_kite_obj(user_details)
+    if kite is None:
+        kite = kite_utils.create_kite_obj(user_details)
     
     try:
         order_id = kite_place_order(kite, order_details)
@@ -131,3 +132,37 @@ def update_kite_stoploss(order_details):
         return None
         
     print("zerodha order modified")
+
+def sweep_kite_orders(userdetails):
+    try:
+        kite = kite_utils.create_kite_obj(userdetails)
+        orders = kite.orders()
+        positions = kite.positions()
+    except Exception as e:
+        print(f"Failed to fetch orders and positions: {e}")
+        return None
+
+    token_quantities = {position['instrument_token']: abs(position['quantity']) for position in positions['net'] if position['product'] == 'MIS' and position['quantity'] != 0}
+
+    sweep_orders = []
+    for token, quantity in token_quantities.items():
+        for order in orders:
+            if token == order['instrument_token'] and order['tag'] is not None and order['status'] == 'COMPLETE':
+                exchange_token = Instrument().get_exchange_token_by_token(token)
+                order_details = {
+                    'trade_id': order['tag'],
+                    'exchange_token': exchange_token,
+                    'transaction_type': order['transaction_type'],
+                    'qty': quantity
+                }
+                sweep_orders.append(order_details)
+    
+    for pending_order in orders:
+        if pending_order['status'] == 'TRIGGER PENDING':
+            print(pending_order['order_id'])
+            # kite.cancel_order(variety=kite.VARIETY_REGULAR,order_id=pending_order['order_id'])
+
+    for sweep_order in sweep_orders:
+        order_details = place_order_calc.create_sweep_order_details(userdetails,sweep_order)
+        print("order_details",order_details)
+        place_zerodha_order(order_details,kite)
