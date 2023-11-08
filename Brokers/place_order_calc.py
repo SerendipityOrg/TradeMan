@@ -35,6 +35,14 @@ def get_active_users(broker_json_details):
             active_users.append(user)
     return active_users
 
+def increment_trade_id(trade_id):
+    # This function separates the prefix and the number, increments the number, and then rejoins them.
+    match = re.match(r"([a-zA-Z]+)(\d+)", trade_id)
+    prefix = match.group(1)
+    number = int(match.group(2))
+    incremented_number = number + 1
+    return f"{prefix}{incremented_number}"
+
 # Initialize a global cache for trade IDs and exit flags
 trade_cache = {}
 
@@ -46,26 +54,47 @@ def get_trade_id(strategy_name, trade_type):
 
     if dt.datetime.now().time() < dt.datetime.strptime("09:00", "%H:%M").time():
         return "test_order"
-
-    # If the strategy is not in the cache, initialize it
-    if strategy_name not in trade_cache:
+# Check if a new day has started and reset the cache if it has
+    if strategy_name not in trade_cache :
         next_trade_id = strategy_obj.get_next_trade_id()
-        trade_cache[strategy_name] = {'trade_id': next_trade_id}
-
+        trade_cache[strategy_name] = {
+            'initial_trade_id': next_trade_id,
+            'trade_id': next_trade_id,
+            'exit_made': False
+        }
+    
     current_trade_id = trade_cache[strategy_name]['trade_id']
-    new_trade_id = f"{current_trade_id}_{trade_type.lower()}"
+    today_orders = strategy_obj.get_today_orders()
 
-    if trade_type.lower() == 'exit':
-        # Update trade ID for future orders
-        next_trade_id_num = int(current_trade_id[2:]) + 1
-        trade_cache[strategy_name]['trade_id'] = f"{current_trade_id[:2]}{next_trade_id_num:02}"
+    # Append the current_trade_id to today_orders after an entry
+    if trade_type.lower() == 'entry':
+        # If the last action was an exit, use a new trade ID
+        if trade_cache[strategy_name]['exit_made']:
+            current_trade_id = increment_trade_id(current_trade_id)
+            trade_cache[strategy_name]['trade_id'] = current_trade_id  # Update trade_id in the cache
+            trade_cache[strategy_name]['exit_made'] = False  # Reset exit flag for new entry
+            strategy_obj.set_next_trade_id(current_trade_id)  # Save new trade ID for strategy
+            strategy_obj.write_strategy_json(strategy_path)
 
-        # Update TodayOrders and NextTradeId, and write changes to JSON
-        today_orders = strategy_obj.get_today_orders()
-        today_orders.append(current_trade_id)
-        strategy_obj.set_today_orders(today_orders)
-        strategy_obj.set_next_trade_id(trade_cache[strategy_name]['trade_id'])
-        strategy_obj.write_strategy_json(strategy_path)
+        new_trade_id = f"{current_trade_id}_entry"
+        if new_trade_id not in today_orders:
+            today_orders.append(current_trade_id)  # Append the new trade ID with entry tag
+            strategy_obj.set_today_orders(today_orders)
+            strategy_obj.write_strategy_json(strategy_path)
+
+    # Process exit
+    elif trade_type.lower() == 'exit':
+        new_trade_id = f"{current_trade_id}_exit"
+        if not trade_cache[strategy_name]['exit_made']:
+            # Mark exit as made
+            trade_cache[strategy_name]['exit_made'] = True
+            # No need to increment the trade_id here, it should be incremented at the next entry
+
+        if current_trade_id not in today_orders:
+            today_orders.append(current_trade_id)  # Append the new trade ID with exit tag
+            strategy_obj.set_today_orders(today_orders)
+            strategy_obj.write_strategy_json(strategy_path)
+
     print(f"Trade ID: {new_trade_id}")
     return new_trade_id
 
@@ -129,7 +158,10 @@ def get_qty(order_details):
             return None
         
         return userdetails["qty"]["MPWizard"].get(base_symbol)
-    
+
+    if strategy == 'OvernightFutures' and "exit" in order_details["trade_id"]:
+        return userdetails["qty"].get("PreviousOvernightFutures")
+        
     return userdetails["qty"].get(strategy)
 
 def calculate_stoploss(order_details,ltp):#TODo split this function into two parts
@@ -171,11 +203,12 @@ def calculate_trigger_price(transaction_type,stoploss):
     return trigger_price
 
 def calculate_transaction_type_sl(transaction_type):
-    if transaction_type == 'BUY':
+    if transaction_type == 'BUY' or transaction_type == 'B':
         transaction_type_sl = 'SELL'
-    elif transaction_type == 'SELL':
+    elif transaction_type == 'SELL' or transaction_type == 'S':
         transaction_type_sl = 'BUY'
     return transaction_type_sl
+
 
 def calculate_target(option_ltp,price_ref,strategy):
     if strategy == 'MPWizard':

@@ -169,6 +169,14 @@ def mpwizard_details(orders, broker, user):
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
             sell_orders.append(simplified_order)
 
+    def extract_numeric_part(trade_id):
+        # Assuming the format is two letters followed by numbers 'MP201'
+        return int(''.join(filter(str.isdigit, trade_id)))
+
+    # Sort the buy and sell orders by the numeric part of trade_id
+    buy_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
+    sell_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
+
     results = {
         "MPWizard": {
             "BUY": buy_orders,
