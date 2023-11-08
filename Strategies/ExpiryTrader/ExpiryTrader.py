@@ -64,7 +64,6 @@ hedge_option_type = expiry_trader_obj.get_hedge_option_type(prediction)
 today_expiry = instrument_obj.get_expiry_by_criteria(today_expiry_symbol,main_strikeprc,main_option_type, "current_week")
 main_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol,main_strikeprc, main_option_type,today_expiry)
 hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(today_expiry_symbol,hedge_strikeprc,hedge_option_type, today_expiry)
-calculate_qty(main_exchange_token,today_expiry_symbol)
 trade_id = place_order_calc.get_trade_id(strategy_name, "entry")
 
 
@@ -122,6 +121,7 @@ def main():
             sleep(wait_time.total_seconds())
         
         print(orders_to_place)
+        calculate_qty(main_exchange_token,today_expiry_symbol)
         message_for_orders("Live",prediction,main_trade_symbol,hedge_trade_symbol)
         place_order.place_order_for_strategy(strategy_name,orders_to_place)
 

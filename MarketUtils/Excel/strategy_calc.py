@@ -16,17 +16,27 @@ def process_mpwizard_trades(broker,mpwizard_trades):
         return []
 
     result = []
-    # Extracting trade details
+
     for i in range(len(mpwizard_trades["BUY"])):
         buy_trade = mpwizard_trades["BUY"][i]
-        sell_trade = mpwizard_trades["SELL"][i]
+        # Find a matching sell_trade by trade_id or trading_symbol
+        matching_sell_trades = [trade for trade in mpwizard_trades["SELL"]
+                                if trade["trade_id"] == buy_trade["trade_id"] or
+                                trade["trading_symbol"] == buy_trade["trading_symbol"]]
+        
+        if not matching_sell_trades:
+            print(f"No matching SELL trade for BUY trade with trade_id: {buy_trade['trade_id']}")
+            continue
+        
+        sell_trade = matching_sell_trades[0] # Take the first matching sell trade
 
         if broker == "zerodha":
             charges = tc.zerodha_taxes(
                 buy_trade["qty"], buy_trade["avg_price"], sell_trade["avg_price"], 1)
         elif broker == "aliceblue":
-            charges = tc.aliceblue_taxes(buy_trade["qty"], float(
-                buy_trade["avg_price"]), float(sell_trade["avg_price"]), 1)
+            charges = tc.aliceblue_taxes(
+                buy_trade["qty"], float(buy_trade["avg_price"]), float(sell_trade["avg_price"]), 1)
+        
         trade_points = float(sell_trade["avg_price"]) - float(buy_trade["avg_price"])
         pnl = trade_points * int(buy_trade["qty"])
         net_pnl = pnl - charges
@@ -36,22 +46,23 @@ def process_mpwizard_trades(broker,mpwizard_trades):
         exit_time = pd.to_datetime(sell_trade["time"], format='%d/%m/%Y %H:%M:%S').round('min')
 
         trade_data = {
-                "trade_id": buy_trade["trade_id"],
-                "trading_symbol": buy_trade["trading_symbol"],
-                "signal": signal,
-                "entry_time": entry_time.strftime('%Y-%m-%d %H:%M:%S'),
-                "exit_time": exit_time.strftime('%Y-%m-%d %H:%M:%S'),
-                "entry_price": round(buy_trade["avg_price"],2),
-                "exit_price": round(sell_trade["avg_price"],2),
-                "hedge_entry_price": 0,  # Assuming no hedge for this example
-                "hedge_exit_price": 0,   # Assuming no hedge for this example
-                "trade_points": round(trade_points,2),
-                "qty": buy_trade["qty"],
-                "pnl": round(pnl,2),
-                "tax": round(charges,2),
-                "net_pnl": round(net_pnl,2)
-            } 
+            "trade_id": buy_trade["trade_id"],
+            "trading_symbol": buy_trade["trading_symbol"],
+            "signal": signal,
+            "entry_time": entry_time.strftime('%Y-%m-%d %H:%M:%S'),
+            "exit_time": exit_time.strftime('%Y-%m-%d %H:%M:%S'),
+            "entry_price": round(buy_trade["avg_price"], 2),
+            "exit_price": round(sell_trade["avg_price"], 2),
+            "hedge_entry_price": 0,  # Assuming no hedge for this example
+            "hedge_exit_price": 0,   # Assuming no hedge for this example
+            "trade_points": round(trade_points, 2),
+            "qty": buy_trade["qty"],
+            "pnl": round(pnl, 2),
+            "tax": round(charges, 2),
+            "net_pnl": round(net_pnl, 2)
+        }
         result.append(trade_data)
+
     return result
 
 def process_amipy_trades(broker,amipy_trades):
@@ -197,7 +208,7 @@ def process_expiry_trades(broker, expiry_trades):
         else:
             charges = 0  # No charges if broker is not recognized
 
-        main_trade_points = float(main_exit["avg_price"]) - float(main_entry["avg_price"])
+        main_trade_points = float(main_entry["avg_price"]) - float(main_exit["avg_price"])
         hedge_trade_points = float(hedge_exit["avg_price"]) - float(hedge_entry["avg_price"]) if hedge_entry else 0
         trade_points = main_trade_points - hedge_trade_points
         pnl = trade_points * main_entry["qty"]
@@ -253,9 +264,9 @@ def process_overnight_futures_trades(afternoon_trade_details, morning_trade_deta
         # Calculating trade points based on direction
         direction = entry_trade["signal"]
         if direction == "Long":
-            trade_points = (entry_trade["entry_price"] - future_exit_price) + (entry_trade["hedge_entry_price"] - option_exit_price)
-        elif direction == "Short":  
             trade_points = (future_exit_price - entry_trade["entry_price"]) + (option_exit_price - entry_trade["hedge_entry_price"])
+        elif direction == "Short":  
+            trade_points = (entry_trade["entry_price"] - future_exit_price) + (option_exit_price - entry_trade["hedge_entry_price"])
         pnl = trade_points * qty
 
         exit_time = pd.to_datetime(morning_trade_details[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')

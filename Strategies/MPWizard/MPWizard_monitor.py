@@ -146,7 +146,7 @@ class OrderMonitor:
             "exchange_token" : order_details['exchange_token'],
             "transaction_type": order_details['transaction_type'],  
             "target": order_details['target'],
-            "limit": order_details['limit_prc'],
+            "limit_prc": order_details['limit_prc'],
             "trigger_prc" : order_details['trigger_prc'],
             "order_type" : 'Stoploss',
             "product_type" : order_details['product_type'],
@@ -231,7 +231,7 @@ class OrderMonitor:
                 trading_symbol = self.get_instrument_by_token(order_details['exchange_token'])
                 message = f"New target for {trading_symbol} set to {new_target} and new limit price set to {new_limit_prc} and new trigger price is {new_trigger_prc}."
                 print(message)
-                # discordbot.discord_bot(message,strategy_obj.get_strategy_name())
+                discordbot.discord_bot(message,strategy_obj.get_strategy_name())
             else:
                 print("No order details available to update target and limit prices.")
                 
