@@ -210,7 +210,7 @@ def process_expiry_trades(broker, expiry_trades):
 
         main_trade_points = float(main_entry["avg_price"]) - float(main_exit["avg_price"])
         hedge_trade_points = float(hedge_exit["avg_price"]) - float(hedge_entry["avg_price"]) if hedge_entry else 0
-        trade_points = main_trade_points - hedge_trade_points
+        trade_points = main_trade_points + hedge_trade_points
         pnl = trade_points * main_entry["qty"]
         net_pnl = pnl - charges
 

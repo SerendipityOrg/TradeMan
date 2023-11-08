@@ -16,6 +16,7 @@ import Brokers.Zerodha.kite_utils as kite_utils
 
 broker_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'broker.json')
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
+previous_day_active_users = general_calc.read_json_file(active_users_json_path)
 
 alice = None
 kite = None
@@ -43,8 +44,14 @@ active_users = all_broker_login(place_order_calc.get_active_users(broker_json_de
 
 def calculate_qty(active_users):
     for user in active_users:
+        prev_overnight_qty = None
+        for prev_user in previous_day_active_users:
+            if user['account_name'] == prev_user['account_name'] and 'OvernightFutures' in prev_user['qty']:
+                prev_overnight_qty = prev_user['qty']['OvernightFutures']
         lots = qty_calc.calculate_lots(user)
         user['qty'] = lots
+        if prev_overnight_qty is not None:
+            user['qty']['PreviousOvernightFutures'] = prev_overnight_qty
         clear_json_file(user['account_name'])
     return active_users
 

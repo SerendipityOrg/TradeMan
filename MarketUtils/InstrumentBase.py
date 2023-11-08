@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 DIR_PATH = os.getcwd()
-insrument_csv_path = os.path.join(DIR_PATH, 'MarketUtils', 'instruments.csv')
+insrument_csv_path = os.path.join(DIR_PATH,'instruments.csv')
 
 from datetime import datetime
 from calendar import monthrange

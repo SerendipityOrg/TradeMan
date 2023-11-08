@@ -41,7 +41,7 @@ def aliceblue_invested_value(user_data):
     return invested_value
 
 
-def zerodha_invested_value(broker_data, broker, user):
+def zerodha_invested_value(broker_data):
     user_details = broker_data
     kite = KiteConnect(api_key=user_details['api_key'])
     kite.set_access_token(user_details['access_token'])
@@ -56,7 +56,7 @@ def get_invested_value(broker_data, broker, user):
     if broker == "aliceblue":
         return aliceblue_invested_value(user_details)
     elif broker == "zerodha":
-        return zerodha_invested_value(broker_data, broker, user)
+        return zerodha_invested_value(user_details)
 
 # Function to format currency in custom style
 
@@ -90,7 +90,7 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
     return message
 
 
-broker_data = general_calc.read_json_file(broker_filepath)
+broker_data = general_calc.read_json_file(active_users_json_path)
 updated_users = []
 
 for user in broker_data:
@@ -114,11 +114,11 @@ for user in broker_data:
         user_data['current_capital'] = current_capital
         phone_number = user_data['mobile_number']
         print(message)
-#     updated_users.append(user_data)
+    updated_users.append(user_data)
 
-#     with TelegramClient(session_filepath, api_id, api_hash) as client:
-#         client.send_message(phone_number, message, parse_mode='md')
+    with TelegramClient(session_filepath, api_id, api_hash) as client:
+        client.send_message(phone_number, message, parse_mode='md')
 
 
 
-# general_calc.write_json_file(broker_filepath, updated_users)
+general_calc.write_json_file(broker_filepath, updated_users)
