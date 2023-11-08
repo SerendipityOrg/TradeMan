@@ -498,7 +498,7 @@ def show_profile(selected_client, selected_client_name):
             if isinstance(Strategy_list, list) and len(Strategy_list) > 0:
                 for i, strategy in enumerate(Strategy_list):
                     strategy["strategy_name"] = st.multiselect(
-                        f"Strategy Name {i+1}", ["AmiPy", "MP Wizard", "ZRM", "Overnight Options", "Screenipy Stocks"], default=strategy.get("strategy_name", []), key=f"strategy_name_{i}")
+                        f"Strategy Name {i+1}", ["AmiPy", "MPWizard", "ZRM", "OvernightFutures", "ExpiryTrader","Screenipy Stocks"], default=strategy.get("strategy_name", []), key=f"strategy_name_{i}")
                     strategy["broker"] = st.multiselect(
                         f"Broker {i+1}", ["Zerodha", "AliceBlue"], default=strategy.get("broker", []), key=f"strategy_broker_{i}")
                     selected_strategies = strategy["strategy_name"]
