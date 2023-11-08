@@ -192,6 +192,7 @@ def main():
     ENV_PATH = os.path.join(DIR, '.env')
     load_dotenv(ENV_PATH)
     
+    # excel_dir = r"C:\Users\vanis\OneDrive\Desktop\TradeMan\UserProfile\excel"
     excel_dir = os.getenv('onedrive_excel_folder')
     opening_balances = read_opening_balances(os.path.join(DIR, 'MarketUtils', 'Main', 'useropeningbalance.txt'))
 

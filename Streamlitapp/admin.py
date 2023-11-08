@@ -387,6 +387,9 @@ def show_profile(selected_client, selected_client_name):
         # Add some space between the table and the 'Edit' button
         st.markdown("<br>", unsafe_allow_html=True)
 
+        # Define the risk profile options at the start
+        risk_profile_options = ["Low", "Medium", "High"]
+        
         # Add 'Edit' button to switch to 'edit mode'
         if st.button('Edit'):
             st.session_state.edit_mode = True
@@ -460,8 +463,12 @@ def show_profile(selected_client, selected_client_name):
                         "Active:", key=f"active_1_{i}", value=broker_1.get("active", False))
                     broker_1["capital"] = st.number_input(
                         "Capital:", key=f"capital_1_{i}", value=broker_1.get("capital", ""))
-                    broker_1["risk_profile"] = st.text_input("Risk profile:", key=f"risk_profile_1_{i}",
-                                                             value=broker_1.get("risk_profile", ""))
+                    broker_1["risk_profile"] = st.selectbox(
+                        "Risk Profile:",
+                        risk_profile_options,
+                        key=f"risk_profile_1_{i}",
+                        index=risk_profile_options.index(broker_1.get("risk_profile", "Low"))  # Set the default value if it exists
+                    )
                     updated_brokers_list_1.append(broker_1)
 
             st.write("Broker 2")
@@ -489,8 +496,12 @@ def show_profile(selected_client, selected_client_name):
                         "Active:", key=f"active_2_{i}", value=broker_2.get("active", False))
                     broker_2["capital"] = st.number_input(
                         "Capital:", key=f"capital_2_{i}", value=broker_2.get("capital", ""))
-                    broker_2["risk_profile"] = st.text_input("Risk profile:", key=f"risk_profile_2_{i}",
-                                                             value=broker_2.get("risk_profile", ""))
+                    broker_2["risk_profile"] = st.selectbox(
+                        "Risk Profile:",
+                        risk_profile_options,
+                        key=f"risk_profile_2_{i}",
+                        index=risk_profile_options.index(broker_2.get("risk_profile", "Low"))  # Set the default value if it exists
+                    )
                     updated_brokers_list_2.append(broker_2)
 
             # Edit strategies list
