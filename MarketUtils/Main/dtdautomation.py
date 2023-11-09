@@ -1,7 +1,9 @@
 import pandas as pd
 import os,sys
 from dotenv import load_dotenv
-
+from firebase_admin import db
+from firebase_admin import credentials, storage
+import firebase_admin
 
 # Get the current working directory
 DIR = os.getcwd()
@@ -186,14 +188,36 @@ def read_opening_balances(file_path):
         print("useropeningbalance.txt not found.")
     return opening_balances
 
+# Function to save file to Firebase Storage
+def save_file_to_firebase(file_path, firebase_bucket_name):
+    bucket = storage.bucket(firebase_bucket_name)
+
+    # Create a blob for uploading the file
+    blob = bucket.blob(os.path.basename(file_path))
+    # Upload the file
+    blob.upload_from_filename(file_path)
+    print(f"File {file_path} uploaded to {firebase_bucket_name}.")
 
 # Main execution
 def main():
     ENV_PATH = os.path.join(DIR, '.env')
     load_dotenv(ENV_PATH)
+
+     # Retrieve values from .env
+    firebase_credentials_path = os.getenv('firebase_credentials_path')
+    database_url = os.getenv('database_url')
+    storage_bucket = os.getenv('storage_bucket')
+
+    # Initialize Firebase app
+    if not firebase_admin._apps:
+        cred = credentials.Certificate(firebase_credentials_path)
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': database_url,
+            'storageBucket': storage_bucket
+        })
     
-    # excel_dir = r"C:\Users\vanis\OneDrive\Desktop\TradeMan\UserProfile\excel"
-    excel_dir = os.getenv('onedrive_excel_folder')
+    excel_dir = r"C:\Users\vanis\OneDrive\Desktop\TradeMan\UserProfile\excel"
+    # excel_dir = os.getenv('onedrive_excel_folder')
     opening_balances = read_opening_balances(os.path.join(DIR, 'MarketUtils', 'Main', 'useropeningbalance.txt'))
 
     sheet_mappings = {
@@ -228,6 +252,7 @@ def main():
 
                 # Check and update the DTD sheet with the new DataFrame
                 check_and_update_dtd_sheet(file_name, dtd_df)
+                save_file_to_firebase(file_name, storage_bucket)
 
 if __name__ == "__main__":
     main()

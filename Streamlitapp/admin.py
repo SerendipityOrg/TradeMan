@@ -85,7 +85,17 @@ def get_weeks_for_month(month_number, year):
     return weeks
 
 
+# Function to format the client name to match the existing Firebase keys
+def format_client_name(client_name):
+    """
+    Formats the client name by replacing spaces with underscores and converting to lowercase
+    to match the Firebase key format.
+    """
+    return client_name.replace(" ", "_").lower()
+
+
 def update_client_data(client_name, updated_data):
+    client_name = format_client_name(client_name)
     # Get a reference to the selected client's database
     selected_client_ref = db.reference(f"/clients/{client_name}")
     # Update the client data in the Firebase database
@@ -93,6 +103,7 @@ def update_client_data(client_name, updated_data):
 
 
 def update_brokers_data(client_name, brokers_list_1, brokers_list_2):
+    client_name = format_client_name(client_name)
     # Get a reference to the selected client's brokers list in the Firebase database
     selected_client_ref = db.reference(f"/clients/{client_name}")
     # Update the brokers list in the Firebase database
@@ -101,6 +112,7 @@ def update_brokers_data(client_name, brokers_list_1, brokers_list_2):
 
 
 def update_strategies_data(client_name, strategies_list):
+    client_name = format_client_name(client_name)
     # Get a reference to the selected client's strategies list in the Firebase database
     selected_client_ref = db.reference(f"/clients/{client_name}/Strategy list")
     # Update the strategies list in the Firebase database

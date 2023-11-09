@@ -1,5 +1,5 @@
 omkar : 23,52,740.40  date: 04-Nov-23
-brijesh : 55,33,128.63 date: 04-Nov-23
+brijesh : 5,33,128.63 date: 04-Nov-23
 vinay : 25,715.57  date: 04-Nov-23
 venkatesh : 67,671.89  date: 04-Nov-23  
 sridhar: 18,524.70 date: 04-Nov-23

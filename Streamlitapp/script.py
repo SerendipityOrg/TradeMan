@@ -338,6 +338,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             # Extract the default start date from the first entry of the data (which is now not the opening balance)
             default_start_date = datetime.datetime.strptime(
                 data[0][0], '%d-%b-%y').date()
+            
 
         # Add custom CSS for the table and value colors
         st.markdown("""
@@ -363,6 +364,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         }
         </style>
         """, unsafe_allow_html=True)
+
 
     if selected == "Calendar":
         selected_date = st.date_input("Select a Date")
@@ -395,7 +397,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
                 # Add the aggregated amounts to the aggregated_data list using format_value and check for italicized detail types
                 italic_types = ["MPWizard", "AmiPy",
-                                "Overnight Options", "ZRM"]
+                                "OvernightFutures", "ExtraTrades", "ExpiryTrader", "ErrorTrades", "ZRM"]
                 for detail_type, amount in details_aggregated.items():
                     display_detail = detail_type if detail_type not in italic_types else f"<em>{detail_type}</em>"
                     aggregated_data.append(
@@ -437,7 +439,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
         if option_selected == 'Strategy Stats':
             # List of target detail types
-            target_types = ["MPWizard", "AmiPy", "Overnight Options", "ZRM"]
+            target_types = ["MPWizard", "AmiPy", "OvernightFutures", "ExtraTrades", "ExpiryTrader", "ErrorTrades", "ZRM"]
 
             # Filter data for the selected date range
             filtered_data = []
@@ -526,7 +528,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
         # Extract unique strategies from data
         unique_strategies = set([record[3] for record in data])
-        categories = ["MPWizard", "AmiPy", "ZRM", "OvernightFutures", "ExpiryTrader"]
+        categories = ["MPWizard", "AmiPy", "OvernightFutures", "ExtraTrades", "ExpiryTrader", "ErrorTrades", "ZRM"]
         available_strategies = [
             strategy for strategy in categories if strategy in unique_strategies]
 
