@@ -29,7 +29,7 @@ EMA_period = strategy_obj.get_entry_params().get('EMAPeriod')
 
 def get_option_tokens(strike_prc):
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    instruments_df = pd.read_csv(os.path.join(script_dir, '..', '..', 'MarketUtils', 'instruments.csv'))
+    instruments_df = pd.read_csv(os.path.join(script_dir, '..', '..', 'instruments.csv'))
 
     instruments_df = instruments_df[
         ["instrument_token", "exchange_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike"]
