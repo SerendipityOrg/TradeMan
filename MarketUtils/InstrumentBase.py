@@ -54,28 +54,32 @@ class Instrument:
 
     def monthly_expiry_type(self):
         today = datetime.today()
-        
         # Find the last day of the previous month
         last_day_of_previous_month = today.replace(day=1) - timedelta(days=1)
-        
+
         # Find the last Thursday of the previous month
         last_thursday_of_previous_month = last_day_of_previous_month
         while last_thursday_of_previous_month.weekday() != 3:
             last_thursday_of_previous_month -= timedelta(days=1)
-        
-        # Find the first Thursday of the current month
-        first_day_of_current_month = today.replace(day=1)
-        days_until_thursday = (3 - first_day_of_current_month.weekday() + 7) % 7
-        first_thursday_of_current_month = first_day_of_current_month + timedelta(days=days_until_thursday)
-        
-        # Find the first day of the last week of the previous month
-        first_day_of_last_week_of_previous_month = last_day_of_previous_month - timedelta(days=last_day_of_previous_month.weekday())
-        
-        # Check the conditions
-        if today >= first_day_of_last_week_of_previous_month or (today > last_thursday_of_previous_month and today <= first_thursday_of_current_month):
-            return "next_month"
-        else:
+
+        # If today is before the last Thursday of the previous month
+        if today < last_thursday_of_previous_month:
             return "current_month"
+        # If today is the last Thursday of the previous month
+        elif today == last_thursday_of_previous_month:
+            return "next_month"
+        # If today is after the last Thursday of the previous month
+        else:
+            # Find the last day of the current month
+            next_month = today.replace(day=28) + timedelta(days=4)
+            last_day_of_current_month = next_month - timedelta(days=next_month.day)
+
+            # If today is after the last Thursday but still in the previous month
+            if today <= last_day_of_current_month:
+                return "current_month"
+            # If we have moved into a new month
+            else:
+                return "next_month"
 
     def get_expiry_by_criteria(self, base_symbol, strike_price, option_type,expiry_type="current_week"):
         filtered_data = self._filter_data(base_symbol, option_type, strike_price)

@@ -160,7 +160,7 @@ def sweep_kite_orders(userdetails):
     for pending_order in orders:
         if pending_order['status'] == 'TRIGGER PENDING':
             print(pending_order['order_id'])
-            # kite.cancel_order(variety=kite.VARIETY_REGULAR,order_id=pending_order['order_id'])
+            kite.cancel_order(variety=kite.VARIETY_REGULAR,order_id=pending_order['order_id'])
 
     for sweep_order in sweep_orders:
         order_details = place_order_calc.create_sweep_order_details(userdetails,sweep_order)

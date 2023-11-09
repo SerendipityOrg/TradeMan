@@ -294,6 +294,9 @@ for user in active_users:
     strategies = user["qty"]
     strategies = list(strategies.keys())
 
+    if "PreviousOvernightFutures" in strategies:
+        strategies.remove("PreviousOvernightFutures")
+
     segregate_based_on_strategy = segregate_by_strategy(details, strategies, user["broker"])
     combined_user_orders = {}
     for strategy, order_list in segregate_based_on_strategy.items():
@@ -308,11 +311,3 @@ for user in active_users:
     order_json,order_json_path = place_order_calc.get_orders_json(user["account_name"])
     order_json["today_orders"] = combined_user_orders
     general_calc.write_json_file(order_json_path, order_json)
-
-
-
-    
-
-
-
-
