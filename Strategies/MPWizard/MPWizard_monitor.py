@@ -207,13 +207,14 @@ class OrderMonitor:
             print("Index name not found for token:", instrument)
 
     def process_modify_orders(self,order_details, message=None):
+        price_ref = order_details['price_ref'] 
+        order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
+        order_details['trigger_prc'] = order_details['limit_prc'] + 1.0  
+
         order_to_modify = self.create_modify_order_details(order_details)
         place_order.modify_orders(order_details=order_to_modify)
 
-        price_ref = order_details['price_ref'] 
         order_details['target'] += (price_ref / 2)  # Adjust target by half of price_ref
-        order_details['limit_prc'] += (price_ref / 2)  # Adjust limit_prc by half of price_ref
-        order_details['trigger_prc'] = order_details['limit_prc'] + 1.0  
         return order_details['target'], order_details['limit_prc'], order_details['trigger_prc']
 
     def handle_trigger(self, instrument,data,order_details=None):

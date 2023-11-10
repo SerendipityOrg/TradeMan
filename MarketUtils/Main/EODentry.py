@@ -169,6 +169,14 @@ def mpwizard_details(orders, broker, user):
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
             sell_orders.append(simplified_order)
 
+    def extract_numeric_part(trade_id):
+        # Assuming the format is two letters followed by numbers 'MP201'
+        return int(''.join(filter(str.isdigit, trade_id)))
+
+    # Sort the buy and sell orders by the numeric part of trade_id
+    buy_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
+    sell_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
+
     results = {
         "MPWizard": {
             "BUY": buy_orders,
@@ -286,6 +294,9 @@ for user in active_users:
     strategies = user["qty"]
     strategies = list(strategies.keys())
 
+    if "PreviousOvernightFutures" in strategies:
+        strategies.remove("PreviousOvernightFutures")
+
     segregate_based_on_strategy = segregate_by_strategy(details, strategies, user["broker"])
     combined_user_orders = {}
     for strategy, order_list in segregate_based_on_strategy.items():
@@ -300,11 +311,3 @@ for user in active_users:
     order_json,order_json_path = place_order_calc.get_orders_json(user["account_name"])
     order_json["today_orders"] = combined_user_orders
     general_calc.write_json_file(order_json_path, order_json)
-
-
-
-    
-
-
-
-
