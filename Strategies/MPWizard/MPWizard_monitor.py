@@ -128,6 +128,7 @@ class OrderMonitor:
         order_details = [
         {  
         "strategy": strategy_obj.get_strategy_name(),
+        "base_symbol": name,
         "exchange_token" : exchange_token,     
         "segment" : strategy_obj.get_general_params().get('Segment'),
         "transaction_type": strategy_obj.get_general_params().get('TransactionType'),  
@@ -143,6 +144,7 @@ class OrderMonitor:
         modify_order_details = [
         {
             "strategy": strategy_obj.get_strategy_name(),
+            "base_symbol": order_details['base_symbol'],
             "exchange_token" : order_details['exchange_token'],
             "transaction_type": order_details['transaction_type'],  
             "target": order_details['target'],

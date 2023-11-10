@@ -66,6 +66,7 @@ def place_orders(strike_prc, signal):
         transaction_type = hedge_transaction_type if "Hedge" in order['order_mode'] else main_transaction_type
         order.update({
             "strategy": strategy_name,
+            "base_symbol": base_symbol,
             "segment": segment_type,
             "transaction_type": transaction_type,
             "order_type": order_type,
@@ -105,4 +106,4 @@ def message_for_orders(trade_type,signal,main_CE_exchange_token,main_PE_exchange
             f"Hedge PE Trade {hedge_trade_PE_symbol} \n")
     print(message)    
     
-    # discord.discord_bot(message, strategy_name)
+    discord.discord_bot(message, strategy_name)
