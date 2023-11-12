@@ -22,7 +22,7 @@ ENV_PATH = os.path.join(DIR, '.env')
 # Loading environment variables from .env file
 load_dotenv(ENV_PATH)
 excel_dir = os.getenv('onedrive_excel_folder')
-# excel_dir = os.path.join(DIR, "UserProfile","Excel")
+# excel_dir = os.path.join(DIR, "UserProfile","excel")
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
 
@@ -54,10 +54,11 @@ def build_message(user, strategy_results, gross_pnl, total_tax, current_capital,
         f"Hello {user}, We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"
     ]
 
-    for strategy_name, values in strategy_results.items():
-        # Format the pnl value using custom_format function
+       # Iterating over each trade_id and its results
+    for trade_id, values in strategy_results.items():
         formatted_pnl = format_currency(values['pnl'], 'INR', locale='en_IN')
-        message_parts.append(f"{strategy_name}: {formatted_pnl}")
+        # Using trade_id in the message instead of the strategy name
+        message_parts.append(f"{trade_id}: {formatted_pnl}")
 
     message_parts.extend([
         f"\nGross PnL: {format_currency(gross_pnl, 'INR', locale='en_IN')}",
@@ -105,28 +106,33 @@ def main():
         # Initialize total_tax, total_pnl, and pnl_sum to store the cumulative values from all sheets
         total_tax = 0
         total_pnl = 0
-        pnl_sum = 0
 
         for sheet_name, df in all_dfs.items():  
-            if 'exit_time' in df.columns:
-                df['entry_time'] = df['entry_time'].astype(str)
-                df['exit_time'] = df['exit_time'].astype(str)
+            if 'exit_time' in df.columns and 'trade_id' in df.columns:
+                df['entry_time'] = pd.to_datetime(df['entry_time']).dt.strftime('%Y-%m-%d')
+                df['exit_time'] = pd.to_datetime(df['exit_time']).dt.strftime('%Y-%m-%d')
 
-                df_today = df[df['exit_time'].str.startswith(today)]
+                df_today = df[df['exit_time'] == today]
 
                 if not df_today.empty:
-                    # Aggregate the pnl and tax values
-                    pnl_sum = round(df_today['pnl'].sum(), 2)
+                    # Calculate the sum of taxes for the trades of the day
                     tax_sum = round(df_today['tax'].sum(), 2)
+                    total_tax += tax_sum  # Update the total tax
 
-                    # Accumulate the pnl_sum and tax_sum values
-                    total_pnl += pnl_sum
-                    total_tax += tax_sum
+                    # Iterate through each trade in today's dataframe
+                    for index, trade in df_today.iterrows():
+                        trade_id = trade['trade_id']
+                        pnl = trade['pnl']
 
-                    # Store the aggregated results in the strategy_results dictionary
-                    strategy_results[sheet_name] = {'pnl': pnl_sum, 'tax': tax_sum}
+                        # Initialize or update the pnl for each trade_id
+                        if trade_id not in strategy_results:
+                            strategy_results[trade_id] = {'pnl': 0, 'tax': tax_sum}
+                        strategy_results[trade_id]['pnl'] += pnl
 
-        # Calculate gross_pnl, expected_tax, and net_pnl
+                        # Update the total pnl
+                        total_pnl += pnl
+
+        # Calculate net pnl and expected capital
         gross_pnl = total_pnl   
         expected_tax = total_tax
         net_pnl = gross_pnl - expected_tax
