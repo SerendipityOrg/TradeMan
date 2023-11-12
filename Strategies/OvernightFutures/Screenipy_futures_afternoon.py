@@ -29,7 +29,7 @@ instrument_obj = InstrumentBase.Instrument()
 
 strategy_name = strategy_obj.get_strategy_name()
 expiry_token = strategy_obj.get_entry_params().get('Token')
-strategy_index = strategy_obj.get_instruments()[0]
+base_symbol = strategy_obj.get_instruments()[0]
 
 order_type = strategy_obj.get_general_params().get('OrderType')
 segment_type = strategy_obj.get_general_params().get('Segment')
@@ -45,13 +45,13 @@ try:
 except KeyError:
     proxyServer = ""
 
-prediction = OF_calc.getNiftyPrediction(
+prediction,percentage = OF_calc.getNiftyPrediction(
                 data= OF_calc.fetchLatestNiftyDaily(proxyServer=proxyServer), 
                 proxyServer=proxyServer
             )
 print(prediction)
 
-strikeprc = get_strikeprc(expiry_token,strategy_index,prediction)
+strikeprc = get_strikeprc(expiry_token,base_symbol,prediction)
 option_type = strategy_obj.get_option_type(prediction, "OS")
 desired_start_time_str = strategy_obj.get_entry_params().get('EntryTime')
 start_hour, start_minute, start_second = map(int, desired_start_time_str.split(':'))
@@ -59,12 +59,12 @@ start_hour, start_minute, start_second = map(int, desired_start_time_str.split('
 weekly_expiry_type = instrument_obj.weekly_expiry_type()
 monthly_expiry_type = instrument_obj.monthly_expiry_type()
 
-weekly_expiry = instrument_obj.get_expiry_by_criteria(strategy_index,strikeprc,option_type, weekly_expiry_type)
-monthly_expiry = instrument_obj.get_expiry_by_criteria(strategy_index,0,"FUT", monthly_expiry_type)
+weekly_expiry = instrument_obj.get_expiry_by_criteria(base_symbol,strikeprc,option_type, weekly_expiry_type)
+monthly_expiry = instrument_obj.get_expiry_by_criteria(base_symbol,0,"FUT", monthly_expiry_type)
 
 
-hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(strategy_index,strikeprc, option_type,weekly_expiry)   
-futures_exchange_token = instrument_obj.get_exchange_token_by_criteria(strategy_index,futures_strikeprc, futures_option_type,monthly_expiry)
+hedge_exchange_token = instrument_obj.get_exchange_token_by_criteria(base_symbol,strikeprc, option_type,weekly_expiry)   
+futures_exchange_token = instrument_obj.get_exchange_token_by_criteria(base_symbol,futures_strikeprc, futures_option_type,monthly_expiry)
 trade_id = place_order_calc.get_trade_id(strategy_name, "entry")
 
 future_trade_symbol = instrument_obj.get_trading_symbol_by_exchange_token(futures_exchange_token)
@@ -77,6 +77,7 @@ def message_for_orders(trade_type,prediction,main_trade_symbol,hedge_trade_symbo
         strategy_name = strategy_obj.get_strategy_name()
 
     message = ( f"Trade for {strategy_name}\n"
+                f"Percentage : {round((percentage[0]*100),2)}\n"
                 f"Direction : {prediction}\n"
                 f"Future : {main_trade_symbol} Expiry : {monthly_expiry}\n"
                 f"Hedge : {hedge_trade_symbol} Expiry : {weekly_expiry}\n")
@@ -86,6 +87,7 @@ def message_for_orders(trade_type,prediction,main_trade_symbol,hedge_trade_symbo
 orders_to_place = [
     {  
         "strategy": strategy_name,
+        "base_symbol": base_symbol,
         "exchange_token" : hedge_exchange_token,     
         "segment" : segment_type,
         "transaction_type": hedge_transcation_type,  
@@ -96,6 +98,7 @@ orders_to_place = [
     },
     {
         "strategy": strategy_name,
+        "base_symbol": base_symbol,
         "exchange_token" : futures_exchange_token,     
         "segment" : segment_type,
         "transaction_type": strategy_obj.get_transaction_type(prediction), 

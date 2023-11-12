@@ -108,4 +108,4 @@ def getNiftyPrediction(data, proxyServer):
     else:
         out = "Bullish"
         sug = "Stay Bullish!"
-    return out
+    return out,pred

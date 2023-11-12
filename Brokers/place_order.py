@@ -16,17 +16,50 @@ def add_token_to_monitor(order_details):
     monitor = place_order_calc.monitor()
     monitor.add_token(order_details=order_details)
     monitor.start_monitoring()
-    
-def place_order_for_strategy(strategy_name,order_details):
-    active_users = Broker.get_active_subscribers(strategy_name)
+
+# def place_order_for_strategy(strategy_name,order_details):
+#     active_users = Broker.get_active_subscribers(strategy_name)
+#     for broker, usernames in active_users.items():
+#         for username in usernames:
+#             for order in order_details:
+#                 order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
+#                 order_with_user["broker"] = broker
+#                 order_with_user["username"] = username
+#                 order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
+#                 print(order_with_user)
+#                 # place_order_for_broker(order_with_user)
+
+
+def place_order_for_strategy(strategy_name, order_details):
+    active_users = Broker.get_active_subscribers(strategy_name)  # Assuming Broker is defined elsewhere
     for broker, usernames in active_users.items():
         for username in usernames:
             for order in order_details:
-                order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
-                order_with_user["broker"] = broker
-                order_with_user["username"] = username
-                order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
-                place_order_for_broker(order_with_user)
+                # Add the username and broker to the order details
+                order_with_user_and_broker = order.copy()  # Create a shallow copy to avoid modifying the original order
+                order_with_user_and_broker.update({
+                    "broker": broker,
+                    "username": username
+                })
+
+                # Now get the quantity with the updated order details
+                order_qty = place_order_calc.get_qty(order_with_user_and_broker)
+
+                # Fetch the max order quantity for the specific base_symbol
+                max_qty = place_order_calc.read_max_order_qty_for_symbol(order_with_user_and_broker.get('base_symbol'))
+
+                # Split the order if the quantity exceeds the maximum
+                while order_qty > 0:
+                    current_qty = min(order_qty, max_qty)
+                    order_to_place = order_with_user_and_broker.copy()
+                    order_to_place["qty"] = current_qty
+                    print(order_to_place)
+                    place_order_for_broker(order_to_place)
+                    order_qty -= current_qty
+
+
+
+
 
 #TODO: write documentation
 def place_order_for_broker(order_details):
@@ -102,3 +135,8 @@ def sweep_open_orders():
         else:
             print("Unknown broker")
             return
+
+
+def orders_via_telegram(details):
+    order_details = place_order_calc.create_telegram_order_details(details)
+    print(details)
