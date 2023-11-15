@@ -13,7 +13,7 @@ from MarketUtils.Excel.strategy_calc import custom_format
 
 # Function to check if DataFrame has required columns
 def has_required_columns(df):
-    required_columns = ['entry_time', 'net_pnl', 'trade_id']
+    required_columns = ['exit_time', 'net_pnl', 'trade_id']
     return all(col in df.columns for col in required_columns)
 
 # Function to fetch data from Excel and return a dictionary of DataFrames
@@ -60,8 +60,8 @@ def create_dtd_dataframe_updated(data_mappings, opening_balance, start_date):
     # Sort the dates
     all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
     rows = []
-    default_details = ['MPWizard', 'AmiPy', 'ZRM', 'OvernightFutures', 'ExtraTrades',
-                       'ExpiryTrader', 'ErrorTrade', 'ErrorTrades','Transactions']
+    default_details = ['Transactions','MPWizard', 'AmiPy', 'ZRM', 'OvernightFutures', 'ExtraTrades',
+                       'ExpiryTrader', 'ErrorTrade', 'ErrorTrades']
     sl_no = 1
 
     # Initialize the running balance with the opening balance
@@ -221,6 +221,7 @@ def main():
     opening_balances = read_opening_balances(os.path.join(DIR, 'MarketUtils', 'Main', 'useropeningbalance.txt'))
 
     sheet_mappings = {
+        'Transactions': 'Transactions',
         'MPWizard': 'MPWizard',
         'AmiPy': 'AmiPy',
         'ZRM': 'ZRM',
@@ -228,7 +229,6 @@ def main():
         'ExpiryTrader': 'ExpiryTrader',
         'ErrorTrade': 'ErrorTrade',
         'ExtraTrades' : 'ExtraTrades',
-        'Transactions': 'Transactions'
     }
 
     for root, dirs, files in os.walk(excel_dir):

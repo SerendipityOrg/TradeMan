@@ -311,29 +311,43 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         # Load the Excel workbook from the bytes object
         wb = openpyxl.load_workbook(byte_stream, data_only=True)
 
-        # Extract data if the "DTD" sheet exists in the workbook
-        if "DTD" in wb.sheetnames:
-            sheet = wb["DTD"]
-            print(f"Extracting data from sheet: DTD")
+        # Identify if the client is a 'signals' client
+        client_type = selected_client.get('client_type', '').lower()  # Replace 'client_type' with the actual key
+        is_signals_client = client_type == "signals"
+        
+        # Define sheets to process for signals clients
+        signals_sheets = ["AmiPy", "MPWizard", "OvernightFutures", "ExpiryTrader", "Screenipy"]
 
-            # Get column names and their indices from the first row
-            column_indices = {cell.value: idx for idx,
-                              cell in enumerate(sheet[1])}
+        # Extract data from the appropriate sheet
+        if is_signals_client:
+            # Handle data extraction for signals clients
+            for sheet_name in signals_sheets:
+                if sheet_name in wb.sheetnames:
+                    sheet = wb[sheet_name]
+                    # Custom logic to extract data from each specific signals sheet
+                    # This needs to be tailored to the structure of these sheets
+                    pass
+        else:
+            if "DTD" in wb.sheetnames:
+                sheet = wb["DTD"]
+                # Extract column names and indices
+                column_indices = {cell.value: idx for idx, cell in enumerate(sheet[1])}
 
-            # Loop through each row in the sheet to read specific columns
-            # Assuming headers are in the first row
-            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
-                date = row[column_indices['Date']].value
-                day = row[column_indices['Day']].value
-                trade_id = row[column_indices['Trade ID']].value
-                details = row[column_indices['Details']].value
-                amount = row[column_indices['Amount']].value
-                running_balance = row[column_indices['Running Balance']].value
+                # Loop through rows to extract data
+                for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
+                    # Extract relevant data from each row
+                    # Assuming columns: Date, Day, Trade ID, Details, Amount, Running Balance
+                    # Modify as per actual column structure
+                    date = row[column_indices['Date']].value
+                    day = row[column_indices['Day']].value
+                    trade_id = row[column_indices['Trade ID']].value
+                    details = row[column_indices['Details']].value
+                    amount = row[column_indices['Amount']].value
+                    running_balance = row[column_indices['Running Balance']].value
 
-                # Skip the opening balance rows
-                if details != "Opening Balance":
-                    data.append([date, day, trade_id, details,
-                                amount, running_balance])
+                    # Skip 'Opening Balance' rows
+                    if details != "Opening Balance":
+                        data.append([date, day, trade_id, details, amount, running_balance])
 
             # Extract the default start date from the first entry of the data (which is now not the opening balance)
             default_start_date = datetime.datetime.strptime(
