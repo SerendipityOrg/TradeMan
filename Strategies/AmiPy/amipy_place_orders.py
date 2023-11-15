@@ -66,6 +66,7 @@ def place_orders(strike_prc, signal):
         transaction_type = hedge_transaction_type if "Hedge" in order['order_mode'] else main_transaction_type
         order.update({
             "strategy": strategy_name,
+            "base_symbol": base_symbol,
             "segment": segment_type,
             "transaction_type": transaction_type,
             "order_type": order_type,

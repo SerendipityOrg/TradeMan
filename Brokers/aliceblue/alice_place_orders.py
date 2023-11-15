@@ -73,7 +73,7 @@ def alice_place_order(alice, order_details):
         discord.discord_bot(message,strategy)
         return None
 
-def place_aliceblue_order(order_details: dict):
+def place_aliceblue_order(order_details: dict,alice = None):
     """
     Place an order with Aliceblue broker.
 
@@ -90,7 +90,8 @@ def place_aliceblue_order(order_details: dict):
 
     """
     user_details = place_order_calc.assign_user_details(order_details.get('username'))
-    alice = alice_utils.create_alice_obj(user_details)   
+    if alice is None:
+        alice = alice_utils.create_alice_obj(user_details)   
 
     try:
         order_id = alice_place_order(alice, order_details)
@@ -156,7 +157,7 @@ def sweep_alice_orders(userdetails):
             if token == order['token'] and order['remarks'] is not None and order['Status'] == 'complete':
                 order_details = {
                     'trade_id': order['remarks'],
-                    'exchange_token': order['token'],
+                    'exchange_token': int(order['token']),
                     'transaction_type': order['Trantype'],
                     'qty': quantity
                 }

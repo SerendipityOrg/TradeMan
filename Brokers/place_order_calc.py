@@ -1,6 +1,7 @@
 import datetime as dt
 import os,re
 import sys
+import pandas as pd
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -212,7 +213,6 @@ def calculate_transaction_type_sl(transaction_type):
         transaction_type_sl = 'BUY'
     return transaction_type_sl
 
-
 def calculate_target(option_ltp,price_ref,strategy):
     if strategy == 'MPWizard':
         target = option_ltp+(price_ref/2)
@@ -256,3 +256,12 @@ def create_sweep_order_details(user,order_details):
 
         }
     return sweep_orders_dict
+
+def read_max_order_qty_for_symbol(base_symbol):
+    df = pd.read_csv(os.path.join(DIR_PATH,'fno_info.csv'))
+    max_order_qty = df[df['base_symbol'] == base_symbol]['max_order_qty'].iloc[0]
+    return max_order_qty
+
+
+def create_telegram_order_details(details):
+    pass
