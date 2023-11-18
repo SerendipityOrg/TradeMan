@@ -109,7 +109,7 @@ def main():
 
         for sheet_name, df in all_dfs.items():  
             if 'exit_time' in df.columns and 'trade_id' in df.columns:
-                df['entry_time'] = pd.to_datetime(df['entry_time']).dt.strftime('%Y-%m-%d')
+                # df['entry_time'] = pd.to_datetime(df['entry_time']).dt.strftime('%Y-%m-%d')
                 df['exit_time'] = pd.to_datetime(df['exit_time']).dt.strftime('%Y-%m-%d')
 
                 df_today = df[df['exit_time'] == today]

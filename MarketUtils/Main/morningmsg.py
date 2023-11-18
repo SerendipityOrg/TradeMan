@@ -90,7 +90,7 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
     return message
 
 
-broker_data = general_calc.read_json_file(active_users_json_path)
+broker_data = general_calc.read_json_file(broker_filepath)
 updated_users = []
 
 for user in broker_data:
