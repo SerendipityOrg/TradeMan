@@ -49,8 +49,8 @@ orders_to_place = [
     },
     {
         "strategy": strategy_name,
-        "exchange_token" : futures_exchange_token,
-        "base_symbol" : strategy_obj.get_instruments()[0],     
+        "base_symbol" : strategy_obj.get_instruments()[0],
+        "exchange_token" : futures_exchange_token,     
         "segment" : segment_type,
         "transaction_type": strategy_obj.get_square_off_transaction(prediction), 
         "order_type" : order_type, 

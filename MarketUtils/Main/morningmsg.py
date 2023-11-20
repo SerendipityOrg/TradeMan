@@ -92,8 +92,9 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
 
     return message
 
-# Read the broker data
-broker_data = general_calc.read_json_file(active_users_json_path)
+
+broker_data = general_calc.read_json_file(broker_filepath)
+updated_users = []
 
 # Initialize Telegram Client
 with TelegramClient(session_filepath, api_id, api_hash) as client:

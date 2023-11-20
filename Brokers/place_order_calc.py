@@ -103,6 +103,9 @@ def get_trade_id(strategy_name, trade_type):
     print(f"Trade ID: {new_trade_id}")
     return new_trade_id
 
+
+
+
 # 1. Renamed the function to avoid clash with the logging module
 def log_order(order_id, order_details):
     print("in log_order")

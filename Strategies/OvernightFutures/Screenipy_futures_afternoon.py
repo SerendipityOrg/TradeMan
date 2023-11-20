@@ -81,6 +81,7 @@ def message_for_orders(trade_type,prediction,main_trade_symbol,hedge_trade_symbo
                 f"Direction : {prediction}\n"
                 f"Future : {main_trade_symbol} Expiry : {monthly_expiry}\n"
                 f"Hedge : {hedge_trade_symbol} Expiry : {weekly_expiry}\n")
+    print(message)
     discord.discord_bot(message, strategy_name)
 
 orders_to_place = [

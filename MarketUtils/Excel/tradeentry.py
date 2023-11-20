@@ -155,7 +155,7 @@ def main():
                     overnight_trades = user_data["today_orders"]["OvernightFutures"]
 
                     # Process morning trades
-                    if "Morning" in overnight_trades:
+                    if "Morning" in overnight_trades and overnight_trades["Morning"] is not None and len(overnight_trades["Morning"]) > 0:
                         trade_id = overnight_trades["Morning"][0]["trade_id"]
                         trade_index = overnight_futures_df.index[overnight_futures_df['trade_id'] == trade_id].tolist()
 
@@ -177,7 +177,7 @@ def main():
                                 all_dfs["OvernightFutures"] = overnight_futures_df
                                 
                     # Process afternoon trades
-                    if "Afternoon" in overnight_trades:
+                    if "Afternoon" in overnight_trades and overnight_trades["Afternoon"] is not None and len(overnight_trades["Afternoon"]) > 0:
                         new_trade_data = sc.process_overnight_futures_trades(overnight_trades["Afternoon"], None, broker)
                         # Append the new row to the DataFrame
                         all_dfs["OvernightFutures"] = pd.concat([overnight_futures_df, pd.DataFrame([new_trade_data[-1]])], ignore_index=True)

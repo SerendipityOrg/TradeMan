@@ -22,7 +22,7 @@ ENV_PATH = os.path.join(DIR, '.env')
 # Loading environment variables from .env file
 load_dotenv(ENV_PATH)
 excel_dir = os.getenv('onedrive_excel_folder')
-# excel_dir = os.path.join(DIR, "UserProfile","Excel")
+# excel_dir = os.path.join(DIR, "UserProfile","excel")
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
 
@@ -109,7 +109,7 @@ def main():
 
         for sheet_name, df in all_dfs.items():  
             if 'exit_time' in df.columns and 'trade_id' in df.columns:
-                df['entry_time'] = pd.to_datetime(df['entry_time']).dt.strftime('%Y-%m-%d')
+                # df['entry_time'] = pd.to_datetime(df['entry_time']).dt.strftime('%Y-%m-%d')
                 df['exit_time'] = pd.to_datetime(df['exit_time']).dt.strftime('%Y-%m-%d')
 
                 df_today = df[df['exit_time'] == today]

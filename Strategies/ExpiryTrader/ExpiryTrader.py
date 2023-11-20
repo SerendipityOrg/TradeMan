@@ -106,7 +106,7 @@ def message_for_orders(trade_type,prediction,main_trade_symbol,hedge_trade_symbo
             f"Direction : {prediction}\n"
             f"Main Trade : {main_trade_symbol}\n"
             f"Hedge Trade {hedge_trade_symbol} \n")    
-    
+    print(message)
     discord.discord_bot(message, strategy_name)
     
 
