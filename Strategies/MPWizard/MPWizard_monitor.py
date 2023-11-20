@@ -122,7 +122,7 @@ class OrderMonitor:
         if not option_type:
             return
         
-        strikeprc = general_calc.round_strike_prc(ltp,name)
+        strikeprc = strategy_obj.round_strike_prc(ltp,name)
         expiry_date = instrument_obj.get_expiry_by_criteria(name,strikeprc,option_type,'current_week')
         exchange_token = instrument_obj.get_exchange_token_by_criteria(name,strikeprc,option_type,expiry_date)
         order_details = [

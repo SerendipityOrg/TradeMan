@@ -37,7 +37,7 @@ product_type = strategy_obj.get_general_params().get('ProductType')
 
 def get_strikeprc(expiry_token,strategy_index,prediction):
     strike_prc_multiplier = strategy_obj.get_entry_params().get('SLMultipler')
-    return strategy_obj.calculate_current_atm_strike_prc(expiry_token=expiry_token, base_symbol=strategy_index,prediction=prediction, strike_prc_multiplier=strike_prc_multiplier)
+    return strategy_obj.calculate_current_atm_strike_prc(base_symbol=strategy_index,token=expiry_token,prediction=prediction, strike_prc_multiplier=strike_prc_multiplier)
 
 
 try:

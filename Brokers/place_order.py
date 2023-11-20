@@ -17,19 +17,6 @@ def add_token_to_monitor(order_details):
     monitor.add_token(order_details=order_details)
     monitor.start_monitoring()
 
-# def place_order_for_strategy(strategy_name,order_details):
-#     active_users = Broker.get_active_subscribers(strategy_name)
-#     for broker, usernames in active_users.items():
-#         for username in usernames:
-#             for order in order_details:
-#                 order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
-#                 order_with_user["broker"] = broker
-#                 order_with_user["username"] = username
-#                 order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
-#                 print(order_with_user)
-#                 # place_order_for_broker(order_with_user)
-
-
 def place_order_for_strategy(strategy_name, order_details):
     active_users = Broker.get_active_subscribers(strategy_name)  # Assuming Broker is defined elsewhere
     for broker, usernames in active_users.items():
@@ -56,10 +43,6 @@ def place_order_for_strategy(strategy_name, order_details):
                     print(order_to_place)
                     place_order_for_broker(order_to_place)
                     order_qty -= current_qty
-
-
-
-
 
 #TODO: write documentation
 def place_order_for_broker(order_details):
@@ -139,4 +122,3 @@ def sweep_open_orders():
 
 def orders_via_telegram(details):
     order_details = place_order_calc.create_telegram_order_details(details)
-    print(details)

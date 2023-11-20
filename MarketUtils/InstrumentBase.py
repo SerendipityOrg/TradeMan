@@ -103,7 +103,6 @@ class Instrument:
                 "current_month": lambda: monthly_expiries[0] if monthly_expiries else None,
                 "next_month": lambda: monthly_expiries[1] if len(monthly_expiries) > 1 else None
             }
-
         return expiry_strategies[expiry_type]()
     
     def get_exchange_token_by_criteria(self, base_symbol,strike_price, option_type,expiry):
@@ -157,4 +156,20 @@ class Instrument:
             return filtered_data.iloc[0]['exchange_token']
         else:
             return None
-        
+    
+    def _filter_data_by_name(self, name):
+        return self._dataframe[self._dataframe['tradingsymbol'] == name]
+
+    def get_exchange_token_by_name(self,name):
+        filtered_data = self._filter_data_by_name(name)
+        if not filtered_data.empty:
+            return filtered_data.iloc[0]['exchange_token']
+        else:
+            return None
+    
+    def get_token_by_name(self,name):
+        filtered_data = self._filter_data_by_name(name)
+        if not filtered_data.empty:
+            return filtered_data.iloc[0]['instrument_token']
+        else:
+            return None

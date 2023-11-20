@@ -172,11 +172,11 @@ def genSignals(resultdf):
 
     def longcover(df, i):
         current_minute = df.index[i].floor('T')
-        return (current_minute not in longcover_indices) and ((df.loc[df.index[i], "Trend"] == -1) or (df.index[i].time() > sqroff_time))
+        return (current_minute not in longcover_indices) and ((df.loc[df.index[i], "Trend"] == -1).any() or (df.index[i].time() > sqroff_time))
 
     def shortcover(df, i):
         current_minute = df.index[i].floor('T')
-        return (current_minute not in shortcover_indices) and ((df.loc[df.index[i], "Trend"] == 1) or (df.index[i].time() > sqroff_time))
+        return (current_minute not in shortcover_indices) and ((df.loc[df.index[i], "Trend"] == 1).any() or (df.index[i].time() > sqroff_time))
 
     
     cover_position_check = None
@@ -266,12 +266,11 @@ def genSignals(resultdf):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     genSignals_path = os.path.join(script_dir, "LiveCSV", "amipy_genSignals.csv")
     resultdf.to_csv(genSignals_path, index=True)
-
     return resultdf, trade_state
 
 signals = []
 
-def updateSignalDf(last_signal):
+def updateSignalDf(last_signal,trade_state):
     print("updateSignalDf")
     global signalsdf, signals
 
@@ -310,11 +309,23 @@ def updateSignalDf(last_signal):
         amipy_orders.place_orders(strike_prc,trade_type) 
 
     elif trade_type == 'LongCoverSignal' or trade_type == 'ShortCoverSignal':
-        signal = signals.pop()  # Retrieve the last signal
-        signal.update({
-            'TradeExitTime': str(trade_time),
-            'TradeExitPrice': current_close,
-        })
+        if len(signals) != 0:
+            signal = signals.pop()  # Retrieve the last signal
+            signal.update({
+                'TradeExitTime': str(trade_time),
+                'TradeExitPrice': current_close,
+            })
+        else:
+            signal = {
+                'Strike_Price': strike_prc,
+                'Trade_No': trade_no,
+                'Trade_Type': trade_type,
+                'Date': str(trade_date),
+                'TradeEntryTime': str(trade_time),
+                'TradeEntryPrice': trade_state['TradeEntryPrice'],
+                'TradeExitTime': str(trade_time),
+                'TradeExitPrice': current_close,
+            }
         signal['NetTradePoints'] = signal['TradeExitPrice'] - signal['TradeEntryPrice']
         signals_df = pd.DataFrame(signal, index=[0])
         signals_df.to_csv(trade_sig_path, index=True)
@@ -380,7 +391,7 @@ def on_ticks(ws, ticks):
         new_signal = signalsdf[['LongSignal', 'ShortSignal', 'LongCoverSignal', 'ShortCoverSignal']].iloc[-1].any()
         if new_signal:
             last_signal = signalsdf.iloc[-1]
-            updateSignalDf(last_signal)
+            updateSignalDf(last_signal,trade_state)
 
     # updateSignalDf(signalsdf, trade_state)
 

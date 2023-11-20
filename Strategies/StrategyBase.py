@@ -1,9 +1,11 @@
 import json,os,sys
 from kiteconnect import KiteConnect
 import datetime as dt
+import pandas as pd
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
+fno_info_path = os.path.join(DIR_PATH, 'fno_info.csv')
 
 from Brokers.BrokerUtils import Broker
 import MarketUtils.general_calc as general_calc
@@ -140,6 +142,13 @@ class Strategy:
         ltp = kite.ltp(token)  # assuming 'kite' is accessible here or you may need to pass it
         return ltp[str(token)]['last_price']
     
+    def get_token_from_info(self,base_symbol):
+        fno_info_df = pd.read_csv(fno_info_path)
+        token = fno_info_df.loc[fno_info_df['base_symbol'] == base_symbol, 'token'].values
+        if len(token) == 0:
+            return f"{base_symbol} not found"
+        return token[0]
+    
     def determine_expiry_index(self):
         day = dt.datetime.today().weekday()
         if day == 0:  # Monday
@@ -155,32 +164,31 @@ class Strategy:
         else:
             return "No expiry today"
 
-    def round_strike_prc(self,ltp, base_symbol): #TODO: Add support for other base symbols using a csv list
-        if base_symbol == 'NIFTY' or base_symbol == 'FINNIFTY' or base_symbol == 'MIDCPNIFTY':
-            return round(ltp / 50) * 50
-        if base_symbol == 'BANKNIFTY' or base_symbol == 'SENSEX':
-            return round(ltp / 100) * 100
+    def round_strike_prc(self,ltp,base_symbo): #TODO: Add support for other base symbols using a csv list
+        strike_step = self.get_strike_step(base_symbo)
+        return round(ltp / strike_step) * strike_step
     
-    def get_strike_distance_multiplier(self,base_symbol): #TODO: Add support for other base symbols using a csv list
-        if base_symbol == 'NIFTY' or base_symbol == 'FINNIFTY' or base_symbol == 'MIDCPNIFTY':
-            return 50
-        if base_symbol == 'BANKNIFTY' or base_symbol == 'SENSEX':
-            return 100
-       
-    def calculate_current_atm_strike_prc(self,expiry_token, base_symbol, prediction=None, strike_prc_multiplier=None):
-        ltp = self.get_single_ltp(expiry_token)
+    def get_strike_step(self, base_symbol):
+        strike_step_df = pd.read_csv(fno_info_path)
+        strike_step = strike_step_df.loc[strike_step_df['base_symbol'] == base_symbol, 'strike_step_size'].values[0]
+        return strike_step
+
+    def calculate_current_atm_strike_prc(self,base_symbol, token = None, prediction=None, strike_prc_multiplier=None):
+        if token is None:
+            token = int(self.get_token_from_info(base_symbol))
+        ltp = self.get_single_ltp(token)
         base_strike = self.round_strike_prc(ltp, base_symbol)
-        multiplier = self.get_strike_distance_multiplier(base_symbol)
+        multiplier = self.get_strike_step(base_symbol)
         if strike_prc_multiplier:
             adjustment = multiplier * (strike_prc_multiplier if prediction == 'Bearish' else -strike_prc_multiplier)
             return base_strike + adjustment
         else:
             return base_strike
-    
-    def get_hedge_strikeprc(self,expiry_token, base_symbol, prediction, hedge_multiplier): #TODO get_strike_distance_multiplier as global variable
-        ltp = self.get_single_ltp(expiry_token)
+        
+    def get_hedge_strikeprc(self,base_symbol,token, prediction, hedge_multiplier): 
+        ltp = self.get_single_ltp(token)
         strike_prc = self.round_strike_prc(ltp, base_symbol)
-        strike_prc_multiplier = self.get_strike_distance_multiplier(base_symbol)
+        strike_prc_multiplier = self.get_strike_step(base_symbol)
         bear_strikeprc = strike_prc + (hedge_multiplier * strike_prc_multiplier)
         bull_strikeprc = strike_prc - (hedge_multiplier * strike_prc_multiplier)
         hedge_strikeprc = bear_strikeprc if prediction == 'Bearish' else bull_strikeprc
@@ -193,3 +201,24 @@ class Strategy:
             return'SELL'
         else:
             print("Invalid prediction")
+
+    def get_strike_multiplier(self,base_symbol):
+        fno_info_df = pd.read_csv(fno_info_path)
+        strike_multiplier = fno_info_df.loc[fno_info_df['base_symbol'] == base_symbol, 'strike_multiplier'].values
+        if len(strike_multiplier) == 0:
+            return f"{base_symbol} not found"
+        return strike_multiplier[0]
+    
+    def get_hedge_multiplier(self,base_symbol):
+        fno_info_df = pd.read_csv(fno_info_path)
+        hedge_multiplier = fno_info_df.loc[fno_info_df['base_symbol'] == base_symbol, 'hedge_multiplier'].values
+        if len(hedge_multiplier) == 0:
+            return f"{base_symbol} not found"
+        return hedge_multiplier[0]
+    
+    def get_stoploss_multiplier(self,base_symbol):
+        fno_info_df = pd.read_csv(fno_info_path)
+        stoploss_multiplier = fno_info_df.loc[fno_info_df['base_symbol'] == base_symbol, 'stoploss_multiplier'].values
+        if len(stoploss_multiplier) == 0:
+            return f"{base_symbol} not found"
+        return stoploss_multiplier[0]
