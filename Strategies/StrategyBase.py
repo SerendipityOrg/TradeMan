@@ -88,7 +88,12 @@ class Strategy:
 
     @classmethod
     def read_strategy_json(cls, file_path):
-        strategy_data = general_calc.read_json_file(file_path)
+        try:
+            strategy_data = general_calc.read_json_file(file_path)
+        except (FileNotFoundError, IOError, json.JSONDecodeError):
+            # Handle file not found, I/O errors, or JSON parsing errors
+            strategy_data = {}
+        
         return cls(strategy_data)
     
     def write_strategy_json(self, file_path):

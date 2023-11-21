@@ -55,9 +55,9 @@ def get_invested_value(user_data):
     active_users = general_calc.read_json_file(active_users_json_path)
     for user in active_users:
         if user['account_name'] == user_data['account_name'] and user['broker'] == "aliceblue":
-            aliceblue_invested_value(user)
+            return aliceblue_invested_value(user)
         elif user['account_name'] == user_data['account_name'] and user['broker'] == "zerodha":
-            zerodha_invested_value(user)
+            return zerodha_invested_value(user)
         else:
             return 0
 

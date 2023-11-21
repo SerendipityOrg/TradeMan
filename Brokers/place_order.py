@@ -113,17 +113,6 @@ def modify_orders(order_details=None):
                 order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
                 modify_stoploss(order_with_user)
 
-def sweep_open_orders():
-    active_users = general_calc.read_json_file(os.path.join(DIR_PATH,"MarketUtils","active_users.json"))
-    for user in active_users:
-        if user['broker'] == "aliceblue":
-            aliceblue.sweep_alice_orders(user)
-        elif user['broker'] == "zerodha":
-            zerodha.sweep_kite_orders(user)
-        else:
-            print("Unknown broker")
-            return
-
 
 def orders_via_telegram(details):
     order_details = place_order_calc.create_telegram_order_details(details)

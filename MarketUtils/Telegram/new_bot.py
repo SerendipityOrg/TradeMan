@@ -211,7 +211,7 @@ def qty_risk_input(update: Update, context: CallbackContext) -> int:
 
 def trade_id_input(update: Update, context: CallbackContext) -> int:
     user_input = update.message.text
-    context.user_data['trade_id'] = user_input
+    context.user_data['trade_id'] = user_input.upper()
     update.message.reply_text("Please select:\n"
                               "1. Entry\n"
                               "2. Exit")
@@ -242,7 +242,7 @@ def entry_exit_selection(update: Update, context: CallbackContext) -> int:
                f"{qty_or_risk_label}: {qty_or_risk}\n" 
                f"Trade ID: {context.user_data.get('trade_id')}")
     if context.user_data.get('stock_name'):
-        summary += f"\nStock Name: {context.user_data.get('stock_name')}"
+        summary += f"\nStock Name: {context.user_data.get('stock_name').upper()}"
     update.message.reply_text(f"Thank you! Here's the summary of your selections:\n{summary}")
     return confirmation(update, context)
 
@@ -273,7 +273,7 @@ def process_confirmation(update: Update, context: CallbackContext) -> int:
             "trade_id": context.user_data.get('trade_id')
         }
         if context.user_data.get('stock_name'):
-            details["stock_name"] = context.user_data.get('stock_name')
+            details["stock_name"] = context.user_data.get('stock_name').upper()
 
         # Call orders_via_telegram with the details dictionary
         place_order.orders_via_telegram(details)

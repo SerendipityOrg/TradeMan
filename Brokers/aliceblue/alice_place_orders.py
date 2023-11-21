@@ -149,31 +149,36 @@ def sweep_alice_orders(userdetails):
         print(f"Failed to fetch orders and positions: {e}")
         return None
 
-    token_quantities = {position['Token']: abs(int(position['Netqty'])) for position in positions if position['Pcode'] == 'MIS' and position['realisedprofitloss']=='0.00'}
+    if len(positions) == 2:
+        print("No positions found")
+    else:    
+        token_quantities = {position['Token']: abs(int(position['Netqty'])) for position in positions if position['Pcode'] == 'MIS' and position['realisedprofitloss']=='0.00'}
 
-    sweep_orders = []
-    for token, quantity in token_quantities.items():
-        for order in orders:
-            if token == order['token'] and order['remarks'] is not None and order['Status'] == 'complete':
-                order_details = {
-                    'trade_id': order['remarks'],
-                    'exchange_token': int(order['token']),
-                    'transaction_type': order['Trantype'],
-                    'qty': quantity
-                }
-                sweep_orders.append(order_details)
-        
-    for pending_order in orders:
-        if orders[0]['stat'] == 'Not_Ok':
-            print("No orders found")
-        elif pending_order['Status'] == 'trigger pending':
-            print(pending_order['Nstordno'])
-            alice.cancel_order(pending_order['Nstordno'])
+        for token, quantity in token_quantities.items():
+            max_qty = place_order_calc.read_max_order_qty_for_symbol(token)  # Fetch max qty for the token
+            remaining_qty = quantity
 
-    for sweep_order in sweep_orders:
-        order_details = place_order_calc.create_sweep_order_details(userdetails, sweep_order)
-        print("order_details",order_details)
-        place_aliceblue_order(order_details,alice)
+            for order in orders:
+                if token == order['token'] and order['remarks'] is not None and order['Status'] == 'complete':
+                    while remaining_qty > 0:
+                        current_qty = min(remaining_qty, max_qty)
+                        order_details = {
+                            'trade_id': order['remarks'],
+                            'exchange_token': int(order['token']),
+                            'transaction_type': order['Trantype'],
+                            'qty': current_qty
+                        }
+                        place_aliceblue_order(order_details, alice)  # Place each split order
+                        remaining_qty -= current_qty
+
+        for pending_order in orders:
+            if orders[0]['stat'] == 'Not_Ok':
+                print("No orders found")
+            elif pending_order['Status'] == 'trigger pending':
+                print(pending_order['Nstordno'])
+                alice.cancel_order(pending_order['Nstordno'])
+
+
 
 
 

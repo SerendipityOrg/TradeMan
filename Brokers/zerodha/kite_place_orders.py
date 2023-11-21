@@ -144,25 +144,26 @@ def sweep_kite_orders(userdetails):
 
     token_quantities = {position['instrument_token']: abs(position['quantity']) for position in positions['net'] if position['product'] == 'MIS' and position['quantity'] != 0}
 
-    sweep_orders = []
     for token, quantity in token_quantities.items():
+        max_qty = place_order_calc.read_max_order_qty_for_symbol(token)  # Fetch max qty for the token
+        remaining_qty = quantity
+
         for order in orders:
             if token == order['instrument_token'] and order['tag'] is not None and order['status'] == 'COMPLETE':
                 exchange_token = Instrument().get_exchange_token_by_token(token)
-                order_details = {
-                    'trade_id': order['tag'],
-                    'exchange_token': exchange_token,
-                    'transaction_type': order['transaction_type'],
-                    'qty': quantity
-                }
-                sweep_orders.append(order_details)
-    
+                
+                while remaining_qty > 0:
+                    current_qty = min(remaining_qty, max_qty)
+                    order_details = {
+                        'trade_id': order['tag'],
+                        'exchange_token': exchange_token,
+                        'transaction_type': order['transaction_type'],
+                        'qty': current_qty
+                    }
+                    place_zerodha_order(order_details, kite)  # Place each split order
+                    remaining_qty -= current_qty
+
     for pending_order in orders:
         if pending_order['status'] == 'TRIGGER PENDING':
             print(pending_order['order_id'])
-            kite.cancel_order(variety=kite.VARIETY_REGULAR,order_id=pending_order['order_id'])
-
-    for sweep_order in sweep_orders:
-        order_details = place_order_calc.create_sweep_order_details(userdetails,sweep_order)
-        print("order_details",order_details)
-        place_zerodha_order(order_details,kite)
+            kite.cancel_order(variety=kite.VARIETY_REGULAR, order_id=pending_order['order_id'])

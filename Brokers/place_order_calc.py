@@ -2,6 +2,7 @@ import datetime as dt
 import os,re
 import sys,math
 import pandas as pd
+import json
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -30,8 +31,12 @@ def get_orders_json(user):
 
 def get_strategy_json(strategy_name):
     strategy_json_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..','Strategies', strategy_name,strategy_name+'.json')
-    strategy_json = general_calc.read_json_file(strategy_json_path)
-    return strategy_json,strategy_json_path
+    try:
+        strategy_json = general_calc.read_json_file(strategy_json_path)
+    except (FileNotFoundError, IOError, json.JSONDecodeError):
+        # Handle exceptions and use an empty dictionary if the file doesn't exist or an error occurs
+        strategy_json = {}
+    return strategy_json, strategy_json_path
 
 def get_active_users(broker_json_details):
     active_users = []
@@ -40,70 +45,74 @@ def get_active_users(broker_json_details):
             active_users.append(user)
     return active_users
 
-def increment_trade_id(trade_id):
-    # This function separates the prefix and the number, increments the number, and then rejoins them.
-    match = re.match(r"([a-zA-Z]+)(\d+)", trade_id)
-    prefix = match.group(1)
-    number = int(match.group(2))
-    incremented_number = number + 1
-    return f"{prefix}{incremented_number}"
 
-# Initialize a global cache for trade IDs and exit flags
-trade_cache = {}
+# Mapping of strategy names to prefixes
+strategy_prefix_map = {
+    'AmiPy': 'AP',
+    'MPwizard': 'MP',
+    'ExpiryTrader': 'ET',
+    'OvernightFutures': 'OF'
+}
+
+# # Load the last state from JSON
+def load_last_state():
+    try:
+        with open('trade_id_state.json', 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+# # Save the current state to JSON
+def save_current_state(state):
+    with open('trade_id_state.json', 'w') as file:
+        json.dump(state, file)
+
+# # Initialize or load the trade ID state
+trade_id_state = load_last_state()
 
 def get_trade_id(strategy_name, trade_type):
-    global trade_cache
+    global trade_id_state
 
+    # Load strategy object
     _, strategy_path = get_strategy_json(strategy_name)
     strategy_obj = Strategy.Strategy.read_strategy_json(strategy_path)
 
-    if dt.datetime.now().time() < dt.datetime.strptime("09:00", "%H:%M").time():
-        return "test_order"
-# Check if a new day has started and reset the cache if it has
-    if strategy_name not in trade_cache :
-        next_trade_id = strategy_obj.get_next_trade_id()
-        trade_cache[strategy_name] = {
-            'initial_trade_id': next_trade_id,
-            'trade_id': next_trade_id,
-            'exit_made': False
-        }
-    
-    current_trade_id = trade_cache[strategy_name]['trade_id']
-    today_orders = strategy_obj.get_today_orders()
+    # Resolve strategy name to prefix
+    strategy_prefix = strategy_prefix_map.get(strategy_name)
+    if not strategy_prefix:
+        raise ValueError(f"Unknown strategy name: {strategy_name}")
 
-    # Append the current_trade_id to today_orders after an entry
+    # Initialize strategy in state if not present
+    if strategy_prefix not in trade_id_state:
+        trade_id_state[strategy_prefix] = 1
+
+    # Generate trade ID for entry
     if trade_type.lower() == 'entry':
-        # If the last action was an exit, use a new trade ID
-        if trade_cache[strategy_name]['exit_made']:
-            current_trade_id = increment_trade_id(current_trade_id)
-            trade_cache[strategy_name]['trade_id'] = current_trade_id  # Update trade_id in the cache
-            trade_cache[strategy_name]['exit_made'] = False  # Reset exit flag for new entry
-            strategy_obj.set_next_trade_id(current_trade_id)  # Save new trade ID for strategy
-            strategy_obj.write_strategy_json(strategy_path)
+        current_id = trade_id_state[strategy_prefix]
+        trade_id_state[strategy_prefix] += 1
+        trade_id = f"{strategy_prefix}{current_id}_entry"
+        base_trade_id = f"{strategy_prefix}{current_id}"
+        # Save new trade ID in strategy JSON
+        strategy_obj.set_next_trade_id(base_trade_id)
+        strategy_obj.write_strategy_json(strategy_path)
 
-        new_trade_id = f"{current_trade_id}_entry"
-        if new_trade_id not in today_orders:
-            today_orders.append(current_trade_id)  # Append the new trade ID with entry tag
-            strategy_obj.set_today_orders(today_orders)
-            strategy_obj.write_strategy_json(strategy_path)
-
-    # Process exit
+    # Use the same ID for exit
     elif trade_type.lower() == 'exit':
-        new_trade_id = f"{current_trade_id}_exit"
-        if not trade_cache[strategy_name]['exit_made']:
-            # Mark exit as made
-            trade_cache[strategy_name]['exit_made'] = True
-            # No need to increment the trade_id here, it should be incremented at the next entry
+        current_id = trade_id_state[strategy_prefix] - 1
+        trade_id = f"{strategy_prefix}{current_id}_exit"
 
-        if current_trade_id not in today_orders:
-            today_orders.append(current_trade_id)  # Append the new trade ID with exit tag
-            strategy_obj.set_today_orders(today_orders)
-            strategy_obj.write_strategy_json(strategy_path)
+    # Add trade_id to today's orders after completion
+    base_trade_id = f"{strategy_prefix}{current_id}"
+    today_orders = strategy_obj.get_today_orders()
+    if base_trade_id not in today_orders:
+        today_orders.append(base_trade_id)
+        strategy_obj.set_today_orders(today_orders)
+        strategy_obj.write_strategy_json(strategy_path)
 
-    print(f"Trade ID: {new_trade_id}")
-    return new_trade_id
-
-
+    # Save state after each ID generation
+    save_current_state(trade_id_state)
+    print(f"Generated trade ID: {trade_id}")
+    return trade_id
 
 
 # 1. Renamed the function to avoid clash with the logging module
@@ -180,12 +189,12 @@ def calculate_qty(risk,accountname,base_symbol=None,exchange_token=None):
     for user in active_users:
         if user['account_name'] == accountname:
             if base_symbol == 'Stock':
-                strategy_obj = Strategy.Strategy.read_strategy_json(os.path.join(DIR_PATH,'Strategies','AmiPy','AmiPy.json'))
+                strategy_obj = Strategy.Strategy({})
                 ltp = strategy_obj.get_single_ltp(Instrument().get_token_by_exchange_token(exchange_token))
                 risk_capital = round(float(user['current_capital']*(int(risk)/100)))
                 qty = math.ceil(risk_capital/ltp)
             else:
-                strategy_obj = Strategy.Strategy.read_strategy_json(os.path.join(DIR_PATH,'Strategies','AmiPy','AmiPy.json'))
+                strategy_obj = Strategy.Strategy({})
                 ltp = strategy_obj.get_single_ltp(Instrument().get_token_by_exchange_token(exchange_token))
                 lot_size = get_lot_size(base_symbol)####TODO Check this part
                 raw_qty = (user['current_capital'] * (int(risk)/100))/ltp
@@ -253,9 +262,15 @@ def get_strategy_name(trade_id):
         'MP': 'MPWizard',
         'ET': 'ExpiryTrader',
         'OF': 'OvernightFutures',
-        'Stock': 'Stock'
+        'EXTRA': 'Extra',
+        'STOCK': 'Stock'
     }
     
+    if trade_id.startswith('EXTRA'):
+        return strategy_map['EXTRA']
+    elif trade_id.startswith('STOCK'):
+        return strategy_map['STOCK']
+
     # Extract the prefix from the trade_id
     prefix = trade_id[:2]  # assuming all prefixes are two characters long
     
