@@ -7,7 +7,6 @@ import MarketUtils.general_calc as general_calc
 import Brokers.Aliceblue.alice_place_orders as aliceblue
 import Brokers.Zerodha.kite_place_orders as zerodha
 
-
 def sweep_open_orders():
     active_users = general_calc.read_json_file(os.path.join(DIR_PATH,"MarketUtils","active_users.json"))
     for user in active_users:

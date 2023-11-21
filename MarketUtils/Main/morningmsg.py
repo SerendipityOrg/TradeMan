@@ -116,10 +116,10 @@ with TelegramClient(session_filepath, api_id, api_hash) as client:
             print(message)
 
             # Send message via Telegram
-            # try:
-            #     client.send_message(phone_number, message, parse_mode='md')
-            # except Exception as e:
-            #     print(f"Error sending message to {phone_number}: {e}")
+            try:
+                client.send_message(phone_number, message, parse_mode='md')
+            except Exception as e:
+                print(f"Error sending message to {phone_number}: {e}")
 
 # Write the updated broker data (including both active and inactive users) to the file
 general_calc.write_json_file(broker_filepath, broker_data)
