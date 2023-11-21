@@ -91,9 +91,9 @@ def get_trade_id(strategy_name, trade_type):
         current_id = trade_id_state[strategy_prefix]
         trade_id_state[strategy_prefix] += 1
         trade_id = f"{strategy_prefix}{current_id}_entry"
-        base_trade_id = f"{strategy_prefix}{current_id}"
+        next_trade_id = f"{strategy_prefix}{trade_id_state[strategy_prefix]}"
         # Save new trade ID in strategy JSON
-        strategy_obj.set_next_trade_id(base_trade_id)
+        strategy_obj.set_next_trade_id(next_trade_id)
         strategy_obj.write_strategy_json(strategy_path)
 
     # Use the same ID for exit
