@@ -49,7 +49,7 @@ def get_active_users(broker_json_details):
 # Mapping of strategy names to prefixes
 strategy_prefix_map = {
     'AmiPy': 'AP',
-    'MPwizard': 'MP',
+    'MPWizard': 'MP',
     'ExpiryTrader': 'ET',
     'OvernightFutures': 'OF'
 }
@@ -331,15 +331,26 @@ def create_telegram_order_details(details):
         expiry_date = Instrument().get_expiry_by_criteria(base_symbol, int(strike_prc), details['option_type'], details['expiry'])
         exchange_token = Instrument().get_exchange_token_by_criteria(base_symbol, int(strike_prc), details['option_type'], expiry_date)
 
+    if details['base_instrument'] == 'Stock' and details['option_type'] != 'Stock':
+        order_type = 'Limit'
+        token = Instrument().get_token_by_exchange_token(exchange_token)
+        price = round(strategy_obj.get_single_ltp(token),1)
+    else:
+        order_type = 'Market'
+        order_details = {}
+
     order_details = {
         "strategy": strategy_name,
         "base_symbol": base_symbol,
         "exchange_token": exchange_token,
         "transaction_type": details['transaction_type'],
-        "order_type": "Market",
+        "order_type": order_type,
         "product_type": details['product_type'],
         "trade_id": details['trade_id']
     }
+
+    if order_details['order_type'] == 'Limit':
+        order_details['limit_prc'] = price
 
     if details['order_type'] == 'PlaceOrder':
         order_details['order_mode'] = ['MainOrder']

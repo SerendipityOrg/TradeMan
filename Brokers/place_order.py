@@ -19,7 +19,7 @@ def add_token_to_monitor(order_details):
     monitor.start_monitoring()
 
 def place_order_for_strategy(strategy_name, order_details):
-    active_users = Broker.get_active_subscribers(strategy_name)  # Assuming Broker is defined elsewhere
+    active_users = Broker.get_active_subscribers(strategy_name)  
     for broker, usernames in active_users.items():
         for username in usernames:
             for order in order_details:
@@ -41,8 +41,9 @@ def place_order_for_strategy(strategy_name, order_details):
                     current_qty = min(order_qty, max_qty)
                     order_to_place = order_with_user_and_broker.copy()
                     order_to_place["qty"] = current_qty
-                    print(order_to_place)
                     place_order_for_broker(order_to_place)
+                    if 'Hedge' in order_to_place.get('order_mode', []):
+                        sleep(1)
                     order_qty -= current_qty
 
 #TODO: write documentation
@@ -57,15 +58,9 @@ def place_order_for_broker(order_details):
 
     if "SL" in order_details['order_mode']:
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
-        print(dt.datetime.now())
-        sleep(1)
-        print(dt.datetime.now())
         place_stoploss_order(order_details=order_details)
     elif "Trailing" in order_details['order_mode']:
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
-        print(dt.datetime.now())
-        sleep(1)
-        print(dt.datetime.now())
         place_stoploss_order(order_details=order_details)
         add_token_to_monitor(order_details)
         

@@ -155,7 +155,8 @@ def sweep_alice_orders(userdetails):
         token_quantities = {position['Token']: abs(int(position['Netqty'])) for position in positions if position['Pcode'] == 'MIS' and position['realisedprofitloss']=='0.00'}
 
         for token, quantity in token_quantities.items():
-            max_qty = place_order_calc.read_max_order_qty_for_symbol(token)  # Fetch max qty for the token
+            base_symbol = Instrument().get_base_symbol_by_exchange_token(token)
+            max_qty = place_order_calc.read_max_order_qty_for_symbol(base_symbol)  # Fetch max qty for the token
             remaining_qty = quantity
 
             for order in orders:

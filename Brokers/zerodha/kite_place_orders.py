@@ -145,7 +145,9 @@ def sweep_kite_orders(userdetails):
     token_quantities = {position['instrument_token']: abs(position['quantity']) for position in positions['net'] if position['product'] == 'MIS' and position['quantity'] != 0}
 
     for token, quantity in token_quantities.items():
-        max_qty = place_order_calc.read_max_order_qty_for_symbol(token)  # Fetch max qty for the token
+        exchange_token = Instrument().get_exchange_token_by_token(token)
+        base_symbol = Instrument().get_base_symbol_by_exchange_token(exchange_token)
+        max_qty = place_order_calc.read_max_order_qty_for_symbol(base_symbol)  # Fetch max qty for the token
         remaining_qty = quantity
 
         for order in orders:

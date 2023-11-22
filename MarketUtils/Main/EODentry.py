@@ -203,14 +203,22 @@ def overnight_futures_details(orders, broker, user):
         
 
     if afternoon_trade_orders is not None:
-        # Assign direction after all orders are appended to the afternoon_trade_orders list
+        # Check if any order has trade_type as 'SELL'
+        is_any_sell_order = any(order.get('trade_type') == 'SELL' for order in afternoon_trade_orders)
+
+        # Assign direction based on the presence of any SELL order
         for order in afternoon_trade_orders:
-            order['direction'] = 'BEARISH' if order.get('trade_type') == 'sell' else 'BULLISH'
+            order['direction'] = 'BEARISH' if is_any_sell_order else 'BULLISH'
+
 
     if morning_trade_orders is not None:
-        # Assign direction after all orders are appended to the morning_trade_orders list
+        # Check if any order has trade_type as 'BUY'
+        is_any_buy_order = any(order.get('trade_type') == 'BUY' for order in morning_trade_orders)
+
+        # Assign direction based on the presence of any BUY order
         for order in morning_trade_orders:
-            order['direction'] = 'BEARISH' if order.get('trade_type') == 'buy' else 'BULLISH'
+            order['direction'] = 'BEARISH' if is_any_buy_order else 'BULLISH'
+
 
     # Check if there are 2 orders and group them under "Morning Trade"
     # Afternoon orders are entered after placing the orders in the afternoon
