@@ -51,12 +51,15 @@ def zerodha_invested_value(broker_data):
 # Fetch invested value based on broker type
 
 
-def get_invested_value(broker_data, broker, user):
-    user_details = broker_data
-    if broker == "aliceblue":
-        return aliceblue_invested_value(user_details)
-    elif broker == "zerodha":
-        return zerodha_invested_value(user_details)
+def get_invested_value(user_data):
+    active_users = general_calc.read_json_file(active_users_json_path)
+    for user in active_users:
+        if user['account_name'] == user_data['account_name'] and user['broker'] == "aliceblue":
+            return aliceblue_invested_value(user)
+        elif user['account_name'] == user_data['account_name'] and user['broker'] == "zerodha":
+            return zerodha_invested_value(user)
+        else:
+            return 0
 
 # Function to format currency in custom style
 
@@ -90,35 +93,33 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
     return message
 
 
-broker_data = general_calc.read_json_file(active_users_json_path)
+broker_data = general_calc.read_json_file(broker_filepath)
 updated_users = []
 
-for user in broker_data:
-    # Check if the account type is Active
-    if "Active" in user['account_type']:
-        # Calculate investment values
-        user_data = user
-        invested_value = get_invested_value(user, user_data['broker'], user)
-        for client in broker_data:
-            if user_data['account_name'] == client['account_name']:
-                user_data['expected_morning_balance'] = client['expected_morning_balance']
-                user_data['yesterday_PnL'] = client['yesterday_PnL']
-                user_data['current_capital'] = client['current_capital']
-                user_data['mobile_number'] = client['mobile_number']
+# Initialize Telegram Client
+with TelegramClient(session_filepath, api_id, api_hash) as client:
+    for user in broker_data:
+        if "Active" in user['account_type']:
+            # Calculate investment values for active users
+            invested_value = get_invested_value(user)
 
-        cash_balance = user_data['expected_morning_balance'] - invested_value
-        current_capital = cash_balance + invested_value
-        formatted_date = date.today().strftime("%d %b %Y")
-        message = generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital)
+            cash_balance = user['expected_morning_balance'] - invested_value
+            current_capital = cash_balance + invested_value
 
-        user_data['current_capital'] = current_capital
-        phone_number = user_data['mobile_number']
-        print(message)
-    updated_users.append(user_data)
+            # Formatting date and message
+            formatted_date = date.today().strftime("%d %b %Y")
+            message = generate_message(user, formatted_date, user, cash_balance, invested_value, current_capital)
 
-    with TelegramClient(session_filepath, api_id, api_hash) as client:
-        client.send_message(phone_number, message, parse_mode='md')
+            user['current_capital'] = current_capital
+            phone_number = user['mobile_number']
 
+            print(message)
 
+            # Send message via Telegram
+            try:
+                client.send_message(phone_number, message, parse_mode='md')
+            except Exception as e:
+                print(f"Error sending message to {phone_number}: {e}")
 
-general_calc.write_json_file(broker_filepath, updated_users)
+# Write the updated broker data (including both active and inactive users) to the file
+general_calc.write_json_file(broker_filepath, broker_data)

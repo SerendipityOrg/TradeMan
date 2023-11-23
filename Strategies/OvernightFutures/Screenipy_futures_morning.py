@@ -38,6 +38,7 @@ trade_id = place_order_calc.get_trade_id(strategy_name, "exit")
 orders_to_place = [
     {  
         "strategy": strategy_name,
+        "base_symbol" : strategy_obj.get_instruments()[0],
         "exchange_token" : hedge_exchange_token,     
         "segment" : segment_type,
         "transaction_type": hedge_transcation_type,  
@@ -48,6 +49,7 @@ orders_to_place = [
     },
     {
         "strategy": strategy_name,
+        "base_symbol" : strategy_obj.get_instruments()[0],
         "exchange_token" : futures_exchange_token,     
         "segment" : segment_type,
         "transaction_type": strategy_obj.get_square_off_transaction(prediction), 

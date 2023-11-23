@@ -45,7 +45,7 @@ def place_test_orders():
                 ltp = strategy_obj.get_single_ltp(token)
                 trade_view = strategy_obj.get_general_params()['TradeView']
                 option_type = MPWizard_calc.calculate_option_type(ib_level,cross_type, trade_view)
-                strikeprc = general_calc.round_strike_prc(ltp,index)
+                strikeprc = strategy_obj.round_strike_prc(ltp,index)
                 expiry_date = Instrument().get_expiry_by_criteria(index,strikeprc,option_type,'current_week')
                 exchange_token = Instrument().get_exchange_token_by_criteria(index,strikeprc,option_type,expiry_date)
                 trade_symbol = Instrument().get_trading_symbol_by_exchange_token(exchange_token)

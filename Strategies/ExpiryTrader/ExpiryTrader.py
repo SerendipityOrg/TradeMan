@@ -49,15 +49,15 @@ order_type = expiry_trader_obj.get_general_params().get('OrderType')
 segment_type = expiry_trader_obj.get_general_params().get('Segment')
 product_type = expiry_trader_obj.get_general_params().get('ProductType')
 
-strike_prc_multiplier = expiry_trader_obj.get_entry_params().get('StrikeMultiplier')
-hedge_multiplier = expiry_trader_obj.get_entry_params().get('HedgeMultiplier')
-stoploss_mutiplier = expiry_trader_obj.get_entry_params().get('SLMultipler')
+strike_prc_multiplier = expiry_trader_obj.get_strike_multiplier(base_symbol)
+hedge_multiplier = expiry_trader_obj.get_hedge_multiplier(base_symbol)
+stoploss_mutiplier = expiry_trader_obj.get_stoploss_multiplier(base_symbol)
 desired_start_time_str = expiry_trader_obj.get_entry_params().get('EntryTime')
 
 start_hour, start_minute, start_second = map(int, desired_start_time_str.split(':'))
 
-main_strikeprc = expiry_trader_obj.calculate_current_atm_strike_prc(today_expiry_token, base_symbol, prediction, strike_prc_multiplier)
-hedge_strikeprc = expiry_trader_obj.get_hedge_strikeprc(today_expiry_token, base_symbol, prediction, hedge_multiplier)
+main_strikeprc = expiry_trader_obj.calculate_current_atm_strike_prc(base_symbol,today_expiry_token, prediction, strike_prc_multiplier)
+hedge_strikeprc = expiry_trader_obj.get_hedge_strikeprc(base_symbol, today_expiry_token, prediction, hedge_multiplier)
 main_option_type = expiry_trader_obj.get_option_type(prediction, "OS")
 hedge_option_type = expiry_trader_obj.get_hedge_option_type(prediction)
 

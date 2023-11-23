@@ -76,7 +76,7 @@ def calculate_lots(user):
 
 def calculate_quantity_based_on_ltp(ltp, strategy_name, base_symbol):
     active_users_file = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
-    indices_lot_sizes = {"NIFTY": 50, "BANKNIFTY": 15, "FINNIFTY": 40, "MIDCAP": 75, "SENSEX": 10}
+    indices_lot_sizes = {"NIFTY": 50, "BANKNIFTY": 15, "FINNIFTY": 40, "MIDCPNIFTY": 75, "SENSEX": 10}
 
     _, strategy_path = place_order_calc.get_strategy_json(strategy_name)
     strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)

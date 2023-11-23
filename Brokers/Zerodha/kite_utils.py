@@ -44,6 +44,8 @@ def calculate_order_type(kite,order_type):
         order_type = kite.ORDER_TYPE_SL
     elif order_type == 'Market':
         order_type = kite.ORDER_TYPE_MARKET
+    elif order_type == 'Limit':
+        order_type = kite.ORDER_TYPE_LIMIT
     else:
         raise ValueError("Invalid order_type in order_details")
     return order_type

@@ -41,6 +41,8 @@ def calculate_order_type(order_type):
         order_type = OrderType.StopLossLimit
     elif order_type == 'Market':
         order_type = OrderType.Market
+    elif order_type == 'Limit':
+        order_type = OrderType.Limit
     else:
         raise ValueError("Invalid order_type in order_details")
     return order_type

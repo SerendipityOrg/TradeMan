@@ -1,5 +1,6 @@
 import os,sys
 from time import sleep
+import datetime as dt
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -17,21 +18,8 @@ def add_token_to_monitor(order_details):
     monitor.add_token(order_details=order_details)
     monitor.start_monitoring()
 
-# def place_order_for_strategy(strategy_name,order_details):
-#     active_users = Broker.get_active_subscribers(strategy_name)
-#     for broker, usernames in active_users.items():
-#         for username in usernames:
-#             for order in order_details:
-#                 order_with_user = order.copy()  # Create a shallow copy to avoid modifying the original order
-#                 order_with_user["broker"] = broker
-#                 order_with_user["username"] = username
-#                 order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
-#                 print(order_with_user)
-#                 # place_order_for_broker(order_with_user)
-
-
 def place_order_for_strategy(strategy_name, order_details):
-    active_users = Broker.get_active_subscribers(strategy_name)  # Assuming Broker is defined elsewhere
+    active_users = Broker.get_active_subscribers(strategy_name)  
     for broker, usernames in active_users.items():
         for username in usernames:
             for order in order_details:
@@ -53,13 +41,10 @@ def place_order_for_strategy(strategy_name, order_details):
                     current_qty = min(order_qty, max_qty)
                     order_to_place = order_with_user_and_broker.copy()
                     order_to_place["qty"] = current_qty
-                    print(order_to_place)
                     place_order_for_broker(order_to_place)
+                    if 'Hedge' in order_to_place.get('order_mode', []):
+                        sleep(1)
                     order_qty -= current_qty
-
-
-
-
 
 #TODO: write documentation
 def place_order_for_broker(order_details):
@@ -73,11 +58,9 @@ def place_order_for_broker(order_details):
 
     if "SL" in order_details['order_mode']:
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
-        sleep(1)
         place_stoploss_order(order_details=order_details)
     elif "Trailing" in order_details['order_mode']:
         order_details['trade_id'] = place_order_calc.get_trade_id(order_details.get('strategy'), "exit")
-        sleep(1)
         place_stoploss_order(order_details=order_details)
         add_token_to_monitor(order_details)
         
@@ -125,18 +108,6 @@ def modify_orders(order_details=None):
                 order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
                 modify_stoploss(order_with_user)
 
-def sweep_open_orders():
-    active_users = general_calc.read_json_file(os.path.join(DIR_PATH,"MarketUtils","active_users.json"))
-    for user in active_users:
-        if user['broker'] == "aliceblue":
-            aliceblue.sweep_alice_orders(user)
-        elif user['broker'] == "zerodha":
-            zerodha.sweep_kite_orders(user)
-        else:
-            print("Unknown broker")
-            return
-
 
 def orders_via_telegram(details):
     order_details = place_order_calc.create_telegram_order_details(details)
-    print(details)
