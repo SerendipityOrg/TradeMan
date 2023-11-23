@@ -20,7 +20,6 @@ from io import BytesIO
 import streamlit as st
 from formats import format_value, format_stat_value, indian_format
 from dotenv import load_dotenv
-from streamlit_option_menu import option_menu
 from script import display_performance_dashboard, table_style
 
 
@@ -146,6 +145,7 @@ def update_profile_picture(selected_client_name, new_profile_picture):
 
 
 def select_client():
+
     # Get a reference to the clients in the Firebase database
     client_ref = db.reference('/clients')
 
@@ -557,6 +557,57 @@ def show_profile(selected_client, selected_client_name):
                     st.success('Client details updated successfully.')
                 st.session_state.edit_mode = False  # Switch out of edit mode
 
+# Define a function to select signals
+def select_signals():
+    # Get a reference to the signals in the Firebase database
+    signals_ref = db.reference('/signals')
+
+    # Retrieve the signals data from the database
+    signals_data = signals_ref.get()
+
+    # Check if signals data is available
+    if not signals_data:
+        st.sidebar.warning("No signals data found.")
+        return
+
+    # Construct a list of signal names, with a default 'Select' option
+    signal_names = ['Select'] + list(signals_data.keys())
+
+    # Create a select box in the Streamlit sidebar to choose a signal
+    selected_signal_name = st.sidebar.selectbox('Select a Signal', signal_names)
+
+    if selected_signal_name and selected_signal_name != 'Select':
+        # Display a date picker widget
+        selected_date = st.date_input("Select a Date")
+
+        # Check if a date has been selected
+        if selected_date:
+            formatted_date = selected_date.strftime("%Y-%m-%d")  # Format the date as needed
+
+            try:
+                # Construct the path to the data for the selected signal
+                data_ref = db.reference(f"/signals/{selected_signal_name}")
+
+                # Retrieve the data for the selected signal
+                signal_data = data_ref.get()
+
+                # Filter the data based on the selected date
+                if signal_data:
+                    extracted_data = []
+                    for item in signal_data.values():
+                        if 'exit_time' in item and datetime.strptime(item['exit_time'], "%Y-%m-%d %H:%M:%S").date() == selected_date:
+                            extracted_data.append({'trade_id': item['trade_id'], 'trade_points': item['trade_points']})
+
+                    if extracted_data:
+                        df = pd.DataFrame(extracted_data)
+                        st.write(df)
+                    else:
+                        st.warning("No trades found for the selected date.")
+                else:
+                    st.warning("No data found for the selected signal.")
+
+            except Exception as e:
+                st.error(f"Error retrieving data: {e}")
 
 def login():
 
@@ -579,6 +630,7 @@ def main():
     if st.session_state.get('login_successful', False):
         # If the admin is logged in, show the client selection page
         select_client()
+        select_signals()
         if st.sidebar.button('Logout'):
             logout()
     else:

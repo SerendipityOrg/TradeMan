@@ -265,27 +265,9 @@ table.dataframe tr:hover {
 </style>
 """
 
-def extract_trade_points(wb, selected_date, sheets):
-    total_trade_points = 0
-    for sheet_name in sheets:
-        if sheet_name in wb.sheetnames:
-            sheet = wb[sheet_name]
-            for row in sheet.iter_rows(min_row=2):
-                entry_time_cell = row[3].value  # entry_time is in the fourth column
-                
-                # Check if entry_time_cell is a datetime object
-                if isinstance(entry_time_cell, datetime):
-                    # Extract the date part from the datetime object
-                    entry_date = entry_time_cell.date()
-                    trade_points_cell = row[8].value  # Assuming trade_points is in the ninth column
-                    
-                    # Check if the entry date matches the selected date and trade_points_cell is not None
-                    if entry_date == selected_date and trade_points_cell is not None:
-                        total_trade_points += trade_points_cell
-
-    return total_trade_points
-
 # Function to display performance dashboard
+
+
 def display_performance_dashboard(selected_client, client_data, excel_file_name):
     # Display the profile picture with the new style
     display_profile_picture(client_data)
@@ -303,9 +285,6 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
     # Reference the Firebase Storage bucket
     bucket = storage.bucket(storage_bucket)
-
-    # Initialize is_signals_client
-    is_signals_client = False
 
     # Check if the client's Excel file exists in the Firebase Storage bucket
     blobs = bucket.list_blobs()
@@ -332,53 +311,29 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         # Load the Excel workbook from the bytes object
         wb = openpyxl.load_workbook(byte_stream, data_only=True)
 
-        # Identify if the client is a 'signals' client
-        client_type = selected_client.get('client_type', '').lower()  # Replace 'client_type' with the actual key
-        is_signals_client = client_type == "signals"
-        
-        # Define sheets to process for signals clients
-        signals_sheets = ["AmiPy", "MPWizard", "OvernightFutures", "ExpiryTrader", "Screenipy"]
+        # Extract data if the "DTD" sheet exists in the workbook
+        if "DTD" in wb.sheetnames:
+            sheet = wb["DTD"]
+            print(f"Extracting data from sheet: DTD")
 
-        # Extract data from the appropriate sheet
-        if is_signals_client:
-            for sheet_name in signals_sheets:
-                if sheet_name in wb.sheetnames:
-                    sheet = wb[sheet_name]
-                    for row in sheet.iter_rows(min_row=2):
-                        trade_id = row[column_indices['trade_id']].value
-                        trading_symbol = row[column_indices['trading_symbol']].value
-                        signal = row[column_indices['signal']].value
-                        entry_time = row[column_indices['entry_time']].value
-                        exit_time = row[column_indices['exit_time']].value
-                        entry_price = row[column_indices['entry_price']].value
-                        exit_price = row[column_indices['exit_price']].value
-                        hedge_points = row[column_indices['hedge_points']].value
-                        trade_points = row[column_indices['trade_points']].value
+            # Get column names and their indices from the first row
+            column_indices = {cell.value: idx for idx,
+                              cell in enumerate(sheet[1])}
 
-                        # Append the extracted data to the data list
-                        data.append([trade_id, trading_symbol, signal, entry_time, exit_time, entry_price, exit_price, hedge_points, trade_points])
-            
-        else:
-            if "DTD" in wb.sheetnames:
-                sheet = wb["DTD"]
-                # Extract column names and indices
-                column_indices = {cell.value: idx for idx, cell in enumerate(sheet[1])}
+            # Loop through each row in the sheet to read specific columns
+            # Assuming headers are in the first row
+            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
+                date = row[column_indices['Date']].value
+                day = row[column_indices['Day']].value
+                trade_id = row[column_indices['Trade ID']].value
+                details = row[column_indices['Details']].value
+                amount = row[column_indices['Amount']].value
+                running_balance = row[column_indices['Running Balance']].value
 
-                # Loop through rows to extract data
-                for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
-                    # Extract relevant data from each row
-                    # Assuming columns: Date, Day, Trade ID, Details, Amount, Running Balance
-                    # Modify as per actual column structure
-                    date = row[column_indices['Date']].value
-                    day = row[column_indices['Day']].value
-                    trade_id = row[column_indices['Trade ID']].value
-                    details = row[column_indices['Details']].value
-                    amount = row[column_indices['Amount']].value
-                    running_balance = row[column_indices['Running Balance']].value
-
-                    # Skip 'Opening Balance' rows
-                    if details != "Opening Balance":
-                        data.append([date, day, trade_id, details, amount, running_balance])
+                # Skip the opening balance rows
+                if details != "Opening Balance":
+                    data.append([date, day, trade_id, details,
+                                amount, running_balance])
 
             # Extract the default start date from the first entry of the data (which is now not the opening balance)
             default_start_date = datetime.datetime.strptime(
@@ -415,69 +370,48 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         selected_date = st.date_input("Select a Date")
 
         if selected_date:
-            if is_signals_client:
-                # Initialize an aggregation dictionary
-                details_aggregated = defaultdict(float)
+            # Filter the data based on the selected date with the format '12-Oct-23'
+            formatted_date = selected_date.strftime('%d-%b-%y')
+            filtered_data = [
+                record for record in data if record[0] == formatted_date]
 
-                # Process each sheet specified for signals clients
-                for sheet_name in signals_sheets:
-                    if sheet_name in wb.sheetnames:
-                        sheet = wb[sheet_name]
-                        for row in sheet.iter_rows(min_row=2):
-                            entry_time = row[3].value  # Assuming 'entry_time' is in the fourth column
+            # Debug print
+            print(f"Filtered data for date {selected_date}: {filtered_data}")
 
-                            # Extract the date part from the entry_time
-                            if isinstance(entry_time, datetime):
-                                entry_date = entry_time.date()
-
-                            # Check if the entry date matches the selected date
-                            if entry_date == selected_date:
-                                detail_type = f"{sheet_name} - {row[1].value}"  # trading_symbol as detail type
-                                trade_points = row[8].value  # Assuming 'trade_points' is in the ninth column
-
-                                if trade_points is not None:
-                                    details_aggregated[detail_type] += trade_points
-
-                if not details_aggregated:
-                    st.write(f"No trade data available for {selected_date}")
-                else:
-                    # Convert the aggregated data to a DataFrame for display
-                    df = pd.DataFrame(list(details_aggregated.items()), columns=['Detail Type', 'Total Trade Points'])
-                    st.write(df.to_html(classes='custom-table', header=True, index=False, escape=False), unsafe_allow_html=True)
-
+            if not filtered_data:
+                st.write(f"No data available for {selected_date}")
             else:
-                # Logic for non-signals clients
-                formatted_date = selected_date.strftime('%d-%b-%y')
-                filtered_data = [record for record in data if record[0] == formatted_date]
+                # Aggregate the amounts for each distinct detail type
+                details_aggregated = defaultdict(float)
+                running_balance = 0
 
-                if not filtered_data:
-                    st.write(f"No data available for {selected_date}")
-                else:
-                    # Aggregate the amounts for each distinct detail type
-                    details_aggregated = defaultdict(float)
-                    running_balance = 0
+                for record in filtered_data:
+                    detail_type = record[3]
+                    amount = float(record[4].replace('₹', '').replace(
+                        ',', '').replace(' ', '').strip())
+                    details_aggregated[detail_type] += amount
+                    running_balance = float(record[5].replace(
+                        '₹', '').replace(',', '').replace(' ', '').strip())
 
-                    for record in filtered_data:
-                        detail_type = record[3]
-                        amount = float(record[4].replace('₹', '').replace(',', '').replace(' ', '').strip())
-                        details_aggregated[detail_type] += amount
-                        running_balance = float(record[5].replace('₹', '').replace(',', '').replace(' ', '').strip())
+                aggregated_data = []
 
-                    aggregated_data = []
+                # Add the aggregated amounts to the aggregated_data list using format_value and check for italicized detail types
+                italic_types = ["MPWizard", "AmiPy",
+                                "OvernightFutures", "ExtraTrades", "ExpiryTrader", "ErrorTrades", "ZRM"]
+                for detail_type, amount in details_aggregated.items():
+                    display_detail = detail_type if detail_type not in italic_types else f"<em>{detail_type}</em>"
+                    aggregated_data.append(
+                        [display_detail, format_value(amount)])
 
-                    # Add the aggregated amounts to the aggregated_data list
-                    italic_types = ["MPWizard", "AmiPy", "OvernightFutures", "ExtraTrades", "ExpiryTrader", "ErrorTrades", "ZRM"]
-                    for detail_type, amount in details_aggregated.items():
-                        display_detail = detail_type if detail_type not in italic_types else f"<em>{detail_type}</em>"
-                        aggregated_data.append([display_detail, format_value(amount)])
+                # Format and color the Running Balance value in green
+                running_balance_formatted = f"<span style='color: green;'>{custom_format(running_balance)}</span>"
+                aggregated_data.append(
+                    [f"<strong>Running Balance</strong>", running_balance_formatted])
 
-                    # Format and color the Running Balance value
-                    running_balance_formatted = f"<span style='color: green;'>{custom_format(running_balance)}</span>"
-                    aggregated_data.append([f"<strong>Running Balance</strong>", running_balance_formatted])
+                # Display the table without header using pandas
+                st.write(pd.DataFrame(aggregated_data).to_html(
+                    classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
 
-                    # Display the table using pandas
-                    st.write(pd.DataFrame(aggregated_data).to_html(classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
-        
     if selected == "Statistics":
 
         # Extract the default start date from the Excel "DTD" sheet

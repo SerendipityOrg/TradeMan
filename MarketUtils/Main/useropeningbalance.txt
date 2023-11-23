@@ -1,9 +1,9 @@
-omkar : 26,41,221.78  date: 11-Nov-23
-brijesh : 5,96,842.25 date: 11-Nov-23
-vinay : 31,143.46  date: 11-Nov-23
-venkatesh : 73,363.57  date: 11-Nov-23 
-sridhar: 24,453.93 date: 11-Nov-23
-vinod : 51,372.31  date: 11-Nov-23
-arjun : 70,716.55  date: 11-Nov-23
-gayathri : 80,565.82  date: 11-Nov-23
-amol : 21,017.56 date: 11-Nov-23
+omkar : 26,90,383.99  date: 18-Nov-23
+brijesh : 6,21,504.32 date: 18-Nov-23
+vinay : 29590.02  date: 18-Nov-23
+venkatesh : 74,326.94  date: 18-Nov-23 
+sridhar: 22,286.05 date: 18-Nov-23
+vinod : 49,751.41  date: 18-Nov-23
+arjun : 70,649.85  date: 18-Nov-23
+gayathri : 79,313.49  date: 18-Nov-23
+amol : 20,594.35 date: 18-Nov-23

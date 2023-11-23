@@ -24,9 +24,7 @@ import MarketUtils.general_calc as general_calc
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def aliceblue_invested_value(user_data):
-    
-    alice = Aliceblue(user_data['username'], user_data['api_key'])
-    session_id = alice.get_session_id()
+    alice = Aliceblue(user_data['username'], user_data['api_key'],session_id=user_data['session_id'])
     holdings = alice.get_holding_positions()
 
     invested_value = 0
@@ -40,7 +38,6 @@ def aliceblue_invested_value(user_data):
 
     return invested_value
 
-
 def zerodha_invested_value(broker_data):
     user_details = broker_data
     kite = KiteConnect(api_key=user_details['api_key'])
@@ -49,28 +46,21 @@ def zerodha_invested_value(broker_data):
     return sum(stock['average_price'] * stock['quantity'] for stock in holdings)
 
 # Fetch invested value based on broker type
-
-
 def get_invested_value(user_data):
     active_users = general_calc.read_json_file(active_users_json_path)
+
     for user in active_users:
         if user['account_name'] == user_data['account_name'] and user['broker'] == "aliceblue":
             return aliceblue_invested_value(user)
         elif user['account_name'] == user_data['account_name'] and user['broker'] == "zerodha":
             return zerodha_invested_value(user)
-        else:
-            return 0
 
 # Function to format currency in custom style
-
-
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
     return formatted.replace('₹', '₹ ')
 
 # Generate a morning report message for a user
-
-
 def generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital):
     # Base message
     message = (
@@ -115,11 +105,11 @@ with TelegramClient(session_filepath, api_id, api_hash) as client:
 
             print(message)
 
-            # Send message via Telegram
-            try:
-                client.send_message(phone_number, message, parse_mode='md')
-            except Exception as e:
-                print(f"Error sending message to {phone_number}: {e}")
+            # # Send message via Telegram
+            # try:
+            #     client.send_message(phone_number, message, parse_mode='md')
+            # except Exception as e:
+            #     print(f"Error sending message to {phone_number}: {e}")
 
 # Write the updated broker data (including both active and inactive users) to the file
-general_calc.write_json_file(broker_filepath, broker_data)
+# general_calc.write_json_file(broker_filepath, broker_data)
