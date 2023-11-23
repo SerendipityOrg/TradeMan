@@ -155,7 +155,7 @@ def sweep_alice_orders(userdetails):
         token_quantities = {position['Token']: abs(int(position['Netqty'])) for position in positions if position['Pcode'] == 'MIS' and position['realisedprofitloss']=='0.00'}
 
         for token, quantity in token_quantities.items():
-            base_symbol = Instrument().get_base_symbol_by_exchange_token(token)
+            base_symbol = Instrument().get_base_symbol_by_exchange_token(int(token))
             max_qty = place_order_calc.read_max_order_qty_for_symbol(base_symbol)  # Fetch max qty for the token
             remaining_qty = quantity
 
@@ -163,13 +163,15 @@ def sweep_alice_orders(userdetails):
                 if token == order['token'] and order['remarks'] is not None and order['Status'] == 'complete':
                     while remaining_qty > 0:
                         current_qty = min(remaining_qty, max_qty)
-                        order_details = {
+                        sweep_order = {
                             'trade_id': order['remarks'],
                             'exchange_token': int(order['token']),
                             'transaction_type': order['Trantype'],
                             'qty': current_qty
                         }
-                        place_aliceblue_order(order_details, alice)  # Place each split order
+                        order_details = place_order_calc.create_sweep_order_details(userdetails, sweep_order)
+                        print("order_details",order_details)
+                        place_aliceblue_order(order_details,alice) # Place each split order
                         remaining_qty -= current_qty
 
         for pending_order in orders:

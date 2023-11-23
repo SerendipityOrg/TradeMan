@@ -156,13 +156,15 @@ def sweep_kite_orders(userdetails):
                 
                 while remaining_qty > 0:
                     current_qty = min(remaining_qty, max_qty)
-                    order_details = {
+                    sweep_order = {
                         'trade_id': order['tag'],
                         'exchange_token': exchange_token,
                         'transaction_type': order['transaction_type'],
                         'qty': current_qty
                     }
-                    place_zerodha_order(order_details, kite)  # Place each split order
+                    order_details = place_order_calc.create_sweep_order_details(userdetails,sweep_order)
+                    print("order_details",order_details)
+                    place_zerodha_order(order_details,kite)
                     remaining_qty -= current_qty
 
     for pending_order in orders:

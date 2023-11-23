@@ -25,8 +25,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def aliceblue_invested_value(user_data):
     
-    alice = Aliceblue(user_data['username'], user_data['api_key'])
-    session_id = alice.get_session_id()
+    alice = Aliceblue(user_data['username'], user_data['api_key'],session_id=user_data['session_id'])
     holdings = alice.get_holding_positions()
 
     invested_value = 0
@@ -58,17 +57,11 @@ def get_invested_value(user_data):
             return aliceblue_invested_value(user)
         elif user['account_name'] == user_data['account_name'] and user['broker'] == "zerodha":
             return zerodha_invested_value(user)
-        else:
-            return 0
 
 # Function to format currency in custom style
-
-
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
     return formatted.replace('₹', '₹ ')
-
-# Generate a morning report message for a user
 
 
 def generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital):
@@ -89,7 +82,6 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
         f"Current Capital: {custom_format(current_capital)}\n\n"
         "Best regards,\nSerendipity Trading Firm"
     )
-
     return message
 
 
