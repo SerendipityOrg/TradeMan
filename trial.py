@@ -5,24 +5,19 @@
 #4 - Strategy behaviour for order_tag in {strategy}.json file
 #5 - Update the requirements.txt file
 
-from pya3 import *
-from pprint import pprint
-
-# alice = Aliceblue(user_id="BY1424",api_key="yn6YMylMSOa7Qmp9OPYhtFWSE4OL7hTMTIptvx1Odl1DkVOxqCFuboLnTCJiEd2IoEQolWY7G1JlABIkPxsvDL81hcAcOa08zszFj7DFgqPkNKGJAll3tP3OZjvmIYH6")
-alice = Aliceblue(user_id='929016',api_key='NRmFZkHUFYn08WrOT340eRGR5Sh4NdQ3arVBEak3UvgimY91CftfTWvx9QRXYLAtgCFFkrKQ1ax5yTaPKINLYLiLK48YziRLHFv84lf1v8hKWlBjclQhggNXJaj5h67f')
-session = alice.get_session_id()
-
-
-# orders = alice.get_order_history('')
-print(alice.get_daywise_positions())
-# pprint(orders)
-
-
-
 
 
 # from kiteconnect import KiteConnect
-# from pprint import pprint
-# kite = KiteConnect(api_key="6b0dp5ussukmo67h",access_token='X7FMC5TulIoUy3sEsTn1nplcC6LCPf2i')
 
-# pprint(kite.positions())
+
+
+# kite = KiteConnect(api_key='6b0dp5ussukmo67h',access_token='P42Om4i9Yjab8fQQQuEiSLCtLyhxc2aI')
+# kite.ORDER_TYPE_LIMIT
+
+# print(kite.holdings())
+
+
+
+
+
+print(round(54.43,1))
