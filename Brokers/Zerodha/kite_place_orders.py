@@ -144,6 +144,9 @@ def sweep_kite_orders(userdetails):
 
     token_quantities = {position['instrument_token']: abs(position['quantity']) for position in positions['net'] if position['product'] == 'MIS' and position['quantity'] != 0}
 
+    buy_orders = []
+    sell_orders = []
+
     for token, quantity in token_quantities.items():
         exchange_token = Instrument().get_exchange_token_by_token(token)
         base_symbol = Instrument().get_base_symbol_by_exchange_token(exchange_token)
@@ -163,9 +166,22 @@ def sweep_kite_orders(userdetails):
                         'qty': current_qty
                     }
                     order_details = place_order_calc.create_sweep_order_details(userdetails,sweep_order)
-                    print("order_details",order_details)
-                    place_zerodha_order(order_details,kite)
+                    if order_details['transaction_type'] == 'BUY':
+                        buy_orders.append(order_details)
+                    else:
+                        sell_orders.append(order_details)
+
                     remaining_qty -= current_qty
+    
+    # Process BUY orders first
+    for buy_order in buy_orders:
+        print("Placing BUY order:", buy_order)
+        place_zerodha_order(buy_order, kite)
+
+    # Then process SELL orders
+    for sell_order in sell_orders:
+        print("Placing SELL order:", sell_order)
+        place_zerodha_order(sell_order, kite)
 
     for pending_order in orders:
         if pending_order['status'] == 'TRIGGER PENDING':

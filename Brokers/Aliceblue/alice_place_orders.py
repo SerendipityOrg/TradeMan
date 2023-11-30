@@ -1,4 +1,5 @@
 import sys,os
+from time import sleep
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -152,6 +153,9 @@ def sweep_alice_orders(userdetails):
     if len(positions) == 2:
         print("No positions found")
     else:    
+        buy_orders = []
+        sell_orders = []
+
         token_quantities = {position['Token']: abs(int(position['Netqty'])) for position in positions if position['Pcode'] == 'MIS' and position['realisedprofitloss']=='0.00'}
 
         for token, quantity in token_quantities.items():
@@ -170,9 +174,23 @@ def sweep_alice_orders(userdetails):
                             'qty': current_qty
                         }
                         order_details = place_order_calc.create_sweep_order_details(userdetails, sweep_order)
-                        print("order_details",order_details)
-                        place_aliceblue_order(order_details,alice) # Place each split order
+                        if order_details['transaction_type'] == 'BUY':
+                            buy_orders.append(order_details)
+                        else:
+                            sell_orders.append(order_details)
                         remaining_qty -= current_qty
+        # Process BUY orders first
+        for buy_order in buy_orders:
+            print("Placing BUY order:", buy_order)
+            place_aliceblue_order(buy_order, alice)
+            sleep(0.1)
+
+        # Then process SELL orders
+        for sell_order in sell_orders:
+            print("Placing SELL order:", sell_order)
+            place_aliceblue_order(sell_order, alice)
+            sleep(0.1)
+
 
         for pending_order in orders:
             if orders[0]['stat'] == 'Not_Ok':

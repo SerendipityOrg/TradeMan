@@ -160,9 +160,13 @@ class Instrument:
     def _filter_data_by_name(self, name):
         return self._dataframe[self._dataframe['tradingsymbol'] == name]
 
-    def get_exchange_token_by_name(self,name):
-        filtered_data = self._filter_data_by_name(name)
-        if not filtered_data.empty:
+    def get_exchange_token_by_name(self, name, segment=None):
+        if segment:
+            filtered_data = self._filter_data_by_name(name)
+            filtered_data = filtered_data[filtered_data['segment'] == segment]
+            return filtered_data.iloc[0]['exchange_token']
+        elif segment is None:
+            filtered_data = self._filter_data_by_name(name)
             return filtered_data.iloc[0]['exchange_token']
         else:
             return None

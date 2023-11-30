@@ -30,7 +30,7 @@ load_dotenv(ENV_PATH)
 import MarketUtils.Discord.discordchannels as discord_bot
 from Strategies.StrategyBase import Strategy
 import Brokers.BrokerUtils.Broker as Broker
-
+import MarketUtils.general_calc as general_calc
 
 strategy_obj = Strategy.read_strategy_json(STRATEGY_PATH)
 
@@ -515,11 +515,16 @@ def update_graph_scatter(n):
     return fig
 
 
+def main ():
+    if current_time > datetime.time(9, 0):
+        if date.today() in general_calc.holidays:
+            print("Skipping execution as today is a holiday.")
+            return
 
-if current_time > datetime.time(9, 0):
-#  __name__ == '__main__':
-    app.run_server(host="0.0.0.0", port="8050", debug=True, use_reloader=False)
+        app.run_server(host="0.0.0.0", port="8050", debug=True, use_reloader=False)
 
-    print("Waiting for ticks...")
+        print("Waiting for ticks...")
 
 # Run app
+if __name__ == "__main__":
+    main()

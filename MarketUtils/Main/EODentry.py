@@ -131,7 +131,7 @@ def assign_short_and_long_orders(orders):
 
     return results
 
-def amipy_details(orders, broker, user):
+def amipy_details(orders, broker):
     # Simplify orders based on the broker
     simplified_orders = []
     for order in orders:
@@ -153,7 +153,7 @@ def amipy_details(orders, broker, user):
 
     return results
 
-def mpwizard_details(orders, broker, user):
+def mpwizard_details(orders, broker):
     results = {}
     buy_orders = []
     sell_orders = []
@@ -185,7 +185,7 @@ def mpwizard_details(orders, broker, user):
     }
     return results
 
-def overnight_futures_details(orders, broker, user):
+def overnight_futures_details(orders, broker):
     results = {}
     morning_trade_orders = []
     afternoon_trade_orders = []
@@ -230,7 +230,7 @@ def overnight_futures_details(orders, broker, user):
     }
     return results
 
-def expiry_trader_details(orders,broker,user):
+def expiry_trader_details(orders,broker):
     results = {}
     entry_orders = []
     exit_orders = []
@@ -260,11 +260,49 @@ def expiry_trader_details(orders,broker,user):
     }
     return results
 
+def extra_details(orders,broker):
+    results = {
+        "EXTRA": {
+            "Long": [],
+            "Short": [],
+            "LongCover": [],
+            "ShortCover": []
+        }
+    }
+
+    for order in orders:
+        simplified_order = simplify_zerodha_order(order) if broker == "zerodha" else simplify_aliceblue_order(order) if broker == "aliceblue" else order
+
+        if '_entry' in simplified_order['trade_id']:
+            if simplified_order['trade_type'] == 'BUY':
+                simplified_order['trade_type'] = 'LongOrder'
+            elif simplified_order['trade_type'] == 'SELL':
+                simplified_order['trade_type'] = 'ShortOrder'
+        elif '_exit' in simplified_order['trade_id']:
+            if simplified_order['trade_type'] == 'BUY':
+                simplified_order['trade_type'] = 'ShortCoverOrder'
+            elif simplified_order['trade_type'] == 'SELL':
+                simplified_order['trade_type'] = 'LongCoverOrder'
+            
+        if simplified_order['trade_type'] == 'LongOrder':
+            results['EXTRA']['Long'].append(simplified_order)
+        elif simplified_order['trade_type'] == 'ShortOrder':
+            results['EXTRA']['Short'].append(simplified_order)
+        elif simplified_order['trade_type'] == 'LongCoverOrder':
+            results['EXTRA']['LongCover'].append(simplified_order)
+        elif simplified_order['trade_type'] == 'ShortCoverOrder':
+            results['EXTRA']['ShortCover'].append(simplified_order)
+    
+    return results
+
+        
+
 strategy_to_function = {
     'AmiPy': amipy_details,
     'MPWizard': mpwizard_details,
     'OvernightFutures': overnight_futures_details,
-    'ExpiryTrader' : expiry_trader_details
+    'ExpiryTrader' : expiry_trader_details,
+    'Extra' : extra_details
     # Add other strategies and their functions here
 }
 
@@ -298,6 +336,7 @@ for user in active_users:
         details = zerodha.get_order_details(user)
     elif user["broker"] == "aliceblue":
         details = aliceblue.get_order_details(user)
+        pprint(details)
     
     strategies = user["qty"]
     strategies = list(strategies.keys())
@@ -309,7 +348,7 @@ for user in active_users:
     combined_user_orders = {}
     for strategy, order_list in segregate_based_on_strategy.items():
         if strategy in strategy_to_function:
-            processed_orders = strategy_to_function[strategy](order_list, user["broker"], user["account_name"])
+            processed_orders = strategy_to_function[strategy](order_list, user["broker"])
             combined_user_orders.update(processed_orders)
     
     if combined_user_orders:

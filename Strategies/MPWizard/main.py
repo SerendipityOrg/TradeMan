@@ -59,6 +59,10 @@ def main():
     Main function to execute the trading strategy.
     """
     now = dt.datetime.now()
+
+    if now.date() in general_calc.holidays:
+        print("Skipping execution as today is a holiday.")
+        return
     
     if now.time() < dt.time(9, 0):
         print("Time is before 9:00 AM, placing test orders.")

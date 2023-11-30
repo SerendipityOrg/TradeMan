@@ -17,6 +17,7 @@ import MarketUtils.InstrumentBase as InstrumentBase
 import Brokers.place_order_calc as place_order_calc
 import Strategies.OvernightFutures.OvernightFutures_calc as OF_calc
 import MarketUtils.Discord.discordchannels as discord
+import MarketUtils.general_calc as general_calc
 
 _,STRATEGY_PATH = place_order_calc.get_strategy_json('OvernightFutures')
 
@@ -113,6 +114,10 @@ orders_to_place = [
 def main():
     global hedge_exchange_token, futures_exchange_token
     now = dt.datetime.now()
+
+    if now.date() in general_calc.holidays:
+        print("Skipping execution as today is a holiday.")
+        return
 
     if now.time() < dt.time(9, 0):
         print("Time is before 9:00 AM, placing test orders.")

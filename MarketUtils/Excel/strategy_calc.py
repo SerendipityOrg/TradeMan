@@ -138,7 +138,6 @@ def process_short_trades(broker,short_signals, short_cover_signals,signal):
         result.append(trade_data)
     return result
 
-
 def process_long_trades(broker,long_signals, long_cover_signals,signal):
     if len(long_signals) != len(long_cover_signals):
         print("Mismatch in the number of LongSignal and LongCoverSignal trades.")
@@ -185,6 +184,11 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
     return result
 
 def process_expiry_trades(broker, expiry_trades):
+    def calculate_avg_price(trades):
+        total_price = sum(trade["avg_price"] * trade["qty"] for trade in trades)
+        total_qty = sum(trade["qty"] for trade in trades)
+        return total_price / total_qty if total_qty > 0 else 0
+
     if not expiry_trades:
         print("No ExpiryTrades trades found.")
         return []
@@ -196,40 +200,49 @@ def process_expiry_trades(broker, expiry_trades):
         entry_trades = [trade for trade in expiry_trades["Entry"] if trade["trade_id"] == trade_id]
         exit_trades = [trade for trade in expiry_trades["Exit"] if trade["trade_id"] == trade_id]
 
-        main_entry = next((trade for trade in entry_trades if trade["trade_type"] == "MainOrder"), None)
-        hedge_entry = next((trade for trade in entry_trades if trade["trade_type"] == "HedgeOrder"), None)
-        main_exit = next((trade for trade in exit_trades if trade["trade_type"] == "MainOrder"), None)
-        hedge_exit = next((trade for trade in exit_trades if trade["trade_type"] == "HedgeOrder"), None)
+        main_entry_trades = [trade for trade in entry_trades if trade["trade_type"] == "MainOrder"]
+        hedge_entry_trades = [trade for trade in entry_trades if trade["trade_type"] == "HedgeOrder"]
+        main_exit_trades = [trade for trade in exit_trades if trade["trade_type"] == "MainOrder"]
+        hedge_exit_trades = [trade for trade in exit_trades if trade["trade_type"] == "HedgeOrder"]
+
+        main_entry_avg_price = calculate_avg_price(main_entry_trades)
+        hedge_entry_avg_price = calculate_avg_price(hedge_entry_trades)
+        main_exit_avg_price = calculate_avg_price(main_exit_trades)
+        hedge_exit_avg_price = calculate_avg_price(hedge_exit_trades)
+
+        # Number of orders (assuming 2 trades per order)
+        no_of_orders = len(entry_trades) // 2
 
         if broker == "zerodha":
-            charges = tc.zerodha_taxes(main_entry["qty"], float(main_entry["avg_price"]), float(main_exit["avg_price"]), 1)
+            charges = tc.zerodha_taxes(main_entry_trades[0]["qty"], main_entry_avg_price, main_exit_avg_price, no_of_orders)
         elif broker == "aliceblue":
-            charges = tc.aliceblue_taxes(main_entry["qty"], float(main_entry["avg_price"]), float(main_exit["avg_price"]), 1)
+            charges = tc.aliceblue_taxes(main_entry_trades[0]["qty"], main_entry_avg_price, main_exit_avg_price, no_of_orders)
         else:
             charges = 0  # No charges if broker is not recognized
 
-        main_trade_points = float(main_entry["avg_price"]) - float(main_exit["avg_price"])
-        hedge_trade_points = float(hedge_exit["avg_price"]) - float(hedge_entry["avg_price"]) if hedge_entry else 0
+        main_trade_points = main_entry_avg_price - main_exit_avg_price
+        hedge_trade_points = hedge_exit_avg_price - hedge_entry_avg_price if hedge_entry_trades else 0
         trade_points = main_trade_points + hedge_trade_points
-        pnl = trade_points * main_entry["qty"]
+        pnl = trade_points * main_entry_trades[0]["qty"]
         net_pnl = pnl - charges
 
+
         # Parse dates with the correct format
-        entry_time = pd.to_datetime(main_entry["time"], format='%d/%m/%Y %H:%M:%S').round('min')
-        exit_time = pd.to_datetime(main_exit["time"], format='%d/%m/%Y %H:%M:%S').round('min')
+        entry_time = pd.to_datetime(main_entry_trades[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
+        exit_time = pd.to_datetime(main_exit_trades[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
 
         trade_data = {
             "trade_id": trade_id,
-            "trading_symbol": main_entry["trading_symbol"],
+            "trading_symbol": main_entry_trades[0]["trading_symbol"],
             "signal": "Short",
             "entry_time": entry_time.strftime('%Y-%m-%d %H:%M:%S'),
             "exit_time": exit_time.strftime('%Y-%m-%d %H:%M:%S'),
-            "entry_price": round(float(main_entry["avg_price"]), 2),
-            "exit_price": round(float(main_exit["avg_price"]), 2),
-            "hedge_entry_price": round(float(hedge_entry["avg_price"]), 2) if hedge_entry else 0,
-            "hedge_exit_price": round(float(hedge_exit["avg_price"]), 2) if hedge_exit else 0,
+            "entry_price": round(main_entry_avg_price, 2),
+            "exit_price": round(main_exit_avg_price, 2),
+            "hedge_entry_price": round(hedge_entry_avg_price, 2) if hedge_entry_trades else 0,
+            "hedge_exit_price": round(hedge_exit_avg_price, 2) if hedge_exit_trades else 0,
             "trade_points": round(trade_points, 2),
-            "qty": main_entry["qty"],
+            "qty": main_entry_trades[0]["qty"],
             "pnl": round(pnl, 2),
             "tax": round(charges, 2),
             "net_pnl": round(net_pnl, 2)
@@ -238,7 +251,6 @@ def process_expiry_trades(broker, expiry_trades):
         result.append(trade_data)
 
     return result
-
 
 def process_overnight_futures_trades(afternoon_trade_details, morning_trade_details, broker,entry_trade=None):
     # Initialize the results list, which will contain up to two dictionaries
