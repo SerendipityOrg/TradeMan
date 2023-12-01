@@ -28,13 +28,17 @@ def alice_place_order(alice, order_details):
     """  
     strategy = order_details.get('strategy')
     exchange_token = order_details.get('exchange_token')
-    segment = Instrument().get_segment_by_exchange_token(exchange_token)
     qty = int(order_details.get('qty'))
     product = order_details.get('product_type')
 
     transaction_type = alice_utils.calculate_transaction_type(order_details.get('transaction_type'))
     order_type = alice_utils.calculate_order_type(order_details.get('order_type'))
     product_type = alice_utils.calculate_product_type(product)
+    if product == 'CNC':
+        segment = 'NSE'
+    else:
+        segment = Instrument().get_segment_by_exchange_token(exchange_token)
+
 
     limit_prc = order_details.get('limit_prc', None) 
     trigger_price = order_details.get('trigger_prc', None)
@@ -179,6 +183,14 @@ def sweep_alice_orders(userdetails):
                         else:
                             sell_orders.append(order_details)
                         remaining_qty -= current_qty
+
+        for pending_order in orders:
+            if orders[0]['stat'] == 'Not_Ok':
+                print("No orders found")
+            elif pending_order['Status'] == 'trigger pending':
+                print(pending_order['Nstordno'])
+                alice.cancel_order(pending_order['Nstordno'])
+
         # Process BUY orders first
         for buy_order in buy_orders:
             print("Placing BUY order:", buy_order)
@@ -190,21 +202,3 @@ def sweep_alice_orders(userdetails):
             print("Placing SELL order:", sell_order)
             place_aliceblue_order(sell_order, alice)
             sleep(0.1)
-
-
-        for pending_order in orders:
-            if orders[0]['stat'] == 'Not_Ok':
-                print("No orders found")
-            elif pending_order['Status'] == 'trigger pending':
-                print(pending_order['Nstordno'])
-                alice.cancel_order(pending_order['Nstordno'])
-
-
-
-
-
-
-    
-                
-
-    

@@ -36,16 +36,6 @@ product_type = strategy_obj.get_general_params().get('ProductType')
 
 
 orders_to_place = [
-    {  
-        "strategy": strategy_name,
-        "base_symbol" : strategy_obj.get_instruments()[0],
-        "exchange_token" : hedge_exchange_token,     
-        "segment" : segment_type,
-        "transaction_type": hedge_transcation_type,  
-        "order_type" : order_type, 
-        "product_type" : product_type,
-        "order_mode" : ["Hedge"]
-    },
     {
         "strategy": strategy_name,
         "base_symbol" : strategy_obj.get_instruments()[0],
@@ -55,6 +45,16 @@ orders_to_place = [
         "order_type" : order_type, 
         "product_type" : product_type,
         "order_mode" : ["Main"]
+    },
+    {  
+        "strategy": strategy_name,
+        "base_symbol" : strategy_obj.get_instruments()[0],
+        "exchange_token" : hedge_exchange_token,     
+        "segment" : segment_type,
+        "transaction_type": hedge_transcation_type,  
+        "order_type" : order_type, 
+        "product_type" : product_type,
+        "order_mode" : ["Hedge"]
     }
 ]
 

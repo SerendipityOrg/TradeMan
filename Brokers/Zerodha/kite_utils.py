@@ -55,6 +55,8 @@ def calculate_product_type(kite,product_type):
         product_type = kite.PRODUCT_NRML
     elif product_type == 'MIS':
         product_type = kite.PRODUCT_MIS
+    elif product_type == 'CNC':
+        product_type = kite.PRODUCT_CNC
     else:
         raise ValueError("Invalid product_type in order_details")
     return product_type

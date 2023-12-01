@@ -336,10 +336,11 @@ for user in active_users:
         details = zerodha.get_order_details(user)
     elif user["broker"] == "aliceblue":
         details = aliceblue.get_order_details(user)
-        pprint(details)
     
     strategies = user["qty"]
     strategies = list(strategies.keys())
+    #add "Extra" strategy to the list of strategies
+    strategies.append("Extra")
 
     if "PreviousOvernightFutures" in strategies:
         strategies.remove("PreviousOvernightFutures")

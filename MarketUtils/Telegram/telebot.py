@@ -27,7 +27,7 @@ TOKEN = '807232387:AAF5OgaGJuUPV8xwDUxYFRHaOWJSU5pIAic'
 order_type_map = {"1": "PlaceOrder", "2": "PlaceStoploss", "3": "ModifyOrder"}
 transaction_type_map = {"1": "BUY", "2": "SELL"}
 base_instrument_map = {"1": "NIFTY", "2": "BANKNIFTY", "3": "FINNIFTY", "4": "Stock"}
-product_type_map = {"1": "NRML", "2": "MIS"} 
+product_type_map = {"1": "NRML", "2": "MIS", "3": "CNC"} 
 option_type_map = {"1": "CE", "2": "PE", "3": "FUT", "4": "Stock"}
 expiry_map = {"1": "current_week", "2": "current_month", "3": "next_week", "4": "next_month", "5": "Stock"}
 entry_exit_map = {"1": "Entry", "2": "Exit"}
@@ -104,7 +104,8 @@ def stock_name_input(update: Update, context: CallbackContext) -> int:
     logger.info(f"Stock name received: {user_input}")  # Log for debugging
     update.message.reply_text("Select Product Type:\n"
                               "1. NRML\n"
-                              "2. MIS")
+                              "2. MIS\n"
+                              "3. CNC")
     return PRODUCT_TYPE
 
 def product_type(update: Update, context: CallbackContext) -> int:

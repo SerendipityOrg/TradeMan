@@ -52,6 +52,8 @@ def calculate_product_type(product_type):
         product_type = ProductType.Normal
     elif product_type == 'MIS':
         product_type = ProductType.Intraday
+    elif product_type == 'CNC':
+        product_type = ProductType.Delivery
     else:
         raise ValueError("Invalid product_type in order_details")
     return product_type

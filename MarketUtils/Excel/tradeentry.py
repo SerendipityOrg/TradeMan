@@ -27,16 +27,15 @@ userprofile_dir = os.path.join(DIR, "UserProfile","OrdersJson")
 active_users_filepath = os.path.join(DIR,"MarketUtils", "active_users.json")
 credentials_filepath = os.path.join(DIR,"MarketUtils","Excel","credentials.json")
 
-# excel_dir = os.path.join(DIR, "UserProfile","Excel")
 
 class TradingStrategy:
     def __init__(self, name, process_func):
         self.name = name
         self.process_func = process_func
     
-    def process_data(self, user_data, broker):
+    def process_data(self, user_data, broker,username):
         if self.name in user_data["today_orders"]:
-            data = self.process_func(broker, user_data["today_orders"][self.name])
+            data = self.process_func(broker, user_data["today_orders"][self.name],username)
             df = pd.DataFrame(data)
             if 'pnl' in df.columns:
                 PnL = round(df['pnl'].sum(), 1)
@@ -60,9 +59,26 @@ def load_existing_excel(excel_path):
         print("Error:", e)
         return {}
 
-def update_excel_data(all_dfs, df, strategy_name):
+def update_excel_data(all_dfs, df, strategy_name, unique_id_column='trade_id'):
     if not df.empty:
-        all_dfs[strategy_name] = pd.concat([all_dfs.get(strategy_name, pd.DataFrame()), df])
+        # Check if the strategy's DataFrame exists in all_dfs
+        if strategy_name in all_dfs:
+            strategy_df = all_dfs[strategy_name]
+            for i, row in df.iterrows():
+                unique_id = row[unique_id_column]
+                # Find the index in the existing DataFrame
+                index = strategy_df[strategy_df[unique_id_column] == unique_id].index
+                if not index.empty:
+                    # Update the existing row (ensuring columns match)
+                    for col in strategy_df.columns:
+                        strategy_df.at[index[0], col] = row[col] if col in row else strategy_df.at[index[0], col]
+                else:
+                    # Append new row if the unique id does not exist
+                    strategy_df = pd.concat([strategy_df, pd.DataFrame([row])], ignore_index=True)
+            all_dfs[strategy_name] = strategy_df
+        else:
+            # If the strategy's DataFrame does not exist, simply add it
+            all_dfs[strategy_name] = df
 
 def save_all_sheets_to_excel(all_dfs, excel_path):
     with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
@@ -112,9 +128,11 @@ strategy_config = {
     "MPWizard": sc.process_mpwizard_trades,
     "AmiPy": sc.process_amipy_trades,
     "OvernightFutures": sc.process_overnight_futures_trades,
-    "ExpiryTrader": sc.process_expiry_trades
+    "ExpiryTrader": sc.process_expiry_trades,
+    "Extra": sc.process_extra_trades
     # Add new strategies here as needed
 }
+
 cred = credentials.Certificate(credentials_filepath)
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
@@ -135,6 +153,7 @@ def main():
     strategies = [TradingStrategy(name, func) for name, func in strategy_config.items()]
 
     for user in data:
+        username = user['account_name']
         user_data = general_calc.read_json_file(os.path.join(userprofile_dir, f"{user['account_name']}.json"))
         broker_json = general_calc.read_json_file(broker_filepath)
         broker = user["broker"]
@@ -147,43 +166,7 @@ def main():
         all_dfs = load_existing_excel(excel_path)
 
         for strategy in strategies:
-            if strategy.name == "OvernightFutures":
-                overnight_futures_df = all_dfs.get("OvernightFutures", pd.DataFrame())
-
-                # Check if there are OvernightFutures trades for today
-                if "OvernightFutures" in user_data["today_orders"]:
-                    overnight_trades = user_data["today_orders"]["OvernightFutures"]
-
-                    # Process morning trades
-                    if "Morning" in overnight_trades and overnight_trades["Morning"] is not None and len(overnight_trades["Morning"]) > 0:
-                        trade_id = overnight_trades["Morning"][0]["trade_id"]
-                        trade_index = overnight_futures_df.index[overnight_futures_df['trade_id'] == trade_id].tolist()
-
-                        if trade_index:
-                            row_index = trade_index[0]
-                            entry_trade = overnight_futures_df.loc[row_index]
-                            if entry_trade is not None:
-                                # Process morning trades
-                                updated_trade_data = sc.process_overnight_futures_trades(None, overnight_trades["Morning"], broker, entry_trade=entry_trade)
-                                
-                                # Update the strategy results with the morning trade PnL and tax
-                                strategy_results[strategy.name] = updated_trade_data[0]['pnl']
-                                gross_pnl += updated_trade_data[0]['pnl']
-                                total_tax += updated_trade_data[0]['tax']
-
-                                # Update the existing row in the DataFrame
-                                for key, value in updated_trade_data[0].items():
-                                    overnight_futures_df.at[row_index, key] = value
-                                all_dfs["OvernightFutures"] = overnight_futures_df
-                                
-                    # Process afternoon trades
-                    if "Afternoon" in overnight_trades and overnight_trades["Afternoon"] is not None and len(overnight_trades["Afternoon"]) > 0:
-                        new_trade_data = sc.process_overnight_futures_trades(overnight_trades["Afternoon"], None, broker)
-                        # Append the new row to the DataFrame
-                        all_dfs["OvernightFutures"] = pd.concat([overnight_futures_df, pd.DataFrame([new_trade_data[-1]])], ignore_index=True)
-
-            else:
-                df, pnl, tax = strategy.process_data(user_data, broker)
+                df, pnl, tax = strategy.process_data(user_data, broker,username)
                 strategy_results[strategy.name] = pnl
                 gross_pnl += pnl
                 total_tax += tax

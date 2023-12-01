@@ -28,15 +28,19 @@ def kite_place_order(kite, order_details):
     """
     strategy = order_details.get('strategy')
     exchange_token = order_details.get('exchange_token')
-    segment = Instrument().get_segment_by_exchange_token(exchange_token)
-    segment_type = kite_utils.calculate_segment_type(kite,segment)
     qty = int(order_details.get('qty'))
     product = order_details.get('product_type')
 
     transaction_type = kite_utils.calculate_transaction_type(kite,order_details.get('transaction_type'))
     order_type = kite_utils.calculate_order_type(kite,order_details.get('order_type'))
     product_type = kite_utils.calculate_product_type(kite,product)
-
+    if product == 'CNC':
+        segment_type = kite.EXCHANGE_NSE
+        trading_symbol = Instrument().get_trading_symbol_by_exchange_token(exchange_token, "NSE")
+    else:
+        segment_type = Instrument().get_segment_by_exchange_token(exchange_token)
+        trading_symbol = Instrument().get_trading_symbol_by_exchange_token(exchange_token)
+    
     limit_prc = order_details.get('limit_prc', None) 
     trigger_price = order_details.get('trigger_prc', None)
 
@@ -57,7 +61,7 @@ def kite_place_order(kite, order_details):
             variety=kite.VARIETY_REGULAR,
             exchange= segment_type, 
             price= limit_prc,
-            tradingsymbol=Instrument().get_trading_symbol_by_exchange_token(exchange_token),
+            tradingsymbol=trading_symbol,
             transaction_type=transaction_type, 
             quantity= qty,
             trigger_price=trigger_price,
@@ -173,6 +177,11 @@ def sweep_kite_orders(userdetails):
 
                     remaining_qty -= current_qty
     
+    for pending_order in orders:
+        if pending_order['status'] == 'TRIGGER PENDING':
+            print(pending_order['order_id'])
+            kite.cancel_order(variety=kite.VARIETY_REGULAR, order_id=pending_order['order_id'])
+
     # Process BUY orders first
     for buy_order in buy_orders:
         print("Placing BUY order:", buy_order)
@@ -182,8 +191,3 @@ def sweep_kite_orders(userdetails):
     for sell_order in sell_orders:
         print("Placing SELL order:", sell_order)
         place_zerodha_order(sell_order, kite)
-
-    for pending_order in orders:
-        if pending_order['status'] == 'TRIGGER PENDING':
-            print(pending_order['order_id'])
-            kite.cancel_order(variety=kite.VARIETY_REGULAR, order_id=pending_order['order_id'])
