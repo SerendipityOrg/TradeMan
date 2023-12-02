@@ -53,28 +53,25 @@ class Instrument:
         return weekly_expiry_type
 
     def monthly_expiry_type(self):
-        today = datetime.today()
-        # Find the last day of the previous month
-        last_day_of_previous_month = today.replace(day=1) - timedelta(days=1)
+        today = datetime.now().date()
+        # Find the last day of the current month
+        next_month = today.replace(day=28) + timedelta(days=4)
+        last_day_of_current_month = next_month - timedelta(days=next_month.day)
 
-        # Find the last Thursday of the previous month
-        last_thursday_of_previous_month = last_day_of_previous_month
-        while last_thursday_of_previous_month.weekday() != 3:
-            last_thursday_of_previous_month -= timedelta(days=1)
+        # Find the last Thursday of the current month
+        last_thursday_of_current_month = last_day_of_current_month
+        while last_thursday_of_current_month.weekday() != 3:
+            last_thursday_of_current_month -= timedelta(days=1)
 
-        # If today is before the last Thursday of the previous month
-        if today < last_thursday_of_previous_month:
-            return "current_month"
-        # If today is the last Thursday of the previous month
-        elif today == last_thursday_of_previous_month:
+        # If today is the last Thursday of the current month
+        if today == last_thursday_of_current_month:
             return "next_month"
-        # If today is after the last Thursday of the previous month
+        # If today is before the last Thursday of the current month
+        elif today < last_thursday_of_current_month:
+            return "current_month"
+        # If today is after the last Thursday of the current month
         else:
-            # Find the last day of the current month
-            next_month = today.replace(day=28) + timedelta(days=4)
-            last_day_of_current_month = next_month - timedelta(days=next_month.day)
-
-            # If today is after the last Thursday but still in the previous month
+            # If today is still within the current month
             if today <= last_day_of_current_month:
                 return "current_month"
             # If we have moved into a new month

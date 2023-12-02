@@ -73,10 +73,19 @@ def get_next_weekday(d, weekday):
     return next_date
 
 def last_weekday_of_month(year, month, weekday):
-    last_day = dt.date(year, month+1, 1) - dt.timedelta(1)
+    if month == 12:
+        # If the current month is December, increment the year and set the month to January
+        last_day = dt.date(year + 1, 1, 1) - dt.timedelta(1)
+    else:
+        # Otherwise, proceed to the next month
+        last_day = dt.date(year, month + 1, 1) - dt.timedelta(1)
+    
+    # Find the last desired weekday of the month
     while last_day.weekday() != weekday or last_day in holidays:
         last_day -= dt.timedelta(1)
+    
     return last_day
+
 
 def get_expiry_dates(base_symbol):
     today = dt.date.today()
