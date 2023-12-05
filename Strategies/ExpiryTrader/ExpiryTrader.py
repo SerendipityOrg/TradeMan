@@ -39,7 +39,7 @@ main_transcation_type = expiry_trader_obj.get_general_params().get('MainTransact
 def calculate_qty(main_exchange_token,base_symbol):
     token = instrument_obj.get_token_by_exchange_token(main_exchange_token)
     ltp = expiry_trader_obj.get_single_ltp(token)
-    qty_calc.calculate_quantity_based_on_ltp(ltp,expiry_trader_obj.get_strategy_name(),base_symbol)
+    qty_calc.update_user_qty_ltp(ltp,expiry_trader_obj.get_strategy_name(),base_symbol)
 
 
 # Extract strategy parameters

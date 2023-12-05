@@ -50,7 +50,7 @@ def zerodha_invested_value(broker_data):
 # Fetch invested value based on broker type
 
 
-def get_invested_value(user_data):
+def get_invested_value(user_data):#TODO get the values from excel
     active_users = general_calc.read_json_file(active_users_json_path)
     for user in active_users:
         if user['account_name'] == user_data['account_name'] and user['broker'] == "aliceblue":

@@ -169,7 +169,7 @@ class Strategy:
         else:
             return "No expiry today"
 
-    def round_strike_prc(self,ltp,base_symbo): #TODO: Add support for other base symbols using a csv list
+    def round_strike_prc(self,ltp,base_symbo): 
         strike_step = self.get_strike_step(base_symbo)
         return round(ltp / strike_step) * strike_step
     

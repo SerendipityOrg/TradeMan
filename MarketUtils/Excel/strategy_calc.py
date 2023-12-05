@@ -23,7 +23,7 @@ def load_existing_excel(excel_path):
         print("Error:", e)
         return {}
 
-def process_mpwizard_trades(broker,mpwizard_trades,username=None):
+def process_mpwizard_trades(broker,mpwizard_trades,username=None,strategy=None):
     if not mpwizard_trades:
         print("No MPWizard trades found.")
         return []
@@ -78,7 +78,7 @@ def process_mpwizard_trades(broker,mpwizard_trades,username=None):
 
     return result
 
-def process_amipy_trades(broker,amipy_trades,username=None):
+def process_amipy_trades(broker,amipy_trades,username=None,strategy=None):
     amipy_data_short = []
     amipy_data_long = []
     if "ShortSignal" in amipy_trades:
@@ -196,7 +196,7 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
         result.append(trade_data)
     return result
 
-def process_expiry_trades(broker, expiry_trades,username=None):
+def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
     def calculate_avg_price(trades):
         total_price = sum(trade["avg_price"] * trade["qty"] for trade in trades)
         total_qty = sum(trade["qty"] for trade in trades)
@@ -266,7 +266,7 @@ def process_expiry_trades(broker, expiry_trades,username=None):
     return result
 
 def process_morning_trades(broker,morning_trades,username=None):
-    excel_path = os.path.join(DIR, f"UserProfile/Excel/{username}.xlsx")
+    excel_path = os.path.join(DIR, f"UserProfile/Excel/{username}.xlsx") #TODO change the path
     all_dfs = load_existing_excel(excel_path)
     trade_df = all_dfs.get("OvernightFutures", pd.DataFrame())
     trade_id = morning_trades[0]['trade_id'].split("_")[0]
@@ -343,7 +343,7 @@ def process_afternoon_trades(broker,afternoon_trades,username=None):
                 }
     return afternoon_trade_data
 
-def process_overnight_futures_trades(broker,trades,username=None):
+def process_overnight_futures_trades(broker,trades,username=None,strategy=None):
     if not trades:
         print("No OvernightFutures trades found.")
         return []
@@ -360,7 +360,7 @@ def process_overnight_futures_trades(broker,trades,username=None):
     
     return result
 
-def process_extra_trades(broker,extra_trades,username=None):
+def process_extra_trades(broker,extra_trades,username=None,strategy=None):
     if not extra_trades:
         print("No extra trades found.")
         return []
@@ -370,7 +370,7 @@ def process_extra_trades(broker,extra_trades,username=None):
         Find a matching entry trade for the given exit trade.
         """
         for entry_trade in processed_trades:
-            if entry_trade['trade_id'] == exit_trade['trade_id']:
+            if entry_trade['trade_id'] == exit_trade['trade_id'].split("_")[0]:
                 return entry_trade
         return None
     
@@ -420,9 +420,9 @@ def process_extra_trades(broker,extra_trades,username=None):
     
 
     def fetch_trade_details_from_excel(trade, cover_type,username):
-        excel_path = os.path.join(DIR, f"UserProfile/Excel/{username}.xlsx")
+        excel_path = os.path.join(DIR, f"UserProfile/Excel/{username}.xlsx") #TODO change the path
         all_dfs = load_existing_excel(excel_path)
-        trade_df = all_dfs.get("Extra", pd.DataFrame())
+        trade_df = all_dfs.get(strategy, pd.DataFrame())#TODO change the sheet name
         trade_id = trade['trade_id'].split("_")[0]
         trade_index = trade_df.index[trade_df['trade_id'] == trade_id].tolist()
 

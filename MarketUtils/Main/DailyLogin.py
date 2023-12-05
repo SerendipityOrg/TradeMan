@@ -43,7 +43,7 @@ def clear_json_file(user_name):
 active_users = all_broker_login(place_order_calc.get_active_users(broker_json_details))
 
 def calculate_qty(active_users):
-    for user in active_users:
+    for user in active_users:#TODO fetch the PreviousOvernightFutures from the excel 
         prev_overnight_qty = None
         for prev_user in previous_day_active_users:
             if user['account_name'] == prev_user['account_name'] and 'OvernightFutures' in prev_user['qty']:

@@ -1,6 +1,7 @@
 from time import sleep
 import os,sys,json
 import datetime as dt
+import MPWizard_calc as MPWizard_calc
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -115,10 +116,12 @@ class OrderMonitor:
 
     def create_order_details(self,name,cross_type,ltp,price_ref):
         mood_data_entry = self._get_mood_data_for_instrument(name)
+        ib_level = mood_data_entry['IBLevel']
+        instru_mood = self.mood_data['GeneralParams']['TradeView']
         if not mood_data_entry:
-            return #TODO add try exception for all the points of failure.
+            return
 
-        option_type = self._determine_option_type(cross_type, mood_data_entry)
+        option_type = MPWizard_calc.calculate_option_type(ib_level,cross_type,instru_mood)
         if not option_type:
             return
         
@@ -159,21 +162,6 @@ class OrderMonitor:
 
     def _get_mood_data_for_instrument(self, name):
         return self.mood_data['EntryParams'].get(name)
-
-    def _determine_option_type(self, cross_type, mood_data_entry):
-        """Determine the option type based on cross type and mood data."""
-        ib_level = mood_data_entry['IBLevel']
-        instru_mood = self.mood_data['GeneralParams']['TradeView']
-
-        if ib_level == 'Big':
-            return 'PE' if cross_type == 'UpCross' else 'CE'
-        elif ib_level == 'Small':
-            return 'PE' if cross_type == 'DownCross' else 'CE'
-        elif ib_level == 'Medium':
-            return 'PE' if instru_mood == 'Bearish' else 'CE'
-        else:
-            print(f"Unknown IB Level: {ib_level}")
-        return None
     
     def get_index_name(self,token):
         index_tokens = strategy_obj.get_general_params().get("IndicesTokens")

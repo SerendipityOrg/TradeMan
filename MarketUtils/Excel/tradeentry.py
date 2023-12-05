@@ -33,9 +33,9 @@ class TradingStrategy:
         self.name = name
         self.process_func = process_func
     
-    def process_data(self, user_data, broker,username):
+    def process_data(self, user_data, broker,username,strategy=None):
         if self.name in user_data["today_orders"]:
-            data = self.process_func(broker, user_data["today_orders"][self.name],username)
+            data = self.process_func(broker, user_data["today_orders"][self.name],username,strategy)
             df = pd.DataFrame(data)
             if 'pnl' in df.columns:
                 PnL = round(df['pnl'].sum(), 1)
@@ -129,7 +129,8 @@ strategy_config = {
     "AmiPy": sc.process_amipy_trades,
     "OvernightFutures": sc.process_overnight_futures_trades,
     "ExpiryTrader": sc.process_expiry_trades,
-    "Extra": sc.process_extra_trades
+    "Extra": sc.process_extra_trades,
+    "Stocks": sc.process_extra_trades,
     # Add new strategies here as needed
 }
 
@@ -166,7 +167,7 @@ def main():
         all_dfs = load_existing_excel(excel_path)
 
         for strategy in strategies:
-                df, pnl, tax = strategy.process_data(user_data, broker,username)
+                df, pnl, tax = strategy.process_data(user_data, broker,username,strategy)
                 strategy_results[strategy.name] = pnl
                 gross_pnl += pnl
                 total_tax += tax
