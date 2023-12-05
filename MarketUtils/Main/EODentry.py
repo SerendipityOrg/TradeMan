@@ -1,15 +1,16 @@
 import os,sys
-import general_calc as general_calc 
 from datetime import datetime
 from pprint import pprint
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-calc_dir = os.path.join(script_dir, '..',"Brokers")
-sys.path.append(calc_dir)
+DIR = os.getcwd()
+sys.path.append(DIR)
 
-import place_order_calc as place_order_calc
-import zerodha.kite_place_orders as zerodha
-import aliceblue.alice_place_orders as aliceblue
+import Brokers.place_order_calc as place_order_calc
+import Brokers.Zerodha.kite_utils as zerodha
+import Brokers.Aliceblue.alice_utils as aliceblue
+import MarketUtils.general_calc as general_calc
+from Strategies.StrategyBase import Strategy
+
 
 def simplify_zerodha_order(detail):
     trade_symbol = detail['tradingsymbol']
@@ -23,10 +24,10 @@ def simplify_zerodha_order(detail):
         option_type = trade_symbol[-2:]
 
     trade_id = detail['tag']
-    # if trade_id.endswith('_entry'):
-    #     trade_id = trade_id.rsplit('_entry', 1)[0]
-    # elif trade_id.endswith('_exit'):
-    #     trade_id = trade_id.rsplit('_exit', 1)[0]
+    if trade_id.endswith('_entry'):
+        order_type = "entry"
+    elif trade_id.endswith('_exit'):
+        order_type = "exit"
     
     return {
         'trade_id' : trade_id,  # This is the order_id for zerodha
@@ -36,7 +37,8 @@ def simplify_zerodha_order(detail):
         'strike_price': strike_price,
         'option_type': option_type,
         'trading_symbol': trade_symbol,
-        'trade_type': detail['transaction_type']
+        'trade_type': detail['transaction_type'],
+        'order_type' : order_type
     }
 
 def simplify_aliceblue_order(detail):
@@ -48,10 +50,11 @@ def simplify_aliceblue_order(detail):
         option_type = detail['optionType']
 
     trade_id = detail['remarks']
-    # if trade_id.endswith('_entry'):
-    #     trade_id = trade_id.rsplit('_entry', 1)[0]
-    # elif trade_id.endswith('_exit'):
-    #     trade_id = trade_id.rsplit('_exit', 1)[0]
+
+    if trade_id.endswith('_entry'):
+        order_type = "entry"
+    elif trade_id.endswith('_exit'):
+        order_type = "exit"
 
     return {
         'trade_id' : trade_id,
@@ -61,14 +64,9 @@ def simplify_aliceblue_order(detail):
         'strike_price': strike_price,
         'option_type': option_type,
         'trading_symbol': detail['Trsym'],
-        'trade_type': 'BUY' if detail['Trantype'] == 'B' else 'SELL'
+        'trade_type': 'BUY' if detail['Trantype'] == 'B' else 'SELL',
+        'order_type' : order_type
     }
-
-
-def load_userdata():
-    return general_calc.read_json_file(os.path.join(script_dir,"broker.json"))
-
-json_data = load_userdata()
 
 users_with_strategies = []
 
@@ -98,9 +96,9 @@ def assign_short_and_long_orders(orders):
         # Determine which orders are main and which are hedge
         for _, orders in strike_prices.items():
             if len(orders) == 2:
-                hedge_orders.extend(orders)
-            else:
                 main_orders.extend(orders)
+            else:
+                hedge_orders.extend(orders)
         return main_orders, hedge_orders
     
     entry_orders = [order for order in orders if "_entry" in order["trade_id"]]
@@ -133,7 +131,7 @@ def assign_short_and_long_orders(orders):
 
     return results
 
-def amipy_details(orders, broker, user):
+def amipy_details(orders, broker,strategy=None):
     # Simplify orders based on the broker
     simplified_orders = []
     for order in orders:
@@ -155,7 +153,7 @@ def amipy_details(orders, broker, user):
 
     return results
 
-def mpwizard_details(orders, broker, user):
+def mpwizard_details(orders, broker,strategy=None):
     results = {}
     buy_orders = []
     sell_orders = []
@@ -171,6 +169,14 @@ def mpwizard_details(orders, broker, user):
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
             sell_orders.append(simplified_order)
 
+    def extract_numeric_part(trade_id):
+        # Assuming the format is two letters followed by numbers 'MP201'
+        return int(''.join(filter(str.isdigit, trade_id)))
+
+    # Sort the buy and sell orders by the numeric part of trade_id
+    buy_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
+    sell_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
+
     results = {
         "MPWizard": {
             "BUY": buy_orders,
@@ -179,60 +185,138 @@ def mpwizard_details(orders, broker, user):
     }
     return results
 
-def overnight_options_details(orders, broker, user):
+def overnight_futures_details(orders, broker,strategy=None):
     results = {}
     morning_trade_orders = []
+    afternoon_trade_orders = []
 
     # Simplify the orders and collect them
     for order in orders:
         simplified_order = simplify_zerodha_order(order) if broker == "zerodha" else simplify_aliceblue_order(order) if broker == "aliceblue" else order
-        simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
-        morning_trade_orders.append(simplified_order)
+        
+        if simplified_order['order_type'] == 'entry':
+            simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
+            afternoon_trade_orders.append(simplified_order)
+        elif simplified_order['order_type'] == 'exit':
+            simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
+            morning_trade_orders.append(simplified_order)
+        
+
+    if afternoon_trade_orders is not None:
+        # Check if any order has trade_type as 'SELL'
+        is_any_sell_order = any(order.get('trade_type') == 'SELL' for order in afternoon_trade_orders)
+
+        # Assign direction based on the presence of any SELL order
+        for order in afternoon_trade_orders:
+            order['direction'] = 'BEARISH' if is_any_sell_order else 'BULLISH'
+
+
+    if morning_trade_orders is not None:
+        # Check if any order has trade_type as 'BUY'
+        is_any_buy_order = any(order.get('trade_type') == 'BUY' for order in morning_trade_orders)
+
+        # Assign direction based on the presence of any BUY order
+        for order in morning_trade_orders:
+            order['direction'] = 'BEARISH' if is_any_buy_order else 'BULLISH'
+
 
     # Check if there are 2 orders and group them under "Morning Trade"
     # Afternoon orders are entered after placing the orders in the afternoon
     results = {
-        "OverNight Options": {
-            "Morning": morning_trade_orders
+        "OvernightFutures": {
+            "Morning": morning_trade_orders,
+            "Afternoon": afternoon_trade_orders
         }
     }
     return results
 
+def expiry_trader_details(orders,broker,strategy=None):
+    results = {}
+    entry_orders = []
+    exit_orders = []
 
+    # Simplify the orders and segregate them
+    for order in orders:
+        simplified_order = simplify_zerodha_order(order) if broker == "zerodha" else simplify_aliceblue_order(order) if broker == "aliceblue" else order
+
+        if simplified_order["order_type"] == "entry":
+            if simplified_order["trade_type"]=="BUY":
+                simplified_order["trade_type"] = "HedgeOrder"
+            elif simplified_order["trade_type"]=="SELL":
+                simplified_order["trade_type"] = "MainOrder"
+            simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
+            entry_orders.append(simplified_order)
+        elif simplified_order["order_type"] == "exit":
+            if simplified_order["trade_type"]=="BUY":
+                simplified_order["trade_type"] = "MainOrder"
+            simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
+            exit_orders.append(simplified_order)
+
+    results = {
+        "ExpiryTrader": {
+            "Entry": entry_orders,
+            "Exit": exit_orders
+        }
+    }
+    return results
+
+def extra_details(orders,broker,strategy=None):
+    results = {
+        strategy: {
+            "Long": [],
+            "Short": [],
+            "LongCover": [],
+            "ShortCover": []
+        }
+    }
+
+    for order in orders:
+        simplified_order = simplify_zerodha_order(order) if broker == "zerodha" else simplify_aliceblue_order(order) if broker == "aliceblue" else order
+
+        if '_entry' in simplified_order['trade_id']:
+            if simplified_order['trade_type'] == 'BUY':
+                simplified_order['trade_type'] = 'LongOrder'
+            elif simplified_order['trade_type'] == 'SELL':
+                simplified_order['trade_type'] = 'ShortOrder'
+        elif '_exit' in simplified_order['trade_id']:
+            if simplified_order['trade_type'] == 'BUY':
+                simplified_order['trade_type'] = 'ShortCoverOrder'
+            elif simplified_order['trade_type'] == 'SELL':
+                simplified_order['trade_type'] = 'LongCoverOrder'
+            
+        if simplified_order['trade_type'] == 'LongOrder':
+            results[strategy]['Long'].append(simplified_order)
+        elif simplified_order['trade_type'] == 'ShortOrder':
+            results[strategy]['Short'].append(simplified_order)
+        elif simplified_order['trade_type'] == 'LongCoverOrder':
+            results[strategy]['LongCover'].append(simplified_order)
+        elif simplified_order['trade_type'] == 'ShortCoverOrder':
+            results[strategy]['ShortCover'].append(simplified_order)
+    
+    return results
+
+        
 
 strategy_to_function = {
     'AmiPy': amipy_details,
     'MPWizard': mpwizard_details,
-    'Overnight_Options': overnight_options_details,
+    'OvernightFutures': overnight_futures_details,
+    'ExpiryTrader' : expiry_trader_details,
+    'Extra' : extra_details,
+    'Stocks' : extra_details
     # Add other strategies and their functions here
 }
-
-
-
-
-# 1. Read broker.json and make a note of the strategies
-users_with_strategies = []
-for broker, accounts in json_data.items():
-    accounts_to_trade = accounts.get("accounts_to_trade", [])
-    for account_name in accounts_to_trade:
-        if account_name in accounts:
-            strategies = list(accounts[account_name]["percentageRisk"].keys())
-            users_with_strategies.append({
-                "user": account_name,
-                "broker": broker,
-                "strategies": strategies
-            })
 
 # Placeholder function to segregate orders
 def segregate_by_strategy(details, strategies, broker):
     combined_details = {}
     for strategy in strategies:
         # 3. Get today_orders from the strategy's JSON and add _entry and _exit suffixes
-        strategy_json, _ = place_order_calc.get_strategy_json(strategy)
-        trade_ids = strategy_json.get('today_orders', [])
+        _, strategy_path = place_order_calc.get_strategy_json(strategy)
+        strategy_obj = Strategy.read_strategy_json(strategy_path)
+        trade_ids = strategy_obj.get_today_orders()
         entry_ids = [tid + "_entry" for tid in trade_ids]
         exit_ids = [tid + "_exit" for tid in trade_ids]
-        
         # 4. Search for the orders in the details list
         for detail in details:
             key_to_check = 'remarks' if broker == 'aliceblue' else 'tag' if broker == 'zerodha' else None
@@ -244,29 +328,36 @@ def segregate_by_strategy(details, strategies, broker):
     return combined_details
 
 # 2. Process each user's strategies
-for user in users_with_strategies:
-    user_details, user_json_path = place_order_calc.get_user_details(user["user"])
-    
-    if user["broker"] == "zerodha":
-        details = zerodha.get_order_details(user_details)
-    elif user["broker"] == "aliceblue":
-        details = aliceblue.get_order_details(user_details)
-    
-    # 5. Segregate and process the orders
-    strategy_based_details = segregate_by_strategy(details, user["strategies"], user["broker"])
-    combined_user_orders = {}
-    for strategy, order_list in strategy_based_details.items():
-        if strategy in strategy_to_function:
-            processed_orders = strategy_to_function[strategy](order_list, user["broker"], user["user"])
-            combined_user_orders.update(processed_orders)
 
-    # # Output combined user orders
+active_users_path = os.path.join(DIR, "MarketUtils","active_users.json")
+active_users = general_calc.read_json_file(active_users_path)
+
+for user in active_users:
+    if user["broker"] == "zerodha":
+        details = zerodha.get_order_details(user)
+    elif user["broker"] == "aliceblue":
+        details = aliceblue.get_order_details(user)
+    
+    strategies = user["qty"]
+    strategies = list(strategies.keys())
+    #add "Extra" strategy to the list of strategies
+    strategies.append("Extra")
+    strategies.append("Stocks")
+
+    if "PreviousOvernightFutures" in strategies:
+        strategies.remove("PreviousOvernightFutures")
+
+    segregate_based_on_strategy = segregate_by_strategy(details, strategies, user["broker"])
+    combined_user_orders = {}
+    for strategy, order_list in segregate_based_on_strategy.items():
+        if strategy in strategy_to_function:
+            processed_orders = strategy_to_function[strategy](order_list, user["broker"],strategy)
+            combined_user_orders.update(processed_orders)
+    
     if combined_user_orders:
-        user_final_orders = {"orders": combined_user_orders}
+        user_final_orders = {"today_orders" : combined_user_orders}
         pprint(user_final_orders)
 
-    # user_json_data = general_calc.read_json_file(user_json_path)
-        
-    # user_json_data[user["broker"]]["today_orders"] = user_final_orders
-
-    # general_calc.write_json_file(user_json_path, user_json_data)
+    order_json,order_json_path = place_order_calc.get_orders_json(user["account_name"])
+    order_json["today_orders"] = combined_user_orders
+    general_calc.write_json_file(order_json_path, order_json)

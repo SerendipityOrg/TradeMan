@@ -1,36 +1,31 @@
-import os
-import json
-import sys
-import io
+import os,json,sys,io
+from dotenv import load_dotenv
 from datetime import date
 from babel.numbers import format_currency
 from pya3 import Aliceblue
 from kiteconnect import KiteConnect
 from telethon.sync import TelegramClient
 
-api_id = '22941664'
-api_hash = '2ee02d39b9a6dae9434689d46e0863ca'
+# Load environment variables
+DIR = os.getcwd()
+active_users_json_path = os.path.join(DIR,"MarketUtils", "active_users.json")
+broker_filepath = os.path.join(DIR,"MarketUtils", "broker.json")
+env_path = os.path.join(DIR, '.env')
+session_filepath = os.path.join(DIR,'MarketUtils', 'Telegram','+918618221715.session')
 
-# Get the directory where the script is located
-script_dir = os.path.dirname(os.path.realpath(__file__))
-json_dir = os.path.join(script_dir, "users")
+load_dotenv(env_path)
+api_id = os.getenv('telethon_api_id')
+api_hash = os.getenv('telethon_api_hash')
 
+sys.path.append(DIR)
+import MarketUtils.general_calc as general_calc
 
 # Change the standard output encoding to UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-
-# Load user data from the JSON file
-def load_userdata():
-    with open(os.path.join(script_dir, "broker.json")) as f:
-        return json.load(f)
-
-# Calculate invested value for AliceBlue user
-
-
 def aliceblue_invested_value(user_data):
-    alice = Aliceblue(user_data['username'], user_data['api_key'])
-    session_id = alice.get_session_id()
+    
+    alice = Aliceblue(user_data['username'], user_data['api_key'],session_id=user_data['session_id'])
     holdings = alice.get_holding_positions()
 
     invested_value = 0
@@ -44,11 +39,9 @@ def aliceblue_invested_value(user_data):
 
     return invested_value
 
-# Calculate invested value for Zerodha user
 
-
-def zerodha_invested_value(broker_data, broker, user):
-    user_details = broker_data[broker][user]
+def zerodha_invested_value(broker_data):
+    user_details = broker_data
     kite = KiteConnect(api_key=user_details['api_key'])
     kite.set_access_token(user_details['access_token'])
     holdings = kite.holdings()
@@ -57,27 +50,24 @@ def zerodha_invested_value(broker_data, broker, user):
 # Fetch invested value based on broker type
 
 
-def get_invested_value(broker_data, broker, user):
-    user_details = broker_data[broker][user]
-    if broker == "aliceblue":
-        return aliceblue_invested_value(user_details)
-    elif broker == "zerodha":
-        return zerodha_invested_value(broker_data, broker, user)
+def get_invested_value(user_data):#TODO get the values from excel
+    active_users = general_calc.read_json_file(active_users_json_path)
+    for user in active_users:
+        if user['account_name'] == user_data['account_name'] and user['broker'] == "aliceblue":
+            return aliceblue_invested_value(user)
+        elif user['account_name'] == user_data['account_name'] and user['broker'] == "zerodha":
+            return zerodha_invested_value(user)
 
 # Function to format currency in custom style
-
-
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
     return formatted.replace('₹', '₹ ')
-
-# Generate a morning report message for a user
 
 
 def generate_message(user, formatted_date, user_data, cash_balance, invested_value, current_capital):
     # Base message
     message = (
-        f"Morning Report for {user} on {formatted_date}:\n\n"
+        f"Morning Report for {user['account_name']} on {formatted_date}:\n\n"
         f"Yesterday's Capital: {custom_format(user_data['current_capital'])}\n"
         f"Yesterday's PnL: {custom_format(user_data['yesterday_PnL'])}\n\n"
         f"Cash Balance: {custom_format(cash_balance)}\n"
@@ -92,62 +82,36 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
         f"Current Capital: {custom_format(current_capital)}\n\n"
         "Best regards,\nSerendipity Trading Firm"
     )
-
     return message
 
 
+broker_data = general_calc.read_json_file(broker_filepath)
+updated_users = []
 
-# Main code execution
-userdata = load_userdata()
+# Initialize Telegram Client
+with TelegramClient(session_filepath, api_id, api_hash) as client:
+    for user in broker_data:
+        if "Active" in user['account_type']:
+            # Calculate investment values for active users
+            invested_value = get_invested_value(user)
 
-# Initialize an empty list for the accounts to trade
-user_list = []
+            cash_balance = user['expected_morning_balance'] - invested_value
+            current_capital = cash_balance + invested_value
 
-# Go through each broker and gather users
-for broker, broker_data in userdata.items():
-    if 'accounts_to_trade' in broker_data:
-        for account in broker_data['accounts_to_trade']:
-            user_list.append((broker, account))
+            # Formatting date and message
+            formatted_date = date.today().strftime("%d %b %Y")
+            message = generate_message(user, formatted_date, user, cash_balance, invested_value, current_capital)
 
-# Iterate through each user and generate and send report
-for broker, user in user_list:
-    # print(user)
-    user_data = userdata[broker][user]
+            user['current_capital'] = current_capital
+            phone_number = user['mobile_number']
 
-    # Calculate investment values
-    invested_value = get_invested_value(userdata, broker, user)
-    cash_balance = user_data['expected_morning_balance'] - invested_value
-    current_capital = cash_balance + invested_value
+            print(message)
 
-    # Get current date in formatted style
-    today = date.today()
-    formatted_date = today.strftime("%d %b %Y")
+            # Send message via Telegram
+            try:
+                client.send_message(phone_number, message, parse_mode='md')
+            except Exception as e:
+                print(f"Error sending message to {phone_number}: {e}")
 
-    # Generate the message
-    message = generate_message(
-        user, formatted_date, user_data, cash_balance, invested_value, current_capital)
-
-    # Print report for debugging purposes
-    print(message)
-
-    # Load user-specific JSON data (assuming each user has a separate JSON)
-    data = load_userdata()
-    phone_number = data[broker][user]['mobile_number']
-
-    # Save data to broker.json
-    data_to_store = {
-        'Current Capital': current_capital,
-    }
-    user_details = data[broker][user]
-    user_details["current_capital"] = current_capital
-    data[broker][user] = user_details
-
-    with open(os.path.join(script_dir, "broker.json"), 'w') as f:
-        json.dump(data, f, indent=4)
-
-    parent_file = os.path.abspath(os.path.join(script_dir, '..'))
-    filepath = os.path.join(parent_file, '+918618221715.session')
-    # # Send the report to the user via Telegram
-    # # Ensure you have `api_id` and `api_hash` defined elsewhere in your code
-    with TelegramClient(filepath, api_id, api_hash) as client:
-        client.send_message(phone_number, message, parse_mode='md')
+# Write the updated broker data (including both active and inactive users) to the file
+general_calc.write_json_file(broker_filepath, broker_data)

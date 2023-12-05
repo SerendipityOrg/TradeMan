@@ -1,0 +1,19 @@
+alice_blue==2.0.4
+dash==2.10.2
+dash_core_components==2.0.0
+dash_html_components==2.0.0
+kiteconnect==4.2.0
+openpyxl==3.0.9
+plotly==5.15.0
+pymongo==4.3.3
+pyotp==2.8.0
+python-telegram-bot==20.3
+Requests==2.31.0
+selenium==4.14.0
+streamlit==1.28.0
+streamlit_on_Hover_tabs==1.0.1
+firebase-admin==6.1.0
+streamlit_calendar==0.4.0
+streamlit_option_menu==0.3.2
+python-dotenv==1.0.0
+babel == 2.12.1

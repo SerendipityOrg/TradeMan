@@ -1,105 +1,139 @@
 import os,sys
-import json
 import pandas as pd
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment
-from babel.numbers import format_currency
+from openpyxl.styles import Alignment,NamedStyle
+
 import strategy_calc as sc
 import firebase_admin
 from firebase_admin import credentials, storage
 from telethon.sync import TelegramClient
 from dotenv import load_dotenv
-import dtdautomation as dtd
 
-env_path = os.path.join(os.path.dirname(__file__), '..','..','Brokers', '.env')
-load_dotenv(env_path)
+
+DIR = os.getcwd()
+sys.path.append(DIR)
+
+import MarketUtils.general_calc as general_calc
+
+ENV_PATH = os.path.join(DIR, '.env')
+load_dotenv(ENV_PATH)
 
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
+excel_dir = os.getenv('onedrive_excel_folder')
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-utils_dir = os.path.join(script_dir, "..")
-sys.path.append(utils_dir)
-import general_calc as gc
-# broker_filepath = os.path.join(utils_dir, "broker.json")
-broker_filepath = os.path.join(script_dir,"..", "broker.json")
+broker_filepath = os.path.join(DIR,"MarketUtils", "broker.json")
+userprofile_dir = os.path.join(DIR, "UserProfile","OrdersJson")
+active_users_filepath = os.path.join(DIR,"MarketUtils", "active_users.json")
+credentials_filepath = os.path.join(DIR,"MarketUtils","Excel","credentials.json")
 
-userprofile_dir = os.path.join(script_dir, "..","..", "UserProfile")
-json_dir = os.path.join(userprofile_dir, "json")
-# excel_dir = os.path.join(userprofile_dir, "excel")
-excel_dir = os.getenv('excel_filepath')
 
-def custom_format(amount):
-    formatted = format_currency(amount, 'INR', locale='en_IN')
-    return formatted.replace('₹', '₹')
-
-def process_strategy_data(user_data, broker, strategy_name, process_func):
-    if strategy_name in user_data[broker]["orders"]:
-        data = process_func(broker,user_data[broker]["orders"][strategy_name])
-        df = pd.DataFrame(data)
-        pnl = round(df["PnL"].sum(), 2)
-        tax = round(df["Tax"].sum(), 2)
-        return df, pnl, tax
-    return pd.DataFrame(), 0, 0
+class TradingStrategy:
+    def __init__(self, name, process_func):
+        self.name = name
+        self.process_func = process_func
+    
+    def process_data(self, user_data, broker,username,strategy=None):
+        if self.name in user_data["today_orders"]:
+            data = self.process_func(broker, user_data["today_orders"][self.name],username,strategy)
+            df = pd.DataFrame(data)
+            if 'pnl' in df.columns:
+                PnL = round(df['pnl'].sum(), 1)
+                Tax = round(df['tax'].sum(), 1)
+            else:
+                print("PnL column not found in DataFrame")
+                PnL = 0
+                Tax = 0
+            return df, PnL, Tax
+        return pd.DataFrame(), 0, 0
 
 def load_existing_excel(excel_path):
-    book = load_workbook(excel_path)
-    return {sheet_name: pd.read_excel(excel_path, sheet_name=sheet_name) for sheet_name in book.sheetnames}
+    if not os.path.exists(excel_path):
+        raise FileNotFoundError(f"Excel file not found: {excel_path}")
+
+    try:
+        book = load_workbook(excel_path)
+        return {sheet_name: pd.read_excel(excel_path, sheet_name=sheet_name) for sheet_name in book.sheetnames}
+    except Exception as e:
+        print(f"An error occurred while loading the Excel file: {excel_path}")
+        print("Error:", e)
+        return {}
+
+def update_excel_data(all_dfs, df, strategy_name, unique_id_column='trade_id'):
+    if not df.empty:
+        # Check if the strategy's DataFrame exists in all_dfs
+        if strategy_name in all_dfs:
+            strategy_df = all_dfs[strategy_name]
+            for i, row in df.iterrows():
+                unique_id = row[unique_id_column]
+                # Find the index in the existing DataFrame
+                index = strategy_df[strategy_df[unique_id_column] == unique_id].index
+                if not index.empty:
+                    # Update the existing row (ensuring columns match)
+                    for col in strategy_df.columns:
+                        strategy_df.at[index[0], col] = row[col] if col in row else strategy_df.at[index[0], col]
+                else:
+                    # Append new row if the unique id does not exist
+                    strategy_df = pd.concat([strategy_df, pd.DataFrame([row])], ignore_index=True)
+            all_dfs[strategy_name] = strategy_df
+        else:
+            # If the strategy's DataFrame does not exist, simply add it
+            all_dfs[strategy_name] = df
 
 def save_all_sheets_to_excel(all_dfs, excel_path):
     with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+        if 'number_style' not in writer.book.named_styles:
+            number_style = NamedStyle(name='number_style', number_format='0.00')
+            writer.book.add_named_style(number_style)
+        
+        center_alignment = Alignment(horizontal='center')
+
         for sheet_name, df in all_dfs.items():
             df.to_excel(writer, sheet_name=sheet_name, index=False)
-
-            # Now that the data is written, get the worksheet to apply styles
             worksheet = writer.sheets[sheet_name]
 
-            for row in worksheet.iter_rows():
+            # Apply number formatting and center alignment to specified columns
+            rounded_columns = ['entry_price', 'exit_price', 'hedge_entry_price', 'hedge_exit_price', 'trade_points', 'pnl', 'tax', 'net_pnl']
+
+            for row in worksheet.iter_rows(min_row=1, max_row=worksheet.max_row, min_col=1, max_col=worksheet.max_column):
                 for cell in row:
-                    cell.alignment = Alignment(horizontal='center')
-        
+                    # Apply center alignment to all cells
+                    cell.alignment = center_alignment
 
-def build_message(user, mpwizard_pnl, amipy_pnl, overnight_pnl, gross_pnl, tax, current_capital, expected_capital):
-    # Construct the message similar to the original script
+                    # Apply number formatting to specified columns
+                    if cell.col_idx - 1 < len(df.columns) and df.columns[cell.col_idx - 1] in rounded_columns:
+                        cell.number_format = number_style.number_format
+
+
+
+def build_message(user, strategy_results, gross_pnl, tax, current_capital, expected_capital):
     message_parts = [f"Hello {user},We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"]
-
-    if mpwizard_pnl != 0:
-        message_parts.append(f"MPWizard: {custom_format(mpwizard_pnl)}")
-
-    if amipy_pnl != 0:
-        message_parts.append(f"AmiPy: {custom_format(amipy_pnl)}")
-
-    if overnight_pnl != 0:
-        message_parts.append(f"Overnight Options: {custom_format(overnight_pnl)}")
-
+    
+    for strategy_name, pnl in strategy_results.items():
+        if pnl != 0:
+            message_parts.append(f"{strategy_name}: {sc.custom_format(pnl)}")
+    
     message_parts.extend([
-        f"\n**Gross PnL: {custom_format(gross_pnl)}**",
-        f"**Expected Tax: {custom_format(tax)}**",
-        f"**Current Capital: {custom_format(current_capital)}**",
-        f"**Expected Morning Balance : {custom_format(expected_capital)}**",
+        f"\n**Gross PnL: {sc.custom_format(gross_pnl)}**",
+        f"**Expected Tax: {sc.custom_format(tax)}**",
+        f"**Current Capital: {sc.custom_format(current_capital)}**",
+        f"**Expected Morning Balance : {sc.custom_format(expected_capital)}**",
         "\nBest Regards,\nSerendipity Trading Firm"
     ])
     
     return message_parts
 
-def update_json_data(data, broker, user, net_pnl, expected_capital, broker_filepath):
-    user_details = data[broker][user]
-    user_details["yesterday_PnL"] = net_pnl
-    user_details["expected_morning_balance"] = round(expected_capital, 2)
-    data[broker][user] = user_details
+# Define a dictionary that maps strategy names to their processing functions
+strategy_config = {
+    "MPWizard": sc.process_mpwizard_trades,
+    "AmiPy": sc.process_amipy_trades,
+    "OvernightFutures": sc.process_overnight_futures_trades,
+    "ExpiryTrader": sc.process_expiry_trades,
+    "Extra": sc.process_extra_trades,
+    "Stocks": sc.process_extra_trades,
+    # Add new strategies here as needed
+}
 
-    with open(broker_filepath, 'w') as json_file:
-        json.dump(data, json_file, indent=4)
-
-def update_excel_data(all_dfs, mpwizard_df, amipy_df, overnight_df):
-    if not mpwizard_df.empty:
-        all_dfs["MPWizard"] = pd.concat([all_dfs.get("MPWizard", pd.DataFrame()), mpwizard_df])
-    if not amipy_df.empty:
-        all_dfs["AmiPy"] = pd.concat([all_dfs.get("AmiPy", pd.DataFrame()), amipy_df])
-    if not overnight_df.empty:
-        all_dfs["Overnight_options"] = pd.concat([all_dfs.get("Overnight_options", pd.DataFrame()), overnight_df])
-
-credentials_filepath = os.path.join(script_dir,"credentials.json")
 cred = credentials.Certificate(credentials_filepath)
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://trading-app-caf8e-default-rtdb.firebaseio.com'
@@ -113,56 +147,45 @@ def save_to_firebase(user, excel_path):
         blob.upload_from_file(my_file)
     print(f"Excel file for {user} has been uploaded to Firebase.")
 
-def send_telegram_message(phone_number, message):
-    session_filepath = os.path.join(script_dir, "..",'..','..', "+918618221715.session")
-    with TelegramClient(session_filepath, api_id, api_hash) as client:
-        client.send_message(phone_number, message, parse_mode='md')
-
-
 def main():
-    data = gc.read_json_file(broker_filepath)
-    user_list = []
-    # Go through each broker
-    for broker, broker_data in data.items():
-        # Check if 'accounts_to_trade' is in the broker data
-        if 'accounts_to_trade' in broker_data:
-            # Add each account to the list
-            for account in broker_data['accounts_to_trade']:
-                user_list.append((broker, account))
+    data = general_calc.read_json_file(active_users_filepath)
+    
+    # Initialize TradingStrategy objects based on the configuration
+    strategies = [TradingStrategy(name, func) for name, func in strategy_config.items()]
 
-    for broker, user in user_list:
-        user_data = gc.read_json_file(os.path.join(json_dir, f"{user}.json"))
-        phone_number = data[broker][user]["mobile_number"]
+    for user in data:
+        username = user['account_name']
+        user_data = general_calc.read_json_file(os.path.join(userprofile_dir, f"{user['account_name']}.json"))
+        broker_json = general_calc.read_json_file(broker_filepath)
+        broker = user["broker"]
+
+        strategy_results = {}
+        gross_pnl = 0
+        total_tax = 0
         
-        mpwizard_df, mpwizard_pnl, mpwizard_tax = process_strategy_data(user_data, broker, "MPWizard", sc.process_mpwizard_trades)
-        amipy_df, amipy_pnl, amipy_tax = process_strategy_data(user_data, broker, "AmiPy", sc.process_amipy_trades)  # Implement a function that processes Amipy trades
-        overnight_df, overnight_pnl, overnight_tax = process_strategy_data(user_data, broker, "Overnight_Options", sc.process_overnight_options_trades)
+        excel_path = os.path.join(excel_dir, f"{user['account_name']}.xlsx")
+        all_dfs = load_existing_excel(excel_path)
 
-        gross_pnl = mpwizard_pnl + amipy_pnl + overnight_pnl
-        tax = mpwizard_tax + amipy_tax + overnight_tax
-        net_pnl = gross_pnl - tax
+        for strategy in strategies:
+                df, pnl, tax = strategy.process_data(user_data, broker,username,strategy)
+                strategy_results[strategy.name] = pnl
+                gross_pnl += pnl
+                total_tax += tax
+                update_excel_data(all_dfs, df, strategy.name)
+                
+        net_pnl = gross_pnl - total_tax
 
-        current_capital = data[broker][user]['current_capital']
+        for account in broker_json:
+            if account["account_name"] == user["account_name"]:
+                current_capital = account["expected_morning_balance"]
+
         expected_capital = current_capital + net_pnl if net_pnl > 0 else current_capital - abs(net_pnl)
 
-        message_parts = build_message(user, mpwizard_pnl, amipy_pnl, overnight_pnl, gross_pnl, tax, current_capital, expected_capital)
+        message_parts = build_message(user['account_name'], strategy_results, gross_pnl, total_tax, current_capital, expected_capital)
         message = "\n".join(message_parts).replace('\u20b9', '₹')
         print(message)
 
-        update_json_data(data, broker, user, net_pnl, expected_capital, broker_filepath)
-
-        excel_path = os.path.join(excel_dir, f"{user}.xlsx")
-        all_dfs = load_existing_excel(excel_path)
-
-        update_excel_data(all_dfs, mpwizard_df, amipy_df, overnight_df)
         save_all_sheets_to_excel(all_dfs, excel_path)
-        dtd.update_dtd_sheets()
-
-        # # Assuming you want to save to Firebase and send messages as in the original script
-        # save_to_firebase(user, excel_path)  # Existing function
-        # send_telegram_message(phone_number, message)  # Separate into a function
-
-# Add other necessary helper functions...
 
 if __name__ == "__main__":
     main()

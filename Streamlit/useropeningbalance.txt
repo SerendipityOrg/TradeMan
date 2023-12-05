@@ -1,9 +1,0 @@
-brijesh: 600000.00
-omkar: 2500000.00
-sridhar: 40000.00
-venkatesh:70000.00
-vinay: 50000.00
-vinod: 50000.00
-
-
-

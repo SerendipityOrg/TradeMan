@@ -1,23 +1,26 @@
 from kiteconnect import KiteConnect
 import pandas as pd
-import json,sys
+import os,sys
 
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
+DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
-import MarketUtils.Calculations.qty_calc as qty_calc
-# import Brokers.BrokerUtils.Broker as Broker
-import Brokers.Zerodha.kite_login as kite_login
 
-def create_kite_obj(user_details):
-    return KiteConnect(api_key=user_details['username'],access_token=user_details['access_token'])
+
+def create_kite_obj(user_details=None,api_key=None,access_token=None):
+    if api_key and access_token:
+        return KiteConnect(api_key=api_key,access_token=access_token)
+    elif user_details:
+        return KiteConnect(api_key=user_details['api_key'],access_token=user_details['access_token'])
+    else:
+        raise ValueError("Either user_details or api_key and access_token must be provided")
 
 def get_csv_kite(user_details):
-    kite = KiteConnect(api_key=user_details['zerodha']['omkar']['api_key'])
-    kite.set_access_token(user_details['zerodha']['omkar']['access_token'])
+    kite = KiteConnect(api_key=user_details['api_key'])
+    kite.set_access_token(user_details['access_token'])
     instrument_dump = kite.instruments()
     instrument_df = pd.DataFrame(instrument_dump)
-    instrument_df.to_csv(r'kite_instruments.csv') 
+    instrument_df.to_csv(r'instruments.csv') 
 
 def get_kite_active_users(active_users, strategy_name):
     subscribed_users = []
@@ -41,6 +44,8 @@ def calculate_order_type(kite,order_type):
         order_type = kite.ORDER_TYPE_SL
     elif order_type == 'Market':
         order_type = kite.ORDER_TYPE_MARKET
+    elif order_type == 'Limit':
+        order_type = kite.ORDER_TYPE_LIMIT
     else:
         raise ValueError("Invalid order_type in order_details")
     return order_type
@@ -50,9 +55,24 @@ def calculate_product_type(kite,product_type):
         product_type = kite.PRODUCT_NRML
     elif product_type == 'MIS':
         product_type = kite.PRODUCT_MIS
+    elif product_type == 'CNC':
+        product_type = kite.PRODUCT_CNC
     else:
         raise ValueError("Invalid product_type in order_details")
     return product_type
+
+def calculate_segment_type(kite, segment_type):
+    # Prefix to indicate the exchange type
+    prefix = "EXCHANGE_"
+    
+    # Construct the attribute name
+    attribute_name = prefix + segment_type
+    
+    # Get the attribute from the kite object, or raise an error if it doesn't exist
+    if hasattr(kite, attribute_name):
+        return getattr(kite, attribute_name)
+    else:
+        raise ValueError(f"Invalid segment_type '{segment_type}' in order_details")
 
 def get_avg_prc(kite,order_id):
     if not order_id:
@@ -64,4 +84,10 @@ def get_avg_prc(kite,order_id):
             avg_prc = order.get('average_price', 0.0)
             break 
     return avg_prc
+
+def get_order_details(user):
+    kite = create_kite_obj(api_key=user['api_key'],access_token=user['access_token'])
+    orders = kite.orders()
+    return orders
+
 

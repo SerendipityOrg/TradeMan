@@ -1,0 +1,9 @@
+venv/
+build/
+dist/
+test/*.ini
+__pycache__/
+.vscode/
+results*.pkl
+*.spec
+.DS_Store

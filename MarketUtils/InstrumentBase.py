@@ -1,8 +1,8 @@
 import pandas as pd
 import os
 
-DIR_PATH = "/Users/amolkittur/Desktop/Dev/"
-insrument_csv_path = os.path.join(DIR_PATH, 'MarketUtils', 'instruments.csv')
+DIR_PATH = os.getcwd()
+insrument_csv_path = os.path.join(DIR_PATH,'instruments.csv')
 
 from datetime import datetime
 from calendar import monthrange
@@ -44,8 +44,41 @@ class Instrument:
     def _get_last_weekly_expiry(self, weekly_expiries, target_month):
         """Return the last weekly expiry of the target month."""
         return max([expiry for expiry in weekly_expiries if datetime.strptime(expiry, "%Y-%m-%d").date().month == target_month])
+    
+    def weekly_expiry_type(self):
+        if datetime.today().weekday() == 3:
+            weekly_expiry_type = "next_week"
+        else:
+            weekly_expiry_type = "current_week"
+        return weekly_expiry_type
 
-    def get_expiry_by_criteria(self, base_symbol, option_type, strike_price, expiry_type="current_week"):
+    def monthly_expiry_type(self):
+        today = datetime.now().date()
+        # Find the last day of the current month
+        next_month = today.replace(day=28) + timedelta(days=4)
+        last_day_of_current_month = next_month - timedelta(days=next_month.day)
+
+        # Find the last Thursday of the current month
+        last_thursday_of_current_month = last_day_of_current_month
+        while last_thursday_of_current_month.weekday() != 3:
+            last_thursday_of_current_month -= timedelta(days=1)
+
+        # If today is the last Thursday of the current month
+        if today == last_thursday_of_current_month:
+            return "next_month"
+        # If today is before the last Thursday of the current month
+        elif today < last_thursday_of_current_month:
+            return "current_month"
+        # If today is after the last Thursday of the current month
+        else:
+            # If today is still within the current month
+            if today <= last_day_of_current_month:
+                return "current_month"
+            # If we have moved into a new month
+            else:
+                return "next_month"
+
+    def get_expiry_by_criteria(self, base_symbol, strike_price, option_type,expiry_type="current_week"):
         filtered_data = self._filter_data(base_symbol, option_type, strike_price)
         today = datetime.now().date()
         future_expiries = filtered_data[filtered_data['expiry'].apply(lambda x: datetime.strptime(x, "%Y-%m-%d").date()) >= today]['expiry'].tolist()
@@ -67,10 +100,9 @@ class Instrument:
                 "current_month": lambda: monthly_expiries[0] if monthly_expiries else None,
                 "next_month": lambda: monthly_expiries[1] if len(monthly_expiries) > 1 else None
             }
-
         return expiry_strategies[expiry_type]()
     
-    def get_exchange_token_by_criteria(self, base_symbol, option_type, strike_price, expiry):
+    def get_exchange_token_by_criteria(self, base_symbol,strike_price, option_type,expiry):
         filtered_data = self._filter_data(base_symbol, option_type, strike_price, expiry)
         if not filtered_data.empty:
             return filtered_data.iloc[0]['exchange_token']
@@ -91,7 +123,11 @@ class Instrument:
         else:
             return None
 
-    def get_trading_symbol_by_exchange_token(self, exchange_token):
+    def get_trading_symbol_by_exchange_token(self, exchange_token,segment=None):
+        if segment:
+            filtered_data = self._filter_data_by_exchange_token(exchange_token)
+            filtered_data = filtered_data[filtered_data['segment'] == segment]
+            return filtered_data.iloc[0]['tradingsymbol']
         filtered_data = self._filter_data_by_exchange_token(exchange_token)
         if not filtered_data.empty:
             return filtered_data.iloc[0]['tradingsymbol']
@@ -111,9 +147,34 @@ class Instrument:
             return filtered_data.iloc[0]['exchange']
         else:
             return None
+
+    def _filter_data_by_token(self, token):
+        return self._dataframe[self._dataframe['instrument_token'] == token]
+
+    def get_exchange_token_by_token(self, token):
+        filtered_data = self._filter_data_by_token(token)
+        if not filtered_data.empty:
+            return filtered_data.iloc[0]['exchange_token']
+        else:
+            return None
     
+    def _filter_data_by_name(self, name):
+        return self._dataframe[self._dataframe['tradingsymbol'] == name]
 
-instrument_obj = Instrument()
-print(instrument_obj.get_expiry_by_criteria('BANKNIFTY', 'CE', 43800, "current_week"))
-
-# print(instrument_obj.get_expiry_by_criteria('BANKNIFTY', 'CE', 44100, "current_week"))
+    def get_exchange_token_by_name(self, name, segment=None):
+        if segment:
+            filtered_data = self._filter_data_by_name(name)
+            filtered_data = filtered_data[filtered_data['segment'] == segment]
+            return filtered_data.iloc[0]['exchange_token']
+        elif segment is None:
+            filtered_data = self._filter_data_by_name(name)
+            return filtered_data.iloc[0]['exchange_token']
+        else:
+            return None
+    
+    def get_token_by_name(self,name):
+        filtered_data = self._filter_data_by_name(name)
+        if not filtered_data.empty:
+            return filtered_data.iloc[0]['instrument_token']
+        else:
+            return None
