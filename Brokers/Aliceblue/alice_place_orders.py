@@ -73,7 +73,7 @@ def alice_place_order(alice, order_details):
         return order_id['NOrdNo'] 
   
     except Exception as e:
-        message = f"Order placement failed: {e} for {order_details['username']}"
+        message = f"Order placement failed: {e} for {order_details['account_name']}"
         print(message)
         discord.discord_bot(message,strategy)
         return None
@@ -94,7 +94,7 @@ def place_aliceblue_order(order_details: dict,alice = None):
         Exception: If the order placement fails.
 
     """
-    user_details = place_order_calc.assign_user_details(order_details.get('username'))
+    user_details = place_order_calc.assign_user_details(order_details.get('account_name'))
     if alice is None:
         alice = alice_utils.create_alice_obj(user_details)   
 
@@ -110,11 +110,11 @@ def place_aliceblue_order(order_details: dict,alice = None):
         print(f"Failed to log the order: {e}")  
 
 def update_alice_stoploss(order_details,alice= None):
-    user_details = place_order_calc.assign_user_details(order_details.get('username'))
+    user_details = place_order_calc.assign_user_details(order_details.get('account_name'))
     if alice is None:
         alice = alice_utils.create_alice_obj(user_details)
     order_id = place_order_calc.retrieve_order_id(
-            order_details.get('username'),
+            order_details.get('account_name'),
             order_details.get('strategy'),
             order_details.get('transaction_type'),
             order_details.get('exchange_token')
@@ -140,7 +140,7 @@ def update_alice_stoploss(order_details,alice= None):
                     trigger_price = trigger_price)
         print("alice modify_order",modify_order)
     except Exception as e:
-        message = f"Order placement failed: {e} for {order_details['username']}"
+        message = f"Order placement failed: {e} for {order_details['account_name']}"
         print(message)
         discord.discord_bot(message, order_details.get('strategy'))
         return None

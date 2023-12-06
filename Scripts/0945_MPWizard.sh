@@ -27,7 +27,7 @@ while true; do
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
     conda activate tradingenv && \
     cd /Users/traderscafe/Desktop/Main/ && \
-    /Users/traderscafe/miniconda3/envs/tradingenv/bin/python Strategies/MPWizard/main.py && \
+    /Users/traderscafe/miniconda3/envs/tradingenv/bin/python Strategies/MPWizard/MPWizard.py && \
     echo "Program started successfully" && break
 
     # If the command failed and we've reached the maximum number of attempts, send a message and exit

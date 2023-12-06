@@ -48,8 +48,6 @@ def calculate_lots(user):
     user_details, _ = general_calc.get_user_details(user['account_name'])
     percentage_risk = user_details['percentage_risk']
 
-    indices_lot_sizes = {"NIFTY": 50, "BANKNIFTY": 15, "FINNIFTY": 40, "MIDCAP": 75, "SENSEX": 10}
-
     for strategy_name, risk in percentage_risk.items():
         if strategy_name not in qty:
             qty[strategy_name] = {}
@@ -63,9 +61,9 @@ def calculate_lots(user):
             qty[strategy_name] = 0
             continue
         
-        for instrument in instruments:
+        for instrument in instruments:  #TODO remove the hardcode
             prc_ref = get_price_reference(strategy_name, instrument) if strategy_name == "MPWizard" else None
-            lot_size = indices_lot_sizes.get(instrument, 1)
+            lot_size = place_order_calc.get_lot_size(instrument)
             quantity = calculate_quantity(current_capital, risk, prc_ref, lot_size, strategy_name)
             if len(instruments) == 1:
                 qty[strategy_name] = quantity
@@ -76,7 +74,6 @@ def calculate_lots(user):
 
 def update_user_qty_ltp(ltp, strategy_name, base_symbol):
     active_users_file = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
-    indices_lot_sizes = {"NIFTY": 50, "BANKNIFTY": 15, "FINNIFTY": 40, "MIDCPNIFTY": 75, "SENSEX": 10} #TODO fetch from nfo_info.csv
 
     _, strategy_path = place_order_calc.get_strategy_json(strategy_name)
     strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
@@ -93,13 +90,8 @@ def update_user_qty_ltp(ltp, strategy_name, base_symbol):
         return
 
 
-    for user in active_users:
-        # if user['account_name'] != base_symbol:
-        #     continue
+    for user in active_users:#TODO this is fetch the capital from active_users.json instead of broker.json
         if strategy_name in user['qty']:
-            print(user['account_name'], "already has a quantity for", strategy_name)
-            
-        
             user_details, _ = general_calc.get_user_details(user['account_name'])
             capital = user['expected_morning_balance']
             percentage_risk = user_details['percentage_risk'].get(strategy_name, 0)
@@ -108,7 +100,7 @@ def update_user_qty_ltp(ltp, strategy_name, base_symbol):
                 print(f"No risk allocated for strategy {strategy_name} or invalid risk value for user {base_symbol}.")
                 return
 
-            lot_size = indices_lot_sizes.get(base_symbol, 1)
+            lot_size = place_order_calc.get_lot_size(base_symbol)
             risk = percentage_risk if percentage_risk < 1 else percentage_risk / capital
             raw_quantity = (risk * capital) / ltp
             quantity = int((raw_quantity // lot_size) * lot_size)

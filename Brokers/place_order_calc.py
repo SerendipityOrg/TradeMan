@@ -3,14 +3,20 @@ import os,re
 import sys,math
 import pandas as pd
 import json
+from dotenv import load_dotenv
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
+
+ENV_PATH = os.path.join(DIR_PATH, '.env')
+load_dotenv(ENV_PATH)
+excel_dir = os.getenv('onedrive_excel_folder')
 
 import MarketUtils.general_calc as general_calc
 import Brokers.place_order_calc as place_order_calc
 from MarketUtils.InstrumentBase import Instrument
 import Strategies.StrategyBase as Strategy
+from MarketUtils.Excel.strategy_calc import load_existing_excel
 
 active_users_json_path = os.path.join(DIR_PATH,"MarketUtils", "active_users.json")
 fno_info_path = os.path.join(DIR_PATH, 'fno_info.csv')
@@ -46,32 +52,32 @@ def get_active_users(broker_json_details):
     return active_users
 
 
-# Mapping of strategy names to prefixes
-strategy_prefix_map = {
-    'AmiPy': 'AP',
-    'MPWizard': 'MP',
-    'ExpiryTrader': 'ET',
-    'OvernightFutures': 'OF'
-}
 
-# # Load the last state from JSON
-def load_last_state():
-    try:
-        with open('trade_id_state.json', 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return {}
-
-# # Save the current state to JSON
-def save_current_state(state):
-    with open('trade_id_state.json', 'w') as file:
-        json.dump(state, file)
-
-# # Initialize or load the trade ID state
-trade_id_state = load_last_state()
 
 def get_trade_id(strategy_name, trade_type):
-    global trade_id_state
+    # Mapping of strategy names to prefixes
+    strategy_prefix_map = {
+        'AmiPy': 'AP',
+        'MPWizard': 'MP',
+        'ExpiryTrader': 'ET',
+        'OvernightFutures': 'OF'
+    }
+
+    # # Load the last state from JSON
+    def load_last_state():
+        try:
+            with open('trade_id_state.json', 'r') as file:
+                return json.load(file)
+        except FileNotFoundError:
+            return {}
+
+    # # Save the current state to JSON
+    def save_current_state(state):
+        with open('trade_id_state.json', 'w') as file:
+            json.dump(state, file)
+
+    # # Initialize or load the trade ID state
+    trade_id_state = load_last_state()
 
     # Load strategy object
     _, strategy_path = get_strategy_json(strategy_name)
@@ -119,7 +125,7 @@ def get_trade_id(strategy_name, trade_type):
 def log_order(order_id, order_details):
     print("in log_order")
     # Getting the json data and path for the user
-    user_data, json_path = get_orders_json(order_details['username'])
+    user_data, json_path = get_orders_json(order_details['account_name'])
     # Creating the order_dict structure
     order_dict = {
         "order_id": order_id,
@@ -138,15 +144,15 @@ def log_order(order_id, order_details):
     order_type_list.append(order_dict)
     general_calc.write_json_file(json_path, user_data)
 
-def assign_user_details(username):
+def assign_user_details(account_name):
     user_details = general_calc.read_json_file(os.path.join(DIR_PATH,'MarketUtils','active_users.json'))
     for user in user_details:
-        if user['account_name'] == username:
+        if user['account_name'] == account_name:
             user_details = user
     return user_details
 
-def fetch_orders_json(username):
-    return general_calc.read_json_file(os.path.join(DIR_PATH,'UserProfile','OrdersJson', f'{username}.json'))
+def fetch_orders_json(account_name):
+    return general_calc.read_json_file(os.path.join(DIR_PATH,'UserProfile','OrdersJson', f'{account_name}.json'))
 
 def retrieve_order_id(user,strategy, trade_type, exchange_token):
 
@@ -160,22 +166,35 @@ def retrieve_order_id(user,strategy, trade_type, exchange_token):
 
     return None
 
+def fetch_qty_from_excel(account_name, strategy, trade_id):
+    excel_path = os.path.join(DIR_PATH, f"UserProfile/Excel/{account_name}.xlsx") #TODO change the path
+    all_dfs = load_existing_excel(excel_path)
+    trade_df = all_dfs.get(strategy, pd.DataFrame())
+    trade_id = trade_id.split("_")[0]
+    trade_index = trade_df.index[trade_df['trade_id'] == trade_id].tolist()
+    if trade_index:
+        row_index = trade_index[0]
+        trade_data = trade_df.loc[row_index]
+        return trade_data['qty']
+    else:
+        print(f"Trade ID {trade_id} not found in excel")
+
 def get_qty(order_details):
-    userdetails = assign_user_details(order_details["username"])
+    userdetails = assign_user_details(order_details["account_name"])
     strategy = order_details["strategy"]
     if strategy not in userdetails["qty"]:
         print(f"Strategy {strategy} not found in userdetails")
         return None
     
-    if strategy == "MPWizard":
+    if strategy == "MPWizard":   #TODO remove this hardcode
         base_symbol = Instrument().get_base_symbol_by_exchange_token(order_details["exchange_token"])    
         if base_symbol is None:
             return None
         
         return userdetails["qty"]["MPWizard"].get(base_symbol)
-
-    if strategy == 'OvernightFutures' and "exit" in order_details["trade_id"]:
-        return userdetails["qty"].get("PreviousOvernightFutures")
+    
+    if order_details.get('strategy_mode') == 'CarryForward' and "exit" in order_details["trade_id"]:
+        return fetch_qty_from_excel(order_details["account_name"], strategy, order_details["trade_id"])
         
     return userdetails["qty"].get(strategy)
 
@@ -265,7 +284,6 @@ def get_strategy_name(trade_id):
         'EXTRA': 'Extra',
         'STOCK': 'Stock'
     }
-    
     if trade_id.startswith('EXTRA'):
         return strategy_map['EXTRA']
     elif trade_id.startswith('STOCK'):
@@ -289,7 +307,7 @@ def create_sweep_order_details(user,order_details):
     transaction_type_sl = calculate_transaction_type_sl(order_details['transaction_type'])
     trade_id_sl = get_exit_trade_id(order_details['trade_id'])
     sweep_orders_dict = {
-            'username': user['username'],
+            'account_name': user['account_name'],
             'broker' : user['broker'],
             'strategy': strategy_name,
             'transaction_type': transaction_type_sl,
@@ -360,7 +378,7 @@ def create_telegram_order_details(details):
     for user in details['account_name']:
         for active_user in active_users:
             if active_user['account_name'] == user:
-                order_details['username'] = user
+                order_details['account_name'] = user
                 order_details['broker'] = active_user['broker']
                 # Calculate quantity based on risk percentage if available
                 if 'risk_percentage' in details:

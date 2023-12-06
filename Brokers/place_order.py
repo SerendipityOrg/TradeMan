@@ -20,14 +20,14 @@ def add_token_to_monitor(order_details):
 
 def place_order_for_strategy(strategy_name, order_details):
     active_users = Broker.get_active_subscribers(strategy_name)  
-    for broker, usernames in active_users.items():
-        for username in usernames:
+    for broker, account_names in active_users.items():
+        for account_name in account_names:
             for order in order_details:
                 # Add the username and broker to the order details
                 order_with_user_and_broker = order.copy()  # Create a shallow copy to avoid modifying the original order
                 order_with_user_and_broker.update({
                     "broker": broker,
-                    "username": username
+                    "account_name": account_name
                 })
 
                 # Now get the quantity with the updated order details
