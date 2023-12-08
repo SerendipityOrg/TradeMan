@@ -7,10 +7,11 @@ sys.path.append(DIR_PATH)
 import MarketUtils.InstrumentBase as InstrumentBase
 import Strategies.StrategyBase as StrategyBase
 import Brokers.place_order_calc as place_order_calc
+import MarketUtils.general_calc as general_calc
 import Brokers.place_order as place_order
 import MarketUtils.Discord.discordchannels as discord
 
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('AmiPy')
+_,STRATEGY_PATH = general_calc.get_strategy_json('AmiPy')
 
 instrument_obj = InstrumentBase.Instrument()
 strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)

@@ -19,7 +19,7 @@ import Strategies.OvernightFutures.OvernightFutures_calc as OF_calc
 import MarketUtils.Discord.discordchannels as discord
 import MarketUtils.general_calc as general_calc
 
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('OvernightFutures')
+_,STRATEGY_PATH = general_calc.get_strategy_json('OvernightFutures')
 
 hedge_transcation_type = "BUY"
 futures_option_type = "FUT"
@@ -126,7 +126,7 @@ def main():
         wait_time = dt.datetime(now.year, now.month, now.day, start_hour, start_minute) - now
         if wait_time.total_seconds() > 0:
             print(f"Waiting for {wait_time} before starting the bot")
-            sleep(wait_time.total_seconds())
+            # sleep(wait_time.total_seconds())
         
         message_for_orders("Live",prediction,future_trade_symbol,hedge_trade_symbol,weekly_expiry,monthly_expiry)
         print(orders_to_place)

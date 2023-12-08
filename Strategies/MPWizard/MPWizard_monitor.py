@@ -13,7 +13,7 @@ import MarketUtils.general_calc as general_calc
 import Brokers.place_order as place_order
 import MarketUtils.Discord.discordchannels as discordbot
 
-_,mpwizard_json = place_order_calc.get_strategy_json('MPWizard')
+_,mpwizard_json = general_calc.get_strategy_json('MPWizard')
 instrument_obj = InstrumentBase.Instrument()
 strategy_obj = StrategyBase.Strategy.read_strategy_json(mpwizard_json)
 
@@ -131,6 +131,7 @@ class OrderMonitor:
         order_details = [
         {  
         "strategy": strategy_obj.get_strategy_name(),
+        "strategy_mode" : "MultipleInstruments",
         "base_symbol": name,
         "exchange_token" : exchange_token,     
         "segment" : strategy_obj.get_general_params().get('Segment'),
@@ -155,7 +156,8 @@ class OrderMonitor:
             "trigger_prc" : order_details['trigger_prc'],
             "order_type" : 'Stoploss',
             "product_type" : order_details['product_type'],
-            "segment" : order_details['segment']
+            "segment" : order_details['segment'],
+            "strategy_mode" : "MultipleInstruments"
         }
         ]
         return modify_order_details

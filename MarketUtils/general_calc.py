@@ -1,9 +1,13 @@
 import json
-import os
+import os,sys
 import datetime as dt
 import pandas as pd
 from pya3 import *
 
+DIR_PATH = os.getcwd()
+sys.path.append(DIR_PATH)
+
+active_users_json_path = os.path.join(DIR_PATH,"MarketUtils", "active_users.json")
 
 #Json Functions
 def read_json_file(file_path):
@@ -15,30 +19,36 @@ def write_json_file(file_path, data):
         json.dump(data, file, indent=4)
 
 def get_user_details(user):
-    user_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'UserProfile', 'UserJson', f'{user}.json')
+    user_json_path = os.path.join(DIR_PATH, 'UserProfile', 'UserJson', f'{user}.json')
     json_data = read_json_file(user_json_path)
     return json_data, user_json_path
 
+def get_orders_json(user):
+    user_json_path = os.path.join(DIR_PATH, 'UserProfile', 'OrdersJson', f'{user}.json')
+    json_data = read_json_file(user_json_path)
+    return json_data, user_json_path
 
-#Gets users
-def get_strategy_users(strategy):
-    data = read_json_file(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'broker.json'))
-    
-    users = []
+def get_strategy_json(strategy_name):
+    strategy_json_path = os.path.join(DIR_PATH, 'Strategies', strategy_name, strategy_name+'.json')
+    try:
+        strategy_json = read_json_file(strategy_json_path)
+    except (FileNotFoundError, IOError, json.JSONDecodeError):
+        # Handle exceptions and use an empty dictionary if the file doesn't exist or an error occurs
+        strategy_json = {}
+    return strategy_json, strategy_json_path
 
-    for broker, broker_data in data.items():
-        # Extract account names that are allowed to trade
-        accounts_to_trade = broker_data.get('accounts_to_trade', [])
+def get_active_users(broker_json_details: list) -> list:
+    active_users = [user for user in broker_json_details if 'Active' in user.get('account_type', '')]
+    return active_users
 
-        # For each user in accounts_to_trade, check if the strategy is in their percentageRisk and if its value is not zero
-        for account in accounts_to_trade:
-            user_details = broker_data.get(account, {})
-            percentage_risk = user_details.get('percentageRisk', {})
-            
-            if strategy in percentage_risk and percentage_risk[strategy] != 0:
-                users.append((broker, account))
+def assign_user_details(account_name):
+    matched_user = None
+    user_details = read_json_file(active_users_json_path)
+    for user in user_details:
+        if user['account_name'] == account_name:
+            matched_user = user
+    return matched_user
 
-    return users
 
 #Expiry Dates Calculation
 holidays = [dt.date(2023, i, j) for i, j in [
@@ -61,67 +71,67 @@ def get_previous_dates(num_dates):
 
     return dates
 
-def get_next_weekday(d, weekday):
-    if d.weekday() == weekday:  # Check if today is already the desired weekday
-        return d
-    days_ahead = weekday - d.weekday()
-    if days_ahead <= 0:  
-        days_ahead += 7
-    next_date = d + dt.timedelta(days_ahead)
-    while next_date in holidays:
-        next_date -= dt.timedelta(1)
-    return next_date
+# def get_next_weekday(d, weekday):
+#     if d.weekday() == weekday:  # Check if today is already the desired weekday
+#         return d
+#     days_ahead = weekday - d.weekday()
+#     if days_ahead <= 0:  
+#         days_ahead += 7
+#     next_date = d + dt.timedelta(days_ahead)
+#     while next_date in holidays:
+#         next_date -= dt.timedelta(1)
+#     return next_date
 
-def last_weekday_of_month(year, month, weekday):
-    if month == 12:
-        # If the current month is December, increment the year and set the month to January
-        last_day = dt.date(year + 1, 1, 1) - dt.timedelta(1)
-    else:
-        # Otherwise, proceed to the next month
-        last_day = dt.date(year, month + 1, 1) - dt.timedelta(1)
+# def last_weekday_of_month(year, month, weekday):
+#     if month == 12:
+#         # If the current month is December, increment the year and set the month to January
+#         last_day = dt.date(year + 1, 1, 1) - dt.timedelta(1)
+#     else:
+#         # Otherwise, proceed to the next month
+#         last_day = dt.date(year, month + 1, 1) - dt.timedelta(1)
     
-    # Find the last desired weekday of the month
-    while last_day.weekday() != weekday or last_day in holidays:
-        last_day -= dt.timedelta(1)
+#     # Find the last desired weekday of the month
+#     while last_day.weekday() != weekday or last_day in holidays:
+#         last_day -= dt.timedelta(1)
     
-    return last_day
+#     return last_day
 
 
-def get_expiry_dates(base_symbol):
-    today = dt.date.today()
+# def get_expiry_dates(base_symbol):
+#     today = dt.date.today()
     
-    if base_symbol == "MIDCPNIFTY":
-        weekly_expiry = get_next_weekday(today, 0)  # Monday
-    elif base_symbol == "FINNIFTY":
-        weekly_expiry = get_next_weekday(today, 1)  # Tuesday
-    elif base_symbol == "BANKNIFTY":
-        weekly_expiry = get_next_weekday(today, 2)  # Wednesday
-    elif base_symbol == "NIFTY" :
-        weekly_expiry = get_next_weekday(today, 3)  # Thursday
-    elif base_symbol == "SENSEX":
-        weekly_expiry = get_next_weekday(today, 4)  # Friday
-    else:
-        raise ValueError(f"Invalid base_symbol: {base_symbol}")
+#     if base_symbol == "MIDCPNIFTY":
+#         weekly_expiry = get_next_weekday(today, 0)  # Monday
+#     elif base_symbol == "FINNIFTY":
+#         weekly_expiry = get_next_weekday(today, 1)  # Tuesday
+#     elif base_symbol == "BANKNIFTY":
+#         weekly_expiry = get_next_weekday(today, 2)  # Wednesday
+#     elif base_symbol == "NIFTY" :
+#         weekly_expiry = get_next_weekday(today, 3)  # Thursday
+#     elif base_symbol == "SENSEX":
+#         weekly_expiry = get_next_weekday(today, 4)  # Friday
+#     else:
+#         raise ValueError(f"Invalid base_symbol: {base_symbol}")
     
-    monthly_expiry = last_weekday_of_month(today.year, today.month, weekly_expiry.weekday())
+#     monthly_expiry = last_weekday_of_month(today.year, today.month, weekly_expiry.weekday())
 
-    if weekly_expiry > monthly_expiry:
-        if today.month == 12:
-            monthly_expiry = last_weekday_of_month(today.year+1, 1, weekly_expiry.weekday())
-        else:
-            monthly_expiry = last_weekday_of_month(today.year, today.month+1, weekly_expiry.weekday())
+#     if weekly_expiry > monthly_expiry:
+#         if today.month == 12:
+#             monthly_expiry = last_weekday_of_month(today.year+1, 1, weekly_expiry.weekday())
+#         else:
+#             monthly_expiry = last_weekday_of_month(today.year, today.month+1, weekly_expiry.weekday())
 
-    return weekly_expiry, monthly_expiry
+#     return weekly_expiry, monthly_expiry
 
-def get_next_week_expiry(base_symbol):
-    # First, get the weekly expiry for the current week
-    weekly_expiry, _ = get_expiry_dates(base_symbol)
+# def get_next_week_expiry(base_symbol):
+#     # First, get the weekly expiry for the current week
+#     weekly_expiry, _ = get_expiry_dates(base_symbol)
     
-    # Now calculate the weekly expiry for the next week
-    next_week_expiry = weekly_expiry + dt.timedelta(days=7)
+#     # Now calculate the weekly expiry for the next week
+#     next_week_expiry = weekly_expiry + dt.timedelta(days=7)
 
-    # If the next week expiry falls on a holiday or weekend, find the previous valid working day
-    while next_week_expiry in holidays:  # Checking if it's a holiday or weekend
-        next_week_expiry -= dt.timedelta(days=1)  # Decrement by one day
+#     # If the next week expiry falls on a holiday or weekend, find the previous valid working day
+#     while next_week_expiry in holidays:  # Checking if it's a holiday or weekend
+#         next_week_expiry -= dt.timedelta(days=1)  # Decrement by one day
     
-    return next_week_expiry
+#     return next_week_expiry

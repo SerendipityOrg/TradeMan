@@ -8,6 +8,9 @@ import MarketUtils.Discord.discordchannels as discord
 import Brokers.place_order_calc as place_order_calc
 import Brokers.Zerodha.kite_utils as kite_utils
 from MarketUtils.InstrumentBase import Instrument
+import MarketUtils.general_calc as general_calc
+from MarketUtils.FNOInfoBase import FNOInfo
+import MarketUtils.Json.json_utils as json_utils
 
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
 
@@ -94,7 +97,7 @@ def place_zerodha_order(order_details: dict, kite=None):
         Exception: If the order placement fails.
     """
     
-    user_details = place_order_calc.assign_user_details(order_details.get('account_name'))
+    user_details = general_calc.assign_user_details(order_details.get('account_name'))
     if kite is None:
         kite = kite_utils.create_kite_obj(user_details)
     
@@ -105,13 +108,13 @@ def place_zerodha_order(order_details: dict, kite=None):
         order_id = None
     
     try:
-        if order_details.get('strategy') == 'MPWizard':
-            place_order_calc.log_order(order_id, order_details)
+        if 'Trailing' in order_details['order_mode']:
+            json_utils.log_order(order_id, order_details)
     except Exception as e:
         print(f"Failed to log the order: {e}")
         
 def update_kite_stoploss(order_details):
-    user_details = place_order_calc.assign_user_details(order_details.get('account_name'))
+    user_details = general_calc.assign_user_details(order_details.get('account_name'))
     kite = kite_utils.create_kite_obj(user_details)
     order_id = place_order_calc.retrieve_order_id(
             order_details.get('account_name'),
@@ -154,7 +157,7 @@ def sweep_kite_orders(userdetails):
     for token, quantity in token_quantities.items():
         exchange_token = Instrument().get_exchange_token_by_token(token)
         base_symbol = Instrument().get_base_symbol_by_exchange_token(exchange_token)
-        max_qty = place_order_calc.read_max_order_qty_for_symbol(base_symbol)  # Fetch max qty for the token
+        max_qty = FNOInfo().get_max_order_qty_by_base_symbol(base_symbol)  # Fetch max qty for the token
         remaining_qty = quantity
 
         for order in orders:

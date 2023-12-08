@@ -17,7 +17,7 @@ import MarketUtils.InstrumentBase as InstrumentBase
 import Brokers.place_order_calc as place_order_calc
 import MarketUtils.general_calc as general_calc
 
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('OvernightFutures')
+_,STRATEGY_PATH = general_calc.get_strategy_json('OvernightFutures')
 
 strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
 instrument_obj = InstrumentBase.Instrument()

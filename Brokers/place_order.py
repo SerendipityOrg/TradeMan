@@ -12,6 +12,7 @@ from Strategies.StrategyBase import Strategy
 import Brokers.BrokerUtils.Broker as Broker
 from MarketUtils.InstrumentBase import Instrument
 import MarketUtils.general_calc as general_calc
+from MarketUtils.FNOInfoBase import FNOInfo
 
 def add_token_to_monitor(order_details):
     monitor = place_order_calc.monitor()
@@ -34,7 +35,7 @@ def place_order_for_strategy(strategy_name, order_details):
                 order_qty = place_order_calc.get_qty(order_with_user_and_broker)
 
                 # Fetch the max order quantity for the specific base_symbol
-                max_qty = place_order_calc.read_max_order_qty_for_symbol(order_with_user_and_broker.get('base_symbol'))
+                max_qty = FNOInfo().get_max_order_qty_by_base_symbol(order_with_user_and_broker.get('base_symbol'))
 
                 # Split the order if the quantity exceeds the maximum
                 while order_qty > 0:
@@ -65,7 +66,7 @@ def place_order_for_broker(order_details):
         add_token_to_monitor(order_details)
         
 def place_stoploss_order(order_details=None,monitor=None):
-    _,strategy_path = place_order_calc.get_strategy_json(order_details['strategy'])
+    _,strategy_path = general_calc.get_strategy_json(order_details['strategy'])
     instrument_base = Instrument()
     strategy_obj = Strategy.read_strategy_json(strategy_path)
 
@@ -110,7 +111,7 @@ def modify_orders(order_details=None):
 
 
 def orders_via_telegram(details):
-    strategy_name = place_order_calc.get_strategy_name(details.get('trade_id'))
+    strategy_name = place_order_calc.calculate_strategy_name(details.get('trade_id'))
     _, strategy_path = place_order_calc.get_strategy_json(strategy_name)
     trade_id = details.get('trade_id').split('_')
 

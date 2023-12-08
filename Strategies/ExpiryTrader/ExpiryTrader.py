@@ -16,7 +16,7 @@ import MarketUtils.Discord.discordchannels as discord
 import MarketUtils.general_calc as general_calc 
 
 ENV_PATH = os.path.join(DIR_PATH, '.env')
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('ExpiryTrader')
+_,STRATEGY_PATH = general_calc.get_strategy_json('ExpiryTrader')
 load_dotenv(ENV_PATH)
 
 class ExpiryTrader(StrategyBase.Strategy):
@@ -39,7 +39,7 @@ main_transcation_type = expiry_trader_obj.get_general_params().get('MainTransact
 def calculate_qty(main_exchange_token,base_symbol):
     token = instrument_obj.get_token_by_exchange_token(main_exchange_token)
     ltp = expiry_trader_obj.get_single_ltp(token)
-    qty_calc.update_user_qty_ltp(ltp,expiry_trader_obj.get_strategy_name(),base_symbol)
+    qty_calc.update_qty_during_entry(ltp,expiry_trader_obj.get_strategy_name(),base_symbol)
 
 
 # Extract strategy parameters

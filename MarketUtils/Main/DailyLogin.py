@@ -40,7 +40,7 @@ def clear_json_file(user_name):
     order_json_filepath = os.path.join(order_json_folderpath, f'{user_name}.json')
     general_calc.write_json_file(order_json_filepath, {})
 
-active_users = all_broker_login(place_order_calc.get_active_users(broker_json_details))
+active_users = all_broker_login(general_calc.get_active_users(broker_json_details))
 
 def calculate_qty(active_users):
     for user in active_users:

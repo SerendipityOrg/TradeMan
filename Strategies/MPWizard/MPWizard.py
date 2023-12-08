@@ -19,7 +19,7 @@ from MarketUtils.InstrumentBase import Instrument
 import MarketUtils.Discord.discordchannels as discord
 
 
-_,strategy_path = place_order_calc.get_strategy_json('MPWizard')
+_,strategy_path = general_calc.get_strategy_json('MPWizard')
 strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
 
 # Fetch the desired start time from the environment variables
@@ -32,7 +32,7 @@ def place_test_orders():
     indices = ["NIFTY", "BANKNIFTY", "FINNIFTY"]
     cross_types = ["UpCross", "DownCross"]
     ib_levels = ["Big", "Medium", "Small"]
-    _,STRATEGY_PATH = place_order_calc.get_strategy_json('MPWizard')
+    _,STRATEGY_PATH = general_calc.get_strategy_json('MPWizard')
     strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
 
     for index in indices:
