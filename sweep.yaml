@@ -8,23 +8,23 @@ rules:
 - "Add docstrings to all functions and file headers."
 
 # This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
-branch: 'main'
+branch: 'staging'
 
 # By default Sweep will read the logs and outputs from your existing Github Actions. To disable this, set this to false.
-gha_enabled: True
+gha_enabled: False
 
 # This is the description of your project. It will be used by sweep when creating PRs. You can tell Sweep what's unique about your project, what frameworks you use, or anything else you want.
 #
 # Example:
 #
 # description: sweepai/sweep is a python project. The main api endpoints are in sweepai/api.py. Write code that adheres to PEP8.
-description: ''
+description: 'TradeMan is a python based trading algorithm, currently based off NSE and BSE market. It relies on brokers like Zerodha and Aliceblue for live trade execution. Still in pursuit of cleaner execution system'
 
 # This sets whether to create pull requests as drafts. If this is set to True, then all pull requests will be created as drafts and GitHub Actions will not be triggered.
 draft: False
 
 # This is a list of directories that Sweep will not be able to edit.
-blocked_dirs: []
+blocked_dirs: [Archive,BackTest,DBpy,Scripts,Streamlitapp]
 
 # This is a list of documentation links that Sweep will use to help it understand your code. You can add links to documentation for any packages you use here.
 #
@@ -32,7 +32,7 @@ blocked_dirs: []
 #
 # docs:
 #   - PyGitHub: ["https://pygithub.readthedocs.io/en/latest/", "We use pygithub to interact with the GitHub API"]
-docs: []
+docs: ["https://kite.trade/docs/pykiteconnect/v4/","https://github.com/jerokpradeep/pya3/blob/main/README.md"]
 
 # Sandbox executes commands in a sandboxed environment to validate code changes after every edit to guarantee pristine code. For more details, see the [Sandbox](./sandbox) page.
 sandbox:
