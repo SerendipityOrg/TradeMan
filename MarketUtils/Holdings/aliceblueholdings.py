@@ -1,8 +1,12 @@
-import os
 import json
+import os
+from pprint import pprint
+
 from openpyxl import load_workbook
 from pya3 import *
-from pprint import pprint
+
+from .holdings_utils import (find_first_empty_row, get_user_list,
+                             is_order_present)
 
 # File paths
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -29,31 +33,6 @@ def fetch_aliceblue_orders(username, api_key):
     
     # Filter only the orders from NSE
     return [order for order in orders if order.get('Exchange') == 'NSE']
-
-def find_first_empty_row(sheet):
-    """
-    Find the first empty row in a given worksheet.
-    """
-    for i, row in enumerate(sheet.iter_rows(values_only=True), 1):
-        if all(cell is None for cell in row):
-            return i
-    return sheet.max_row + 1
-
-def is_order_present(sheet, tradingsymbol, timestamp):
-    """
-    Check if an order with a given tradingsymbol and timestamp is already present in the worksheet.
-    """
-    for row in sheet.iter_rows(values_only=True):
-        if row and row[1] == tradingsymbol and row[2] == timestamp:
-            return True
-    return False
-
-# Populate user_list with accounts from each broker
-user_list = [(broker, account) for broker, broker_data in data.items() for account in broker_data.get('accounts_to_trade', [])]
-
-# Iterate over all the broker-user pairs
-for broker, user in user_list:
-    credentials = data[broker][user]
 
     if broker == "aliceblue":
         print(f"Fetching equity orders for {user} from Alice Blue")
