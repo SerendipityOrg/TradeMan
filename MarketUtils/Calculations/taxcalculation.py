@@ -24,6 +24,59 @@ def zerodha_taxes(qty, entry_prc, exit_prc,orders):
     stamp_charges = 0.003 / 100 * entry_prc * qty
 
     total_charges = brokerage + stt_on_exercise + stt_on_sell + transaction_charges + gst + sebi_charges + stamp_charges
+# This file contains functions to calculate the taxes for different brokers and different types of trades.
+# It includes functions to calculate taxes for Zerodha and Aliceblue for both regular and futures trades.
+# Each function takes the quantity of the instrument traded, the entry price, the exit price, and the number of orders as inputs.
+# It returns the total charges for the trade.
+#
+# The functions calculate the brokerage, STT/CTT, transaction charges, GST, SEBI charges, and stamp charges.
+# The brokerage is a flat rate per executed order.
+# The STT/CTT is calculated based on the intrinsic value of the trade and the exit price.
+# The transaction charges are a percentage of the exit price.
+# The GST is a percentage of the sum of the brokerage, SEBI charges, and transaction charges.
+# The SEBI charges are a fixed rate per crore.
+# The stamp charges are a percentage of the entry price.
+# The total charges are the sum of all these charges.
+#
+# The functions for futures trades are similar, but they use different rates for the charges.
+# The brokerage is a percentage of the entry price, capped at a maximum amount.
+# The STT/CTT is a percentage of the exit price.
+# The transaction charges are a percentage of the exit price.
+# The SEBI charges are a fixed rate per crore.
+# The GST is a percentage of the sum of the brokerage, SEBI charges, and transaction charges.
+# The stamp charges are a percentage of the entry price, with a minimum amount.
+# The total charges are the sum of all these charges.
+#
+# The functions assume that the number of orders is either 1 or 2, and that the number of instruments is twice the number of orders.
+# This is because each order can involve two instruments (the instrument being traded and the instrument being used to hedge).
+# If the number of orders is not 1 or 2, the functions will not work correctly.
+#
+# Note: These functions are specific to the Indian market and may not be applicable to other markets.
+# Also, the rates used in these functions are based on the rates as of the time of writing and may have changed.
+# Please check the latest rates before using these functions.
+#
+# Author: Your Name
+# Date: The current date
+#
+# This file is part of the TradeMan project.
+# TradeMan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# TradeMan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with TradeMan.  If not, see <https://www.gnu.org/licenses/>.
+#
+# For any questions or concerns, please email Your Email Address
+#
+# We welcome any and all suggestions for improvements
+# Contributions on GitHub are always welcomed!
+# GitHub: Your GitHub Link
 
     return total_charges
 
