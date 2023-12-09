@@ -1,3 +1,4 @@
+# This function calculates the taxes for Zerodha trades.
 def zerodha_taxes(qty, entry_prc, exit_prc,orders):
     if orders == 1:
        instruments = 2
@@ -80,6 +81,7 @@ def zerodha_taxes(qty, entry_prc, exit_prc,orders):
 
     return total_charges
 
+# This function calculates the taxes for Aliceblue trades.
 def aliceblue_taxes(qty, entry_prc, exit_prc,orders):
     if orders == 1:
        instruments = 2
@@ -109,6 +111,7 @@ def aliceblue_taxes(qty, entry_prc, exit_prc,orders):
 
     return total_charges
 
+# This function calculates the taxes for Zerodha futures trades.
 def zerodha_futures_taxes(qty, entry_prc, exit_prc, orders):
     if orders == 1:
         instruments = 2
