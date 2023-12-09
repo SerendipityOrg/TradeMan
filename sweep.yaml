@@ -1,43 +1,36 @@
-# Sweep AI turns bugs & feature requests into code changes (https://sweep.dev)
-# For details on our config file, check out our docs at https://docs.sweep.dev/usage/config
-
-# This setting contains a list of rules that Sweep will check for. If any of these rules are broken in a new commit, Sweep will create an pull request to fix the broken rule.
-rules:
-- "All new business logic should have corresponding unit tests."
-- "Refactor large functions to be more modular."
-- "Add docstrings to all functions and file headers."
-
-# This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
-branch: 'staging'
-
-# By default Sweep will read the logs and outputs from your existing Github Actions. To disable this, set this to false.
-gha_enabled: False
-
-# This is the description of your project. It will be used by sweep when creating PRs. You can tell Sweep what's unique about your project, what frameworks you use, or anything else you want.
-#
-# Example:
-#
-# description: sweepai/sweep is a python project. The main api endpoints are in sweepai/api.py. Write code that adheres to PEP8.
-description: 'TradeMan is a python based trading algorithm, currently based off NSE and BSE market. It relies on brokers like Zerodha and Aliceblue for live trade execution. Still in pursuit of cleaner execution system'
-
-# This sets whether to create pull requests as drafts. If this is set to True, then all pull requests will be created as drafts and GitHub Actions will not be triggered.
+gha_enabled: True
+branch: main
+blocked_dirs: [Archive,BackTest,Scripts,Streamlitapp]
 draft: False
+description: "TradeMan is a python 3.11 based trading algorithm, currently based off NSE and BSE market. All imports should be global (like `import sweepai.utils.github_utils`). Write unit tests in the same directory as their corresponding code, i.e. sweepai/api_test.py tests sweepai/api.py. We use pytest for tests. Never use wildcard imports. Use list and tuple for typing instead of typing.List and typing.Tuple."
+# These are the docs that we index for Sweep.
+# We scrape these docs once a day and store them in our database.
+# You can use it by adding the key to your GitHub issue.
+# Example: Use PyGitHub to get the number of files in a repo.
 
-# This is a list of directories that Sweep will not be able to edit.
-blocked_dirs: [Archive,BackTest,DBpy,Scripts,Streamlitapp]
+# The title should be restrictive so it only shows up when the user wants it.
+# "React JS" is good, "React" is not.
+# The url should be the root of the docs, not a specific page. We will scrape all pages under this root.
+# "https://react.dev/" is good, "https://react.dev/docs/getting-started" is not.
+# Write a natural language description of what the package is and how it's used to help Sweep.
+docs:
+  aliceblue: ["https://github.com/jerokpradeep/pya3/blob/main/README.md", "We use alice blue api for trade placements."]
+  kite: ["https://kite.trade/docs/pykiteconnect/v4/", "We use kite api for trade placements."]
 
-# This is a list of documentation links that Sweep will use to help it understand your code. You can add links to documentation for any packages you use here.
-#
-# Example:
-#
-# docs:
-#   - PyGitHub: ["https://pygithub.readthedocs.io/en/latest/", "We use pygithub to interact with the GitHub API"]
-docs: ["https://kite.trade/docs/pykiteconnect/v4/","https://github.com/jerokpradeep/pya3/blob/main/README.md"]
-
-# Sandbox executes commands in a sandboxed environment to validate code changes after every edit to guarantee pristine code. For more details, see the [Sandbox](./sandbox) page.
 sandbox:
   install:
-    - trunk init
+    - pre-commit install
+    - pip install requirements.txt
   check:
-    - trunk fmt {file_path} || return 0
-    - trunk check --fix --print-failures {file_path}
+    - git add . && pre-commit run --files {file_path} || exit 0
+    - 'if [[ "{file_path}" == *.py ]]; then PYTHONPATH=. poetry run pylint --errors-only {file_path}; else exit 0; fi'
+    - 'if [[ "{file_path}" == *.py ]]; then PYTHONPATH=. poetry run python {file_path}; else exit 0; fi'
+
+rules:
+  - "We should use loguru for error logging. If the log is inside an exception, use logger.exception to add tracebacks, where logger is imported from loguru. Use f-strings for string formatting in logger calls."
+  - "There should be no debug log or print statements in production code."
+  - "All functions should have parameters and output annotated with type hints. Use list, tuple and dict instead of typing.List, typing.Tuple and typing.dict."
+  - "Leftover TODOs in the code should be handled."
+  - "All new business logic should have corresponding unit tests in the same directory. For example, sweepai/api_test.py tests sweepai/api.py. Use unittest and unittest.mock as required."
+  - "Any clearly inefficient or repeated code should be optimized or refactored."
+  - "Remove any comments before code that are obvious. For example `# this prints hello world; print('hello world')`."
