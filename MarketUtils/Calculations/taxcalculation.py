@@ -24,7 +24,7 @@ def zerodha_taxes(qty, entry_prc, exit_prc,orders):
     stamp_charges = 0.003 / 100 * entry_prc * qty
 
     total_charges = brokerage + stt_on_exercise + stt_on_sell + transaction_charges + gst + sebi_charges + stamp_charges
-# This file contains functions to calculate the taxes for different brokers and different types of trades.
+# This file contains functions to calculate taxes for different brokers and different types of trades.
 # It includes functions to calculate taxes for Zerodha and Aliceblue for both regular and futures trades.
 # Each function takes the quantity of the instrument traded, the entry price, the exit price, and the number of orders as inputs.
 # It returns the total charges for the trade.
