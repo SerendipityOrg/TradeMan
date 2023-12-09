@@ -124,12 +124,16 @@
 
 #     workbook.save(workbook_path)
 
-import os
 import json
-from openpyxl import load_workbook
-from kiteconnect import KiteConnect
-from pya3 import *
+import os
 from pprint import pprint
+
+from kiteconnect import KiteConnect
+from openpyxl import load_workbook
+from pya3 import *
+
+from .holdings_utils import (find_first_empty_row, get_user_list,
+                             is_order_present)
 
 # File paths
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -162,15 +166,6 @@ def fetch_zerodha_orders(api_key, access_token):
         return [order for order in orders if order['exchange'] == 'NSE']
     except Exception as e:
         return [f"Error fetching orders from Zerodha: {str(e)}"]
-
-def find_first_empty_row(sheet):
-    """Find the first empty row in a given worksheet."""
-    for i, row in enumerate(sheet.iter_rows(values_only=True), 1):
-        if all(cell is None for cell in row):
-            return i
-    return sheet.max_row + 1
-
-def is_order_present(sheet, tradingsymbol, timestamp):
     """Check if an order with a given tradingsymbol and timestamp is already present in the worksheet."""
     for row in sheet.iter_rows(values_only=True):
         if row and row[1] == tradingsymbol and row[2] == timestamp:
@@ -178,7 +173,7 @@ def is_order_present(sheet, tradingsymbol, timestamp):
     return False
 
 # Populate user_list with accounts from each broker
-user_list = [(broker, account) for broker, broker_data in data.items() for account in broker_data.get('accounts_to_trade', [])]
+user_list = get_user_list(data)
 
 # Iterate over all the broker-user pairs
 for broker, user in user_list:

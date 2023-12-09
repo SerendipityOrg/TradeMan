@@ -1,7 +1,11 @@
-import os
 import json
+import os
+
 from kiteconnect import KiteConnect, KiteTicker
 from openpyxl import load_workbook
+
+from .holdings_utils import (find_first_empty_row, get_user_list,
+                             is_order_present)
 
 # File paths
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -21,29 +25,6 @@ def fetch_zerodha_orders(api_key, access_token):
         return [order for order in orders if order['exchange'] == 'NSE']
     except Exception as e:
         return [f"Error fetching orders from Zerodha: {str(e)}"]
-
-# Function to find the first empty row in a worksheet
-def find_first_empty_row(sheet):
-    for i, row in enumerate(sheet.iter_rows(values_only=True), 1):
-        if all(cell is None for cell in row):
-            return i
-    return sheet.max_row + 1
-
-# Function to check if an order is already in the worksheet
-def is_order_present(sheet, tradingsymbol, timestamp):
-    for row in sheet.iter_rows(values_only=True):
-        if row:
-            # Assuming tradingsymbol is in the 2nd column and timestamp is in the 3rd column
-            if row[1] == tradingsymbol and row[2] == timestamp:
-                return True
-    return False
-
-# Populate user_list with accounts from each broker
-user_list = []
-for broker, broker_data in data.items():
-    if 'accounts_to_trade' in broker_data:
-        for account in broker_data['accounts_to_trade']:
-            user_list.append((broker, account))
 
 # Iterate over all the broker-user pairs
 for broker, user in user_list:
@@ -75,7 +56,6 @@ for broker, user in user_list:
         workbook_path = os.path.join(script_dir, "excel", f"{user}.xlsx")
         workbook = load_workbook(workbook_path)
         sheet = workbook["Holdings"]
-
         # Find the first empty row to start writing data
         last_row = find_first_empty_row(sheet)
 
