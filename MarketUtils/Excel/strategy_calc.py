@@ -3,6 +3,11 @@ import os,sys
 from babel.numbers import format_currency
 from openpyxl import load_workbook
 
+def calculate_avg_price(trades):
+    total_price = sum(trade["avg_price"] * trade["qty"] for trade in trades)
+    total_qty = sum(trade["qty"] for trade in trades)
+    return total_price / total_qty if total_qty > 0 else 0
+
 DIR = os.getcwd()
 sys.path.append(DIR)
 import MarketUtils.Calculations.taxcalculation as tc
@@ -43,9 +48,12 @@ def process_mpwizard_trades(broker,mpwizard_trades,username=None):
         
         sell_trade = matching_sell_trades[0] # Take the first matching sell trade
 
+        avg_buy_price = calculate_avg_price(mpwizard_trades["BUY"])
+        avg_sell_price = calculate_avg_price(matching_sell_trades)
+        sell_trade = matching_sell_trades[0] # Take the first matching sell trade
+        total_buy_qty = sum(buy_trade["qty"] for buy_trade in mpwizard_trades["BUY"])
         if broker == "zerodha":
-            charges = tc.zerodha_taxes(
-                buy_trade["qty"], buy_trade["avg_price"], sell_trade["avg_price"], 1)
+            charges = tc.zerodha_taxes(total_buy_qty, avg_buy_price, avg_sell_price, 1)
         elif broker == "aliceblue":
             charges = tc.aliceblue_taxes(
                 buy_trade["qty"], float(buy_trade["avg_price"]), float(sell_trade["avg_price"]), 1)
@@ -69,7 +77,7 @@ def process_mpwizard_trades(broker,mpwizard_trades,username=None):
             "hedge_entry_price": 0,  # Assuming no hedge for this example
             "hedge_exit_price": 0,   # Assuming no hedge for this example
             "trade_points": round(trade_points, 2),
-            "qty": buy_trade["qty"],
+            "qty": total_buy_qty,
             "pnl": round(pnl, 2),
             "tax": round(charges, 2),
             "net_pnl": round(net_pnl, 2)
