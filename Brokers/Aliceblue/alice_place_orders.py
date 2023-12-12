@@ -73,12 +73,17 @@ def alice_place_order(alice, order_details):
                                         order_tag = order_details.get('trade_id', None))
         
         print(f"Order placed. ID is: {order_id}")
-        return order_id['NOrdNo'] 
+
+        order_status = alice_utils.get_order_status(alice, order_id['NOrdNo'])
+        if order_status == "FAIL":
+            order_history = alice.get_order_history(order_id['NOrdNo'])
+            raise Exception(f"Order placement failed, Reason: {order_history['RejReason']} for {order_details['account_name']}")
+
+        return order_id['NOrdNo']
   
     except Exception as e:
-        message = f"Order placement failed: {e} for {order_details['account_name']}"
-        print(message)
-        discord.discord_bot(message,strategy)
+        print(e)
+        discord.discord_bot(e,strategy)
         return None
 
 def place_aliceblue_order(order_details: dict,alice = None):

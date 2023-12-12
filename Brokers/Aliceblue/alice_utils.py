@@ -18,6 +18,10 @@ def get_csv_alice(user_details):
     alice.get_contract_master("NFO") #TODO rename the NFO.csv to alice_instruments.csv
     alice.get_contract_master("BFO") #TODO rename the NSE.csv to alice_instruments.csv
 
+def get_order_status(alice, order_id):
+    order_status = alice.get_order_history(order_id)
+    if order_status['reporttype'] != 'fill' : 
+        return "FAIL"
 
 def get_alice_active_users(active_users, strategy_name):
     subscribed_users = []

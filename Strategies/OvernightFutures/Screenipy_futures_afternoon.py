@@ -126,7 +126,7 @@ def main():
         wait_time = dt.datetime(now.year, now.month, now.day, start_hour, start_minute) - now
         if wait_time.total_seconds() > 0:
             print(f"Waiting for {wait_time} before starting the bot")
-            # sleep(wait_time.total_seconds())
+            sleep(wait_time.total_seconds())
         
         message_for_orders("Live",prediction,future_trade_symbol,hedge_trade_symbol,weekly_expiry,monthly_expiry)
         print(orders_to_place)
@@ -139,13 +139,15 @@ def main():
         futures_exchange_token = np.int64(futures_exchange_token)
         futures_exchange_token = int(futures_exchange_token)
 
-
+        today_orders = strategy_obj.get_today_orders()
+        today_orders.append(trade_id.split("_")[0])
         extra_information = strategy_obj.get_extra_information()
 
         extra_information['hedge_exchange_token'] = hedge_exchange_token
         extra_information['futures_exchange_token'] = futures_exchange_token
         extra_information['prediction'] = prediction 
 
+        strategy_obj.set_today_orders(today_orders)
         strategy_obj.set_extra_information(extra_information)
 
         strategy_obj.write_strategy_json(STRATEGY_PATH)
