@@ -520,10 +520,24 @@ def show_profile(selected_client, selected_client_name):
             st.subheader("Strategies")
             if isinstance(Strategy_list, list) and len(Strategy_list) > 0:
                 for i, strategy in enumerate(Strategy_list):
+                    # Define options lists
+                    strategy_options = ["AmiPy", "MPWizard", "ZRM", "OvernightFutures", "ExpiryTrader", "Screenipy Stocks"]
+                    broker_options = ["Zerodha", "AliceBlue"]
+
+                    # Retrieve and validate default values
+                    default_strategy_names = strategy.get("strategy_name", [])
+                    default_strategy_names = [name for name in default_strategy_names if name in strategy_options]
+                    default_brokers = [broker for broker in strategy.get("broker", []) if broker in broker_options]
+
+                    # Debugging: Print the filtered default_strategy_names
+                    print(f"Filtered default_strategy_names for Strategy {i+1}:", default_strategy_names)
+
+                    # Set multiselect widgets for strategy names and brokers
                     strategy["strategy_name"] = st.multiselect(
-                        f"Strategy Name {i+1}", ["AmiPy", "MPWizard", "ZRM", "OvernightFutures", "ExpiryTrader","Screenipy Stocks"], default=strategy.get("strategy_name", []), key=f"strategy_name_{i}")
+                        f"Strategy Name {i+1}", strategy_options, default=default_strategy_names, key=f"strategy_name_{i}")
                     strategy["broker"] = st.multiselect(
-                        f"Broker {i+1}", ["Zerodha", "AliceBlue"], default=strategy.get("broker", []), key=f"strategy_broker_{i}")
+                        f"Broker {i+1}", broker_options, default=default_brokers, key=f"strategy_broker_{i}")
+
                     selected_strategies = strategy["strategy_name"]
                     selected_brokers = strategy["broker"]
 
@@ -532,14 +546,21 @@ def show_profile(selected_client, selected_client_name):
                             # Modify the key format here
                             perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_0"
                             # Retrieve the value using the updated key
-                            percentage_allocated = strategy.get(
-                                perc_allocated_key, "")
+                            percentage_allocated = strategy.get(perc_allocated_key, "")
                             options = [f"{i/10:.1f}%" for i in range(0, 101)]
-                            default_index = options.index(percentage_allocated)
+                            
+                            # Handle the case where percentage_allocated is not in options
+                            default_index = options.index(percentage_allocated) if percentage_allocated in options else 0
+
                             selected_percentage_allocated = st.selectbox(
-                                f"Percentage Allocated for {selected_strategy} and {selected_broker_name} (%):", options, index=default_index, key=f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}")
+                                f"Percentage Allocated for {selected_strategy} and {selected_broker_name} (%):", 
+                                options, 
+                                index=default_index, 
+                                key=f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}"
+                            )
                             # Set the selected value
                             strategy[perc_allocated_key] = selected_percentage_allocated
+
                     updated_strategies_list.append(strategy)
 
             # Update the changes in the database when Update button is clicked
