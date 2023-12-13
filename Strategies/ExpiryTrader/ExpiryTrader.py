@@ -13,6 +13,7 @@ import Strategies.StrategyBase as StrategyBase
 import MarketUtils.InstrumentBase as InstrumentBase
 import MarketUtils.Calculations.qty_calc as qty_calc
 import MarketUtils.Discord.discordchannels as discord 
+import MarketUtils.general_calc as general_calc 
 
 ENV_PATH = os.path.join(DIR_PATH, '.env')
 _,STRATEGY_PATH = place_order_calc.get_strategy_json('ExpiryTrader')
@@ -112,6 +113,10 @@ def message_for_orders(trade_type,prediction,main_trade_symbol,hedge_trade_symbo
 
 def main():
     now = dt.datetime.now()
+
+    if now.date() in general_calc.holidays:
+        print("Skipping execution as today is a holiday.")
+        return
 
     if now.time() < dt.time(9, 0):
         print("Time is before 9:00 AM, placing test orders.")

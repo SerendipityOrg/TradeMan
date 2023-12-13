@@ -110,4 +110,14 @@ def modify_orders(order_details=None):
 
 
 def orders_via_telegram(details):
+    strategy_name = place_order_calc.get_strategy_name(details.get('trade_id'))
+    _, strategy_path = place_order_calc.get_strategy_json(strategy_name)
+    trade_id = details.get('trade_id').split('_')
+
+    strategy_obj = Strategy.read_strategy_json(strategy_path)
+    today_orders = strategy_obj.get_today_orders()
+    if trade_id[0] not in today_orders:
+        today_orders.append(trade_id[0])
+        strategy_obj.set_today_orders(today_orders)
+        strategy_obj.write_strategy_json(strategy_path)
     order_details = place_order_calc.create_telegram_order_details(details)

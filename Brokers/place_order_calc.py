@@ -313,11 +313,12 @@ def create_telegram_order_details(details):
     base_symbol = details['base_instrument']
     if base_symbol == 'Stock':
         base_symbol = details['stock_name']
+
     strategy_name = get_strategy_name(details['trade_id'])
+    _, STRATEGY_PATH = place_order_calc.get_strategy_json(strategy_name)
+    strategy_obj = Strategy.Strategy.read_strategy_json(STRATEGY_PATH)
 
     if details['strike_prc'] == "ATM":
-        _, STRATEGY_PATH = place_order_calc.get_strategy_json(strategy_name)
-        strategy_obj = Strategy.Strategy.read_strategy_json(STRATEGY_PATH)
         strike_prc = strategy_obj.calculate_current_atm_strike_prc(base_symbol)
     else:
         strike_prc = details['strike_prc']
@@ -326,7 +327,7 @@ def create_telegram_order_details(details):
         strike_prc = 0
 
     if details.get('option_type') == 'Stock':
-        exchange_token = Instrument().get_exchange_token_by_name(details['stock_name'])
+        exchange_token = Instrument().get_exchange_token_by_name(details['stock_name'],"NSE")
     else:
         expiry_date = Instrument().get_expiry_by_criteria(base_symbol, int(strike_prc), details['option_type'], details['expiry'])
         exchange_token = Instrument().get_exchange_token_by_criteria(base_symbol, int(strike_prc), details['option_type'], expiry_date)
