@@ -1,114 +1,152 @@
-import os, sys
+import os
+import sys
 import json
 import pandas as pd
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from pya3 import Aliceblue
+from kiteconnect import KiteConnect
+# Import TelegramClient from telethon
+from telethon import TelegramClient
 
-# Setting up directory paths
+# Load environment variables
 DIR = os.getcwd()
+active_users_json_path = os.path.join(DIR, "MarketUtils", "active_users.json")
+env_path = os.path.join(DIR, '.env')
+load_dotenv(env_path)
+
+# Retrieve API credentials from environment variables
+api_id = os.getenv('telethon_api_id')
+api_hash = os.getenv('telethon_api_hash')
+
+# Add the script directory to the system path
 sys.path.append(DIR)
-
-# Import custom modules
 import MarketUtils.general_calc as general_calc
-import MarketUtils.Main.dtdautomation as dtd
 
-# Get the script directory and file paths
-broker_filepath = os.path.join(DIR, "MarketUtils", "broker.json")
-ENV_PATH = os.path.join(DIR, '.env')
+# Function definitions:
 
-# Loading environment variables from .env file
-load_dotenv(ENV_PATH)
-import MarketUtils.general_calc as general_calc
-from morningmsg import aliceblue_invested_value, zerodha_invested_value
-
-# Assuming aliceblue_invested_value, zerodha_invested_value and other necessary functions 
-# are defined in the user's environment similar to morningmsg.py
-
-# Function to load an existing Excel file and return its data as a pandas DataFrame
+# Function to load an Excel sheet
 def load_excel_sheet(excel_path, sheet_name):
-    """Loads a specified sheet from an Excel file into a pandas DataFrame."""
-    if not os.path.exists(excel_path):
-        raise FileNotFoundError(f"Excel file not found: {excel_path}")
-
+    """Loads a sheet from an Excel file into a DataFrame."""
     try:
         return pd.read_excel(excel_path, sheet_name=sheet_name)
+    except FileNotFoundError:
+        print(f"Excel file not found: {excel_path}")
+        return pd.DataFrame()
     except Exception as e:
-        print(f"An error occurred while loading the Excel file: {excel_path}")
-        print("Error:", e)
+        print(f"Error loading Excel file: {e}")
         return pd.DataFrame()
 
-# Function to calculate PnL for the specified period
+# Function to calculate PnL
 def calculate_pnl(data, start_date, end_date):
-    """Calculates the PnL for a given period in the provided DataFrame."""
+    """Calculates PnL between two dates in the DataFrame."""
     filtered_data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
     return filtered_data['Running Balance'].sum()
 
 # Function to calculate cash balance
-def calculate_cash_balance(user, broker_data):
-    """Calculates the cash balance for the user."""
-    # Fetch the invested value based on broker type
-    invested_value = get_invested_value(user, broker_data)
-    cash_balance = user['expected_morning_balance'] - invested_value
-    return cash_balance
+def calculate_cash_balance(user, invested_value):
+    """Calculates the cash balance for a user."""
+    return user['expected_morning_balance'] - invested_value
 
-# Function to get the invested value based on broker type
-def get_invested_value(user, broker_data):
-    if user['broker'] == 'aliceblue':
-        return aliceblue_invested_value(user)
-    elif user['broker'] == 'zerodha':
-        return zerodha_invested_value(user)
-    else:
-        return 0  # Default value for other brokers or if not specified
+# Function to generate the report message
+def generate_message(pnl, cash_balance, next_week_capital, invested_value, start_date, end_date):
+    """Formats the weekly report message."""
+    message = f"Weekly Summary ({start_date.strftime('%B %d')} to {end_date.strftime('%B %d')})\n\n"
+    message += f"PnL: ₹{pnl}\n\n"
+    message += f"Cash Balance+stocks: ₹{cash_balance} + ₹{invested_value}\n"
+    message += f"Next Week Starting Capital with stocks: ₹{next_week_capital}\n\n"
+    message += "Best regards,\nYour Trading Firm"
+    return message
 
-# Function to format and send the weekly report
-def send_weekly_report(user, pnl, cash_balance, next_week_capital):
-    """Formats and prints the weekly report message."""
-    today = datetime.now()
-    start_date = today - timedelta(days=today.weekday() + 1) # Last Monday
-    end_date = start_date + timedelta(days=5) # Last Saturday
+# Function to send Telegram messages to users
+def send_telegram_messages(broker_data, session_filepath):
+    """Sends investment status messages to users via Telegram."""
+    with TelegramClient(session_filepath, api_id, api_hash) as client:
+        for user in broker_data:
+            if "Active" in user['account_type']:
+                # Calculate investment values for active users
+                invested_value = get_invested_value(user)
 
-    message = f"Weekly Summary ( {start_date.strftime('%B %d')} to {end_date.strftime('%B %d')})\n\n"
-    message += f"PnL : ₹ {pnl}\n\n"
-    message += f"Cash Balance: ₹ {cash_balance}\n"
-    message += f"Next Week Starting Capital with Stocks : ₹ {next_week_capital}\n\n"
-    message += "Best regards,\nSerendipity Trading Firm"
+                cash_balance = user['expected_morning_balance'] - invested_value
+                current_capital = cash_balance + invested_value
+
+                # Formatting date and message
+                formatted_date = datetime.today().strftime("%d %b %Y")
+                message = telegram_message(user, formatted_date, cash_balance, invested_value, current_capital)
+
+                user['current_capital'] = current_capital
+                phone_number = user['mobile_number']
+
+                # Send the message to the user's phone number (implement the sending logic as needed)
+                # client.send_message(phone_number, message)
+                print(message)  # For testing purposes
+
+
+def aliceblue_invested_value(user_data):
     
-    print(message)  # Replace this with your method to send the message (e.g., email, Telegram)
+    alice = Aliceblue(user_data['username'], user_data['api_key'],session_id=user_data['session_id'])
+    holdings = alice.get_holding_positions()
 
+    invested_value = 0
+    if holdings.get("stat") == "Not_Ok":
+        invested_value = 0
+    else:
+        for stock in holdings['HoldingVal']:
+            average_price = float(stock['Price'])
+            quantity = float(stock['HUqty'])
+            invested_value += average_price * quantity
+
+    return invested_value
+
+
+def zerodha_invested_value(broker_data):
+    user_details = broker_data
+    kite = KiteConnect(api_key=user_details['api_key'])
+    kite.set_access_token(user_details['access_token'])
+    holdings = kite.holdings()
+    return sum(stock['average_price'] * stock['quantity'] for stock in holdings)
+
+# Fetch invested value based on broker type
+
+
+def get_invested_value(user_data):
+    active_users = general_calc.read_json_file(active_users_json_path)
+    for user in active_users:
+        if user['account_name'] == user_data['account_name'] and user['broker'] == "aliceblue":
+            return aliceblue_invested_value(user)
+        elif user['account_name'] == user_data['account_name'] and user['broker'] == "zerodha":
+            return zerodha_invested_value(user)
+        
 # Main function to execute the script
 def main():
-    """Main function to execute the script."""
-    DIR = os.getcwd()
-    broker_filepath = os.path.join(DIR, "MarketUtils", "active_broker.json")
-
-    # Read active_users.json
-    with open('active_users.json', 'r') as file:
+    # Read active users from the JSON file
+    with open(active_users_json_path, 'r') as file:
         users = json.load(file)
 
-    # Load broker data
-    broker_data = general_calc.read_json_file(broker_filepath)
-
+    # Process each user
     for user in users:
-        account_name = user['account_name']
-        excel_path = f"{account_name}.xlsx"
-
         # Load the DTD sheet from the Excel file
+        excel_path = f"{user['account_name']}.xlsx"
         dtd_data = load_excel_sheet(excel_path, 'DTD')
 
-        # Calculate the PnL for the last week
+        # Calculate PnL
         today = datetime.now()
-        start_date = today - timedelta(days=today.weekday() + 1) # Last Monday
-        end_date = start_date + timedelta(days=5) # Last Saturday
+        start_date = today - timedelta(days=today.weekday() + 1)
+        end_date = start_date + timedelta(days=5)
         pnl = calculate_pnl(dtd_data, start_date, end_date)
 
+        # Get invested value using the imported function
+        invested_value = get_invested_value(user)
+
         # Calculate cash balance
-        cash_balance = calculate_cash_balance(user, broker_data)
+        cash_balance = calculate_cash_balance(user, invested_value)
 
-        # Next week starting capital with stocks (placeholder, replace with actual calculation)
-        next_week_capital = cash_balance  # Placeholder, replace with actual calculation
+        # Calculate next week's capital, including invested value
+        next_week_capital = cash_balance + invested_value
 
-        # Send the weekly report
-        send_weekly_report(user, pnl, cash_balance, next_week_capital)
+        # Generate and print/send the report
+        report = generate_message(pnl, cash_balance, next_week_capital, invested_value, start_date, end_date)
+        print(report)  # Replace this with your method of sending the report (e.g., email, Telegram)
 
 # Execute the main function when the script is run
 if __name__ == "__main__":
