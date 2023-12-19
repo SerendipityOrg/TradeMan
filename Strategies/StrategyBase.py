@@ -9,9 +9,7 @@ fno_info_path = os.path.join(DIR_PATH, 'fno_info.csv')
 
 from Brokers.BrokerUtils import Broker
 import MarketUtils.general_calc as general_calc
-
-
-class Strategy:
+from .Strategy import Strategy
     def __init__(self, strategy_data):
         self.strategy_name = strategy_data.get('StrategyName', None)
         self.description = strategy_data.get('Description', None)
