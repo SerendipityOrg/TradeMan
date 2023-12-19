@@ -187,7 +187,7 @@ def select_client():
 
     # Show another select box for the user to choose between 'Profile' and 'Performance Dashboard'
     next_selection = st.sidebar.selectbox(
-        'Client Details', ['Profile', 'Performance Dashboard'])
+        'Client Details', ['Select','Profile', 'Performance Dashboard'])
 
     # Display the appropriate content based on the user's choice
     if next_selection == 'Profile':
@@ -201,9 +201,8 @@ def select_client():
         excel_file_name = f"{client_username}.xlsx"
         # Call the function to display the performance dashboard, passing in both the client data and Excel file name
         display_performance_dashboard(
-            selected_client, client_username, excel_file_name)
-
-
+            selected_client, client_username, excel_file_name)      
+    
 def show_profile(selected_client, selected_client_name):
     profile_picture = selected_client.get("Profile Picture")
     # Display the profile picture if available
@@ -591,44 +590,48 @@ def select_signals():
         st.sidebar.warning("No signals data found.")
         return
 
-    # Construct a list of signal names, with a default 'Select' option
-    signal_names = ['Select'] + list(signals_data.keys())
+    # Assuming 'signalinfo' and 'signals' are the main categories for an admin
+    signal_names = ['Select', 'signalinfo', 'signals']
 
-    # Create a select box in the Streamlit sidebar to choose a signal
-    selected_signal_name = st.sidebar.selectbox('Select a Signal', signal_names)
+    # Create a select box in the Streamlit sidebar to choose a signal category
+    selected_signal_category = st.sidebar.selectbox('Select a Signal Category', signal_names)
 
-    if selected_signal_name and selected_signal_name != 'Select':
-        # Display a date picker widget
+    # If an admin selects 'signalinfo' or 'signals', show the date input
+    if selected_signal_category in ['signalinfo', 'signals']:
         selected_date = st.date_input("Select a Date")
 
-        # Check if a date has been selected
-        if selected_date:
-            formatted_date = selected_date.strftime("%Y-%m-%d")  # Format the date as needed
+    # if selected_signal_name and selected_signal_name != 'Select':
+    #     # Display a date picker widget
+    #     selected_date = st.date_input("Select a Date")
 
-            try:
-                # Construct the path to the data for the selected signal
-                data_ref = db.reference(f"/signals/{selected_signal_name}")
+    #     # Check if a date has been selected
+    #     if selected_date:
+    #         formatted_date = selected_date.strftime("%Y-%m-%d")  # Format the date as needed
 
-                # Retrieve the data for the selected signal
-                signal_data = data_ref.get()
+    #         try:
+    #             # Construct the path to the data for the selected signal
+    #             data_ref = db.reference(f"/signals/{selected_signal_name}")
 
-                # Filter the data based on the selected date
-                if signal_data:
-                    extracted_data = []
-                    for item in signal_data.values():
-                        if 'exit_time' in item and datetime.strptime(item['exit_time'], "%Y-%m-%d %H:%M:%S").date() == selected_date:
-                            extracted_data.append({'trade_id': item['trade_id'], 'trade_points': item['trade_points']})
+    #             # Retrieve the data for the selected signal
+    #             signal_data = data_ref.get()
 
-                    if extracted_data:
-                        df = pd.DataFrame(extracted_data)
-                        st.write(df)
-                    else:
-                        st.warning("No trades found for the selected date.")
-                else:
-                    st.warning("No data found for the selected signal.")
+    #             # Filter the data based on the selected date
+    #             if signal_data:
+    #                 extracted_data = []
+    #                 for item in signal_data.values():
+    #                     if 'exit_time' in item and datetime.strptime(item['exit_time'], "%Y-%m-%d %H:%M:%S").date() == selected_date:
+    #                         extracted_data.append({'trade_id': item['trade_id'], 'trade_points': item['trade_points']})
 
-            except Exception as e:
-                st.error(f"Error retrieving data: {e}")
+    #                 if extracted_data:
+    #                     df = pd.DataFrame(extracted_data)
+    #                     st.write(df)
+    #                 else:
+    #                     st.warning("No trades found for the selected date.")
+    #             else:
+    #                 st.warning("No data found for the selected signal.")
+
+    #         except Exception as e:
+    #             st.error(f"Error retrieving data: {e}")
 
 def login():
 

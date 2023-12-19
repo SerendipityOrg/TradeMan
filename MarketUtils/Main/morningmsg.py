@@ -84,34 +84,39 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
     )
     return message
 
+# Other imports and function definitions remain the same
 
-broker_data = general_calc.read_json_file(broker_filepath)
-updated_users = []
+def main():
+    broker_data = general_calc.read_json_file(broker_filepath)
+    updated_users = []
 
-# Initialize Telegram Client
-with TelegramClient(session_filepath, api_id, api_hash) as client:
-    for user in broker_data:
-        if "Active" in user['account_type']:
-            # Calculate investment values for active users
-            invested_value = get_invested_value(user)
+    # Initialize Telegram Client
+    with TelegramClient(session_filepath, api_id, api_hash) as client:
+        for user in broker_data:
+            if "Active" in user['account_type']:
+                # Calculate investment values for active users
+                invested_value = get_invested_value(user)
 
-            cash_balance = user['expected_morning_balance'] - invested_value
-            current_capital = cash_balance + invested_value
+                cash_balance = user['expected_morning_balance'] - invested_value
+                current_capital = cash_balance + invested_value
 
-            # Formatting date and message
-            formatted_date = date.today().strftime("%d %b %Y")
-            message = generate_message(user, formatted_date, user, cash_balance, invested_value, current_capital)
+                # Formatting date and message
+                formatted_date = date.today().strftime("%d %b %Y")
+                message = generate_message(user, formatted_date, user, cash_balance, invested_value, current_capital)
 
-            user['current_capital'] = current_capital
-            phone_number = user['mobile_number']
+                user['current_capital'] = current_capital
+                phone_number = user['mobile_number']
 
-            print(message)
+                print(message)
 
-            # Send message via Telegram
-            try:
-                client.send_message(phone_number, message, parse_mode='md')
-            except Exception as e:
-                print(f"Error sending message to {phone_number}: {e}")
+                # Send message via Telegram
+                try:
+                    client.send_message(phone_number, message, parse_mode='md')
+                except Exception as e:
+                    print(f"Error sending message to {phone_number}: {e}")
 
-# Write the updated broker data (including both active and inactive users) to the file
-general_calc.write_json_file(broker_filepath, broker_data)
+    # Write the updated broker data (including both active and inactive users) to the file
+    general_calc.write_json_file(broker_filepath, broker_data)
+
+if __name__ == "__main__":
+    main()

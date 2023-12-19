@@ -1,198 +1,144 @@
 import os
 import sys
 import json
-import pandas as pd
-from babel.numbers import format_currency
 from datetime import datetime, timedelta
+from babel.numbers import format_currency
 from dotenv import load_dotenv
+from telethon.sync import TelegramClient
 from pya3 import Aliceblue
 from kiteconnect import KiteConnect
-from telethon import TelegramClient
 
-# Set the current working directory and load environment variables
+# Set up the working directory and load environment variables
 DIR = os.getcwd()
 ENV_PATH = os.path.join(DIR, '.env')
 load_dotenv(ENV_PATH)
 
-# Retrieve and normalize the directory path for Excel files
-# excel_dir = os.getenv('onedrive_excel_folder')
-# excel_dir = os.path.normpath(excel_dir) 
-excel_dir = r"C:\Users\vanis\OneDrive\Desktop\TradeMan\UserProfile\excel" 
-
+# Define file paths
 active_users_json_path = os.path.join(DIR, "MarketUtils", "active_users.json")
+broker_filepath = os.path.join(DIR, "MarketUtils", "broker.json")
+starting_capital_path = os.path.join(DIR, "MarketUtils", "weekstartingcapital.txt")
 
-# Add the script directory to the system path for importing other modules
+# Extend the system path for importing modules from the script directory
 sys.path.append(DIR)
-import MarketUtils.general_calc as general_calc
-# from MarketUtils.Main.morningmsg import get_invested_value
+from MarketUtils.Main.morningmsg import get_invested_value  # Import function without printing
 
+# Function to format currency in a custom style
 def custom_format(amount):
+    """Formats a numeric amount into a currency format."""
     formatted = format_currency(amount, 'INR', locale='en_IN')
     return formatted.replace('₹', '₹ ')
 
-def read_week_starting_capital(file_path):
-    start_capital = {}
-    try:
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-            for line in lines:
-                parts = line.strip().split('date:')
-                if len(parts) == 2:
-                    user_balance_part = parts[0].strip()
-                    user_parts = user_balance_part.split(':')
-                    date_str = parts[1].strip()
-                    if len(user_parts) == 2:
-                        user = user_parts[0].strip()
-                        balance_str = user_parts[1].strip().replace('₹', '').replace(',', '').strip()
-                        start_capital[user] = {
-                            'balance': float(balance_str),
-                            'date': pd.to_datetime(date_str, format='%d-%b-%y')  # Assuming the date is in '04-Nov-23' format
-                        }
-    except FileNotFoundError:
-        print("useropeningbalance.txt not found.")
-    return start_capital
+def aliceblue_cash_value(user_data):
+    
+    alice = Aliceblue(user_data['username'], user_data['api_key'],session_id=user_data['session_id'])
 
-# # Function to load an Excel sheet
-# def load_excel_sheet(excel_file_name, sheet_name):
-#     """Loads a specified sheet from an Excel file into a DataFrame."""
-#     excel_path = os.path.join(excel_dir, excel_file_name)
-#     try:
-#         df = pd.read_excel(excel_path, sheet_name=sheet_name)
-#         if 'Date' not in df.columns:
-#             print(f"'Date' column not found in the Excel file: {excel_file_name}")
-#             return pd.DataFrame()
-#         df['Date'] = pd.to_datetime(df['Date'], format='%d-%b-%y', errors='coerce')
-#         return df
-#     except FileNotFoundError:
-#         print(f"Excel file not found: {excel_path}")
-#         return pd.DataFrame()
-#     except Exception as e:
-#         print(f"Error loading Excel file: {e}")
-#         return pd.DataFrame()
+    # Fetching the margin or funds details, the method name might differ based on the API
+    balance_details = alice.get_balance()  # This method might have a different name
 
-def write_next_week_capital(capital_file_path, users_capital):
-    """Writes next week's capital to a file."""
-    with open(capital_file_path, 'w') as file:
-        for user, capital in users_capital.items():
-            date_str = datetime.now().strftime("%d-%b-%y")
-            file.write(f"{user} : {custom_format(capital)} date: {date_str}\n")
+      # Search for 'coverOrderMarginPrsnt' in the balance_details
+    for item in balance_details:
+        if isinstance(item, dict) and 'coverOrderMarginPrsnt' in item:
+            cover_order_margin_present = item.get('coverOrderMarginPrsnt', 0)
+            print("Cover order margin present:", cover_order_margin_present)
+            return cover_order_margin_present
 
-def calculate_pnl_and_update_capital(users, capital_file_path):
-    """Calculates PnL and updates the capital file."""
-    starting_capitals = read_week_starting_capital(capital_file_path)
-    next_week_capitals = {}
-    for user in users:
-        current_capital = user['current_capital']  # Assuming this field exists in your user data
-        starting_capital = starting_capitals.get(user['account_name'], 0)
-        pnl = starting_capital - current_capital
-        next_week_capitals[user['account_name']] = current_capital
-        print(f"PnL for {user['account_name']}: {custom_format(pnl)}")
-    write_next_week_capital(capital_file_path, next_week_capitals)
+    # Default return if 'coverOrderMarginPrsnt' is not found
+    return 0
 
-
-# Function to calculate cash balance
+# Function to calculate the cash balance for a user
 def calculate_cash_balance(user, invested_value):
-    """Calculates the cash balance for a user."""
+    """Calculates and returns the cash balance for a user."""
     return user['expected_morning_balance'] - invested_value
 
-# Function to generate the weekly report message
+# Function to read the starting capital from a file for a specific user
+def get_starting_capital(user_account_name):
+    """Reads and returns the starting capital for a specific user from a file."""
+    with open(starting_capital_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            if user_account_name in line:
+                capital_str = line.split(':')[1].split('date')[0].strip()
+                capital_str = capital_str.replace('₹', '').replace(',', '')
+                return float(capital_str)
+    return 0.0
+
+# Function to read the current capital for a specific user from a file
+def get_current_capital(user_account_name):
+    """Reads and returns the current capital for a specific user from a file."""
+    with open(broker_filepath, 'r') as file:
+        broker_data = json.load(file)
+    for account in broker_data:
+        if account.get("account_name") == user_account_name:
+            return account.get("current_capital", 0.0)
+    return 0.0
+
+# Function to calculate the profit and loss
+def calculate_pnl(starting_capital, current_capital):
+    """Calculates and returns the Profit and Loss (PnL)."""
+    return  current_capital - starting_capital 
+
+# Function to generate a formatted message for weekly reports
 def generate_message(user, pnl, cash_balance, next_week_capital, invested_value, start_date, end_date):
-    """Formats and generates the weekly report message."""
+    """Generates and returns a formatted weekly report message."""
     message = f"Weekly Summary for {user['account_name']} ({start_date.strftime('%B %d')} to {end_date.strftime('%B %d')})\n\n"
-    message += f"PnL: {pnl}\n\n"
-    message += f"Cash Balance + stocks: {cash_balance} + {invested_value}\n"
-    message += f"Next Week Starting Capital with stocks: {next_week_capital}\n\n"
+    message += f"PnL: {custom_format(pnl)}\n\n"
+    message += f"Cash Balance + stocks: {custom_format(cash_balance)} + {custom_format(invested_value)}\n"
+    message += f"Next Week Starting Capital with stocks: {custom_format(next_week_capital)}\n\n"
     message += "Best regards,\nSerendipity Trading Firm"
     return message
 
-
-def aliceblue_invested_value(user_data):
-    
-    alice = Aliceblue(user_data['username'], user_data['api_key'],session_id=user_data['session_id'])
-    holdings = alice.get_holding_positions()
-
-    invested_value = 0
-    if holdings.get("stat") == "Not_Ok":
-        invested_value = 0
-    else:
-        for stock in holdings['HoldingVal']:
-            average_price = float(stock['Price'])
-            quantity = float(stock['HUqty'])
-            invested_value += average_price * quantity
-
-    return invested_value
-
-def zerodha_invested_value(broker_data):
-    user_details = broker_data
-    kite = KiteConnect(api_key=user_details['api_key'])
-    kite.set_access_token(user_details['access_token'])
-    holdings = kite.holdings()
-    return sum(stock['average_price'] * stock['quantity'] for stock in holdings)
-
-# Fetch invested value based on broker type
-def get_invested_value(user_data):
-    active_users = general_calc.read_json_file(active_users_json_path)
-    for user in active_users:
-        if user['account_name'] == user_data['account_name'] and user['broker'] == "aliceblue":
-            return aliceblue_invested_value(user)
-        elif user['account_name'] == user_data['account_name'] and user['broker'] == "zerodha":
-            return zerodha_invested_value(user)
-
-# Function to find the start date of the last complete week (Monday to Friday)
+# Function to find the start date of the last complete week
 def get_last_week_start():
-    """Finds the start date of the last complete week."""
+    """Finds and returns the start date of the last complete week."""
     today = datetime.now()
     last_monday = today - timedelta(days=today.weekday() + 7)
     return last_monday
 
-# Function to get last week's Running Balance
-def get_last_week_running_balance(data):
-    """Gets the last week's Running Balance from the DataFrame."""
-    if data.empty:
-        print("Dataframe is empty. Cannot calculate last week's running balance.")
-        return None
-    start_date = get_last_week_start()
-    end_date = start_date + timedelta(days=4)  # Up to Friday
+# Function to save the next week's capital for each user to a file
+def save_next_week_capital(next_week_capitals):
+    """Saves the next week's capital for each user to a file."""
+    with open(starting_capital_path, 'w', encoding='utf-8') as file:
+        date_string = datetime.now().strftime("%d-%b-%y")
+        for user_name, capital in next_week_capitals.items():
+            file.write(f"{user_name} : {custom_format(capital)} date: {date_string}\n")
 
-    week_data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
-    if not week_data.empty:
-        last_week_balance = week_data.iloc[-1]['Running Balance']  # Access the last row's running balance
-        return last_week_balance
-    else:
-        print("No data found for last week.")
-        return None
-
+# Function to send a message via Telegram
+def send_telegram_message(phone_number, message):
+    """Sends a message to a specified phone number via Telegram."""
+    session_filepath = os.path.join(DIR, "MarketUtils", "Telegram", "+918618221715.session")
+    with TelegramClient(session_filepath, api_id, api_hash) as client:
+        client.send_message(phone_number, message, parse_mode='md')
 
 # Main function to execute the script
 def main():
-    capital_file_path = os.path.join(DIR, "weekstartingcapital.txt")
+    """Main function to execute the script for generating weekly reports."""
     with open(active_users_json_path, 'r') as file:
         users = json.load(file)
 
-    for user in users:
-        excel_file_name = f"{user['account_name']}.xlsx"
-        
-        # Load specific sheet (DTD) and perform calculations
-        # dtd_data = load_excel_sheet(excel_file_name, 'DTD')
+    next_week_capitals = {}
 
-        # Other calculations and message generation
-        start_date = get_last_week_start()
-        end_date = start_date + timedelta(days=4)
-        pnl = calculate_pnl_and_update_capital(start_date, end_date)
+    for user in users:
+        user_name = user['account_name']
+        starting_capital = get_starting_capital(user_name)
+        current_capital = get_current_capital(user_name)
         invested_value = get_invested_value(user)
         cash_balance = calculate_cash_balance(user, invested_value)
+        pnl = calculate_pnl(starting_capital, current_capital)
         next_week_capital = cash_balance + invested_value
-        message = generate_message(user, pnl, cash_balance, next_week_capital, invested_value, start_date, end_date)
-        print(message)
+        next_week_capitals[user_name] = next_week_capital
 
-    # Update the starting capital for the next week
-    calculate_pnl_and_update_capital(users, capital_file_path)
+        start_date = get_last_week_start()
+        end_date = start_date + timedelta(days=4)
+        message = generate_message(user, pnl, cash_balance, next_week_capital, invested_value, start_date, end_date)
+        # print(message)
+
+        # Uncomment the line below to enable sending the message via Telegram
+        # send_telegram_message(user['mobile_number'], message)
+
+    # save_next_week_capital(next_week_capitals) 
 
 # Retrieve API credentials for Telegram from environment variables
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
-
-strating_capital = read_week_starting_capital(os.path.join(DIR, 'MarketUtils', 'Main', 'weekstartingcapital.txt'))
 
 if __name__ == "__main__":
     main()
