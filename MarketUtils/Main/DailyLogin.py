@@ -40,18 +40,12 @@ def clear_json_file(user_name):
     order_json_filepath = os.path.join(order_json_folderpath, f'{user_name}.json')
     general_calc.write_json_file(order_json_filepath, {})
 
-active_users = all_broker_login(place_order_calc.get_active_users(broker_json_details))
+active_users = all_broker_login(general_calc.get_active_users(broker_json_details))
 
 def calculate_qty(active_users):
     for user in active_users:
-        prev_overnight_qty = None
-        for prev_user in previous_day_active_users:
-            if user['account_name'] == prev_user['account_name'] and 'OvernightFutures' in prev_user['qty']:
-                prev_overnight_qty = prev_user['qty']['OvernightFutures']
         lots = qty_calc.calculate_lots(user)
         user['qty'] = lots
-        if prev_overnight_qty is not None:
-            user['qty']['PreviousOvernightFutures'] = prev_overnight_qty
         clear_json_file(user['account_name'])
     return active_users
 

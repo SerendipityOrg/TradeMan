@@ -5,4 +5,5 @@
 *.json
 *.xlsx
 *.DS_Store
+.venv/
 trial.py

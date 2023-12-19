@@ -131,7 +131,7 @@ def assign_short_and_long_orders(orders):
 
     return results
 
-def amipy_details(orders, broker):
+def amipy_details(orders, broker,strategy=None):
     # Simplify orders based on the broker
     simplified_orders = []
     for order in orders:
@@ -153,7 +153,7 @@ def amipy_details(orders, broker):
 
     return results
 
-def mpwizard_details(orders, broker):
+def mpwizard_details(orders, broker,strategy=None):
     results = {}
     buy_orders = []
     sell_orders = []
@@ -185,7 +185,7 @@ def mpwizard_details(orders, broker):
     }
     return results
 
-def overnight_futures_details(orders, broker):
+def overnight_futures_details(orders, broker,strategy=None):
     results = {}
     morning_trade_orders = []
     afternoon_trade_orders = []
@@ -230,7 +230,7 @@ def overnight_futures_details(orders, broker):
     }
     return results
 
-def expiry_trader_details(orders,broker):
+def expiry_trader_details(orders,broker,strategy=None):
     results = {}
     entry_orders = []
     exit_orders = []
@@ -260,9 +260,9 @@ def expiry_trader_details(orders,broker):
     }
     return results
 
-def extra_details(orders,broker):
+def extra_details(orders,broker,strategy=None):
     results = {
-        "EXTRA": {
+        strategy: {
             "Long": [],
             "Short": [],
             "LongCover": [],
@@ -285,13 +285,13 @@ def extra_details(orders,broker):
                 simplified_order['trade_type'] = 'LongCoverOrder'
             
         if simplified_order['trade_type'] == 'LongOrder':
-            results['EXTRA']['Long'].append(simplified_order)
+            results[strategy]['Long'].append(simplified_order)
         elif simplified_order['trade_type'] == 'ShortOrder':
-            results['EXTRA']['Short'].append(simplified_order)
+            results[strategy]['Short'].append(simplified_order)
         elif simplified_order['trade_type'] == 'LongCoverOrder':
-            results['EXTRA']['LongCover'].append(simplified_order)
+            results[strategy]['LongCover'].append(simplified_order)
         elif simplified_order['trade_type'] == 'ShortCoverOrder':
-            results['EXTRA']['ShortCover'].append(simplified_order)
+            results[strategy]['ShortCover'].append(simplified_order)
     
     return results
 
@@ -302,7 +302,8 @@ strategy_to_function = {
     'MPWizard': mpwizard_details,
     'OvernightFutures': overnight_futures_details,
     'ExpiryTrader' : expiry_trader_details,
-    'Extra' : extra_details
+    'Extra' : extra_details,
+    'Stocks' : extra_details
     # Add other strategies and their functions here
 }
 
@@ -341,6 +342,7 @@ for user in active_users:
     strategies = list(strategies.keys())
     #add "Extra" strategy to the list of strategies
     strategies.append("Extra")
+    strategies.append("Stocks")
 
     if "PreviousOvernightFutures" in strategies:
         strategies.remove("PreviousOvernightFutures")
@@ -349,7 +351,7 @@ for user in active_users:
     combined_user_orders = {}
     for strategy, order_list in segregate_based_on_strategy.items():
         if strategy in strategy_to_function:
-            processed_orders = strategy_to_function[strategy](order_list, user["broker"])
+            processed_orders = strategy_to_function[strategy](order_list, user["broker"],strategy)
             combined_user_orders.update(processed_orders)
     
     if combined_user_orders:

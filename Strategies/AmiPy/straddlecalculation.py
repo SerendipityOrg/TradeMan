@@ -8,13 +8,12 @@ import json
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
-print(DIR_PATH)
 import MarketUtils.InstrumentBase as InstrumentBase
 
 import Strategies.StrategyBase as StrategyBase
-import Brokers.place_order_calc as place_order_calc
+import MarketUtils.general_calc as general_calc
 
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('AmiPy')
+_,STRATEGY_PATH = general_calc.get_strategy_json('AmiPy')
 
 strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
 instrument_obj = InstrumentBase.Instrument()
@@ -25,11 +24,8 @@ Supertrend_period = strategy_obj.get_entry_params().get('SupertrendPeriod')
 Supertrend_multiplier = strategy_obj.get_entry_params().get('SupertrendMultiplier')
 EMA_period = strategy_obj.get_entry_params().get('EMAPeriod')
 
-
-
 def get_option_tokens(strike_prc):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    instruments_df = pd.read_csv(os.path.join(script_dir, '..', '..', 'instruments.csv'))
+    instruments_df = pd.read_csv(os.path.join(DIR_PATH, 'instruments.csv'))
 
     instruments_df = instruments_df[
         ["instrument_token", "exchange_token", "tradingsymbol", "name", "exchange", "lot_size", "instrument_type", "expiry", "strike"]

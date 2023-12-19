@@ -1,9 +1,6 @@
 import os
 import sys
-import ast
-import pandas as pd
 import datetime as dt
-from kiteconnect import KiteConnect
 from dotenv import load_dotenv
 
 DIR_PATH = os.getcwd()
@@ -16,9 +13,9 @@ import MarketUtils.general_calc as general_calc
 import Brokers.BrokerUtils.Broker as Broker
 import Brokers.Zerodha.kite_utils as kite_utils
 import Strategies.StrategyBase as StrategyBase
-import Brokers.place_order_calc as place_order_calc
+import MarketUtils.Calculations.qty_calc as qty_calc
 
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('MPWizard')
+_,STRATEGY_PATH = general_calc.get_strategy_json('MPWizard')
 strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
 
 api_key, access_token = Broker.get_primary_account()
@@ -100,37 +97,10 @@ def get_high_low_range_and_update_json():
             entry_params[instrument]['TriggerPoints']['IBLow'] = low
             entry_params[instrument]['IBValue'] = range_
             entry_params[instrument]['IBLevel'] = determine_ib_level(range_ / entry_params[instrument]['ATR5D'])
-            entry_params[instrument]["PriceRef"] = get_weekday_price_ref(instrument)
+            entry_params[instrument]["PriceRef"] = qty_calc.get_price_reference('MPWizard',instrument)
             strategy_obj.write_strategy_json(STRATEGY_PATH)
 
-
-def get_weekday_price_ref(base_symbol):
-    """
-    Fetch the PriceRef from the ExtraInformation for each base symbol based on the day.
-    """
-
-    weekday = dt.datetime.now().weekday()
-    
-    extra_information = strategy_obj.get_extra_information()
-
-    # Form the key to fetch from ExtraInformation
-    key = f"{base_symbol}OptRef"
-
-    # Fetch the PriceRef for the specified base symbol based on the day
-    ref_data = extra_information.get(key, None)
-    if ref_data is None:
-        print(f"ExtraInformation for {key} not found.")
-        return None
-
-    if not isinstance(ref_data, list) or len(ref_data) <= weekday:
-        print(f"PriceRef data for {key} is not in the correct format or missing for the current weekday.")
-        return None
-
-    price_ref = ref_data[weekday]
-    return price_ref
-
 def calculate_option_type(ib_level,cross_type,trade_view):
-    
     if ib_level == 'Big':
         return 'PE' if cross_type == 'UpCross' else 'CE'
     elif ib_level == 'Small':

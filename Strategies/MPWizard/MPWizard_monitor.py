@@ -1,6 +1,7 @@
 from time import sleep
 import os,sys,json
 import datetime as dt
+import MPWizard_calc as MPWizard_calc
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -12,7 +13,7 @@ import MarketUtils.general_calc as general_calc
 import Brokers.place_order as place_order
 import MarketUtils.Discord.discordchannels as discordbot
 
-_,mpwizard_json = place_order_calc.get_strategy_json('MPWizard')
+_,mpwizard_json = general_calc.get_strategy_json('MPWizard')
 instrument_obj = InstrumentBase.Instrument()
 strategy_obj = StrategyBase.Strategy.read_strategy_json(mpwizard_json)
 
@@ -115,10 +116,12 @@ class OrderMonitor:
 
     def create_order_details(self,name,cross_type,ltp,price_ref):
         mood_data_entry = self._get_mood_data_for_instrument(name)
+        ib_level = mood_data_entry['IBLevel']
+        instru_mood = self.mood_data['GeneralParams']['TradeView']
         if not mood_data_entry:
-            return #TODO add try exception for all the points of failure.
+            return
 
-        option_type = self._determine_option_type(cross_type, mood_data_entry)
+        option_type = MPWizard_calc.calculate_option_type(ib_level,cross_type,instru_mood)
         if not option_type:
             return
         
@@ -128,6 +131,7 @@ class OrderMonitor:
         order_details = [
         {  
         "strategy": strategy_obj.get_strategy_name(),
+        "strategy_mode" : "MultipleInstruments",
         "base_symbol": name,
         "exchange_token" : exchange_token,     
         "segment" : strategy_obj.get_general_params().get('Segment'),
@@ -152,28 +156,14 @@ class OrderMonitor:
             "trigger_prc" : order_details['trigger_prc'],
             "order_type" : 'Stoploss',
             "product_type" : order_details['product_type'],
-            "segment" : order_details['segment']
+            "segment" : order_details['segment'],
+            "strategy_mode" : "MultipleInstruments"
         }
         ]
         return modify_order_details
 
     def _get_mood_data_for_instrument(self, name):
         return self.mood_data['EntryParams'].get(name)
-
-    def _determine_option_type(self, cross_type, mood_data_entry):
-        """Determine the option type based on cross type and mood data."""
-        ib_level = mood_data_entry['IBLevel']
-        instru_mood = self.mood_data['GeneralParams']['TradeView']
-
-        if ib_level == 'Big':
-            return 'PE' if cross_type == 'UpCross' else 'CE'
-        elif ib_level == 'Small':
-            return 'PE' if cross_type == 'DownCross' else 'CE'
-        elif ib_level == 'Medium':
-            return 'PE' if instru_mood == 'Bearish' else 'CE'
-        else:
-            print(f"Unknown IB Level: {ib_level}")
-        return None
     
     def get_index_name(self,token):
         index_tokens = strategy_obj.get_general_params().get("IndicesTokens")

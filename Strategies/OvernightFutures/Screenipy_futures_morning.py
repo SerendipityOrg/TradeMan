@@ -17,7 +17,7 @@ import MarketUtils.InstrumentBase as InstrumentBase
 import Brokers.place_order_calc as place_order_calc
 import MarketUtils.general_calc as general_calc
 
-_,STRATEGY_PATH = place_order_calc.get_strategy_json('OvernightFutures')
+_,STRATEGY_PATH = general_calc.get_strategy_json('OvernightFutures')
 
 strategy_obj = StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
 instrument_obj = InstrumentBase.Instrument()
@@ -44,7 +44,8 @@ orders_to_place = [
         "transaction_type": strategy_obj.get_square_off_transaction(prediction), 
         "order_type" : order_type, 
         "product_type" : product_type,
-        "order_mode" : ["Main"]
+        "order_mode" : ["Main"],
+        "strategy_mode" : "CarryForward"
     },
     {  
         "strategy": strategy_name,
@@ -54,7 +55,8 @@ orders_to_place = [
         "transaction_type": hedge_transcation_type,  
         "order_type" : order_type, 
         "product_type" : product_type,
-        "order_mode" : ["Hedge"]
+        "order_mode" : ["Hedge"],
+        "strategy_mode" : "CarryForward"
     }
 ]
 
