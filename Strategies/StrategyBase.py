@@ -21,7 +21,8 @@ from .Strategy import Strategy
         self.today_orders = strategy_data.get('TodayOrders', [])
         self.extra_information = strategy_data.get('ExtraInformation', {})
         self.signal_entry = strategy_data.get('SignalEntry', {})
-    
+    # Getter methods
+    # Getter methods
     # Getter methods
     def get_strategy_name(self):
         return self.strategy_name
