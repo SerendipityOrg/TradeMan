@@ -177,6 +177,8 @@ def mpwizard_details(orders, broker):
     buy_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
     sell_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
 
+    sell_orders = [order for order in sell_orders if order["avg_price"] != 0.0]
+
     results = {
         "MPWizard": {
             "BUY": buy_orders,
@@ -249,8 +251,12 @@ def expiry_trader_details(orders,broker):
         elif simplified_order["order_type"] == "exit":
             if simplified_order["trade_type"]=="BUY":
                 simplified_order["trade_type"] = "MainOrder"
+            elif simplified_order["trade_type"]=="SELL":
+                simplified_order["trade_type"] = "HedgeOrder"
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
             exit_orders.append(simplified_order)
+
+    exit_orders = [order for order in exit_orders if order["avg_price"] != 0.0]
 
     results = {
         "ExpiryTrader": {
