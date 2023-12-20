@@ -17,9 +17,9 @@ load_dotenv(ENV_PATH)
 
 # excel_dir = os.getenv('onedrive_excel_folder')
 excel_dir = r"/Users/amolkittur/Desktop/Dev/UserProfile/Excel"
-excel_path = os.getenv('signal_excel_file')
 
 def append_data_to_excel(data, sheet_name):
+    excel_path = os.path.join(excel_dir, "omkar.xlsx")
     book = load_workbook(excel_path)
     sheet = book[sheet_name] if sheet_name in book.sheetnames else book.create_sheet(sheet_name)
 
@@ -161,7 +161,6 @@ def handle_other_sl_types(strategy):
     omkar_file_path = os.path.join(excel_dir, "omkar.xlsx")
     df = pd.read_excel(omkar_file_path, sheet_name=strategy)
 
-    print(todays_trade_ids)
 
     # Process each trade for today
     for trade_id in todays_trade_ids:
@@ -213,7 +212,6 @@ def main():
         if sl_type == "StrategySL":
             handle_strategy_sl(strategy, strategy_path)
         else:
-            print(strategy)
             handle_other_sl_types(strategy)
 
 main()
