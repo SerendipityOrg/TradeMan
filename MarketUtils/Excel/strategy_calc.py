@@ -34,46 +34,42 @@ def process_mpwizard_trades(broker,mpwizard_trades,username=None,strategy=None):
         return []
 
     result = []
+    trade_ids = set(trade["trade_id"] for trade in mpwizard_trades["BUY"])
 
-    for i in range(len(mpwizard_trades["BUY"])):
-        buy_trade = mpwizard_trades["BUY"][i]
-        # Find a matching sell_trade by trade_id or trading_symbol
-        matching_sell_trades = [trade for trade in mpwizard_trades["SELL"]
-                                if trade["trade_id"] == buy_trade["trade_id"] or
-                                trade["trading_symbol"] == buy_trade["trading_symbol"]]
-        
-        if not matching_sell_trades:
-            print(f"No matching SELL trade for BUY trade with trade_id: {buy_trade['trade_id']}")
-            continue
-        
-        sell_trade = matching_sell_trades[0] # Take the first matching sell trade
+    for trade_id in trade_ids:
+        entry_trades = [trade for trade in mpwizard_trades["BUY"] if trade["trade_id"] == trade_id]
+        exit_trades = [trade for trade in mpwizard_trades["SELL"] if trade["trade_id"] == trade_id]
+        total_qty = sum(trade["qty"] for trade in entry_trades)
+
+        entry_trade_avg_price = calculate_avg_price(entry_trades)
+        exit_trade_avg_price = calculate_avg_price(exit_trades)
 
         broker_taxes = {
             'zerodha': tc.zerodha_taxes,
             'aliceblue': tc.aliceblue_taxes
         }
-        charges = broker_taxes[broker](buy_trade['qty'], buy_trade['avg_price'], sell_trade['avg_price'], 1)
-        
-        trade_points = float(sell_trade["avg_price"]) - float(buy_trade["avg_price"])
-        pnl = trade_points * int(buy_trade["qty"])
+        charges = broker_taxes[broker](total_qty, entry_trade_avg_price, entry_trade_avg_price, len(entry_trades) )
+
+        entry_time = pd.to_datetime(entry_trades[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
+        exit_time = pd.to_datetime(exit_trades[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
+
+        trade_points = float(exit_trade_avg_price) - float(entry_trade_avg_price)
+        pnl = trade_points * total_qty
         net_pnl = pnl - charges
         signal = "Long"
 
-        entry_time = pd.to_datetime(buy_trade["time"], format='%d/%m/%Y %H:%M:%S').round('min')
-        exit_time = pd.to_datetime(sell_trade["time"], format='%d/%m/%Y %H:%M:%S').round('min')
-
         trade_data = {
-            "trade_id": buy_trade["trade_id"],
-            "trading_symbol": buy_trade["trading_symbol"],
+            "trade_id": trade_id,
+            "trading_symbol": entry_trades[0]["trading_symbol"],
             "signal": signal,
             "entry_time": entry_time.strftime('%Y-%m-%d %H:%M:%S'),
             "exit_time": exit_time.strftime('%Y-%m-%d %H:%M:%S'),
-            "entry_price": round(buy_trade["avg_price"], 2),
-            "exit_price": round(sell_trade["avg_price"], 2),
+            "entry_price": round(entry_trade_avg_price, 2),
+            "exit_price": round(exit_trade_avg_price, 2),
             "hedge_entry_price": 0,  
             "hedge_exit_price": 0,   
             "trade_points": round(trade_points, 2),
-            "qty": buy_trade["qty"],
+            "qty": total_qty,
             "pnl": round(pnl, 2),
             "tax": round(charges, 2),
             "net_pnl": round(net_pnl, 2)
@@ -133,7 +129,7 @@ def process_short_trades(broker,short_signals, short_cover_signals,signal):
 
         trade_data = {
             "trade_id": short_signal_group[0]["trade_id"],
-            "trading_symbol Symbol": short_signal_group[0]["trading_symbol"],
+            "trading_symbol": short_signal_group[0]["trading_symbol"],
             "signal": signal,
             "entry_time": entry_time.strftime('%Y-%m-%d %H:%M:%S'),
             "exit_time": exit_time.strftime('%Y-%m-%d %H:%M:%S'),
@@ -194,12 +190,12 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
         result.append(trade_data)
     return result
 
-def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
-    def calculate_avg_price(trades):
-        total_price = sum(trade["avg_price"] * trade["qty"] for trade in trades)
-        total_qty = sum(trade["qty"] for trade in trades)
-        return total_price / total_qty if total_qty > 0 else 0
+def calculate_avg_price(trades):
+    total_price = sum(trade["avg_price"] * trade["qty"] for trade in trades)
+    total_qty = sum(trade["qty"] for trade in trades)
+    return total_price / total_qty if total_qty > 0 else 0
 
+def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
     if not expiry_trades:
         print("No ExpiryTrades trades found.")
         return []
@@ -210,6 +206,7 @@ def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
     for trade_id in trade_ids:
         entry_trades = [trade for trade in expiry_trades["Entry"] if trade["trade_id"] == trade_id]
         exit_trades = [trade for trade in expiry_trades["Exit"] if trade["trade_id"] == trade_id]
+        total_qty = sum(trade["qty"] for trade in entry_trades)
 
         main_entry_trades = [trade for trade in entry_trades if trade["trade_type"] == "MainOrder"]
         hedge_entry_trades = [trade for trade in entry_trades if trade["trade_type"] == "HedgeOrder"]
@@ -228,12 +225,12 @@ def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
             'zerodha': tc.zerodha_taxes,
             'aliceblue': tc.aliceblue_taxes
         }
-        charges = broker_taxes[broker](main_entry_trades[0]["qty"], main_entry_avg_price, main_exit_avg_price, no_of_orders)
+        charges = broker_taxes[broker](total_qty, main_entry_avg_price, main_exit_avg_price, no_of_orders)
 
         main_trade_points = main_entry_avg_price - main_exit_avg_price
         hedge_trade_points = hedge_exit_avg_price - hedge_entry_avg_price if hedge_entry_trades else 0
         trade_points = main_trade_points + hedge_trade_points
-        pnl = trade_points * main_entry_trades[0]["qty"]
+        pnl = trade_points * total_qty
         net_pnl = pnl - charges
 
 

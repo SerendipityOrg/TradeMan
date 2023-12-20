@@ -249,8 +249,13 @@ def expiry_trader_details(orders,broker,strategy=None):
         elif simplified_order["order_type"] == "exit":
             if simplified_order["trade_type"]=="BUY":
                 simplified_order["trade_type"] = "MainOrder"
+            elif simplified_order["trade_type"]=="SELL":
+                simplified_order["trade_type"] = "HedgeOrder"
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
             exit_orders.append(simplified_order)
+
+    #remove the order which has avg_price as 0
+    exit_orders = [order for order in exit_orders if order["avg_price"] != 0.0]
 
     results = {
         "ExpiryTrader": {
@@ -295,7 +300,6 @@ def extra_details(orders,broker,strategy=None):
     
     return results
 
-        
 
 strategy_to_function = {
     'AmiPy': amipy_details,
@@ -312,7 +316,7 @@ def segregate_by_strategy(details, strategies, broker):
     combined_details = {}
     for strategy in strategies:
         # 3. Get today_orders from the strategy's JSON and add _entry and _exit suffixes
-        _, strategy_path = place_order_calc.get_strategy_json(strategy)
+        _, strategy_path = general_calc.get_strategy_json(strategy)
         strategy_obj = Strategy.read_strategy_json(strategy_path)
         trade_ids = strategy_obj.get_today_orders()
         entry_ids = [tid + "_entry" for tid in trade_ids]
