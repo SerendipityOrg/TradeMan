@@ -2,7 +2,9 @@ def zerodha_taxes(qty, entry_prc, exit_prc,orders):
     if orders == 1:
        instruments = 2
     elif orders == 2:
-        instruments = 4 
+        instruments = 4
+    elif orders == 3:
+        instruments = 6 
     # Brokerage
     brokerage = 20 * instruments  # Flat Rs. 20 per executed order
 
