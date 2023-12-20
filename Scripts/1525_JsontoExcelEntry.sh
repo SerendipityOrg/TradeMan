@@ -35,7 +35,7 @@ while true; do
         echo "The script AmiPy has some errors. Please Check !!!"
         
         # Send a message on Telegram
-        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Sweep Orders errors. Please Check !!!"
+        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Excel entry  errors. Please Check !!!"
 
         exit 1
     fi
