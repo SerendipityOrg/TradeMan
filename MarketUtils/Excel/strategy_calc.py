@@ -2,10 +2,15 @@ import pandas as pd
 import os,sys
 from babel.numbers import format_currency
 from openpyxl import load_workbook
+from dotenv import load_dotenv
 
 DIR = os.getcwd()
 sys.path.append(DIR)
 import MarketUtils.Calculations.taxcalculation as tc
+
+ENV_PATH = os.path.join(DIR, '.env')
+load_dotenv(ENV_PATH)
+excel_dir = os.getenv('onedrive_excel_folder')
 
 def custom_format(amount):
     formatted = format_currency(amount, 'INR', locale='en_IN')
@@ -266,7 +271,7 @@ def process_expiry_trades(broker, expiry_trades,username=None):
     return result
 
 def process_morning_trades(broker,morning_trades,username=None):
-    excel_path = os.path.join(DIR, f"UserProfile/Excel/{username}.xlsx")
+    excel_path = os.path.join(excel_dir, f"{username}.xlsx")
     all_dfs = load_existing_excel(excel_path)
     trade_df = all_dfs.get("OvernightFutures", pd.DataFrame())
     trade_id = morning_trades[0]['trade_id'].split("_")[0]
