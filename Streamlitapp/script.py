@@ -12,6 +12,7 @@ from firebase_admin import db
 from firebase_admin import credentials, storage
 import openpyxl
 import json
+from babel.numbers import format_currency
 from collections import defaultdict
 from io import BytesIO
 from formats import format_value, format_stat_value, indian_format, custom_format
@@ -19,6 +20,7 @@ from streamlit_option_menu import option_menu
 
 
 storage_bucket = os.getenv('STORAGE_BUCKET')
+
 
 
 def display_profile_picture(client_data, style=None):
@@ -124,8 +126,10 @@ def show_profile(client_data):
     Brokers_list_1 = client_data.get("Brokers list 1", [])
     Brokers_list_2 = client_data.get("Brokers list 2", [])
     Strategy_list = client_data.get("Strategy list", [])
+    weekly_saturday_capital = client_data.get("Weekly Saturday Capital", "")
     Comments = client_data.get("Comments", "")
     Smart_Contract = client_data.get("Smart Contract", "")
+    
 
     # Create a DataFrame to display the client data in tabular form
     data = {
@@ -235,7 +239,31 @@ def show_profile(client_data):
         st.markdown(table_style, unsafe_allow_html=True)
         st.write(strategy_df.to_html(index=False, escape=False),
                  unsafe_allow_html=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)  
+    
+    # Display Week Saturday Capital
+    st.subheader("Week Saturday Capital")
+    # Initialize week_saturday_capital_value with a default value
+    weekly_saturday_capital_value = 0.0
 
+    if weekly_saturday_capital:
+        # Ensure week_saturday_capital is a float, default to 0.0 if not
+        weekly_saturday_capital_value = float(weekly_saturday_capital) if isinstance(weekly_saturday_capital, (float, int)) else 0.0
+
+    # Calculate the upcoming Saturday date
+    today = datetime.date.today()
+    next_saturday = today + datetime.timedelta((5 - today.weekday()) % 7)  # 5 represents Saturday
+    formatted_saturday = next_saturday.strftime('%d-%m-%Y')  # Format the date as dd-mm-yyyy
+
+    if weekly_saturday_capital:
+        # Ensure weekly_saturday_capital is a float, default to 0.0 if not
+        weekly_saturday_capital_value = float(weekly_saturday_capital) if isinstance(weekly_saturday_capital, (float, int)) else 0.0
+
+    # Use the custom format function to format the capital value
+    formatted_capital_value = custom_format(weekly_saturday_capital_value)
+
+    st.write(f"Weekly Saturday Capital for {formatted_saturday}: {formatted_capital_value}")
 
 table_style = """
 <style>

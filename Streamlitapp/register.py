@@ -110,7 +110,6 @@ def register_page():
             key=f"risk_profile_{i}"
         )
 
-
         broker_list_1.append(broker_1)
 
     add_broker_2 = st.button("Add Broker 2")
@@ -185,6 +184,11 @@ def register_page():
             "broker": selected_broker,
             **strategy
         })
+
+
+    # Take input for the week staring capital 
+    weekly_saturday_capital = st.number_input("Weekly Saturday Capital:", key="weekly_saturday_capital")
+    
     # Take input for comments
     comments = st.text_area("Comments:", key="comments_input")
 
@@ -211,7 +215,7 @@ def register_page():
                 return
                 # Create a list with all the client data
             client_data = [name, UserName, email, Password, phone, dob, aadhar, pan,
-                           bank_name, bank_account, broker_list_1, broker_list_2, strategy_list, comments, smart_contract]
+                           bank_name, bank_account, broker_list_1, broker_list_2, strategy_list,weekly_saturday_capital, comments, smart_contract]
 
             # Save the uploaded profile picture as binary data if it exists
             if profile_picture is not None:
@@ -246,9 +250,10 @@ def register_page():
                 "Brokers list 1": client_data[10],
                 "Brokers list 2": client_data[11],
                 "Strategy list": client_data[12],
-                "Comments": client_data[13],
-                "Smart Contract": client_data[14],
-                "Profile Picture": client_data[15] if profile_picture is not None else None,
+                "Weekly Saturday Capital": client_data[13],
+                "Comments": client_data[14],
+                "Smart Contract": client_data[15],
+                "Profile Picture": client_data[16]if profile_picture is not None else None,
             }
 
             # Save the client data to Firebase Realtime Database

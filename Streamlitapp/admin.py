@@ -18,7 +18,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from io import BytesIO
 import streamlit as st
-from formats import format_value, format_stat_value, indian_format
+from formats import custom_format
 from dotenv import load_dotenv
 from script import display_performance_dashboard, table_style
 
@@ -44,7 +44,6 @@ if not firebase_admin._apps:
     })
     # Initialize variables
 data = []  # This will hold the Excel data
-
 
 def login_admin(username, password):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -100,6 +99,12 @@ def update_client_data(client_name, updated_data):
     # Update the client data in the Firebase database
     selected_client_ref.update(updated_data)
 
+def update_week_saturday_capital(selected_client_name, new_week_saturday_capital):
+    # Get a reference to the selected client's database
+    selected_client_ref = db.reference(f"/clients/{selected_client_name}")
+
+    # Update the week_saturday_capital in the Firebase database
+    selected_client_ref.update({"Week Saturday Capital": new_week_saturday_capital})
 
 def update_brokers_data(client_name, brokers_list_1, brokers_list_2):
     client_name = format_client_name(client_name)
@@ -116,7 +121,6 @@ def update_strategies_data(client_name, strategies_list):
     selected_client_ref = db.reference(f"/clients/{client_name}/Strategy list")
     # Update the strategies list in the Firebase database
     selected_client_ref.set(strategies_list)
-
 
 def update_profile_picture(selected_client_name, new_profile_picture):
     # Get a reference to the selected client's database
@@ -142,7 +146,6 @@ def update_profile_picture(selected_client_name, new_profile_picture):
 
     # Remove the temporary file
     temp_file_path.unlink()
-
 
 def select_client():
 
@@ -266,6 +269,7 @@ def show_profile(selected_client, selected_client_name):
         Brokers_list_1 = selected_client.get("Brokers list 1", [])
         Brokers_list_2 = selected_client.get("Brokers list 2", [])
         Strategy_list = selected_client.get("Strategy list", [])
+        weekly_saturday_capital = selected_client.get("Weekly Saturday Capital", [])
         Comments = selected_client.get("Comments", "")
         Smart_Contract = selected_client.get("Smart Contract", "")
 
@@ -400,7 +404,29 @@ def show_profile(selected_client, selected_client_name):
 
         # Define the risk profile options at the start
         risk_profile_options = ["Low", "Medium", "High"]
-        
+  
+        st.subheader("Week Saturday Capital")
+        # Initialize week_saturday_capital_value with a default value
+        weekly_saturday_capital_value = 0.0
+
+        if weekly_saturday_capital:
+            # Ensure week_saturday_capital is a float, default to 0.0 if not
+            weekly_saturday_capital_value = float(weekly_saturday_capital) if isinstance(weekly_saturday_capital, (float, int)) else 0.0
+
+        # Calculate the upcoming Saturday date
+        today = datetime.date.today()
+        next_saturday = today + datetime.timedelta((5 - today.weekday()) % 7)  # 5 represents Saturday
+        formatted_saturday = next_saturday.strftime('%d-%m-%Y')  # Format the date as dd-mm-yyyy
+
+        if weekly_saturday_capital:
+            # Ensure weekly_saturday_capital is a float, default to 0.0 if not
+            weekly_saturday_capital_value = float(weekly_saturday_capital) if isinstance(weekly_saturday_capital, (float, int)) else 0.0
+
+        # Use the custom format function to format the capital value
+        formatted_capital_value = custom_format(weekly_saturday_capital_value)
+
+        st.write(f"Weekly Saturday Capital for {formatted_saturday}: {formatted_capital_value}")
+
         # Add 'Edit' button to switch to 'edit mode'
         if st.button('Edit'):
             st.session_state.edit_mode = True
@@ -447,6 +473,19 @@ def show_profile(selected_client, selected_client_name):
                 if new_profile_picture is not None:
                     update_profile_picture(
                         selected_client_name, new_profile_picture)
+                    
+            st.subheader("Weekly Saturday Capital")
+            # Input field for updating "Week Saturday Capital"
+            new_weekly_saturday_capital = st.number_input(
+                "Weekly Saturday Capital",
+                value=weekly_saturday_capital_value,
+                key="weekly_saturday_capital"  # Consistent key for the existing data
+            )
+
+             # Check if the value has been changed
+            if new_weekly_saturday_capital != weekly_saturday_capital_value:
+                updated_data["Weekly Saturday Capital"] = new_weekly_saturday_capital  # Same key as in the database
+                weekly_saturday_capital_value = new_weekly_saturday_capital  # Update the current value
 
             # Edit brokers list
             st.subheader("Brokers")
@@ -645,10 +684,8 @@ def login():
         else:
             st.error('Invalid username or password.')
 
-
 def logout():
     st.session_state.login_successful = False
-
 
 def main():
     if st.session_state.get('login_successful', False):
