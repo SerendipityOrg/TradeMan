@@ -147,7 +147,7 @@ def process_short_trades(broker,short_signals, short_cover_signals,signal):
 
         trade_data = {
             "trade_id": short_signal_group[0]["trade_id"],
-            "trading_symbol Symbol": short_signal_group[0]["trading_symbol"],
+            "trading_symbol": short_signal_group[0]["trading_symbol"],
             "signal": signal,
             "entry_time": entry_time.strftime('%Y-%m-%d %H:%M:%S'),
             "exit_time": exit_time.strftime('%Y-%m-%d %H:%M:%S'),
