@@ -1,97 +1,51 @@
-import os
-import sys
+import os, sys,io, json
 import json
-from firebase_admin import db
-from firebase_admin import credentials
 import firebase_admin
+from firebase_admin import credentials, storage
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from telethon.sync import TelegramClient
+from io import BytesIO
+import openpyxl
+from openpyxl import load_workbook
+import pandas as pd
 
-# Set up the working directory and load environment variables
+# Load environment variables
 DIR = os.getcwd()
-ENV_PATH = os.path.join(DIR, '.env')
-load_dotenv(ENV_PATH)
+active_users_json_path = os.path.join(DIR,"MarketUtils", "active_users.json")
+broker_filepath = os.path.join(DIR,"MarketUtils", "broker.json")
+env_path = os.path.join(DIR, '.env')
+session_filepath = os.path.join(DIR,'MarketUtils', 'Telegram','+918618221715.session')
 
-# Retrieve values from .env for Firebase
+load_dotenv(env_path)
+api_id = os.getenv('telethon_api_id')
+api_hash = os.getenv('telethon_api_hash')
+
+sys.path.append(DIR)
+import MarketUtils.general_calc as general_calc
+from morningmsg import get_invested_value
+from Brokers.Aliceblue.alice_utils import cash_margin_available  # Specific broker utility
+from Brokers.Zerodha.kite_utils import cash_balance  # Specific broker utility
+from MarketUtils.Excel.strategy_calc import custom_format  # Utility for formatting Excel data
+
+# Retrieve values from .env for Firebase and Telegram
 firebase_credentials_path = os.getenv('FIREBASE_CREDENTIALS_PATH')
 database_url = os.getenv('DATABASE_URL')
+storage_bucket = os.getenv('STORAGE_BUCKET')
+api_id = os.getenv('TELETHON_API_ID')
+api_hash = os.getenv('TELETHON_API_HASH')
 
-# Initialize Firebase app
+# Initialize Firebase app if it hasn't been initialized yet
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_credentials_path)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': database_url
+        'databaseURL': database_url,
+        'storageBucket': storage_bucket
     })
 
-# Define file paths
+# Define file paths for various utilities and files
 active_users_json_path = os.path.join(DIR, "MarketUtils", "active_users.json")
 broker_filepath = os.path.join(DIR, "MarketUtils", "broker.json")
-starting_capital_path = os.path.join(DIR, "MarketUtils", "weekstartingcapital.txt")
-
-# Extend the system path for importing modules from the script directory
-sys.path.append(DIR)
-import MarketUtils.general_calc as general_calc
-from Brokers.Aliceblue.alice_utils import cash_margin_available
-from Brokers.Zerodha.kite_utils import cash_balance
-from MarketUtils.Excel.strategy_calc import custom_format
-from MarketUtils.Main.morningmsg import get_invested_value 
-
-def get_cashmargin_value(user_data):#TODO get the values from excel
-    active_users = general_calc.read_json_file(active_users_json_path)
-    for user in active_users:
-        if user['account_name'] == user_data['account_name'] and user['broker'] == "aliceblue":
-            return cash_margin_available(user)
-        elif user['account_name'] == user_data['account_name'] and user['broker'] == "zerodha":
-            return cash_balance(user)
-    
-# Function to calculate the cash balance for a user
-def calculate_cash_balance(user, invested_value, get_cashmargin_value):
-    """Calculates and returns the cash balance for a user"""
-    cash_margin_value = get_cashmargin_value(user)
-    # Convert cash_margin_value to float
-    cash_margin_value = float(cash_margin_value)
-    return cash_margin_value - invested_value
-
-# Function to get starting capital from Firebase
-def get_starting_capital(mobile_number):
-    """Reads and returns the starting capital for a specific user from Firebase based on mobile number."""
-    ref = db.reference('/clients')
-    clients = ref.get()
-
-    # Format mobile_number to match the Firebase format
-    mobile_number_formatted = mobile_number[3:] if mobile_number.startswith('+91') else mobile_number
-
-    if clients:
-        for username, client_data in clients.items():
-            if client_data.get('phone number') == mobile_number_formatted:
-                return client_data.get('Weekly Saturday Capital', 0.0)
-    return 0.0
-
-# Function to read the current capital for a specific user from a file
-def get_current_capital(username):
-    """Reads and returns the current capital for a specific user from a file."""
-    with open(broker_filepath, 'r') as file:
-        broker_data = json.load(file)
-    for account in broker_data:
-        if account.get("account_name") == username:
-            return account.get("current_capital", 0.0)
-    return 0.0
-
-# Function to calculate the profit and loss
-def calculate_pnl(starting_capital, current_capital):
-    """Calculates and returns the Profit and Loss (PnL)."""
-    return  current_capital - starting_capital 
-
-# Function to generate a formatted message for weekly reports
-def generate_message(user, pnl, cash_balance, next_week_capital, invested_value, start_date, end_date):
-    """Generates and returns a formatted weekly report message."""
-    message = f"Weekly Summary for {user['account_name']} ({start_date.strftime('%B %d')} to {end_date.strftime('%B %d')})\n\n"
-    message += f"PnL: {custom_format(pnl)}\n\n"
-    message += f"Cash Balance + stocks: {custom_format(cash_balance)} + {custom_format(invested_value)}\n"
-    message += f"Next Week Starting Capital with stocks: {custom_format(next_week_capital)}\n\n"
-    message += "Best regards,\nSerendipity Trading Firm"
-    return message
 
 # Function to find the start date of the last complete week
 def get_last_week_start():
@@ -100,60 +54,127 @@ def get_last_week_start():
     last_monday = today - timedelta(days=today.weekday() + 7)
     return last_monday
 
-# Function to save the next week's capital for each user to a file
-def save_next_week_capital(next_week_capitals):
-    """Saves the next week's capital for each user to the 'clients' node in Firebase."""
-    ref = db.reference('/clients')  # Reference to the 'clients' node
-    date_string = datetime.now().strftime("%d-%b-%y")
+# Function to load an existing Excel file from Firebase Storage and return its data as a dictionary of pandas DataFrames
+def load_existing_excel_from_firebase(excel_file_name):
+    bucket = storage.bucket(storage_bucket)
+    blobs = bucket.list_blobs()
+    file_exists = False
+    for blob in blobs:
+        if blob.name == excel_file_name:
+            file_exists = True
+            break
 
-    for user_name, capital in next_week_capitals.items():
-        # Update the 'Weekly Saturday Capital' for each client
-        client_ref = ref.child(user_name)
-        client_data = client_ref.get() or {}
-        client_data['Weekly Saturday Capital'] = custom_format(capital)
-        client_data['Updated Date'] = date_string
-        client_ref.set(client_data)
+    data = []  # List to store extracted data from Excel
+    details_amounts = {}  # Dictionary to store the sums of amounts for each detail
 
-    print("Next week's capitals updated in Firebase.")
+    if file_exists:
+        blob = bucket.blob(excel_file_name)
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
+        wb = openpyxl.load_workbook(byte_stream, data_only=True)
 
+        if "DTD" in wb.sheetnames:
+            sheet = wb["DTD"]
+            column_indices = {cell.value: idx for idx, cell in enumerate(sheet[1])}
+
+            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
+                details = row[column_indices['Details']].value
+                amount_str = row[column_indices['Amount']].value
+
+                # Skip the opening balance rows and sum the amounts for each 'Details'
+                if details != "Opening Balance" and amount_str is not None:
+                    # Remove currency symbols and commas, then convert to float
+                    amount = float(amount_str.replace('₹', '').replace(',', '').replace('-', ''))
+                    # Subtract if original amount was negative
+                    if '-' in amount_str:
+                        amount = -amount
+
+                    # Sum the amounts for each 'Details'
+                    if details in details_amounts:
+                        details_amounts[details] += amount
+                    else:
+                        details_amounts[details] = amount
+
+    # Print the total amounts for each detail
+    for detail, total_amount in details_amounts.items():
+        print(f"{detail}: ₹{total_amount:,.2f}")
+
+# Function to get the free cash/margin available for a user
+def get_cashmargin_value(user_data):
+    """Retrieves the cash margin available for a user based on their broker."""
+    active_users = general_calc.read_json_file(active_users_json_path)
+    for user in active_users:
+        if user['account_name'] == user_data['account_name']:
+            if user['broker'] == "aliceblue":
+                cash_margin = cash_margin_available(user)
+            elif user['broker'] == "zerodha":
+                cash_margin = cash_balance(user)
+            try:
+                return float(cash_margin)  # Ensure cash_margin is a float
+            except ValueError:
+                print(f"Invalid cash margin value for {user['account_name']}: {cash_margin}")
+                return 0.0  # Return a default value or handle as appropriate
+    return 0.0  # If user or broker not found
+   
 # Function to send a message via Telegram
 def send_telegram_message(phone_number, message):
     """Sends a message to a specified phone number via Telegram."""
-    session_filepath = os.path.join(DIR, "MarketUtils", "Telegram", "+918618221715.session")
     with TelegramClient(session_filepath, api_id, api_hash) as client:
         client.send_message(phone_number, message, parse_mode='md')
 
-# Main function to execute the script
+# Function to generate a formatted message for weekly reports
+def generate_message(user, net_pnl, cash_margin_value, trademan_account_value, actual_account_value, difference_value, start_date, end_date):
+    """Generates and returns a formatted weekly report message."""
+    message = f"Weekly Summary for {user['account_name']} ({start_date.strftime('%B %d')} to {end_date.strftime('%B %d')})\n\n"
+    message += f"Net PnL: {custom_format(net_pnl)}\n"
+    message += f"Free Cash: {custom_format(cash_margin_value)}\n"
+    message += f"Trademan Invested: {custom_format(trademan_account_value - cash_margin_value)}\n"
+    message += f"Trademan Account Value: {custom_format(trademan_account_value)}\n"
+    message += f"Actual Account Value: {custom_format(actual_account_value)}\n"
+    message += f"Difference: {custom_format(difference_value)}\n\n"
+    message += "Best regards,\nSerendipity Trading Firm"
+    return message
+
+# Main function to execute the script for generating weekly reports
 def main():
     """Main function to execute the script for generating weekly reports."""
-    with open(active_users_json_path, 'r') as file:
-        users = json.load(file)
+    # Load broker data from JSON file
+    broker_data = general_calc.read_json_file(broker_filepath)
 
-    next_week_capitals = {}
+    for user in broker_data:
+        if "Active" in user['account_type']:
+            start_date = get_last_week_start()
+            end_date = start_date + timedelta(days=4)
+            free_cash = get_cashmargin_value(user)
 
-    for user in users:
-        user_name = user['account_name']
-        starting_capital = get_starting_capital(user_name)
-        current_capital = get_current_capital(user_name)
-        invested_value = get_invested_value(user)
-        cash_balance = calculate_cash_balance(user, invested_value, get_cashmargin_value)
-        pnl = calculate_pnl(starting_capital, current_capital)
-        next_week_capital = cash_balance + invested_value
-        next_week_capitals[user_name] = next_week_capital
+            # Define the name of the Excel file in Firebase Storage
+            excel_file_name = f"{user['account_name']}.xlsx"
 
-        start_date = get_last_week_start()
-        end_date = start_date + timedelta(days=4)
-        message = generate_message(user, pnl, cash_balance, next_week_capital, invested_value, start_date, end_date)
-        print(message)
+            try:
+                # Load data from Excel file in Firebase Storage
+                all_dfs = load_existing_excel_from_firebase(excel_file_name)
+                if all_dfs:  # Make sure all_dfs is not empty
+                    net_pnl = calculate_net_pnl(user, start_date, end_date, all_dfs)
+                    # Here you can format net_pnl as needed before passing it to generate_message
+                    formatted_net_pnl = custom_format(net_pnl)  # Modify this as per your formatting needs
 
-        # Uncomment the line below to enable sending the message via Telegram
-        # send_telegram_message(user['mobile_number'], message)
+                    # Calculate trademan_invested using all_dfs
+                    trademan_invested = calculate_trademan_invested(user, all_dfs)
+                    # Modify this as per your formatting needs
+                    formatted_trademan_invested = custom_format(trademan_invested)
 
-    # save_next_week_capital(next_week_capitals) 
+                    actual_account_value = free_cash + get_invested_value(user)
+                    difference_value = actual_account_value - (free_cash + trademan_invested)
 
-# Retrieve API credentials for Telegram from environment variables
-api_id = os.getenv('telethon_api_id')
-api_hash = os.getenv('telethon_api_hash')
+                    message = generate_message(user, formatted_net_pnl, free_cash, formatted_trademan_invested, actual_account_value, difference_value, start_date, end_date)
+                    print(message)
+                    # send_telegram_message(user['mobile_number'], message)  # Uncomment to enable Telegram messaging
+
+            except FileNotFoundError as e:
+                print(f"File not found for {user['account_name']}: {e}")
+            except Exception as e:
+                print(f"An error occurred for {user['account_name']}: {e}")
 
 if __name__ == "__main__":
     main()
