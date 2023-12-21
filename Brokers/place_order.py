@@ -112,7 +112,7 @@ def modify_orders(order_details=None):
 
 def orders_via_telegram(details):
     strategy_name = place_order_calc.calculate_strategy_name(details.get('trade_id'))
-    _, strategy_path = place_order_calc.get_strategy_json(strategy_name)
+    _, strategy_path = general_calc.get_strategy_json(strategy_name)
     trade_id = details.get('trade_id').split('_')
 
     strategy_obj = Strategy.read_strategy_json(strategy_path)

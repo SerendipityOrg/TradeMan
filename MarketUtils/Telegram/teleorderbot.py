@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
 import logging
 import os,sys
+from dotenv import load_dotenv
 
 DIR = os.getcwd()
 sys.path.append(DIR)
@@ -9,20 +10,40 @@ sys.path.append(DIR)
 import Brokers.place_order as place_order
 import MarketUtils.general_calc as general_calc
 
-
-
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                     level=logging.INFO)
+                     level=logging.INFO)  # Set to DEBUG to capture detailed logs
 logger = logging.getLogger(__name__)
 
 # Define states for the conversation
 (ORDER_TYPE, TRANSACTION_TYPE,USER_SELECTION, BASE_INSTRUMENT, PRODUCT_TYPE, STOCK_NAME_INPUT, OPTION_TYPE, STRIKE_PRICE_SELECTION, 
- STRIKE_PRICE_INPUT, EXPIRY_SELECTION, QTY_RISK_SELECTION, QTY_RISK_INPUT, TRADE_ID_INPUT, 
- ENTRY_EXIT_SELECTION, CONFIRMATION) = range(15)
+ STRIKE_PRICE_INPUT, EXPIRY_SELECTION, QTY_RISK_SELECTION, QTY_RISK_INPUT, TRADE_ID_INPUT, STRATEGY_SELECTION,STRATEGY_QTY_SELECTION,
+ ENTRY_EXIT_SELECTION, CONFIRMATION) = range(17)
 
 # Token for your bot from BotFather
 TOKEN = '807232387:AAF5OgaGJuUPV8xwDUxYFRHaOWJSU5pIAic'
+
+def get_strategies_from_users():
+    active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
+    strategies = set()
+    for user in active_users:
+        strategies.update(user['qty'].keys())
+    strategies.add("Extra")  # Add the "Extra" strategy
+
+    # Convert the set to a list and sort it
+    sorted_strategies = sorted(list(strategies))
+    return {str(idx + 1): strategy for idx, strategy in enumerate(sorted_strategies)}
+
+
+def get_strategy_qty(username,base_instrument, strategy):
+    active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
+    for user in active_users:
+        if user['account_name'] == username and strategy in user['qty']:
+            if isinstance(user['qty'][strategy], dict):
+                return user['qty'][strategy].get(base_instrument)
+            else:
+                return user['qty'][strategy]
+    return None
 
 order_type_map = {"1": "PlaceOrder", "2": "PlaceStoploss", "3": "ModifyOrder"}
 transaction_type_map = {"1": "BUY", "2": "SELL"}
@@ -33,6 +54,7 @@ expiry_map = {"1": "current_week", "2": "current_month", "3": "next_week", "4": 
 entry_exit_map = {"1": "Entry", "2": "Exit"}
 active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
 active_users_map = {str(idx): user['account_name'] for idx, user in enumerate(active_users, 1)}
+strategy_map = get_strategies_from_users()
 
 # Handler functions
 def start(update: Update, context: CallbackContext) -> int:
@@ -46,38 +68,67 @@ def start(update: Update, context: CallbackContext) -> int:
 def order_type(update: Update, context: CallbackContext) -> int:
     user_input = update.message.text
     context.user_data['order_type'] = order_type_map[user_input]
-    update.message.reply_text("Select transaction type:\n"
-                              "1. BUY\n"
-                              "2. SELL")
+
+    # Construct the strategy options message
+    strategy_options_message = "Select strategy:\n"
+    for key, strategy in strategy_map.items():
+        strategy_options_message += f"{key}. {strategy}\n"
+
+    update.message.reply_text(strategy_options_message)
+    return STRATEGY_SELECTION
+
+def strategy_selection(update: Update, context: CallbackContext) -> int:
+    user_input = update.message.text
+    selected_strategy = strategy_map.get(user_input, "Unknown")
+    if selected_strategy == "Unknown":
+        update.message.reply_text("Invalid strategy. Please try again.")
+        return STRATEGY_SELECTION
+
+    context.user_data['strategy'] = selected_strategy
+    # Filter active_users based on selected strategy
+    active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
+    filtered_users = [user for user in active_users if selected_strategy in user['qty']]
+    context.user_data['filtered_users'] = filtered_users
+
+    # Construct user selection message
+    user_selection_message = "Please select one or more users by number (e.g., 1,3,5):\n"
+    for idx, user in enumerate(filtered_users, 1):
+        user_selection_message += f"{idx}. {user['account_name']}\n"
+
+    user_selection_message += f"{len(filtered_users) + 1}. ALL USERS\n"
+    update.message.reply_text(user_selection_message)
+    return USER_SELECTION
+
+
+def user_selection(update: Update, context: CallbackContext) -> int:
+    user_inputs = update.message.text.split(',')
+    all_users_option = str(len(context.user_data['filtered_users']) + 1)  # The option number for "All Users"
+    selected_accounts = []
+
+    for user_input in user_inputs:
+        user_input = user_input.strip()
+        if user_input == all_users_option:
+            selected_accounts = [user['account_name'] for user in context.user_data['filtered_users']]
+            break  # No need to loop further as all users are selected
+        else:
+            try:
+                selected_account = context.user_data['filtered_users'][int(user_input) - 1]['account_name']
+                selected_accounts.append(selected_account)
+            except (IndexError, ValueError):
+                update.message.reply_text("Invalid selection: " + user_input)
+                return USER_SELECTION
+
+    context.user_data['account_name'] = selected_accounts
+    # Proceed to the next step
+    update.message.reply_text("Select transaction type:\n1. BUY\n2. SELL")
     return TRANSACTION_TYPE
+
+
 
 def transaction_type(update: Update, context: CallbackContext) -> int:
     user_input = update.message.text
     context.user_data['transaction_type'] = transaction_type_map[user_input]
 
-    active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
-    message = "Please select an account by number:\n"
-    for idx, user in enumerate(active_users, 1):
-        message += f"{idx}. {user['account_name']}\n"
-    message += f"{len(active_users) + 1}. All Users"  # Dynamically adding 'All Users' option
-
-    update.message.reply_text(message)
-    return USER_SELECTION
-
-def user_selection(update: Update, context: CallbackContext) -> int:
-    user_input = update.message.text
-
-    try:
-        if user_input == str(len(active_users) + 1):  # Check if 'All Users' is selected
-            selected_accounts = [user['account_name'] for user in active_users]
-        else:
-            selected_account = active_users[int(user_input) - 1]['account_name']
-            selected_accounts = [selected_account]  # Store as a list for consistency
-    except (IndexError, ValueError):
-        update.message.reply_text("Invalid selection. Please try again.")
-        return USER_SELECTION
-
-    context.user_data['account_name'] = selected_accounts
     update.message.reply_text("Select a BaseInstrument by number:\n"
                               "1. NIFTY\n"
                               "2. BANKNIFTY\n"
@@ -175,25 +226,28 @@ def expiry_selection(update: Update, context: CallbackContext) -> int:
     context.user_data['expiry'] = expiry_map[user_input]
     update.message.reply_text("Enter:\n"
                               "1. Qty\n"
-                              "2. Risk")
+                              "2. Risk\n"
+                              "3. Strategy QTY")
     return QTY_RISK_SELECTION
 
 def qty_risk_selection(update: Update, context: CallbackContext) -> int:
     user_input = update.message.text
-    if user_input in ["1", "2"]:
-        context.user_data['qty_or_risk'] = user_input  # Store whether the user chose quantity or risk
+    context.user_data['qty_or_risk'] = user_input
 
-        if user_input == "1":
-            update.message.reply_text("Please enter the quantity:")
-        else:
-            update.message.reply_text("Please enter the risk percentage:")
+    if user_input == "3":
+        update.message.reply_text("Please Enter Trade ID")
+        print("Transitioning to STRATEGY_QTY_SELECTION")
+        return TRADE_ID_INPUT
+    elif user_input == "1" or user_input == "2":
+        prompt = "Please enter the quantity:" if user_input == "1" else "Please enter the risk percentage:"
+        update.message.reply_text(prompt)
         return QTY_RISK_INPUT
     else:
         update.message.reply_text("Please select a valid option for Qty/Risk.")
         return QTY_RISK_SELECTION
 
-
 def qty_risk_input(update: Update, context: CallbackContext) -> int:
+    print("In qty_risk_input") 
     user_input = update.message.text
 
     # Determine whether to store quantity or risk percentage based on previous selection
@@ -229,8 +283,6 @@ def entry_exit_selection(update: Update, context: CallbackContext) -> int:
         update.message.reply_text("Please select a valid option for Entry/Exit.")
         return ENTRY_EXIT_SELECTION
 
-    qty_or_risk = context.user_data.get('quantity') or context.user_data.get('risk_percentage')
-    qty_or_risk_label = "Quantity" if 'quantity' in context.user_data else "Risk Percentage"
     # Compile the summary of selections
     summary = (f"Order Transaction: {context.user_data.get('order_type')}\n"
                 f"Transaction Type: {context.user_data.get('transaction_type')}\n"
@@ -240,7 +292,6 @@ def entry_exit_selection(update: Update, context: CallbackContext) -> int:
                f"Strike Price: {context.user_data.get('strike_price')}\n"
                f"Option Type: {context.user_data.get('option_type')}\n"
                f"Expiry: {context.user_data.get('expiry')}\n"
-               f"{qty_or_risk_label}: {qty_or_risk}\n" 
                f"Trade ID: {context.user_data.get('trade_id')}")
     if context.user_data.get('stock_name'):
         summary += f"\nStock Name: {context.user_data.get('stock_name').upper()}"
@@ -257,31 +308,49 @@ def clear_user_data(context: CallbackContext):
 def process_confirmation(update: Update, context: CallbackContext) -> int:
     user_input = update.message.text
     if user_input == "1":
-        qty_or_risk = context.user_data.get('quantity') or context.user_data.get('risk_percentage')
-        qty_or_risk_label = "qty" if 'quantity' in context.user_data else "risk_percentage"
+        order_details_list = []
 
-        # Construct details as a dictionary
-        details = {
-            "order_type": context.user_data.get('order_type'),
-            "transaction_type": context.user_data.get('transaction_type'),
-            "account_name": context.user_data.get('account_name'),
-            "base_instrument": context.user_data.get('base_instrument'),
-            "product_type": context.user_data.get('product_type'),
-            "strike_prc": context.user_data.get('strike_price'),
-            "option_type": context.user_data.get('option_type'),
-            "expiry": context.user_data.get('expiry'),
-            qty_or_risk_label: qty_or_risk,
-            "trade_id": context.user_data.get('trade_id')
-        }
-        if context.user_data.get('stock_name'):
-            details["stock_name"] = context.user_data.get('stock_name').upper()
+        # Check the mode of quantity determination: manual or risk-based
+        qty_or_risk = context.user_data.get('qty_or_risk')
+        for account_name in context.user_data['account_name']:
+            if qty_or_risk == "1":  # Manual quantity entry
+                quantity = context.user_data.get('quantity')
+                qty_or_risk_label = "qty"
+            elif qty_or_risk == "2":  # Risk percentage
+                quantity = context.user_data.get('risk_percentage')
+                # Implement your logic for calculating quantity based on risk
+                qty_or_risk_label = "risk_percentage"
+            elif qty_or_risk == "3":  # Strategy quantity
+                quantity = get_strategy_qty(account_name,context.user_data.get('base_instrument', ''), context.user_data.get('strategy', ''))
+                qty_or_risk_label = "qty"
+            else:
+                update.message.reply_text("Invalid quantity/risk selection.")
+                return ConversationHandler.END
 
-        # Call orders_via_telegram with the details dictionary
-        place_order.orders_via_telegram(details)
+            # Construct details for each user
+            details = {
+                "order_type": context.user_data.get('order_type'),
+                "transaction_type": context.user_data.get('transaction_type'),
+                "account_name": account_name,
+                "base_instrument": context.user_data.get('base_instrument'),
+                "product_type": context.user_data.get('product_type'),
+                "strike_prc": context.user_data.get('strike_price'),
+                "option_type": context.user_data.get('option_type'),
+                "expiry": context.user_data.get('expiry'),
+                qty_or_risk_label: quantity,  # User-specific quantity
+                "trade_id": context.user_data.get('trade_id')
+            }
+            if context.user_data.get('stock_name'):
+                details["stock_name"] = context.user_data.get('stock_name').upper()
+
+            order_details_list.append(details)
+
+        # Pass the list of details to orders_via_telegram function
+        for order_details in order_details_list:
+            place_order.orders_via_telegram(order_details)
+
         clear_user_data(context)
-        # Convert details dictionary to a string for displaying in the message
-        details_str = '\n'.join([f"{key}: {value}" for key, value in details.items()])
-        update.message.reply_text(f"Order placed:\n{details_str}")
+        update.message.reply_text("Orders placed for all selected users.")
     elif user_input == "2":
         update.message.reply_text("Order not placed. Please start again with /start if you wish to place an order.")
     else:
@@ -289,7 +358,6 @@ def process_confirmation(update: Update, context: CallbackContext) -> int:
         return CONFIRMATION
 
     return ConversationHandler.END
-
 
 def error(update: Update, context: CallbackContext):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
@@ -306,8 +374,9 @@ def main():
         entry_points=[CommandHandler('start', start)],
         states={
         ORDER_TYPE: [MessageHandler(Filters.text & ~Filters.command, order_type)],
-        TRANSACTION_TYPE: [MessageHandler(Filters.text & ~Filters.command, transaction_type)],
+        STRATEGY_SELECTION: [MessageHandler(Filters.text & ~Filters.command, strategy_selection)],
         USER_SELECTION: [MessageHandler(Filters.text & ~Filters.command, user_selection)],
+        TRANSACTION_TYPE: [MessageHandler(Filters.text & ~Filters.command, transaction_type)],
         BASE_INSTRUMENT: [MessageHandler(Filters.text & ~Filters.command, base_instrument)],
         STOCK_NAME_INPUT: [MessageHandler(Filters.text & ~Filters.command, stock_name_input)],
         PRODUCT_TYPE: [MessageHandler(Filters.text & ~Filters.command, product_type)],

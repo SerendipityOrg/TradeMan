@@ -77,12 +77,12 @@ def alice_place_order(alice, order_details):
         order_status = alice_utils.get_order_status(alice, order_id['NOrdNo'])
         if order_status == "FAIL":
             order_history = alice.get_order_history(order_id['NOrdNo'])
-            raise Exception(f"Order placement failed, Reason: {order_history['RejReason']} for {order_details['account_name']}")
+            message = (f"Order placement failed, Reason: {order_history['RejReason']} for {order_details['account_name']}")
+            discord.discord_bot(message,strategy)
 
         return order_id['NOrdNo']
   
     except Exception as e:
-        print(e)
         discord.discord_bot(e,strategy)
         return None
 
