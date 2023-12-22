@@ -3,12 +3,9 @@ import os, sys
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
-import Brokers.place_order_calc as place_order_calc
 import Strategies.StrategyBase as StrategyBase
 from MarketUtils.InstrumentBase import Instrument
 import MarketUtils.general_calc as general_calc
-import Brokers.place_order as place_order
-
 
 active_users_json_path = os.path.join(DIR_PATH,"MarketUtils", "active_users.json")
 
@@ -16,8 +13,9 @@ def extract_base_symbol(details):
     return details['stock_name'] if details['base_instrument'] == 'Stock' else details['base_instrument']
 
 def get_strategy_object(details):
-    strategy_name = place_order_calc.calculate_strategy_name(details['trade_id'])
-    _, STRATEGY_PATH = place_order_calc.get_strategy_json(strategy_name)
+    from Brokers.place_order_calc import calculate_strategy_name
+    strategy_name = calculate_strategy_name(details['trade_id'])
+    _, STRATEGY_PATH = general_calc.get_strategy_json(strategy_name)
     return strategy_name, StrategyBase.Strategy.read_strategy_json(STRATEGY_PATH)
 
 def calculate_strike_price(details, strategy_obj, base_symbol):
@@ -59,17 +57,18 @@ def prepare_order_details(details, strategy_name, base_symbol, exchange_token, s
 
 def place_orders_for_users(details, order_details):
     from MarketUtils.Calculations.qty_calc import calculate_qty_for_telegram
+    import Brokers.place_order as place_order
     active_users = general_calc.read_json_file(active_users_json_path)
-    for user in details['account_name']:
-        for active_user in active_users:
-            if active_user['account_name'] == user:
-                order_details['account_name'] = user
-                order_details['broker'] = active_user['broker']
-                if 'risk_percentage' in details:
-                    order_details['qty'] = calculate_qty_for_telegram(details['risk_percentage'], user, order_details.get('base_symbol'), int(order_details.get('exchange_token')))
-                elif 'qty' in details:
-                    order_details['qty'] = details['qty']
-                else:
-                    print("Quantity not specified for", user)
-                place_order.place_order_for_broker(order_details)
-                break  # Break the inner loop after placing an order for a user
+
+    user = details['account_name']
+    for active_user in active_users:
+        if active_user['account_name'] == user:
+            order_details['account_name'] = user
+            order_details['broker'] = active_user['broker']
+            if 'risk_percentage' in details:
+                order_details['qty'] = calculate_qty_for_telegram(details['risk_percentage'], user, order_details.get('base_symbol'), int(order_details.get('exchange_token')))
+            elif 'qty' in details:
+                order_details['qty'] = details['qty']
+            else:
+                print("Quantity not specified for", user)
+            place_order.place_order_for_broker(order_details)
