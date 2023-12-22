@@ -279,16 +279,22 @@ table.dataframe td {
     text-align: left; /* Align text to the left */
 }
 
+/* Header background color */
 table.dataframe th {
-    background-color: #f2f2f2;
+    background-color: AliceBlue;
 }
 
+/* Alternating row background colors */
 table.dataframe tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: AliceBlue;  /* Even rows will be AliceBlue */
+}
+table.dataframe tr:nth-child(odd) {
+    background-color: AliceBlue;  /* Odd rows will be white */
 }
 
+/* Hover style for rows */
 table.dataframe tr:hover {
-    background-color: #ddd;
+    background-color: HoneyDew;
 }
 </style>
 """
@@ -650,3 +656,59 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
             # Display the Running Balance graph using Streamlit's plotly_chart function
             st.plotly_chart(fig)
+
+# # Define a function to select signals
+# def select_signals():
+#     # Get a reference to the signals in the Firebase database
+#     signals_ref = db.reference('/signals')
+
+#     # Retrieve the signals data from the database
+#     signals_data = signals_ref.get()
+
+#     # Check if signals data is available
+#     if not signals_data:
+#         st.sidebar.warning("No signals data found.")
+#         return
+
+#     # Assuming 'signalinfo' and 'signals' are the main categories for an admin
+#     signal_names = ['Select', 'signalinfo', 'signals']
+
+#     # Create a select box in the Streamlit sidebar to choose a signal category
+#     selected_signal_category = st.sidebar.selectbox('Select a Signal Category', signal_names)
+
+#     # If an admin selects 'signalinfo' or 'signals', show the date input
+#     if selected_signal_category in ['signalinfo', 'signals']:
+#         selected_date = st.date_input("Select a Date")
+
+#     # if selected_signal_name and selected_signal_name != 'Select':
+#     #     # Display a date picker widget
+#     #     selected_date = st.date_input("Select a Date")
+
+#     #     # Check if a date has been selected
+#     #     if selected_date:
+#     #         formatted_date = selected_date.strftime("%Y-%m-%d")  # Format the date as needed
+
+#     #         try:
+#     #             # Construct the path to the data for the selected signal
+#     #             data_ref = db.reference(f"/signals/{selected_signal_name}")
+
+#     #             # Retrieve the data for the selected signal
+#     #             signal_data = data_ref.get()
+
+#     #             # Filter the data based on the selected date
+#     #             if signal_data:
+#     #                 extracted_data = []
+#     #                 for item in signal_data.values():
+#     #                     if 'exit_time' in item and datetime.strptime(item['exit_time'], "%Y-%m-%d %H:%M:%S").date() == selected_date:
+#     #                         extracted_data.append({'trade_id': item['trade_id'], 'trade_points': item['trade_points']})
+
+#     #                 if extracted_data:
+#     #                     df = pd.DataFrame(extracted_data)
+#     #                     st.write(df)
+#     #                 else:
+#     #                     st.warning("No trades found for the selected date.")
+#     #             else:
+#     #                 st.warning("No data found for the selected signal.")
+
+#     #         except Exception as e:
+#     #             st.error(f"Error retrieving data: {e}")

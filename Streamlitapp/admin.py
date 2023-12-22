@@ -188,7 +188,7 @@ def select_client():
 
     # Show another select box for the user to choose between 'Profile' and 'Performance Dashboard'
     next_selection = st.sidebar.selectbox(
-        'Client Details', ['Select','Profile', 'Performance Dashboard'])
+        'Client Details', ['Profile', 'Performance Dashboard'])
 
     # Display the appropriate content based on the user's choice
     if next_selection == 'Profile':
@@ -614,62 +614,6 @@ def show_profile(selected_client, selected_client_name):
                     st.success('Client details updated successfully.')
                 st.session_state.edit_mode = False  # Switch out of edit mode
 
-# Define a function to select signals
-def select_signals():
-    # Get a reference to the signals in the Firebase database
-    signals_ref = db.reference('/signals')
-
-    # Retrieve the signals data from the database
-    signals_data = signals_ref.get()
-
-    # Check if signals data is available
-    if not signals_data:
-        st.sidebar.warning("No signals data found.")
-        return
-
-    # Assuming 'signalinfo' and 'signals' are the main categories for an admin
-    signal_names = ['Select', 'signalinfo', 'signals']
-
-    # Create a select box in the Streamlit sidebar to choose a signal category
-    selected_signal_category = st.sidebar.selectbox('Select a Signal Category', signal_names)
-
-    # If an admin selects 'signalinfo' or 'signals', show the date input
-    if selected_signal_category in ['signalinfo', 'signals']:
-        selected_date = st.date_input("Select a Date")
-
-    # if selected_signal_name and selected_signal_name != 'Select':
-    #     # Display a date picker widget
-    #     selected_date = st.date_input("Select a Date")
-
-    #     # Check if a date has been selected
-    #     if selected_date:
-    #         formatted_date = selected_date.strftime("%Y-%m-%d")  # Format the date as needed
-
-    #         try:
-    #             # Construct the path to the data for the selected signal
-    #             data_ref = db.reference(f"/signals/{selected_signal_name}")
-
-    #             # Retrieve the data for the selected signal
-    #             signal_data = data_ref.get()
-
-    #             # Filter the data based on the selected date
-    #             if signal_data:
-    #                 extracted_data = []
-    #                 for item in signal_data.values():
-    #                     if 'exit_time' in item and datetime.strptime(item['exit_time'], "%Y-%m-%d %H:%M:%S").date() == selected_date:
-    #                         extracted_data.append({'trade_id': item['trade_id'], 'trade_points': item['trade_points']})
-
-    #                 if extracted_data:
-    #                     df = pd.DataFrame(extracted_data)
-    #                     st.write(df)
-    #                 else:
-    #                     st.warning("No trades found for the selected date.")
-    #             else:
-    #                 st.warning("No data found for the selected signal.")
-
-    #         except Exception as e:
-    #             st.error(f"Error retrieving data: {e}")
-
 def login():
 
     username = st.text_input('Admin Username')
@@ -686,10 +630,24 @@ def logout():
     st.session_state.login_successful = False
 
 def main():
+    # Custom CSS to change the background color of the main content area but not the sidebar
+    main_bg_color = "HoneyDew"  # Replace with your desired color code
+
+    # Injecting Custom CSS to override default Streamlit styles for the main content area
+    st.markdown(f'''
+        <style>
+            /* Changing the background color of the main content area */
+            .stApp {{
+                background-color: {main_bg_color};
+            }}
+            
+        </style>
+        ''', unsafe_allow_html=True)
+
     if st.session_state.get('login_successful', False):
         # If the admin is logged in, show the client selection page
         select_client()
-        select_signals()
+    
         if st.sidebar.button('Logout'):
             logout()
     else:
