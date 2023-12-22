@@ -131,7 +131,7 @@ def assign_short_and_long_orders(orders):
 
     return results
 
-def amipy_details(orders, broker,strategy=None):
+def amipy_details(orders, broker):
     # Simplify orders based on the broker
     simplified_orders = []
     for order in orders:
@@ -153,7 +153,7 @@ def amipy_details(orders, broker,strategy=None):
 
     return results
 
-def mpwizard_details(orders, broker,strategy=None):
+def mpwizard_details(orders, broker):
     results = {}
     buy_orders = []
     sell_orders = []
@@ -177,6 +177,8 @@ def mpwizard_details(orders, broker,strategy=None):
     buy_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
     sell_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
 
+    sell_orders = [order for order in sell_orders if order["avg_price"] != 0.0]
+
     results = {
         "MPWizard": {
             "BUY": buy_orders,
@@ -185,7 +187,7 @@ def mpwizard_details(orders, broker,strategy=None):
     }
     return results
 
-def overnight_futures_details(orders, broker,strategy=None):
+def overnight_futures_details(orders, broker):
     results = {}
     morning_trade_orders = []
     afternoon_trade_orders = []
@@ -230,7 +232,7 @@ def overnight_futures_details(orders, broker,strategy=None):
     }
     return results
 
-def expiry_trader_details(orders,broker,strategy=None):
+def expiry_trader_details(orders,broker):
     results = {}
     entry_orders = []
     exit_orders = []
@@ -254,7 +256,6 @@ def expiry_trader_details(orders,broker,strategy=None):
             simplified_order["trade_id"] = simplified_order["trade_id"].split('_')[0]
             exit_orders.append(simplified_order)
 
-    #remove the order which has avg_price as 0
     exit_orders = [order for order in exit_orders if order["avg_price"] != 0.0]
 
     results = {
@@ -265,9 +266,9 @@ def expiry_trader_details(orders,broker,strategy=None):
     }
     return results
 
-def extra_details(orders,broker,strategy=None):
+def extra_details(orders,broker):
     results = {
-        strategy: {
+        "EXTRA": {
             "Long": [],
             "Short": [],
             "LongCover": [],
@@ -290,24 +291,24 @@ def extra_details(orders,broker,strategy=None):
                 simplified_order['trade_type'] = 'LongCoverOrder'
             
         if simplified_order['trade_type'] == 'LongOrder':
-            results[strategy]['Long'].append(simplified_order)
+            results['EXTRA']['Long'].append(simplified_order)
         elif simplified_order['trade_type'] == 'ShortOrder':
-            results[strategy]['Short'].append(simplified_order)
+            results['EXTRA']['Short'].append(simplified_order)
         elif simplified_order['trade_type'] == 'LongCoverOrder':
-            results[strategy]['LongCover'].append(simplified_order)
+            results['EXTRA']['LongCover'].append(simplified_order)
         elif simplified_order['trade_type'] == 'ShortCoverOrder':
-            results[strategy]['ShortCover'].append(simplified_order)
+            results['EXTRA']['ShortCover'].append(simplified_order)
     
     return results
 
+        
 
 strategy_to_function = {
     'AmiPy': amipy_details,
     'MPWizard': mpwizard_details,
     'OvernightFutures': overnight_futures_details,
     'ExpiryTrader' : expiry_trader_details,
-    'Extra' : extra_details,
-    'Stocks' : extra_details
+    'Extra' : extra_details
     # Add other strategies and their functions here
 }
 
@@ -316,7 +317,7 @@ def segregate_by_strategy(details, strategies, broker):
     combined_details = {}
     for strategy in strategies:
         # 3. Get today_orders from the strategy's JSON and add _entry and _exit suffixes
-        _, strategy_path = general_calc.get_strategy_json(strategy)
+        _, strategy_path = place_order_calc.get_strategy_json(strategy)
         strategy_obj = Strategy.read_strategy_json(strategy_path)
         trade_ids = strategy_obj.get_today_orders()
         entry_ids = [tid + "_entry" for tid in trade_ids]
@@ -346,7 +347,6 @@ for user in active_users:
     strategies = list(strategies.keys())
     #add "Extra" strategy to the list of strategies
     strategies.append("Extra")
-    strategies.append("Stocks")
 
     if "PreviousOvernightFutures" in strategies:
         strategies.remove("PreviousOvernightFutures")
@@ -355,7 +355,7 @@ for user in active_users:
     combined_user_orders = {}
     for strategy, order_list in segregate_based_on_strategy.items():
         if strategy in strategy_to_function:
-            processed_orders = strategy_to_function[strategy](order_list, user["broker"],strategy)
+            processed_orders = strategy_to_function[strategy](order_list, user["broker"])
             combined_user_orders.update(processed_orders)
     
     if combined_user_orders:

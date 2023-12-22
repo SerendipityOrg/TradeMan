@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define maximum number of attempts
-max_attempts=5
+max_attempts=1
 
 # Counter for the number of attempts
 attempt=0
@@ -14,8 +14,8 @@ chat_id='-367108102'
 while true; do
     # Check if the current hour is greater than 16 (4 pm)
     current_hour=$(date +%H)
-    if ((current_hour >= 15)); then
-        echo "The script will not retry after 3 pm."
+    if ((current_hour >= 16)); then
+        echo "The script will not retry after 4 pm."
         break
     fi
 
@@ -26,16 +26,16 @@ while true; do
     # Source conda, activate the environment and run the script
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
     conda activate tradingenv && \
-    cd /Users/traderscafe/Desktop/Main/TradeMan/Strategies/SiriTrading && \
-    /Users/traderscafe/miniconda3/envs/tradingenv/bin/python readmsg.py && \
+    cd /Users/traderscafe/Desktop/Main/  && \
+    /Users/traderscafe/miniconda3/envs/tradingenv/bin/python MarketUtils/Main/weeklyreport.py && \
     echo "Program started successfully" && break
 
     # If the command failed and we've reached the maximum number of attempts, send a message and exit
     if ((attempt==max_attempts)); then
-        echo "The script has some errors. Please Check !!!"
+        echo "The script AmiPy has some errors. Please Check !!!"
         
         # Send a message on Telegram
-        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Siri Errors. Please Check !!!"
+        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Weekly report errors. Please Check !!!"
 
         exit 1
     fi

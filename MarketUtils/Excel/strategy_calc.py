@@ -28,48 +28,53 @@ def load_existing_excel(excel_path):
         print("Error:", e)
         return {}
 
-def process_mpwizard_trades(broker,mpwizard_trades,username=None,strategy=None):#TODO modify the code such that is calculates the trade with multiple orders
+def process_mpwizard_trades(broker,mpwizard_trades,username=None):
     if not mpwizard_trades:
         print("No MPWizard trades found.")
         return []
 
     result = []
-    trade_ids = set(trade["trade_id"] for trade in mpwizard_trades["BUY"])
 
-    for trade_id in trade_ids:
-        entry_trades = [trade for trade in mpwizard_trades["BUY"] if trade["trade_id"] == trade_id]
-        exit_trades = [trade for trade in mpwizard_trades["SELL"] if trade["trade_id"] == trade_id]
-        total_qty = sum(trade["qty"] for trade in entry_trades)
+    for i in range(len(mpwizard_trades["BUY"])):
+        buy_trade = mpwizard_trades["BUY"][i]
+        # Find a matching sell_trade by trade_id or trading_symbol
+        matching_sell_trades = [trade for trade in mpwizard_trades["SELL"]
+                                if trade["trade_id"] == buy_trade["trade_id"] or
+                                trade["trading_symbol"] == buy_trade["trading_symbol"]]
+        
+        if not matching_sell_trades:
+            print(f"No matching SELL trade for BUY trade with trade_id: {buy_trade['trade_id']}")
+            continue
+        
+        sell_trade = matching_sell_trades[0] # Take the first matching sell trade
 
-        entry_trade_avg_price = calculate_avg_price(entry_trades)
-        exit_trade_avg_price = calculate_avg_price(exit_trades)
-
-        broker_taxes = {
-            'zerodha': tc.zerodha_taxes,
-            'aliceblue': tc.aliceblue_taxes
-        }
-        charges = broker_taxes[broker](total_qty, entry_trade_avg_price, entry_trade_avg_price, len(entry_trades) )
-
-        entry_time = pd.to_datetime(entry_trades[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
-        exit_time = pd.to_datetime(exit_trades[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
-
-        trade_points = float(exit_trade_avg_price) - float(entry_trade_avg_price)
-        pnl = trade_points * total_qty
+        if broker == "zerodha":
+            charges = tc.zerodha_taxes(
+                buy_trade["qty"], buy_trade["avg_price"], sell_trade["avg_price"], 1)
+        elif broker == "aliceblue":
+            charges = tc.aliceblue_taxes(
+                buy_trade["qty"], float(buy_trade["avg_price"]), float(sell_trade["avg_price"]), 1)
+        
+        trade_points = float(sell_trade["avg_price"]) - float(buy_trade["avg_price"])
+        pnl = trade_points * int(buy_trade["qty"])
         net_pnl = pnl - charges
         signal = "Long"
 
+        entry_time = pd.to_datetime(buy_trade["time"], format='%d/%m/%Y %H:%M:%S').round('min')
+        exit_time = pd.to_datetime(sell_trade["time"], format='%d/%m/%Y %H:%M:%S').round('min')
+
         trade_data = {
-            "trade_id": trade_id,
-            "trading_symbol": entry_trades[0]["trading_symbol"],
+            "trade_id": buy_trade["trade_id"],
+            "trading_symbol": buy_trade["trading_symbol"],
             "signal": signal,
             "entry_time": entry_time.strftime('%Y-%m-%d %H:%M:%S'),
             "exit_time": exit_time.strftime('%Y-%m-%d %H:%M:%S'),
-            "entry_price": round(entry_trade_avg_price, 2),
-            "exit_price": round(exit_trade_avg_price, 2),
-            "hedge_entry_price": 0,  
-            "hedge_exit_price": 0,   
+            "entry_price": round(buy_trade["avg_price"], 2),
+            "exit_price": round(sell_trade["avg_price"], 2),
+            "hedge_entry_price": 0,  # Assuming no hedge for this example
+            "hedge_exit_price": 0,   # Assuming no hedge for this example
             "trade_points": round(trade_points, 2),
-            "qty": total_qty,
+            "qty": buy_trade["qty"],
             "pnl": round(pnl, 2),
             "tax": round(charges, 2),
             "net_pnl": round(net_pnl, 2)
@@ -78,7 +83,7 @@ def process_mpwizard_trades(broker,mpwizard_trades,username=None,strategy=None):
 
     return result
 
-def process_amipy_trades(broker,amipy_trades,username=None,strategy=None):
+def process_amipy_trades(broker,amipy_trades,username=None):
     amipy_data_short = []
     amipy_data_long = []
     if "ShortSignal" in amipy_trades:
@@ -115,13 +120,18 @@ def process_short_trades(broker,short_signals, short_cover_signals,signal):
             trade["avg_price"]) for trade in short_cover_signal_group if trade["trade_type"] == "ShortCoverSignal")
         hedge_price = hedge_exit - hedge_entry
         trade_points = (entry_price - exit_price) + hedge_price
+        
 
-        broker_taxes = {
-            'zerodha': tc.zerodha_taxes,
-            'aliceblue': tc.aliceblue_taxes
-        }
-        charges = broker_taxes[broker](short_signal_group[0]["qty"], entry_price, exit_price, 2)
-        hedge_charges = broker_taxes[broker](short_signal_group[0]["qty"], hedge_entry, hedge_exit, 2)
+        if broker == "zerodha":
+            charges = tc.zerodha_taxes(
+                short_signal_group[0]["qty"], entry_price, exit_price, 2)
+            hedge_charges = tc.zerodha_taxes(
+                short_signal_group[0]["qty"], hedge_entry, hedge_exit, 2)
+        elif broker == "aliceblue":
+            charges = tc.aliceblue_taxes(
+                short_signal_group[0]["qty"], entry_price, exit_price, 2)
+            hedge_charges = tc.aliceblue_taxes(
+                short_signal_group[0]["qty"], hedge_entry, hedge_exit, 2)
         charges = charges + hedge_charges
 
         entry_time = pd.to_datetime(short_signal_group[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
@@ -162,11 +172,12 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
                          for trade in long_cover_signal_group)
         trade_points = entry_price - exit_price
 
-        broker_taxes = {
-            'zerodha': tc.zerodha_taxes,
-            'aliceblue': tc.aliceblue_taxes
-        }
-        charges = broker_taxes[broker](long_signal_group[0]["qty"], entry_price, exit_price, 2)
+        if broker == "zerodha":
+            charges = tc.zerodha_taxes(
+                long_signal_group[0]["qty"], entry_price, exit_price, 2)
+        elif broker == "aliceblue":
+            charges = tc.aliceblue_taxes(
+                long_signal_group[0]["qty"], entry_price, exit_price, 2)
 
         entry_time = pd.to_datetime(long_signal_group[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
         exit_time = pd.to_datetime(long_cover_signal_group[0]["time"], format='%d/%m/%Y %H:%M:%S').round('min')
@@ -190,12 +201,12 @@ def process_long_trades(broker,long_signals, long_cover_signals,signal):
         result.append(trade_data)
     return result
 
-def calculate_avg_price(trades):
-    total_price = sum(trade["avg_price"] * trade["qty"] for trade in trades)
-    total_qty = sum(trade["qty"] for trade in trades)
-    return total_price / total_qty if total_qty > 0 else 0
+def process_expiry_trades(broker, expiry_trades,username=None):
+    def calculate_avg_price(trades):
+        total_price = sum(trade["avg_price"] * trade["qty"] for trade in trades)
+        total_qty = sum(trade["qty"] for trade in trades)
+        return total_price / total_qty if total_qty > 0 else 0
 
-def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
     if not expiry_trades:
         print("No ExpiryTrades trades found.")
         return []
@@ -206,7 +217,6 @@ def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
     for trade_id in trade_ids:
         entry_trades = [trade for trade in expiry_trades["Entry"] if trade["trade_id"] == trade_id]
         exit_trades = [trade for trade in expiry_trades["Exit"] if trade["trade_id"] == trade_id]
-        total_qty = sum(trade["qty"] for trade in entry_trades)
 
         main_entry_trades = [trade for trade in entry_trades if trade["trade_type"] == "MainOrder"]
         hedge_entry_trades = [trade for trade in entry_trades if trade["trade_type"] == "HedgeOrder"]
@@ -221,16 +231,17 @@ def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
         # Number of orders (assuming 2 trades per order)
         no_of_orders = len(entry_trades) // 2
 
-        broker_taxes = {
-            'zerodha': tc.zerodha_taxes,
-            'aliceblue': tc.aliceblue_taxes
-        }
-        charges = broker_taxes[broker](total_qty, main_entry_avg_price, main_exit_avg_price, no_of_orders)
+        if broker == "zerodha":
+            charges = tc.zerodha_taxes(main_entry_trades[0]["qty"], main_entry_avg_price, main_exit_avg_price, no_of_orders)
+        elif broker == "aliceblue":
+            charges = tc.aliceblue_taxes(main_entry_trades[0]["qty"], main_entry_avg_price, main_exit_avg_price, no_of_orders)
+        else:
+            charges = 0  # No charges if broker is not recognized
 
         main_trade_points = main_entry_avg_price - main_exit_avg_price
         hedge_trade_points = hedge_exit_avg_price - hedge_entry_avg_price if hedge_entry_trades else 0
         trade_points = main_trade_points + hedge_trade_points
-        pnl = trade_points * total_qty
+        pnl = trade_points * main_entry_trades[0]["qty"]
         net_pnl = pnl - charges
 
 
@@ -260,7 +271,7 @@ def process_expiry_trades(broker, expiry_trades,username=None,strategy=None):
     return result
 
 def process_morning_trades(broker,morning_trades,username=None):
-    excel_path = os.path.join(excel_dir, f"{username}.xlsx") #TODO change the path
+    excel_path = os.path.join(excel_dir, f"{username}.xlsx")
     all_dfs = load_existing_excel(excel_path)
     trade_df = all_dfs.get("OvernightFutures", pd.DataFrame())
     trade_id = morning_trades[0]['trade_id'].split("_")[0]
@@ -280,19 +291,12 @@ def process_morning_trades(broker,morning_trades,username=None):
         
         qty = trade['qty']
 
-        broker_taxes = {
-            'zerodha': {
-                'future_tax': tc.zerodha_futures_taxes,
-                'option_tax': tc.zerodha_taxes
-            },
-            'aliceblue': {
-                'future_tax': tc.aliceblue_futures_taxes,
-                'option_tax': tc.aliceblue_taxes
-            }
-        }
-        broker_tax_functions = broker_taxes.get(broker, {})
-        future_tax = broker_tax_functions.get('future_tax', lambda *args: 0)(qty, trade_data['entry_price'], future_exit_price, 1)
-        option_tax = broker_tax_functions.get('option_tax', lambda *args: 0)(qty, trade_data['hedge_entry_price'], option_exit_price, 1)
+        if broker == "zerodha":
+            future_tax = tc.zerodha_futures_taxes(qty, trade_data['entry_price'], future_exit_price, 1)
+            option_tax = tc.zerodha_taxes(qty, trade_data["hedge_entry_price"],option_exit_price, 1)
+        elif broker == "aliceblue":
+            future_tax = tc.aliceblue_futures_taxes(qty, trade_data["entry_price"], future_exit_price, 1)
+            option_tax = tc.aliceblue_taxes(qty, trade_data["hedge_entry_price"], option_exit_price, 1)
 
         # Calculating trade points based on direction
         if trade_data["signal"] == "Long":
@@ -344,7 +348,7 @@ def process_afternoon_trades(broker,afternoon_trades,username=None):
                 }
     return afternoon_trade_data
 
-def process_overnight_futures_trades(broker,trades,username=None,strategy=None):
+def process_overnight_futures_trades(broker,trades,username=None):
     if not trades:
         print("No OvernightFutures trades found.")
         return []
@@ -361,7 +365,7 @@ def process_overnight_futures_trades(broker,trades,username=None,strategy=None):
     
     return result
 
-def process_extra_trades(broker,extra_trades,username=None,strategy=None):
+def process_extra_trades(broker,extra_trades,username=None):
     if not extra_trades:
         print("No extra trades found.")
         return []
@@ -371,7 +375,7 @@ def process_extra_trades(broker,extra_trades,username=None,strategy=None):
         Find a matching entry trade for the given exit trade.
         """
         for entry_trade in processed_trades:
-            if entry_trade['trade_id'] == exit_trade['trade_id'].split("_")[0]:
+            if entry_trade['trade_id'] == exit_trade['trade_id']:
                 return entry_trade
         return None
     
@@ -395,12 +399,10 @@ def process_extra_trades(broker,extra_trades,username=None,strategy=None):
             trade_points = trade['avg_price'] - matching_trade['entry_price']
             pnl = trade_points * trade['qty']
 
-            broker_taxes = {
-                'zerodha': tc.zerodha_taxes,
-                'aliceblue': tc.aliceblue_taxes
-            }
-            charges = broker_taxes[broker](trade['qty'], matching_trade['entry_price'], trade['avg_price'], 1)  #TODO check if the trade is FUT or OPT
-
+            if broker == "zerodha":
+                charges = tc.zerodha_taxes(trade['qty'], matching_trade['entry_price'], trade['avg_price'], 1)
+            elif broker == "aliceblue":
+                charges = tc.aliceblue_taxes(trade['qty'], matching_trade['entry_price'], trade['avg_price'], 1)
             net_pnl = pnl - charges
             trade_id = trade['trade_id'].split("_")[0]
             exit_trade = {
@@ -423,9 +425,9 @@ def process_extra_trades(broker,extra_trades,username=None,strategy=None):
     
 
     def fetch_trade_details_from_excel(trade, cover_type,username):
-        excel_path = os.path.join(DIR, f"UserProfile/Excel/{username}.xlsx") #TODO change the path
+        excel_path = os.path.join(DIR, f"UserProfile/Excel/{username}.xlsx")
         all_dfs = load_existing_excel(excel_path)
-        trade_df = all_dfs.get(strategy, pd.DataFrame())#TODO change the sheet name
+        trade_df = all_dfs.get("Extra", pd.DataFrame())
         trade_id = trade['trade_id'].split("_")[0]
         trade_index = trade_df.index[trade_df['trade_id'] == trade_id].tolist()
 
@@ -439,12 +441,10 @@ def process_extra_trades(broker,extra_trades,username=None,strategy=None):
                 elif cover_type == "ShortCover":
                     trade_points = trade_data['entry_price'] - trade['avg_price']
                 pnl = trade_points * trade['qty']
-
-                broker_taxes = {
-                    'zerodha': tc.zerodha_taxes,
-                    'aliceblue': tc.aliceblue_taxes
-                }
-                charges = broker_taxes[broker](trade['qty'], trade_data['entry_price'], trade['avg_price'], 1)
+                if broker == "zerodha":
+                    charges = tc.zerodha_taxes(trade['qty'], trade_data['entry_price'], trade['avg_price'], 1)
+                elif broker == "aliceblue":
+                    charges = tc.aliceblue_taxes(trade['qty'], trade_data['entry_price'], trade['avg_price'], 1)
                 net_pnl = pnl - charges
 
                 extra_trade_data = {
