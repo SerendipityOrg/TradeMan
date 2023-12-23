@@ -44,10 +44,6 @@ if not firebase_admin._apps:
         'storageBucket': storage_bucket
     })
 
-# Define file paths for various utilities and files
-active_users_json_path = os.path.join(DIR, "MarketUtils", "active_users.json")
-broker_filepath = os.path.join(DIR, "MarketUtils", "broker.json")
-
 # Function to find the start date of the current complete week
 def get_current_week_range():
     """Finds and returns the start date of the current complete week."""
@@ -80,7 +76,7 @@ def send_telegram_message(phone_number, message):
         client.send_message(phone_number, message, parse_mode='md') 
 
 # Function to generate a formatted message for weekly reports
-def generate_message(user, excel_file_name, net_pnl, cash_margin_value, trademan_account_value, trademan_invested, commission, actual_account_value, difference_value, start_date, end_date):
+def generate_message(user, excel_file_name, net_pnl, cash_margin_value, trademan_account_value, trademan_invested, drawdown, commission, actual_account_value, difference_value, start_date, end_date):
     """Generates and returns a formatted weekly report message."""
     message = f"Weekly Summary for {user['account_name']} ({start_date.strftime('%B %d')} to {end_date.strftime('%B %d')})\n\n"
     
@@ -92,13 +88,17 @@ def generate_message(user, excel_file_name, net_pnl, cash_margin_value, trademan
     message += f"\n**Net PnL: {custom_format(net_pnl)}**\n\n"
     message += f"Free Cash: {custom_format(cash_margin_value)}\n"
     message += f"Trademan Invested: {custom_format(trademan_invested)}\n"
-    message += f"Trademan Account Value: {custom_format(trademan_account_value)}\n"
+    message += f"Estimated Account Value: {custom_format(trademan_account_value)}\n"
     message += f"Actual Account Value: {custom_format(actual_account_value)}\n"
     message += f"Difference: {custom_format(difference_value)}\n\n"
 
-    # Only add the commission to the message if it's not zero
-    if commission != 0:
+    # Only add the commission to the message if it's greater than 0
+    if commission > 0:
         message += f"Commission: {custom_format(commission)}\n\n"
+
+    # Add the drawdown to the message if base_capital is less than actual_account_value
+    if drawdown < 0:
+        message += f"Drawdown: -{custom_format(abs(drawdown))}\n\n"
 
     message += "Best regards,\n**Serendipity Trading Firm**"
     return message
@@ -143,12 +143,54 @@ def calculate_trademan_invested(excel_file_name):
             total_margin_used = active_holdings['Margin Used'].sum()
 
     return total_margin_used
- 
+
+# Function to read base capital from basecapital.txt
+def read_base_capital(file_path):
+    base_capital = {}
+    try:
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+            for line in lines:
+                parts = line.strip().split(':')
+                if len(parts) == 2:
+                    user = parts[0].strip()
+                    balance_str = parts[1].strip()  # Directly strip whitespace
+                    base_capital[user] = float(balance_str)  # Convert the balance string to a float
+    except FileNotFoundError:
+        print("basecapital.txt not found.")
+    except ValueError as e:
+        print(f"Error parsing base capital: {e}")
+    return base_capital
+
+# Function to calculate commission and drawdown
+def calculate_commission_and_drawdown(user, actual_account_value, base_capital):
+    user_name = user['account_name']
+    commission = 0.0
+    drawdown = 0.0
+
+    if user_name in base_capital:
+        user_base_capital = base_capital[user_name]
+        
+        if actual_account_value > user_base_capital:
+            # Commission is positive when there's a profit
+            commission = actual_account_value - user_base_capital
+        elif actual_account_value < user_base_capital:
+            # Drawdown is negative when there's a loss
+            drawdown = actual_account_value - user_base_capital
+        # print(f"Account: {user_name}, Commission: {commission}, Drawdown: {drawdown}")
+    else:
+        print(f"Base capital not found for {user_name}.")
+
+    return commission, drawdown
+
 # Main function to execute the script for generating weekly reports
 def main():
     """Main function to execute the script for generating weekly reports."""
     # Load broker data from JSON file
     broker_data = general_calc.read_json_file(broker_filepath)
+    
+    # Load base capital data
+    base_capital = read_base_capital(os.path.join(DIR, 'MarketUtils', 'Main', 'basecapital.txt'))
 
     for user in broker_data:
         if "Active" in user['account_type']:
@@ -160,28 +202,30 @@ def main():
             excel_file_name = f"{user['account_name']}.xlsx"
 
             try:
-                # Calculate Trademan invested value (move this calculation before trademan_account_value)
+                # Calculate Trademan invested value
                 trademan_invested = calculate_trademan_invested(excel_file_name)
 
                 # Calculate net PnL
                 net_pnl = calculate_net_pnl(excel_file_name)
 
-                # Calculate commission based on net PnL
-                commission = net_pnl / 2 if net_pnl > 0 else 0
-
                 # Calculate actual account value and difference
                 actual_account_value = free_cash + get_invested_value(user)
-                difference_value = actual_account_value - (free_cash + trademan_invested)
+                
+                # Calculate commission and drawdown based on the base capital
+                commission, drawdown = calculate_commission_and_drawdown(user, actual_account_value, base_capital)
 
-                # Calculate trademan_account_value
+                # Calculate estimated account value (trademan_account_value)
                 trademan_account_value = free_cash + trademan_invested
 
+                # Calculate the difference between estimated and actual account value
+                difference_value = actual_account_value - trademan_account_value
+
                 # Generate and print the summary message
-                message = generate_message(user, excel_file_name, net_pnl, free_cash, trademan_account_value, trademan_invested, commission, actual_account_value, difference_value, start_date, end_date)
+                message = generate_message(user, excel_file_name, net_pnl, free_cash, trademan_account_value, trademan_invested, drawdown, commission, actual_account_value, difference_value, start_date, end_date)
                 print(message)
         
                 # Uncomment the following line to enable sending the message via Telegram
-                # send_telegram_message(user['mobile_number'], message)
+                send_telegram_message(user['mobile_number'], message)
 
             except FileNotFoundError as e:
                 print(f"File not found for {user['account_name']}: {e}")
@@ -190,4 +234,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
