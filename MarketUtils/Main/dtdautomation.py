@@ -43,107 +43,50 @@ def fetch_data_from_excel(file_name, sheet_mappings):
 
 
 # Function to create and return the DTD DataFrame with individual transactions and formatted columns
-def create_dtd_dataframe_updated(data_mappings, opening_balance, start_date):
+def create_dtd_dataframe_updated(data_mappings):
     if not data_mappings:
         print("No valid DataFrames found!")
-        return pd.DataFrame(), 0
+        return pd.DataFrame()
 
-    # Convert start_date to pandas Timestamp for comparison
-    start_date = pd.to_datetime(start_date)
-
-    # Extract all unique dates from the data mappings
-    all_dates = pd.concat([df['exit_time'].dt.date for key, df in data_mappings.items()]).unique()
-
-    # Filter out any NaT values (Not a Time) from the all_dates list to prevent errors during processing
+    all_dates = pd.concat([df['exit_time'].dt.date for df in data_mappings.values() if 'exit_time' in df.columns]).unique()
     all_dates = [date for date in all_dates if pd.notna(date)]
-    
-    # Sort the dates
     all_dates_sorted = sorted(all_dates, key=pd.Timestamp)
+    
     rows = []
-    default_details = ['Transactions','MPWizard', 'AmiPy', 'ZRM', 'OvernightFutures', 'ExtraTrades',
-                       'ExpiryTrader', 'ErrorTrade', 'ErrorTrades']
     sl_no = 1
 
-    # Initialize the running balance with the opening balance
-    running_balance = opening_balance
-
-    # Add the Opening Balance row with the correct start date
-    rows.append({
-        'Sl NO': sl_no,
-        'Date': start_date.strftime('%d-%b-%y'),
-        'Day': start_date.strftime('%A'),
-        'Trade ID': '',
-        'Details': 'Opening Balance',
-        'Amount': custom_format(running_balance),
-        'Running Balance': custom_format(running_balance)
-    })
-    sl_no += 1
-
     for date in all_dates_sorted:
-        if pd.Timestamp(date) < start_date:
-            continue  # Skip dates before the start date
         date_str = date.strftime('%d-%b-%y')
         day_str = date.strftime('%A')
-        for transaction_id in default_details:
-            if transaction_id in data_mappings:
-                df = data_mappings[transaction_id]
-                time_col = 'exit_time'
-                sub_df = df[df[time_col].dt.date == date]
+        for transaction_id, df in data_mappings.items():
+            sub_df = df[df['exit_time'].dt.date == date]
 
-                for _, row in sub_df.iterrows():
-                    trade_id = row['trade_id']
-                    amount = row['net_pnl']
-                    detail = transaction_id  # Default detail
+            for _, row in sub_df.iterrows():
+                trade_id = row['trade_id']
+                amount = row['net_pnl']
+                detail = transaction_id  # Default detail
 
-                    # If the transaction_id is 'Transactions', use the 'transaction_type' for details
-                    if transaction_id == 'Transactions' and 'transaction_type' in row:
-                        detail = row['transaction_type']
+                if pd.notna(amount) and amount != 0.00:
+                    rows.append({
+                        'Sl NO': sl_no,
+                        'Date': date_str,
+                        'Day': day_str,
+                        'Trade ID': trade_id,
+                        'Details': detail,
+                        'Amount': custom_format(amount),
+                    })
+                    sl_no += 1
 
-                    # Check if amount is not NaN and not 0.00
-                    if pd.notna(amount) and amount != 0.00:
-                        running_balance += amount
-                        rows.append({
-                            'Sl NO': sl_no,
-                            'Date': date_str,
-                            'Day': day_str,
-                            'Trade ID': trade_id,
-                            'Details': detail,
-                            'Amount': custom_format(amount),
-                            'Running Balance': custom_format(running_balance)
-                        })
-                        sl_no += 1
-
-    dtd_df = pd.DataFrame(rows)
-    return dtd_df, running_balance
-
-# Function to retrieve existing 'Opening Balance' from the DTD sheet
-def get_existing_opening_balance(file_name):
-    if 'DTD' in pd.ExcelFile(file_name).sheet_names:
-        existing_dtd = pd.read_excel(file_name, sheet_name='DTD')
-        details_column = existing_dtd.get('Details')
-        if details_column is not None and 'Opening Balance' in details_column.values:
-            running_balance_str = existing_dtd[details_column ==
-                                               'Opening Balance']['Running Balance'].iloc[0]
-            if isinstance(running_balance_str, (str, int, float)):
-                return float(str(running_balance_str).replace('₹', '').replace(',', '').strip())
-    return None
+    return pd.DataFrame(rows)
 
 # Function to append new data to the existing DTD sheet or create a new one
-
-
 def check_and_update_dtd_sheet(file_name, new_dtd_df):
     if 'Details' not in new_dtd_df.columns:
         print(
             f"'Details' column missing in the new data for {file_name}. Skipping this file.")
         return
 
-    existing_opening_balance = get_existing_opening_balance(file_name)
-
     with pd.ExcelWriter(file_name, engine='openpyxl', mode='a') as writer:
-        if existing_opening_balance is not None:
-            new_dtd_df.loc[new_dtd_df['Details'] == 'Opening Balance',
-                           'Running Balance'] = custom_format(existing_opening_balance)
-
         if 'DTD' in writer.book.sheetnames:
             existing_dtd = pd.read_excel(file_name, sheet_name='DTD')
             if 'Date' in existing_dtd.columns and 'Date' in new_dtd_df.columns:
@@ -164,29 +107,6 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df):
             updated_dtd_df = new_dtd_df
 
         updated_dtd_df.to_excel(writer, sheet_name='DTD', index=False)
-
-
-def read_opening_balances(file_path):
-    opening_balances = {}
-    try:
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-            for line in lines:
-                parts = line.strip().split('date:')
-                if len(parts) == 2:
-                    user_balance_part = parts[0].strip()
-                    user_parts = user_balance_part.split(':')
-                    date_str = parts[1].strip()
-                    if len(user_parts) == 2:
-                        user = user_parts[0].strip()
-                        balance_str = user_parts[1].strip().replace('₹', '').replace(',', '').strip()
-                        opening_balances[user] = {
-                            'balance': float(balance_str),
-                            'date': pd.to_datetime(date_str, format='%d-%b-%y')  # Assuming the date is in '04-Nov-23' format
-                        }
-    except FileNotFoundError:
-        print("useropeningbalance.txt not found.")
-    return opening_balances
 
 # Function to save file to Firebase Storage
 def save_file_to_firebase(file_path, firebase_bucket_name):
@@ -218,10 +138,8 @@ def main():
     
     excel_dir = r"C:\Users\vanis\OneDrive\Desktop\TradeMan\UserProfile\excel"
     # excel_dir = os.getenv('onedrive_excel_folder')
-    opening_balances = read_opening_balances(os.path.join(DIR, 'MarketUtils', 'Main', 'useropeningbalance.txt'))
-
+    
     sheet_mappings = {
-        'Transactions': 'Transactions',
         'MPWizard': 'MPWizard',
         'AmiPy': 'AmiPy',
         'ZRM': 'ZRM',
@@ -235,22 +153,10 @@ def main():
         for file in files:
             if file.endswith(".xlsx"):
                 file_name = os.path.join(root, file)
-                user_name = os.path.splitext(file)[0]
 
-                # Retrieve user data from opening_balances dictionary
-                # This contains both the balance and the start date
-                user_data = opening_balances.get(user_name, {'balance': 0.0, 'date': pd.Timestamp.now()})
-                opening_balance = user_data['balance']
-                opening_date = user_data['date']
-
-                # Fetch data from Excel
                 data_mappings = fetch_data_from_excel(file_name, sheet_mappings)
+                dtd_df = create_dtd_dataframe_updated(data_mappings)
 
-                # Now pass the 'opening_date' to 'create_dtd_dataframe_updated' function
-                dtd_df, _ = create_dtd_dataframe_updated(
-                    data_mappings, opening_balance, opening_date)
-
-                # Check and update the DTD sheet with the new DataFrame
                 check_and_update_dtd_sheet(file_name, dtd_df)
                 save_file_to_firebase(file_name, storage_bucket)
 

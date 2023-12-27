@@ -362,17 +362,9 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                 trade_id = row[column_indices['Trade ID']].value
                 details = row[column_indices['Details']].value
                 amount = row[column_indices['Amount']].value
-                running_balance = row[column_indices['Running Balance']].value
 
-                # Skip the opening balance rows
-                if details != "Opening Balance":
-                    data.append([date, day, trade_id, details,
-                                amount, running_balance])
-
-            # Extract the default start date from the first entry of the data (which is now not the opening balance)
-            default_start_date = datetime.datetime.strptime(
-                data[0][0], '%d-%b-%y').date()
-            
+                # Add the row data to the data list
+                data.append([date, day, trade_id, details, amount])
 
         # Add custom CSS for the table and value colors
         st.markdown("""
@@ -424,8 +416,6 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                     amount = float(record[4].replace('₹', '').replace(
                         ',', '').replace(' ', '').strip())
                     details_aggregated[detail_type] += amount
-                    running_balance = float(record[5].replace(
-                        '₹', '').replace(',', '').replace(' ', '').strip())
 
                 aggregated_data = []
 
@@ -436,11 +426,6 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                     display_detail = detail_type if detail_type not in italic_types else f"<em>{detail_type}</em>"
                     aggregated_data.append(
                         [display_detail, format_value(amount)])
-
-                # Format and color the Running Balance value in green
-                running_balance_formatted = f"<span style='color: green;'>{custom_format(running_balance)}</span>"
-                aggregated_data.append(
-                    [f"<strong>Running Balance</strong>", running_balance_formatted])
 
                 # Display the table without header using pandas
                 st.write(pd.DataFrame(aggregated_data).to_html(
@@ -508,39 +493,39 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             st.write(pd.DataFrame(aggregated_data, columns=['Detail Type', 'Amount']).to_html(
                 classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
 
-        if option_selected == 'Admin Stats':
+        # if option_selected == 'Admin Stats':
 
-            if start_date and end_date:
-                filtered_data = []
-                for record in data:
-                    try:
-                        record_date = datetime.datetime.strptime(
-                            record[0], '%d-%b-%y').date()
-                        if start_date <= record_date <= end_date:
-                            filtered_data.append(record)
-                    except ValueError as e:
-                        print(f"Failed to parse date {record[0]}: {e}")
+        #     if start_date and end_date:
+        #         filtered_data = []
+        #         for record in data:
+        #             try:
+        #                 record_date = datetime.datetime.strptime(
+        #                     record[0], '%d-%b-%y').date()
+        #                 if start_date <= record_date <= end_date:
+        #                     filtered_data.append(record)
+        #             except ValueError as e:
+        #                 print(f"Failed to parse date {record[0]}: {e}")
 
-                # Compute the statistics
-                initial_capital = float(filtered_data[0][5].replace(
-                    '₹', '').replace(',', '').replace(' ', '').strip())
-                ending_capital = float(
-                    filtered_data[-1][5].replace('₹', '').replace(',', '').replace(' ', '').strip())
-                total_profit = ending_capital - initial_capital
+        #         # Compute the statistics
+        #         initial_capital = float(filtered_data[0][5].replace(
+        #             '₹', '').replace(',', '').replace(' ', '').strip())
+        #         ending_capital = float(
+        #             filtered_data[-1][5].replace('₹', '').replace(',', '').replace(' ', '').strip())
+        #         total_profit = ending_capital - initial_capital
 
-                # Create a DataFrame for the statistics
-                stats_data = {
-                    "Metric": ["Initial Capital", "Ending Capital", "Total Profit"],
-                    "Value": [f"<span style='color: green;'>{custom_format(initial_capital)}</span>",
-                              f"<span style='color: green;'>{custom_format(ending_capital)}</span>",
-                              f"<span style='color: green;'>{custom_format(total_profit)}</span>"]
-                }
+        #         # Create a DataFrame for the statistics
+        #         stats_data = {
+        #             "Metric": ["Initial Capital", "Ending Capital", "Total Profit"],
+        #             "Value": [f"<span style='color: green;'>{custom_format(initial_capital)}</span>",
+        #                       f"<span style='color: green;'>{custom_format(ending_capital)}</span>",
+        #                       f"<span style='color: green;'>{custom_format(total_profit)}</span>"]
+        #         }
 
-                stats_df = pd.DataFrame(stats_data)
+        #         stats_df = pd.DataFrame(stats_data)
 
-                # Display the table without index and without column headers, and with custom styles
-                st.write(stats_df.to_html(index=False, header=False,
-                                          classes='custom-table', escape=False), unsafe_allow_html=True)
+        #         # Display the table without index and without column headers, and with custom styles
+        #         st.write(stats_df.to_html(index=False, header=False,
+        #                                   classes='custom-table', escape=False), unsafe_allow_html=True)
 
     if selected == 'Graph':
         if 'filtered_data' not in locals():
@@ -656,59 +641,3 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
 
             # Display the Running Balance graph using Streamlit's plotly_chart function
             st.plotly_chart(fig)
-
-# # Define a function to select signals
-# def select_signals():
-#     # Get a reference to the signals in the Firebase database
-#     signals_ref = db.reference('/signals')
-
-#     # Retrieve the signals data from the database
-#     signals_data = signals_ref.get()
-
-#     # Check if signals data is available
-#     if not signals_data:
-#         st.sidebar.warning("No signals data found.")
-#         return
-
-#     # Assuming 'signalinfo' and 'signals' are the main categories for an admin
-#     signal_names = ['Select', 'signalinfo', 'signals']
-
-#     # Create a select box in the Streamlit sidebar to choose a signal category
-#     selected_signal_category = st.sidebar.selectbox('Select a Signal Category', signal_names)
-
-#     # If an admin selects 'signalinfo' or 'signals', show the date input
-#     if selected_signal_category in ['signalinfo', 'signals']:
-#         selected_date = st.date_input("Select a Date")
-
-#     # if selected_signal_name and selected_signal_name != 'Select':
-#     #     # Display a date picker widget
-#     #     selected_date = st.date_input("Select a Date")
-
-#     #     # Check if a date has been selected
-#     #     if selected_date:
-#     #         formatted_date = selected_date.strftime("%Y-%m-%d")  # Format the date as needed
-
-#     #         try:
-#     #             # Construct the path to the data for the selected signal
-#     #             data_ref = db.reference(f"/signals/{selected_signal_name}")
-
-#     #             # Retrieve the data for the selected signal
-#     #             signal_data = data_ref.get()
-
-#     #             # Filter the data based on the selected date
-#     #             if signal_data:
-#     #                 extracted_data = []
-#     #                 for item in signal_data.values():
-#     #                     if 'exit_time' in item and datetime.strptime(item['exit_time'], "%Y-%m-%d %H:%M:%S").date() == selected_date:
-#     #                         extracted_data.append({'trade_id': item['trade_id'], 'trade_points': item['trade_points']})
-
-#     #                 if extracted_data:
-#     #                     df = pd.DataFrame(extracted_data)
-#     #                     st.write(df)
-#     #                 else:
-#     #                     st.warning("No trades found for the selected date.")
-#     #             else:
-#     #                 st.warning("No data found for the selected signal.")
-
-#     #         except Exception as e:
-#     #             st.error(f"Error retrieving data: {e}")

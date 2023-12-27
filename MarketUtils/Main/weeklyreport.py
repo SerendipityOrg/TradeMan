@@ -132,15 +132,15 @@ def calculate_trademan_invested(excel_file_name):
         # Trim spaces from column names and convert them to a consistent case
         df_holdings.columns = df_holdings.columns.str.strip().str.title()
 
-        if 'Margin Used' in df_holdings.columns:  # Check if 'Margin Used' column exists
+        if 'net_pnl' in df_holdings.columns:  # Check if 'Margin Used' column exists
             # Convert 'Margin Used' to numeric, replacing non-numeric with 0
-            df_holdings['Margin Used'] = pd.to_numeric(df_holdings['Margin Used'].replace('[₹,]', '', regex=True), errors='coerce').fillna(0)
+            df_holdings['net_pnl'] = pd.to_numeric(df_holdings['net_pnl'].replace('[₹,]', '', regex=True), errors='coerce').fillna(0)
 
             # Filter rows where 'Exit Date' is NaN (i.e., no exit date)
-            active_holdings = df_holdings[df_holdings['Exit Date'].isna()]
+            active_holdings = df_holdings[df_holdings['exit_time'].isna()]
 
             # Sum 'Margin Used' for these active holdings
-            total_margin_used = active_holdings['Margin Used'].sum()
+            total_margin_used = active_holdings['net_pnl'].sum()
 
     return total_margin_used
 
