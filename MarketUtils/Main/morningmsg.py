@@ -48,8 +48,6 @@ def zerodha_invested_value(broker_data):
     return sum(stock['average_price'] * stock['quantity'] for stock in holdings)
 
 # Fetch invested value based on broker type
-
-
 def get_invested_value(user_data):#TODO get the values from excel
     active_users = general_calc.read_json_file(active_users_json_path)
     for user in active_users:
@@ -85,7 +83,6 @@ def generate_message(user, formatted_date, user_data, cash_balance, invested_val
     return message
 
 # Other imports and function definitions remain the same
-
 def main():
     broker_data = general_calc.read_json_file(broker_filepath)
     updated_users = []

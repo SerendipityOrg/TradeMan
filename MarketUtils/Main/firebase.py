@@ -29,7 +29,8 @@ if not firebase_admin._apps:
         'databaseURL': database_url,
         'storageBucket': storage_bucket
     })
-     
+
+    
 # Function to get the current week's start and end dates
 def get_current_week():
     current_date = datetime.date.today()
@@ -113,3 +114,4 @@ def save_file_to_firebase(file_path, firebase_bucket_name):
     # Upload the file
     blob.upload_from_filename(file_path)
     print(f"File {file_path} uploaded to {firebase_bucket_name}.")
+

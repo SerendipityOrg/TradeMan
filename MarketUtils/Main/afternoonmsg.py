@@ -21,7 +21,8 @@ ENV_PATH = os.path.join(DIR, '.env')
 
 # Loading environment variables from .env file
 load_dotenv(ENV_PATH)
-excel_dir = os.getenv('onedrive_excel_folder')
+excel_dir = r"C:\Users\vanis\OneDrive\DONOTTOUCH\excel"
+# excel_dir = os.getenv('onedrive_excel_folder')
 # excel_dir = os.path.join(DIR, "UserProfile","excel")
 api_id = os.getenv('telethon_api_id')
 api_hash = os.getenv('telethon_api_hash')
@@ -98,7 +99,7 @@ def main():
         all_dfs = load_existing_excel(excel_path)
         
         # Update the DTD sheet in the loaded Excel file
-        dtd.main() 
+        # dtd.main() 
 
         # Create a dictionary to store the aggregated results for each strategy
         strategy_results = {}
@@ -141,10 +142,10 @@ def main():
 
         message = build_message(user['account_name'], strategy_results, gross_pnl, expected_tax, current_capital, expected_capital)
         print(message)
-        update_json_data(broker_data, user, net_pnl, current_capital, expected_capital, broker_filepath)
+        # update_json_data(broker_data, user, net_pnl, current_capital, expected_capital, broker_filepath)
 
-        # Sending the message via Telegram is currently commented out, remove the comments to enable.
-        send_telegram_message(user['mobile_number'], message)
+        # # Sending the message via Telegram is currently commented out, remove the comments to enable.
+        # send_telegram_message(user['mobile_number'], message)
 
 
 # Execute the main function when the script is run

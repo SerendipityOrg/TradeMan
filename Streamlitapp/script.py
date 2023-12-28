@@ -21,8 +21,6 @@ from streamlit_option_menu import option_menu
 
 storage_bucket = os.getenv('STORAGE_BUCKET')
 
-
-
 def display_profile_picture(client_data, style=None):
     # Ensure that client_data is a dictionary
     if isinstance(client_data, str):
@@ -101,7 +99,6 @@ def display_profile_picture(client_data, style=None):
 
         # Remove the saved image file
         os.remove(image_path)
-
 
 def show_profile(client_data):
     # Display profile picture
@@ -300,8 +297,6 @@ table.dataframe tr:hover {
 """
 
 # Function to display performance dashboard
-
-
 def display_performance_dashboard(selected_client, client_data, excel_file_name):
     # Display the profile picture with the new style
     display_profile_picture(client_data)
@@ -551,7 +546,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
         available_strategies = [
             strategy for strategy in categories if strategy in unique_strategies]
 
-        graph_option = option_menu(None, ["Net PnL", "Running Balance"],
+        graph_option = option_menu(None, ["Net PnL"],
                                    icons=['line-chart', 'line-chart'],
                                    menu_icon="chart-bar",
                                    default_index=0,
@@ -594,50 +589,50 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             )
             st.plotly_chart(fig)
 
-        elif graph_option == "Running Balance":
-            # Extract running balances from the entire dataset and convert them to floats
-            running_balance = [float(record[5].replace('₹', '').replace(
-                ',', '').replace(' ', '').strip()) for record in data]
+        # elif graph_option == "Running Balance":
+        #     # Extract running balances from the entire dataset and convert them to floats
+        #     running_balance = [float(record[5].replace('₹', '').replace(
+        #         ',', '').replace(' ', '').strip()) for record in data]
 
-            # Create an auxiliary list of formatted values
-            formatted_balance = [custom_format(val) for val in running_balance]
+        #     # Create an auxiliary list of formatted values
+        #     formatted_balance = [custom_format(val) for val in running_balance]
 
-            # Create a Plotly figure for Running Balance
-            fig = go.Figure()
+        #     # Create a Plotly figure for Running Balance
+        #     fig = go.Figure()
 
-            # Add traces for each segment of the line with the determined color
-            for i in range(1, len(running_balance)):
-                color = 'green' if running_balance[i] > running_balance[i - 1] else 'red'
-                fig.add_trace(go.Scatter(
-                    x=[data[i - 1][0], data[i][0]],
-                    y=[running_balance[i - 1], running_balance[i]],
-                    customdata=[formatted_balance[i - 1],
-                                formatted_balance[i]],
-                    mode='lines',
-                    line=dict(color=color, width=2),
-                    hovertemplate='<b>Date:</b> %{x}<br><b>Running Balance:</b> %{customdata}',
-                    showlegend=False
-                ))
+        #     # Add traces for each segment of the line with the determined color
+        #     for i in range(1, len(running_balance)):
+        #         color = 'green' if running_balance[i] > running_balance[i - 1] else 'red'
+        #         fig.add_trace(go.Scatter(
+        #             x=[data[i - 1][0], data[i][0]],
+        #             y=[running_balance[i - 1], running_balance[i]],
+        #             customdata=[formatted_balance[i - 1],
+        #                         formatted_balance[i]],
+        #             mode='lines',
+        #             line=dict(color=color, width=2),
+        #             hovertemplate='<b>Date:</b> %{x}<br><b>Running Balance:</b> %{customdata}',
+        #             showlegend=False
+        #         ))
 
-            # Hide legend for each trace
+        #     # Hide legend for each trace
 
-            # Update the layout to hide the overall legend
-            fig.update_layout(showlegend=False)
+        #     # Update the layout to hide the overall legend
+        #     fig.update_layout(showlegend=False)
 
-            # Get the range of y-values for custom tick formatting
-            y_max = max(running_balance)
-            y_min = min(running_balance)
-            tickvals = list(
-                range(40000, int(math.ceil(y_max / 50000) * 50000) + 1, 50000))
-            ticktext = [custom_format(val) for val in tickvals]
+        #     # Get the range of y-values for custom tick formatting
+        #     y_max = max(running_balance)
+        #     y_min = min(running_balance)
+        #     tickvals = list(
+        #         range(40000, int(math.ceil(y_max / 50000) * 50000) + 1, 50000))
+        #     ticktext = [custom_format(val) for val in tickvals]
 
-            # Update y-axis to display values in Indian rupees with custom formatting
-            fig.update_layout(
-                yaxis_title="Amount (₹)",
-                yaxis_tickvals=tickvals,
-                yaxis_ticktext=ticktext,
-                xaxis_title="Date"
-            )
+        #     # Update y-axis to display values in Indian rupees with custom formatting
+        #     fig.update_layout(
+        #         yaxis_title="Amount (₹)",
+        #         yaxis_tickvals=tickvals,
+        #         yaxis_ticktext=ticktext,
+        #         xaxis_title="Date"
+        #     )
 
-            # Display the Running Balance graph using Streamlit's plotly_chart function
-            st.plotly_chart(fig)
+        #     # Display the Running Balance graph using Streamlit's plotly_chart function
+        #     st.plotly_chart(fig)

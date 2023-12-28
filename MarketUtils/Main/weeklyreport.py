@@ -23,7 +23,7 @@ api_hash = os.getenv('telethon_api_hash')
 
 sys.path.append(DIR)
 import MarketUtils.general_calc as general_calc
-from morningmsg import get_invested_value
+from MarketUtils.Main.morningmsg import get_invested_value
 from Brokers.Aliceblue.alice_utils import cash_margin_available  # Specific broker utility
 from Brokers.Zerodha.kite_utils import cash_balance  # Specific broker utility
 from MarketUtils.Excel.strategy_calc import custom_format  # Utility for formatting Excel data
@@ -225,7 +225,7 @@ def main():
                 print(message)
         
                 # Uncomment the following line to enable sending the message via Telegram
-                send_telegram_message(user['mobile_number'], message)
+                # send_telegram_message(user['mobile_number'], message)
 
             except FileNotFoundError as e:
                 print(f"File not found for {user['account_name']}: {e}")
