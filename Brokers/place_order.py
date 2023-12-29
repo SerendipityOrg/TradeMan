@@ -13,12 +13,15 @@ import Brokers.BrokerUtils.Broker as Broker
 from MarketUtils.InstrumentBase import Instrument
 import MarketUtils.general_calc as general_calc
 
-def get_order_qty(order_with_user_and_broker):
-    # Get the quantity with the updated order details
-    order_qty = place_order_calc.get_qty(order_with_user_and_broker)
-    return order_qty
+def calculate_stoploss(order_details, option_ltp):
+    # Calculate the stoploss price
+    # ...
+    return stoploss_price
 
 def split_order(order_with_user_and_broker, max_qty):
+    # Calculate the trigger price based on the transaction type and stoploss price
+    # ...
+    return trigger_price
     # Split the order if the quantity exceeds the maximum
     while order_qty > 0:
         current_qty = min(order_qty, max_qty)
@@ -35,6 +38,9 @@ def place_order_for_strategy(strategy_name, order_details):
     monitor.start_monitoring()
 
 def place_order_for_strategy(strategy_name, order_details):
+    # Modify the transaction type for stoploss orders
+    # ...
+    return modified_transaction_type
     active_users = Broker.get_active_subscribers(strategy_name)  
     for broker, usernames in active_users.items():
         for username in usernames:
@@ -88,9 +94,9 @@ def place_stoploss_order(order_details=None,monitor=None):
     token = instrument_base.get_token_by_exchange_token(order_details.get('exchange_token'))
     option_ltp = strategy_obj.get_single_ltp(str(token))
 
-    order_details['limit_prc'] = place_order_calc.calculate_stoploss(order_details,option_ltp)
-    order_details['trigger_prc'] = place_order_calc.calculate_trigger_price(order_details.get('transaction_type'),order_details['limit_prc'])
-    order_details['transaction_type'] = place_order_calc.calculate_transaction_type_sl(order_details.get('transaction_type'))
+    order_details['limit_prc'] = calculate_stoploss(order_details, option_ltp)
+    order_details['trigger_prc'] = calculate_trigger_price(order_details.get('transaction_type'), order_details['limit_prc'])
+    order_details['transaction_type'] = calculate_transaction_type_sl(order_details.get('transaction_type'))
 
     order_details['order_type'] = 'Stoploss'
 
@@ -123,7 +129,13 @@ def modify_orders(order_details=None):
                 order_with_user["username"] = username
                 order_with_user['qty'] = place_order_calc.get_qty(order_with_user)
                 modify_stoploss(order_with_user)
+def place_aliceblue_order(order_details):
+    # Place the order for Aliceblue broker
+    # ...
 
+def place_zerodha_order(order_details):
+    # Place the order for Zerodha broker
+    # ...
 
 def orders_via_telegram(details):
     strategy_name = place_order_calc.get_strategy_name(details.get('trade_id'))
