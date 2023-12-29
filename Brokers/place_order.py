@@ -13,7 +13,23 @@ import Brokers.BrokerUtils.Broker as Broker
 from MarketUtils.InstrumentBase import Instrument
 import MarketUtils.general_calc as general_calc
 
-def add_token_to_monitor(order_details):
+def get_order_qty(order_with_user_and_broker):
+    # Get the quantity with the updated order details
+    order_qty = place_order_calc.get_qty(order_with_user_and_broker)
+    return order_qty
+
+def split_order(order_with_user_and_broker, max_qty):
+    # Split the order if the quantity exceeds the maximum
+    while order_qty > 0:
+        current_qty = min(order_qty, max_qty)
+        order_to_place = order_with_user_and_broker.copy()
+        order_to_place["qty"] = current_qty
+        place_order_for_broker(order_to_place)
+        if 'Hedge' in order_to_place.get('order_mode', []):
+            sleep(1)
+        order_qty -= current_qty
+
+def place_order_for_strategy(strategy_name, order_details):
     monitor = place_order_calc.monitor()
     monitor.add_token(order_details=order_details)
     monitor.start_monitoring()
