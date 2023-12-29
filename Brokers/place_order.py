@@ -137,7 +137,7 @@ def place_zerodha_order(order_details):
     # Place the order for Zerodha broker
     # ...
 
-def orders_via_telegram(details):
+
     strategy_name = place_order_calc.get_strategy_name(details.get('trade_id'))
     _, strategy_path = place_order_calc.get_strategy_json(strategy_name)
     trade_id = details.get('trade_id').split('_')
