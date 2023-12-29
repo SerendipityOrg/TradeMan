@@ -28,7 +28,8 @@ def get_strategies_from_users():
     strategies = set()
     for user in active_users:
         strategies.update(user['qty'].keys())
-    strategies.add("Extra")  # Add the "Extra" strategy
+    strategies.add("Extra")
+    strategies.add("Stocks")
 
     # Convert the set to a list and sort it
     sorted_strategies = sorted(list(strategies))
@@ -85,34 +86,53 @@ def strategy_selection(update: Update, context: CallbackContext) -> int:
         return STRATEGY_SELECTION
 
     context.user_data['strategy'] = selected_strategy
-    # Filter active_users based on selected strategy
-    active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
-    filtered_users = [user for user in active_users if selected_strategy in user['qty']]
-    context.user_data['filtered_users'] = filtered_users
 
-    # Construct user selection message
-    user_selection_message = "Please select one or more users by number (e.g., 1,3,5):\n"
-    for idx, user in enumerate(filtered_users, 1):
-        user_selection_message += f"{idx}. {user['account_name']}\n"
+    # Check if the selected strategy is "Extra" or "Stocks"
+    if selected_strategy in ["Extra", "Stocks"]:
+        # Show all users from active_users.json
+        active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
+        user_selection_message = "Please select one or more users by number (e.g., 1,3,5):\n"
+        for idx, user in enumerate(active_users, 1):
+            user_selection_message += f"{idx}. {user['account_name']}\n"
+        user_selection_message += f"{len(active_users) + 1}. ALL USERS\n"
+        context.user_data['filtered_users'] = active_users
+        update.message.reply_text(user_selection_message)
+        return USER_SELECTION
+    else:
+        # Filter active_users based on selected strategy
+        active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
+        filtered_users = [user for user in active_users if selected_strategy in user['qty']]
+        context.user_data['filtered_users'] = filtered_users
 
-    user_selection_message += f"{len(filtered_users) + 1}. ALL USERS\n"
-    update.message.reply_text(user_selection_message)
-    return USER_SELECTION
+        # Construct user selection message
+        user_selection_message = "Please select one or more users by number (e.g., 1,3,5):\n"
+        for idx, user in enumerate(filtered_users, 1):
+            user_selection_message += f"{idx}. {user['account_name']}\n"
+
+        user_selection_message += f"{len(filtered_users) + 1}. ALL USERS\n"
+        update.message.reply_text(user_selection_message)
+        return USER_SELECTION
+
 
 
 def user_selection(update: Update, context: CallbackContext) -> int:
     user_inputs = update.message.text.split(',')
-    all_users_option = str(len(context.user_data['filtered_users']) + 1)  # The option number for "All Users"
+    all_users_option = str(len(context.user_data.get('filtered_users', [])) + 1)  # The option number for "All Users"
     selected_accounts = []
 
     for user_input in user_inputs:
         user_input = user_input.strip()
         if user_input == all_users_option:
-            selected_accounts = [user['account_name'] for user in context.user_data['filtered_users']]
+            # If 'filtered_users' doesn't exist, use all users from active_users.json
+            filtered_users = context.user_data.get('filtered_users')
+            if not filtered_users:
+                active_users = general_calc.read_json_file(os.path.join(DIR, "MarketUtils", "active_users.json"))
+                filtered_users = active_users
+            selected_accounts = [user['account_name'] for user in filtered_users]
             break  # No need to loop further as all users are selected
         else:
             try:
-                selected_account = context.user_data['filtered_users'][int(user_input) - 1]['account_name']
+                selected_account = context.user_data.get('filtered_users', [])[int(user_input) - 1]['account_name']
                 selected_accounts.append(selected_account)
             except (IndexError, ValueError):
                 update.message.reply_text("Invalid selection: " + user_input)
@@ -122,8 +142,6 @@ def user_selection(update: Update, context: CallbackContext) -> int:
     # Proceed to the next step
     update.message.reply_text("Select transaction type:\n1. BUY\n2. SELL")
     return TRANSACTION_TYPE
-
-
 
 def transaction_type(update: Update, context: CallbackContext) -> int:
     user_input = update.message.text
@@ -236,7 +254,6 @@ def qty_risk_selection(update: Update, context: CallbackContext) -> int:
 
     if user_input == "3":
         update.message.reply_text("Please Enter Trade ID")
-        print("Transitioning to STRATEGY_QTY_SELECTION")
         return TRADE_ID_INPUT
     elif user_input == "1" or user_input == "2":
         prompt = "Please enter the quantity:" if user_input == "1" else "Please enter the risk percentage:"
@@ -247,7 +264,6 @@ def qty_risk_selection(update: Update, context: CallbackContext) -> int:
         return QTY_RISK_SELECTION
 
 def qty_risk_input(update: Update, context: CallbackContext) -> int:
-    print("In qty_risk_input") 
     user_input = update.message.text
 
     # Determine whether to store quantity or risk percentage based on previous selection

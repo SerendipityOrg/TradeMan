@@ -43,7 +43,8 @@ def calculate_qty(main_exchange_token,base_symbol):
 
 
 # Extract strategy parameters
-base_symbol, today_expiry_token = expiry_trader_obj.determine_expiry_index()
+day = dt.datetime.today().weekday()
+base_symbol, today_expiry_token = expiry_trader_obj.determine_expiry_index(day)
 strategy_name = expiry_trader_obj.get_strategy_name()
 prediction = expiry_trader_obj.get_general_params().get('TradeView')
 order_type = expiry_trader_obj.get_general_params().get('OrderType')

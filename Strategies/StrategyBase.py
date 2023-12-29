@@ -154,8 +154,7 @@ class Strategy:
             return f"{base_symbol} not found"
         return token[0]
     
-    def determine_expiry_index(self):
-        day = dt.datetime.today().weekday()
+    def determine_expiry_index(self,day):
         if day == 0:  # Monday
             return "MIDCPNIFTY","288009"
         elif day == 1:  # Tuesday
