@@ -119,7 +119,7 @@ def modify_stoploss(order_details=None):
     else:
         print("Unknown broker")
     
-def modify_orders(order_details=None):
+
     active_users = Broker.get_active_subscribers(order_details[0]['strategy'])
     for broker, usernames in active_users.items():
         for username in usernames:
