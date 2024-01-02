@@ -6,6 +6,10 @@ from admin import main as admin_main
 import os
 
 
+# The first and only call to st.set_page_config() in your entire app
+st.set_page_config(layout="wide")
+
+
 class SessionState:
     def __init__(self, active_user=None):
         self.active_user = active_user

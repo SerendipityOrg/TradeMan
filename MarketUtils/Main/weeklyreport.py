@@ -124,25 +124,28 @@ def calculate_net_pnl(excel_file_name):
 
 # Function to calculate Trademan invested value (customize this function according to your logic)
 def calculate_trademan_invested(excel_file_name):
-    _, df_holdings = load_excel(excel_file_name)  # Load the 'Holdings' sheet
+    # Load the 'Holdings' sheet
+    _, df_holdings = load_excel(excel_file_name)
 
-    total_margin_used = 0  # Initialize default value
+    total_margin_used = 0.0  # Initialize the net PnL for holdings without an exit time
 
     if df_holdings is not None:
-        # Trim spaces from column names and convert them to a consistent case
+        # Clean the column names
         df_holdings.columns = df_holdings.columns.str.strip().str.title()
 
-        if 'net_pnl' in df_holdings.columns:  # Check if 'Margin Used' column exists
-            # Convert 'Margin Used' to numeric, replacing non-numeric with 0
-            df_holdings['net_pnl'] = pd.to_numeric(df_holdings['net_pnl'].replace('[₹,]', '', regex=True), errors='coerce').fillna(0)
+        # Ensure 'Net_Pnl' and 'Exit_Time' columns exist and are in the correct format
+        if 'Net_Pnl' in df_holdings.columns and 'Exit_Time' in df_holdings.columns:
+            # Convert 'Net_Pnl' to numeric, replacing non-numeric with 0
+            df_holdings['Net_Pnl'] = pd.to_numeric(df_holdings['Net_Pnl'].replace('[₹,]', '', regex=True), errors='coerce').fillna(0)
 
-            # Filter rows where 'Exit Date' is NaN (i.e., no exit date)
-            active_holdings = df_holdings[df_holdings['exit_time'].isna()]
+            # Filter rows where 'Exit_Time' is NaN (i.e., the trade is still active)
+            active_holdings = df_holdings[df_holdings['Exit_Time'].isna()]
 
-            # Sum 'Margin Used' for these active holdings
-            total_margin_used = active_holdings['net_pnl'].sum()
+            # Sum 'Net_Pnl' for these active holdings
+            total_margin_used = active_holdings['Net_Pnl'].sum()
 
-    return total_margin_used
+    # Return the total margin used (or modify as needed for your specific use case)
+    return  total_margin_used
 
 # Function to read base capital from basecapital.txt
 def read_base_capital(file_path):
@@ -225,7 +228,7 @@ def main():
                 print(message)
         
                 # Uncomment the following line to enable sending the message via Telegram
-                # send_telegram_message(user['mobile_number'], message)
+                send_telegram_message(user['mobile_number'], message)
 
             except FileNotFoundError as e:
                 print(f"File not found for {user['account_name']}: {e}")
