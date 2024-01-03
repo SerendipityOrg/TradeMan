@@ -5,21 +5,18 @@ import datetime
 from PIL import Image
 import streamlit as st
 import pandas as pd
-import re
-import math
-import plotly.graph_objects as go
 from firebase_admin import db
 from firebase_admin import credentials, storage
 import openpyxl
 import json
-from collections import defaultdict
 from io import BytesIO
+import pygwalker as pyg
+import streamlit.components.v1 as components
 from formats import format_value, format_stat_value, indian_format, custom_format
 from streamlit_option_menu import option_menu
 
 
 storage_bucket = os.getenv('STORAGE_BUCKET')
-
 
 def display_profile_picture(client_data, style=None):
     # Ensure that client_data is a dictionary
@@ -53,7 +50,7 @@ def display_profile_picture(client_data, style=None):
             "container": {
                 "position": "absolute",
                 "top": "-80px",
-                "right": "-170px",
+                "right": "-80px",
                 "border": "2px solid #ccc",
                 "border-radius": "50%",
                 "overflow": "hidden"
@@ -100,7 +97,6 @@ def display_profile_picture(client_data, style=None):
         # Remove the saved image file
         os.remove(image_path)
 
-
 def show_profile(client_data):
     # Display profile picture
     display_profile_picture(client_data)
@@ -124,8 +120,10 @@ def show_profile(client_data):
     Brokers_list_1 = client_data.get("Brokers list 1", [])
     Brokers_list_2 = client_data.get("Brokers list 2", [])
     Strategy_list = client_data.get("Strategy list", [])
+    weekly_saturday_capital = client_data.get("Weekly Saturday Capital", "")
     Comments = client_data.get("Comments", "")
     Smart_Contract = client_data.get("Smart Contract", "")
+    
 
     # Create a DataFrame to display the client data in tabular form
     data = {
@@ -235,7 +233,31 @@ def show_profile(client_data):
         st.markdown(table_style, unsafe_allow_html=True)
         st.write(strategy_df.to_html(index=False, escape=False),
                  unsafe_allow_html=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)  
+    
+    # Display Week Saturday Capital
+    st.subheader("Week Saturday Capital")
+    # Initialize week_saturday_capital_value with a default value
+    weekly_saturday_capital_value = 0.0
 
+    if weekly_saturday_capital:
+        # Ensure week_saturday_capital is a float, default to 0.0 if not
+        weekly_saturday_capital_value = float(weekly_saturday_capital) if isinstance(weekly_saturday_capital, (float, int)) else 0.0
+
+    # Calculate the upcoming Saturday date
+    today = datetime.date.today()
+    next_saturday = today + datetime.timedelta((5 - today.weekday()) % 7)  # 5 represents Saturday
+    formatted_saturday = next_saturday.strftime('%d-%m-%Y')  # Format the date as dd-mm-yyyy
+
+    if weekly_saturday_capital:
+        # Ensure weekly_saturday_capital is a float, default to 0.0 if not
+        weekly_saturday_capital_value = float(weekly_saturday_capital) if isinstance(weekly_saturday_capital, (float, int)) else 0.0
+
+    # Use the custom format function to format the capital value
+    formatted_capital_value = custom_format(weekly_saturday_capital_value)
+
+    st.write(f"Weekly Saturday Capital for {formatted_saturday}: {formatted_capital_value}")
 
 table_style = """
 <style>
@@ -251,37 +273,31 @@ table.dataframe td {
     text-align: left; /* Align text to the left */
 }
 
+/* Header background color */
 table.dataframe th {
-    background-color: #f2f2f2;
+    background-color: AliceBlue;
 }
 
+/* Alternating row background colors */
 table.dataframe tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: AliceBlue;  /* Even rows will be AliceBlue */
+}
+table.dataframe tr:nth-child(odd) {
+    background-color: AliceBlue;  /* Odd rows will be white */
 }
 
+/* Hover style for rows */
 table.dataframe tr:hover {
-    background-color: #ddd;
+    background-color: HoneyDew;
 }
 </style>
 """
 
 # Function to display performance dashboard
-
-
 def display_performance_dashboard(selected_client, client_data, excel_file_name):
-    # Display the profile picture with the new style
-    display_profile_picture(client_data)
-
-    # CSS style definitions for the option menu
-    selected = option_menu(None, ["Calendar", "Statistics", "Graph"],
-                           icons=['calendar', 'file-bar-graph', 'graph-up'],
-                           menu_icon="cast", default_index=0, orientation="horizontal",
-                           styles={
-                               "container": {"padding": "0!important", "background-color": "#fafafa"},
-                               "icon": {"color": "orange", "font-size": "25px"},
-                               "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
-                               "nav-link-selected": {"background-color": "purple"},
-    })
+    # Initialize Streamlit page config and title if this is your main entry function
+    # st.set_page_config(page_title="Performance Dashboard", layout="wide")
+    st.subheader("Performance Dashboard")
 
     # Reference the Firebase Storage bucket
     bucket = storage.bucket(storage_bucket)
@@ -295,8 +311,6 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             break
 
     data = []  # List to store extracted data from Excel
-    # Excel header should be the same as below
-    # Sl NO,Date,Day,Trade ID,Details,Amount,Running Balance
 
     # If the client's Excel file exists, proceed to extract data
     if file_exists:
@@ -317,8 +331,7 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
             print(f"Extracting data from sheet: DTD")
 
             # Get column names and their indices from the first row
-            column_indices = {cell.value: idx for idx,
-                              cell in enumerate(sheet[1])}
+            column_indices = {cell.value: idx for idx, cell in enumerate(sheet[1])}
 
             # Loop through each row in the sheet to read specific columns
             # Assuming headers are in the first row
@@ -328,295 +341,15 @@ def display_performance_dashboard(selected_client, client_data, excel_file_name)
                 trade_id = row[column_indices['Trade ID']].value
                 details = row[column_indices['Details']].value
                 amount = row[column_indices['Amount']].value
-                running_balance = row[column_indices['Running Balance']].value
 
-                # Skip the opening balance rows
-                if details != "Opening Balance":
-                    data.append([date, day, trade_id, details,
-                                amount, running_balance])
+                # Add the row data to the data list
+                data.append([date, day, trade_id, details, amount])
 
-            # Extract the default start date from the first entry of the data (which is now not the opening balance)
-            default_start_date = datetime.datetime.strptime(
-                data[0][0], '%d-%b-%y').date()
+        # Convert the data list to a DataFrame
+        df = pd.DataFrame(data, columns=['Date', 'Day', 'Trade ID', 'Details', 'Amount'])
 
-        # Add custom CSS for the table and value colors
-        st.markdown("""
-        <style>
-        .custom-table {
-            top: 3px;  /* Adjust the top value as needed */
-            right: 500px;
-            border: 2px solid #ccc;
-            overflow: hidden;
-            background-color: #E6E6FA;
-            font-size: 19px;
-            width: 100%;
-            }
-            .custom-table td {
-            padding: 15px;  # Increase padding for larger cells
-            border: 1px solid #ddd;  # Add borders to the cells
-            }
-        .positive-value {
-            color: green;
-        }
-        .negative-value {
-            color: red;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+        # Generate the HTML using Pygwalker
+        pyg_html = pyg.to_html(df)
 
-    if selected == "Calendar":
-        selected_date = st.date_input("Select a Date")
-
-        if selected_date:
-            # Filter the data based on the selected date with the format '12-Oct-23'
-            formatted_date = selected_date.strftime('%d-%b-%y')
-            filtered_data = [
-                record for record in data if record[0] == formatted_date]
-
-            # Debug print
-            print(f"Filtered data for date {selected_date}: {filtered_data}")
-
-            if not filtered_data:
-                st.write(f"No data available for {selected_date}")
-            else:
-                # Aggregate the amounts for each distinct detail type
-                details_aggregated = defaultdict(float)
-                running_balance = 0
-
-                for record in filtered_data:
-                    detail_type = record[3]
-                    amount = float(record[4].replace('₹', '').replace(
-                        ',', '').replace(' ', '').strip())
-                    details_aggregated[detail_type] += amount
-                    running_balance = float(record[5].replace(
-                        '₹', '').replace(',', '').replace(' ', '').strip())
-
-                aggregated_data = []
-
-                # Add the aggregated amounts to the aggregated_data list using format_value and check for italicized detail types
-                italic_types = ["MPWizard", "AmiPy",
-                                "Overnight Options", "ZRM"]
-                for detail_type, amount in details_aggregated.items():
-                    display_detail = detail_type if detail_type not in italic_types else f"<em>{detail_type}</em>"
-                    aggregated_data.append(
-                        [display_detail, format_value(amount)])
-
-                # Format and color the Running Balance value in green
-                running_balance_formatted = f"<span style='color: green;'>{custom_format(running_balance)}</span>"
-                aggregated_data.append(
-                    [f"<strong>Running Balance</strong>", running_balance_formatted])
-
-                # Display the table without header using pandas
-                st.write(pd.DataFrame(aggregated_data).to_html(
-                    classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
-
-    if selected == "Statistics":
-
-        # Extract the default start date from the Excel "DTD" sheet
-        default_start_date = None
-        if data:
-            try:
-                default_start_date = datetime.datetime.strptime(
-                    data[0][0], '%d-%b-%y').date()
-            except ValueError as e:
-                print(f"Failed to parse default start date {data[0][0]}: {e}")
-                default_start_date = datetime.date.today()  # or some other fallback date
-
-        # Display date input fields for the user to select the start and end dates
-        start_date = st.date_input("Select Start Date", default_start_date)
-        end_date = st.date_input("Select End Date")
-
-        # Option menu for stats
-        option_selected = option_menu(None, ['Strategy Stats', 'Admin Stats'],
-                                      menu_icon="cast", default_index=0, orientation="horizontal",
-                                      styles={
-            "container": {"padding": "0!important", "background-color": "#fafafa"},
-            "icon": {"color": "orange", "font-size": "25px"},
-            "nav-link": {"font-size": "25px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
-            "nav-link-selected": {"background-color": "#a3297a"}, })
-
-        if option_selected == 'Strategy Stats':
-            # List of target detail types
-            target_types = ["MPWizard", "AmiPy", "Overnight Options", "ZRM"]
-
-            # Filter data for the selected date range
-            filtered_data = []
-            for record in data:
-                try:
-                    record_date = datetime.datetime.strptime(
-                        record[0], '%d-%b-%y').date()
-                    if start_date <= record_date <= end_date:
-                        filtered_data.append(record)
-                except ValueError as e:
-                    print(f"Failed to parse date {record[0]}: {e}")
-
-            # Aggregate the amounts for each target detail type
-            details_aggregated = defaultdict(float)
-
-            for record in filtered_data:
-                detail_type = record[3]
-                amount = float(record[4].replace('₹', '').replace(
-                    ',', '').replace(' ', '').strip())
-
-                if detail_type in target_types:
-                    details_aggregated[detail_type] += amount
-
-            aggregated_data = []
-
-            # Add the aggregated amounts to the aggregated_data list using format_value
-            for detail_type, amount in details_aggregated.items():
-                display_detail = detail_type
-                aggregated_data.append([display_detail, format_value(amount)])
-
-            # Display the table using pandas
-            st.write(pd.DataFrame(aggregated_data, columns=['Detail Type', 'Amount']).to_html(
-                classes='custom-table', header=False, index=False, escape=False), unsafe_allow_html=True)
-
-        if option_selected == 'Admin Stats':
-
-            if start_date and end_date:
-                filtered_data = []
-                for record in data:
-                    try:
-                        record_date = datetime.datetime.strptime(
-                            record[0], '%d-%b-%y').date()
-                        if start_date <= record_date <= end_date:
-                            filtered_data.append(record)
-                    except ValueError as e:
-                        print(f"Failed to parse date {record[0]}: {e}")
-
-                # Compute the statistics
-                initial_capital = float(filtered_data[0][5].replace(
-                    '₹', '').replace(',', '').replace(' ', '').strip())
-                ending_capital = float(
-                    filtered_data[-1][5].replace('₹', '').replace(',', '').replace(' ', '').strip())
-                total_profit = ending_capital - initial_capital
-
-                # Create a DataFrame for the statistics
-                stats_data = {
-                    "Metric": ["Initial Capital", "Ending Capital", "Total Profit"],
-                    "Value": [f"<span style='color: green;'>{custom_format(initial_capital)}</span>",
-                              f"<span style='color: green;'>{custom_format(ending_capital)}</span>",
-                              f"<span style='color: green;'>{custom_format(total_profit)}</span>"]
-                }
-
-                stats_df = pd.DataFrame(stats_data)
-
-                # Display the table without index and without column headers, and with custom styles
-                st.write(stats_df.to_html(index=False, header=False,
-                                          classes='custom-table', escape=False), unsafe_allow_html=True)
-
-    if selected == 'Graph':
-        if 'filtered_data' not in locals():
-            if default_start_date:  # Check if default_start_date exists
-                start_date = default_start_date
-            else:
-                start_date = datetime.date.today()  # Fallback if default_start_date doesn't exist
-            end_date = datetime.date.today()
-            filtered_data = []
-            for record in data:
-                if record[0]:
-                    try:
-                        record_date = datetime.datetime.strptime(
-                            record[0], '%d-%b-%y').date()
-                        if start_date <= record_date <= end_date:
-                            filtered_data.append(record)
-                    except ValueError as e:
-                        print(f"Failed to parse date {record[0]}: {e}")
-
-        # Extract unique strategies from data
-        unique_strategies = set([record[3] for record in data])
-        categories = ["MPWizard", "AmiPy", "ZRM", "OvernightFutures", "ExpiryTrader"]
-        available_strategies = [
-            strategy for strategy in categories if strategy in unique_strategies]
-
-        graph_option = option_menu(None, ["Net PnL", "Running Balance"],
-                                   icons=['line-chart', 'line-chart'],
-                                   menu_icon="chart-bar",
-                                   default_index=0,
-                                   orientation="horizontal",
-                                   styles={
-            "container": {"padding": "0!important", "background-color": "#fafafa"},
-            "icon": {"color": "orange", "font-size": "18px"},
-            "nav-link": {"font-size": "18px", "text-align": "left", "margin": "0px", "--hover-color": "#eee"},
-            "nav-link-selected": {"background-color": "orange"},
-        })
-
-        if graph_option == "Net PnL":
-            if not available_strategies:
-                st.write("No available strategies in the DTD sheet.")
-                return
-            selected_strategy = st.selectbox(
-                'Select Strategy:', available_strategies)
-            selected_strategies = [selected_strategy]
-            strategy_data = [
-                record for record in data if record[3] in selected_strategies]
-            daily_pnl = [float(record[4].replace('₹', '').replace(
-                ',', '').replace(' ', '').strip()) for record in strategy_data]
-
-            # Plotting code for Net PnL
-            fig = go.Figure()
-            for i in range(1, len(daily_pnl)):
-                color = 'green' if daily_pnl[i] > daily_pnl[i - 1] else 'red'
-                fig.add_trace(go.Scatter(
-                    x=[strategy_data[i - 1][0], strategy_data[i][0]],
-                    y=[daily_pnl[i - 1], daily_pnl[i]],
-                    mode='lines',
-                    line=dict(color=color, width=2),
-                    hovertemplate='<b>Date:</b> %{x}<br><b>Net PnL:</b> ₹%{y:,.2f}',
-                    showlegend=False
-                ))
-            fig.update_layout(
-                title=f'Net PnL for {selected_strategy}',
-                xaxis_title="Date",
-                yaxis_title="Net PnL (₹)"
-            )
-            st.plotly_chart(fig)
-
-        elif graph_option == "Running Balance":
-            # Extract running balances from the entire dataset and convert them to floats
-            running_balance = [float(record[5].replace('₹', '').replace(
-                ',', '').replace(' ', '').strip()) for record in data]
-
-            # Create an auxiliary list of formatted values
-            formatted_balance = [custom_format(val) for val in running_balance]
-
-            # Create a Plotly figure for Running Balance
-            fig = go.Figure()
-
-            # Add traces for each segment of the line with the determined color
-            for i in range(1, len(running_balance)):
-                color = 'green' if running_balance[i] > running_balance[i - 1] else 'red'
-                fig.add_trace(go.Scatter(
-                    x=[data[i - 1][0], data[i][0]],
-                    y=[running_balance[i - 1], running_balance[i]],
-                    customdata=[formatted_balance[i - 1],
-                                formatted_balance[i]],
-                    mode='lines',
-                    line=dict(color=color, width=2),
-                    hovertemplate='<b>Date:</b> %{x}<br><b>Running Balance:</b> %{customdata}',
-                    showlegend=False
-                ))
-
-            # Hide legend for each trace
-
-            # Update the layout to hide the overall legend
-            fig.update_layout(showlegend=False)
-
-            # Get the range of y-values for custom tick formatting
-            y_max = max(running_balance)
-            y_min = min(running_balance)
-            tickvals = list(
-                range(40000, int(math.ceil(y_max / 50000) * 50000) + 1, 50000))
-            ticktext = [custom_format(val) for val in tickvals]
-
-            # Update y-axis to display values in Indian rupees with custom formatting
-            fig.update_layout(
-                yaxis_title="Amount (₹)",
-                yaxis_tickvals=tickvals,
-                yaxis_ticktext=ticktext,
-                xaxis_title="Date"
-            )
-
-            # Display the Running Balance graph using Streamlit's plotly_chart function
-            st.plotly_chart(fig)
+        # Embed the HTML into the Streamlit app
+        components.html(pyg_html, height=1000, scrolling=True)

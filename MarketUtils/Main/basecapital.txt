@@ -1,0 +1,10 @@
+omkar : 2500000.00 
+brijesh : 643678.20 
+vinay : 72000.00
+venkatesh : 104000.00  
+sridhar: 40000.00
+vinod : 50000.00
+arjun : 75000.00
+gayathri : 100000.00 
+amol : 18000.00
+abhishek : 99000.00 

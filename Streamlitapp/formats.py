@@ -5,27 +5,26 @@ from babel.numbers import format_currency
 def format_value(value, format_type="normal"):
     print(f"Formatting value: {value}")  # Debug print
     formatted_value = ""
+
     if value is None:
         formatted_value = "N/A"
-    elif isinstance(value, str):
-        if value.startswith('='):
-            formatted_value = "Formula"
-        else:
-            try:
-                float_value = float(value.replace('₹', '').replace(',', ''))
-                if float_value < 0:
-                    formatted_value = f'<span class="negative-value">₹ {float_value:,.2f}</span>'
-                else:
-                    formatted_value = f'<span class="positive-value">₹ {float_value:,.2f}</span>'
-            except ValueError:
-                formatted_value = value
     else:
-        if value < 0:
-            formatted_value = f'<span class="negative-value">₹ {value:,.2f}</span>'
-        else:
-            formatted_value = f'<span class="positive-value">₹ {value:,.2f}</span>'
+        try:
+            # Ensure value is a float for formatting
+            float_value = float(str(value).replace('₹', '').replace(',', '').strip())
+            # Use custom_format to format the numerical part
+            formatted_value = custom_format(float_value)
 
-    # Apply formatting based on format_type
+            # Apply additional HTML styling for negative values
+            if float_value < 0:
+                formatted_value = f'<span class="negative-value">{formatted_value}</span>'
+            else:
+                formatted_value = f'<span class="positive-value">{formatted_value}</span>'
+        except ValueError:
+            # Handle the case where conversion to float fails
+            formatted_value = value
+
+    # Apply additional formatting based on format_type
     if format_type == "bold":
         return f"<b>{formatted_value}</b>"
     elif format_type == "italic":

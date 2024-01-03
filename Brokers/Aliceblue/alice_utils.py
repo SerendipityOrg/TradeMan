@@ -76,6 +76,12 @@ def get_order_details(user):
     orders = alice.get_order_history('')
     return orders
 
+def cash_margin_available(user_details):
+    alice = Aliceblue(user_details['username'], user_details['api_key'],session_id=user_details['session_id'])
+    balance_details = alice.get_balance()  # This method might have a different name
 
-
-
+    # Search for 'cashmarginavailable' in the balance_details
+    for item in balance_details:
+        if isinstance(item, dict) and 'cashmarginavailable' in item:
+            cash_margin_available = item.get('cashmarginavailable', 0)
+            return cash_margin_available

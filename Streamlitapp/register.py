@@ -44,9 +44,8 @@ def get_session_state():
 
 # Define file_path globally at the top level of your script
 script_dir = os.path.dirname(os.path.realpath(__file__))
-utils = os.path.join(script_dir, '..', 'MarketUtils')
-file_path = os.path.join(utils, 'broker.json')
-
+marketutils = os.path.join(script_dir, '..', 'MarketUtils')
+file_path = os.path.join(marketutils, 'broker.json')
 
 def register_page():
     # Initialize or retrieve session state
@@ -82,6 +81,10 @@ def register_page():
         if len(session_state.brokers) == 0 or any(session_state.brokers[-1].values()):
             session_state.brokers.append({})
 
+    # Define the risk profile options once at the start
+    risk_profile_options = ["Low", "Medium", "High"]
+
+
     # Create dynamic input fields for broker information
     broker_list_1 = []
     for i, broker_1 in enumerate(session_state.brokers):
@@ -100,8 +103,12 @@ def register_page():
             "ApiSecret:", key=f"api_secret_{i}")
         broker_1["active"] = st.checkbox("Active:", key=f"active_{i}")
         broker_1["capital"] = st.number_input("Capital:", key=f"capital_{i}")
-        broker_1["risk_profile"] = st.text_input(
-            "Risk profile:", key=f"risk_profile_{i}")
+         # Use st.selectbox for risk profile dropdown
+        broker_1["risk_profile"] = st.selectbox(
+            "Risk Profile:",
+            risk_profile_options,
+            key=f"risk_profile_{i}"
+        )
 
         broker_list_1.append(broker_1)
 
@@ -134,8 +141,13 @@ def register_page():
             "ApiSecret:", key=f"api_secret2_{i}")
         broker_2["active"] = st.checkbox("Active:", key=f"active2_{i}")
         broker_2["capital"] = st.number_input("Capital:", key=f"capital2_{i}")
-        broker_2["risk_profile"] = st.text_input(
-            "Risk profile:", key=f"risk_profile2_{i}")
+         # Use st.selectbox for risk profile dropdown
+        broker_2["risk_profile"] = st.selectbox(
+            "Risk Profile:",
+            risk_profile_options,
+            key=f"risk_profile_{i}"
+        )
+
 
         broker_list_2.append(broker_2)
 
@@ -172,6 +184,11 @@ def register_page():
             "broker": selected_broker,
             **strategy
         })
+
+
+    # Take input for the week staring capital 
+    weekly_saturday_capital = st.number_input("Weekly Saturday Capital:", key="weekly_saturday_capital")
+    
     # Take input for comments
     comments = st.text_area("Comments:", key="comments_input")
 
@@ -198,7 +215,7 @@ def register_page():
                 return
                 # Create a list with all the client data
             client_data = [name, UserName, email, Password, phone, dob, aadhar, pan,
-                           bank_name, bank_account, broker_list_1, broker_list_2, strategy_list, comments, smart_contract]
+                           bank_name, bank_account, broker_list_1, broker_list_2, strategy_list,weekly_saturday_capital, comments, smart_contract]
 
             # Save the uploaded profile picture as binary data if it exists
             if profile_picture is not None:
@@ -233,9 +250,10 @@ def register_page():
                 "Brokers list 1": client_data[10],
                 "Brokers list 2": client_data[11],
                 "Strategy list": client_data[12],
-                "Comments": client_data[13],
-                "Smart Contract": client_data[14],
-                "Profile Picture": client_data[15] if profile_picture is not None else None,
+                "Weekly Saturday Capital": client_data[13],
+                "Comments": client_data[14],
+                "Smart Contract": client_data[15],
+                "Profile Picture": client_data[16]if profile_picture is not None else None,
             }
 
             # Save the client data to Firebase Realtime Database
@@ -281,33 +299,32 @@ def register_page():
             st.error(error_message)
 
     # Function to save data to broker.json file
-    def save_to_json(data):
-        # Read the existing data
-        existing_data = {}
+    def save_to_json(file_path, data):
+        # Ensure that file_path is a string and data is a list of dictionaries
+        if not isinstance(file_path, str) or not isinstance(data, list):
+            st.error("File path must be a string and data must be a list of dictionaries.")
+            return
+
+        # Load the existing data from the file, or initialize an empty list if the file does not exist
+        existing_data = []
         if os.path.exists(file_path):
             with open(file_path, 'r') as file:
                 existing_data = json.load(file)
+                # Ensure that existing_data is a list
+                if not isinstance(existing_data, list):
+                    st.error("The existing data in the file is not a list.")
+                    return
 
-        # Merge existing and new data
-        for key, value in data.items():
-            # Ensure that 'value' is indeed a dictionary as expected
-            if not isinstance(value, dict):
-                st.error(f"Error: Data for key {key} is not a dictionary.")
-                return
-            
-            if key in existing_data:
-                for subkey, subvalue in value.items():
-                    if subkey in existing_data[key]:
-                        st.warning(f"Overwriting key {subkey} in {key}")
-                    existing_data[key][subkey] = subvalue
-            else:
-                existing_data[key] = value
+        # Append the new data to the existing data
+        existing_data.extend(data)  # Using extend to add all items from the new data list
 
-        # Save the merged data
-        with open(file_path, 'w') as file:
-            json.dump(existing_data, file, indent=4)
-
-        st.success("Data saved successfully to broker.json!")
+        # Save the combined data back to the file
+        try:
+            with open(file_path, 'w') as file:
+                json.dump(existing_data, file, indent=4)
+            st.success("Data saved successfully to broker.json!")
+        except Exception as e:
+            st.error(f"Failed to save data: {e}")
 
     # Function to convert percentage string to float
     def percentage_string_to_float(percentage_str):
@@ -315,15 +332,15 @@ def register_page():
 
     # Assuming you have a strategy_list and broker_list_1 and broker_list_2 defined elsewhere
     # Initialize the data to save
-    data_to_save = {}
+    data_to_save = []
 
-    # Formatting and saving Zerodha and AliceBlue details into the data_to_save dictionary
+    # Loop through both lists of brokers
     for broker_list in [broker_list_1, broker_list_2]:
         for broker in broker_list:
             broker_name = broker["broker_name"].lower()
             username = broker["user_name"]
-            account_name = "UserName"  # If you have an account name from input, replace this with the variable
-
+            
+            # Check if the broker name is one of the supported brokers
             if broker_name in ["zerodha", "aliceblue"]:
                 percentageRisk = {}
                 for strategy in strategy_list:
@@ -336,29 +353,28 @@ def register_page():
                                         strategy[perc_allocated_key])
 
                 formatted_data = {
-                    "account_name": account_name,
+                    "account_name": UserName, 
                     "broker": broker_name,
                     "username": broker["user_name"],
                     "password": broker["password"],
                     "twoFA": broker.get("two_fa", ""),
                     "api_secret": broker["api_secret"],
-                    "app_code": broker.get("api_code", ""),  # Assuming 'api_code' is correct and not 'app_code'
+                    "app_code": broker.get("api_code", ""),
                     "api_key": broker["api_key"],
                     "totp_access": broker.get("totp_auth", ""),
                     "session_id": "",
-                    "mobile_number": phone,
-                    "account_type": ["Active"],  # Assuming you want to set this statically as 'Active'
-                    "percentageRisk": percentageRisk
+                    "mobile_number": phone,  
+                    "account_type": ["Active"]
                 }
 
-                # Ensure we are not overwriting data if multiple brokers are in the same list
-                if broker_name not in data_to_save:
-                    data_to_save[broker_name] = {}
-                data_to_save[broker_name][username] = formatted_data
+                print(formatted_data)
+
+                # Append the formatted data to the list of data to save
+                data_to_save.append(formatted_data)
 
     # Save the formatted data to broker.json when the user clicks the save button
     if st.button("Save to broker.json"):
-        save_to_json(data_to_save)
+        save_to_json(file_path=file_path, data=data_to_save)
 
 if __name__ == "__main__":
     register_page()
