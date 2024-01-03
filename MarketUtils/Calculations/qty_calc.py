@@ -1,44 +1,69 @@
+# This file contains functions for calculating quantities for trading strategies.
+# It includes functions to get price reference values, calculate quantities based on various parameters, 
+# calculate lots for a user, and calculate quantities based on the last traded price (LTP).
+
 import datetime as dt
-import os, sys
 import math
+import os
+import sys
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
-import MarketUtils.general_calc as general_calc
 import Brokers.place_order_calc as place_order_calc
+import MarketUtils.general_calc as general_calc
 import Strategies.StrategyBase as StrategyBase
 
 
-# Function to get price reference values from the strategy object
+# This function gets the price reference values from the strategy object.
+# Inputs: strategy_name (string), instrument (string)
+# Returns: price reference value (float) or 0 if no values are found
 def get_price_reference(strategy_name, instrument):
-    # Here we are using a mock strategy JSON for demonstration purposes
+    # Fetch the strategy JSON
     _,strategy_path = place_order_calc.get_strategy_json(strategy_name)
+    # Read the strategy JSON into a Strategy object
     strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
 
+    # Get the index of the current day of the week (0 = Monday, 6 = Sunday)
     today_index = dt.datetime.today().weekday()
+    # Construct the key to fetch the price reference values from the strategy object
     key = f"{instrument}OptRef"
+    # Fetch the price reference values
     price_ref_values = strategy_obj.get_extra_information().get(key, [])
+    # If price reference values are found, return the value for the current day
     if price_ref_values:
         return price_ref_values[today_index]
+    # If no price reference values are found, return 0
     else:
         return 0 
-# Function to calculate quantity based on capital, risk, price reference, and lot size
+
+# This function calculates the quantity of an instrument to be traded based on the capital, risk, price reference, and lot size.
+# Inputs: capital (float), risk (float), prc_ref (float), lot_size (int), strategy_name (string)
+# Returns: quantity (int)
 def calculate_quantity(capital, risk, prc_ref, lot_size, strategy_name):
+    # If the strategy is MPWizard and a price reference is provided
     if strategy_name == "MPWizard" and prc_ref is not None:
+        # If the price reference is 0, print a message and return 0
         if prc_ref == 0:
             print("Price reference is 0")
             return 0
+        # Calculate the raw quantity based on the risk, capital, and price reference
         raw_quantity = (risk * capital) / prc_ref
+        # Calculate the final quantity by rounding down the raw quantity to the nearest multiple of the lot size
         quantity = int((raw_quantity // lot_size) * lot_size)
+        # If the final quantity is 0, set it to the lot size
         if quantity == 0:
             quantity = lot_size
     else:
-        # For other strategies, risk values represent the capital allocated
+        # For other strategies, the risk values represent the capital allocated
+        # If the risk is less than or equal to 1, print a message and return 0
         if risk <= 1:
             print(f"Risk for {strategy_name} is not in absolute capital terms. Skipping calculation.")
             return 0
+        # Calculate the number of lots based on the capital and risk
         lots = capital / risk
+        # Calculate the final quantity by rounding up the number of lots to the nearest whole number and multiplying by the lot size
         quantity = math.ceil(lots) * lot_size
+    # Return the final quantity
     return quantity
 
 
