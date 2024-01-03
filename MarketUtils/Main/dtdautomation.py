@@ -10,6 +10,7 @@ DIR = os.getcwd()
 sys.path.append(DIR)
 
 from MarketUtils.Excel.strategy_calc import custom_format
+import MarketUtils.Firebase.firebase_utils as firebase_utils
 
 # Function to check if DataFrame has required columns
 def has_required_columns(df):
@@ -40,7 +41,6 @@ def fetch_data_from_excel(file_name, sheet_mappings):
             print(
                 f"Sheet '{actual_sheet_name}' not found in {file_name} or other ValueError: {e}. Skipping...")
     return data_mappings
-
 
 # Function to create and return the DTD DataFrame with individual transactions and formatted columns
 def create_dtd_dataframe_updated(data_mappings):
@@ -108,16 +108,6 @@ def check_and_update_dtd_sheet(file_name, new_dtd_df):
 
         updated_dtd_df.to_excel(writer, sheet_name='DTD', index=False)
 
-# Function to save file to Firebase Storage
-def save_file_to_firebase(file_path, firebase_bucket_name):
-    bucket = storage.bucket(firebase_bucket_name)
-
-    # Create a blob for uploading the file
-    blob = bucket.blob(os.path.basename(file_path))
-    # Upload the file
-    blob.upload_from_filename(file_path)
-    print(f"File {file_path} uploaded to {firebase_bucket_name}.")
-
 # Main execution
 def main():
     ENV_PATH = os.path.join(DIR, '.env')
@@ -158,7 +148,7 @@ def main():
                 dtd_df = create_dtd_dataframe_updated(data_mappings)
 
                 check_and_update_dtd_sheet(file_name, dtd_df)
-                save_file_to_firebase(file_name, storage_bucket)
+                firebase_utils.save_file_to_firebase(file_name, storage_bucket)
 
 if __name__ == "__main__":
     main()

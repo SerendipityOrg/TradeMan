@@ -27,7 +27,7 @@ from MarketUtils.Main.morningmsg import get_invested_value
 from Brokers.Aliceblue.alice_utils import cash_margin_available  # Specific broker utility
 from Brokers.Zerodha.kite_utils import cash_balance  # Specific broker utility
 from MarketUtils.Excel.strategy_calc import custom_format  # Utility for formatting Excel data
-from MarketUtils.Main.firebase import process_DTD, load_excel, get_current_week
+from MarketUtils.Firebase.firebase_utils import process_DTD, load_excel, get_current_week
 
 # Retrieve values from .env for Firebase and Telegram
 firebase_credentials_path = os.getenv('FIREBASE_CREDENTIALS_PATH')
@@ -186,6 +186,14 @@ def calculate_commission_and_drawdown(user, actual_account_value, base_capital):
 
     return commission, drawdown
 
+def update_json_data(data, user, actual_account_value, broker_filepath):
+    for username in data:
+        if user["account_name"] == username["account_name"]:
+            user_details = username
+            user_details["current_capital"] = round(actual_account_value, 2)
+
+    general_calc.write_json_file(broker_filepath,data )
+
 # Main function to execute the script for generating weekly reports
 def main():
     """Main function to execute the script for generating weekly reports."""
@@ -226,6 +234,8 @@ def main():
                 # Generate and print the summary message
                 message = generate_message(user, excel_file_name, net_pnl, free_cash, trademan_account_value, trademan_invested, drawdown, commission, actual_account_value, difference_value, start_date, end_date)
                 print(message)
+
+                update_json_data(broker_data, user, net_pnl, actual_account_value, broker_filepath)
         
                 # Uncomment the following line to enable sending the message via Telegram
                 send_telegram_message(user['mobile_number'], message)

@@ -39,7 +39,7 @@ def get_current_week():
     return start_week, end_week
 
 # Function to load an existing Excel file from Firebase Storage
-def load_excel(excel_file_name):
+def load_excel_from_firebase(excel_file_name):
     # Connect to the Firebase bucket
     bucket = storage.bucket(storage_bucket)
     blob = bucket.blob(excel_file_name)
@@ -65,7 +65,7 @@ def load_excel(excel_file_name):
 # Function to process data within the current week
 def process_DTD(excel_file_name):
         # Load the Excel file within the function
-    df_dtd, _ = load_excel(excel_file_name)  # Only load the 'DTD' sheet
+    df_dtd, _ = load_excel_from_firebase(excel_file_name)  # Only load the 'DTD' sheet
 
     result_list = []  # Initialize an empty list to store the results
 
@@ -115,3 +115,21 @@ def save_file_to_firebase(file_path, firebase_bucket_name):
     blob.upload_from_filename(file_path)
     print(f"File {file_path} uploaded to {firebase_bucket_name}.")
 
+# Function to load an existing Excel file from Firebase Storage
+def load_excel(excel_file_name):
+    # Connect to the Firebase bucket
+    bucket = storage.bucket(storage_bucket)
+    blob = bucket.blob(excel_file_name)
+
+    # Download the file if it exists in Firebase and return its content as a Pandas DataFrame
+    if blob.exists():
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
+        # Load the Excel file into a Pandas DataFrame
+        xls = pd.ExcelFile(byte_stream)
+        # Return the ExcelFile object and the sheet names
+        return xls, xls.sheet_names
+    else:
+        print(f"The file {excel_file_name} does not exist in Firebase Storage.")
+        return None, None

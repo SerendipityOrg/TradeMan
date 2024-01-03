@@ -167,7 +167,7 @@ def main():
     # Print the combined report to the console
     print(combined_report)
 
-      # Send the report to Discord
+    #   # Send the report to Discord
     send_discord_message(combined_report)
 
 if __name__ == "__main__":
