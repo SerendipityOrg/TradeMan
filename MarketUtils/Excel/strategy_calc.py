@@ -99,7 +99,7 @@ def process_amipy_trades(broker,amipy_trades,username=None):
     elif amipy_data_long is not None:
         return amipy_data_long
     
-def process_short_trades(broker,short_signals, short_cover_signals,signal):
+def process_short_trades(broker: str, short_signals: list[dict], short_cover_signals: list[dict], signal: str) -> None:
     if len(short_signals) != len(short_cover_signals):
         print("Mismatch in the number of ShortSignal and ShortCoverSignal trades.")
         return []
