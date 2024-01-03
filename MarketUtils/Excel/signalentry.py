@@ -175,7 +175,10 @@ def handle_other_sl_types(strategy):
             hedge_entry_price = trade_row['hedge_entry_price'].iloc[0]
             hedge_exit_price = trade_row['hedge_exit_price'].iloc[0]
             hedge_points = hedge_exit_price - hedge_entry_price
-            trade_points = (trade_entry_price - trade_exit_price) + hedge_points
+            if trade_row['signal'].iloc[0] == 'Short':
+                trade_points = (trade_entry_price - trade_exit_price) + hedge_points
+            else: 
+                trade_points = (trade_exit_price - trade_entry_price) + hedge_points
 
         trade_data = {
                 "trade_id": trade_id,
