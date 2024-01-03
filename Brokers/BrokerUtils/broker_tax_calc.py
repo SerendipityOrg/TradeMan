@@ -84,7 +84,7 @@ def zerodha_futures_taxes(qty, entry_prc, exit_prc, orders):
 
     # Stamp charges
     stamp_charges_rate = 0.002 / 100
-    stamp_charges = max(stamp_charges_rate * entry_prc * qty, 200)
+    stamp_charges = max(STAMP_CHARGES_RATE_ZERODHA * entry_prc * qty, 200)
 
     total_charges = brokerage + stt_ctt + transaction_charges + gst + sebi_charges + stamp_charges
 

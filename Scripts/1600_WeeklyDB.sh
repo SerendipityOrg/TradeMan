@@ -14,7 +14,7 @@ chat_id='-367108102'
 while true; do
     # Check if the current hour is greater than 16 (4 pm)
     current_hour=$(date +%H)
-    if ((current_hour >= 16)); then
+    if ((current_hour >= 17)); then
         echo "The script will not retry after 4 pm."
         break
     fi
@@ -27,15 +27,15 @@ while true; do
     source /Users/traderscafe/miniconda3/etc/profile.d/conda.sh && \
     conda activate tradingenv && \
     cd /Users/traderscafe/Desktop/Main/  && \
-    /Users/traderscafe/miniconda3/envs/tradingenv/bin/python MarketUtils/Main/EODentry.py && \
+    /Users/traderscafe/miniconda3/envs/tradingenv/bin/python DBpy/WeeklyDBData.py && \
     echo "Program started successfully" && break
 
     # If the command failed and we've reached the maximum number of attempts, send a message and exit
     if ((attempt==max_attempts)); then
-        echo "The script AmiPy has some errors. Please Check !!!"
+        echo "The script weeklydb has some errors. Please Check !!!"
         
         # Send a message on Telegram
-        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="Json entry errors. Please Check !!!"
+        curl -s -X POST https://api.telegram.org/bot$telegram_bot_token/sendMessage -d chat_id=$chat_id -d text="WeeklyDB errors. Please Check !!!"
 
         exit 1
     fi
