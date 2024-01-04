@@ -4,7 +4,9 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from firebase_admin import db, credentials, storage
 import firebase_admin
+from babel.numbers import format_currency
 import pandas as pd
+from telethon.sync import TelegramClient
 import requests
 from io import BytesIO
 
@@ -16,6 +18,7 @@ sys.path.append(DIR)  # Add the current directory to the system path
 import MarketUtils.general_calc as general_calc
 from MarketUtils.Main.weeklyreport import calculate_commission_and_drawdown, read_base_capital
 from MarketUtils.Excel.strategy_calc import custom_format
+import MarketUtils.Firebase.firebase_utils as firebase_utils
 
 # Load environment variables from the .env file
 ENV_PATH = os.path.join(DIR, '.env')
@@ -41,29 +44,6 @@ if not firebase_admin._apps:
         'storageBucket': storage_bucket
     })
 
-# Function to load an existing Excel file from Firebase Storage
-def load_excel(excel_file_name):
-    # Connect to the Firebase bucket
-    bucket = storage.bucket(storage_bucket)
-    blob = bucket.blob(excel_file_name)
-
-    # Download the file if it exists in Firebase and return its content as a Pandas DataFrame
-    if blob.exists():
-        byte_stream = BytesIO()
-        blob.download_to_file(byte_stream)
-        byte_stream.seek(0)
-        # Load the Excel file into a Pandas DataFrame
-        xls = pd.ExcelFile(byte_stream)
-        # Return the ExcelFile object and the sheet names
-        return xls, xls.sheet_names
-    else:
-        print(f"The file {excel_file_name} does not exist in Firebase Storage.")
-        return None, None
-    #     return pd.read_excel(byte_stream)
-    # else:
-    #     print(f"The file {excel_file_name} does not exist in Firebase Storage.")
-    #     return None
-
 # Function to send a message via Discord using a webhook
 def send_discord_message(message: str):
     # Discord's character limit per message
@@ -79,6 +59,24 @@ def send_discord_message(message: str):
             print("Part of the message sent successfully")
         else:
             print(f"Failed to send message part: {response.status_code}, {response.text}")
+
+def update_json_data(data, user, net_pnl, current_capital,expected_capital, broker_filepath):
+    for username in data:
+        if user["account_name"] == username["account_name"]:
+            user_details = username
+            user_details["current_capital"] = round(current_capital, 2)
+            user_details["yesterday_PnL"] = round(net_pnl,2)
+            user_details["expected_morning_balance"] = round(expected_capital, 2)
+    general_calc.write_json_file(broker_filepath,data )
+
+# Function to send a message via Telegram
+def send_telegram_message(phone_number, message):
+    # Define the session file path
+    session_filepath = os.path.join(DIR, "MarketUtils", "Telegram", "+918618221715.session")
+    
+    # Create a Telegram client and send the message
+    with TelegramClient(session_filepath, api_id, api_hash) as client:
+        client.send_message(phone_number, message, parse_mode='md')
 
 # Function to create the report message for each user
 def create_report_message(user, base_capital, strategy_results, custom_format):
@@ -116,20 +114,44 @@ def create_report_message(user, base_capital, strategy_results, custom_format):
 
     return "\n".join(report_parts)
 
+# Function to construct a PNL message for the user
+def build_message(user, strategy_results, gross_pnl, total_tax, current_capital, expected_capital):
+    message_parts = [
+        f"Hello {user}, We hope you're enjoying a wonderful day.\n Here are your PNLs for today:\n"
+    ]
+
+       # Iterating over each trade_id and its results
+    for trade_id, values in strategy_results.items():
+        formatted_pnl = format_currency(values['pnl'], 'INR', locale='en_IN')
+        # Using trade_id in the message instead of the strategy name
+        message_parts.append(f"{trade_id}: {formatted_pnl}")
+
+    message_parts.extend([
+        f"\nGross PnL: {format_currency(gross_pnl, 'INR', locale='en_IN')}",
+        f"Expected Tax: {format_currency(total_tax, 'INR', locale='en_IN')}",
+        f"Current Capital: {format_currency(current_capital, 'INR', locale='en_IN')}",
+        f"Expected Morning Balance : {format_currency(expected_capital, 'INR', locale='en_IN')}",
+        "\nBest Regards,\nSerendipity Trading Firm"
+    ])
+
+    return "\n".join(message_parts).replace('\u20b9', '₹')
 # Main function to generate and send the report
 def main():
-    # Get yesterday's date to title the report
     today = datetime.now().strftime('%Y-%m-%d')
     combined_report = f"PnL for Today ({today})\n"
 
-    # Load broker data from the JSON file
     broker_data = general_calc.read_json_file(broker_filepath)
 
-    # Process data for each user in the broker data
+        # Filter active users
+    active_users = [user for user in broker_data if "Active" in user['account_type']]
+
+    for user in active_users:
+        mobile_number = user["mobile_number"]
+
     for user in broker_data:
         if "Active" in user['account_type']:
             excel_file_name = f"{user['account_name']}.xlsx"
-            xls, sheet_names = load_excel(excel_file_name)
+            xls, sheet_names = firebase_utils.load_excel(excel_file_name)
 
             if xls is not None:
                 strategy_results = {}
@@ -159,16 +181,21 @@ def main():
                 user['expected_tax'] = total_tax
                 net_pnl = total_pnl - total_tax
                 user['net_pnl'] = net_pnl
+                current_capital = user.get('current_capital', 0)
+                expected_capital = current_capital + net_pnl
+
+                # Call the build_message function to create a personalized message
+                message = build_message(user['account_name'], strategy_results, total_pnl, total_tax, current_capital, expected_capital)
+                print(message)
+                # send_telegram_message(user['mobile_number'], message)
+                # update_json_data(broker_data, user, net_pnl, current_capital, expected_capital, broker_filepath)
 
                 base_capital = read_base_capital(os.path.join(DIR, 'MarketUtils', 'Main', 'basecapital.txt'))
                 report_message = create_report_message(user, base_capital, strategy_results, custom_format)
                 combined_report += report_message + "\n"
 
-    # Print the combined report to the console
     print(combined_report)
-
-    #   # Send the report to Discord
-    send_discord_message(combined_report)
+    # send_discord_message(combined_report)
 
 if __name__ == "__main__":
     main()

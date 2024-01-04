@@ -106,14 +106,14 @@ if __name__ == "__main__":
 
 
 # Function to save file to Firebase Storage
-def save_file_to_firebase(file_path, firebase_bucket_name):
+def save_file_to_firebase(excel_file_name, firebase_bucket_name):
     bucket = storage.bucket(firebase_bucket_name)
 
     # Create a blob for uploading the file
-    blob = bucket.blob(os.path.basename(file_path))
+    blob = bucket.blob(os.path.basename(excel_file_name))
     # Upload the file
-    blob.upload_from_filename(file_path)
-    print(f"File {file_path} uploaded to {firebase_bucket_name}.")
+    blob.upload_from_filename(excel_file_name)
+    print(f"File {excel_file_name} uploaded to {firebase_bucket_name}.")
 
 # Function to load an existing Excel file from Firebase Storage
 def load_excel(excel_file_name):

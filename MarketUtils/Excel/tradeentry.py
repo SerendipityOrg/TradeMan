@@ -187,5 +187,8 @@ def main():
 
         save_all_sheets_to_excel(all_dfs, excel_path)
 
+        # Upload the saved Excel file to Firebase
+        save_to_firebase(username, excel_path)
+
 if __name__ == "__main__":
     main()

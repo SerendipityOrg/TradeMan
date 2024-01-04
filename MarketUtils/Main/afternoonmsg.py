@@ -49,6 +49,15 @@ def update_json_data(data, user, net_pnl, current_capital,expected_capital, brok
             user_details["expected_morning_balance"] = round(expected_capital, 2)
     general_calc.write_json_file(broker_filepath,data )
 
+# Function to send a message via Telegram
+def send_telegram_message(phone_number, message):
+    # Define the session file path
+    session_filepath = os.path.join(DIR, "MarketUtils", "Telegram", "+918618221715.session")
+    
+    # Create a Telegram client and send the message
+    with TelegramClient(session_filepath, api_id, api_hash) as client:
+        client.send_message(phone_number, message, parse_mode='md')
+
 # Function to construct a PNL message for the user
 def build_message(user, strategy_results, gross_pnl, total_tax, current_capital, expected_capital):
     message_parts = [
@@ -70,17 +79,6 @@ def build_message(user, strategy_results, gross_pnl, total_tax, current_capital,
     ])
 
     return "\n".join(message_parts).replace('\u20b9', '₹')
-
-
-# Function to send a message via Telegram
-def send_telegram_message(phone_number, message):
-    # Define the session file path
-    session_filepath = os.path.join(DIR, "MarketUtils", "Telegram", "+918618221715.session")
-    
-    # Create a Telegram client and send the message
-    with TelegramClient(session_filepath, api_id, api_hash) as client:
-        client.send_message(phone_number, message, parse_mode='md')
-
 
 # The main function which processes user data and sends PNL messages
 def main():
