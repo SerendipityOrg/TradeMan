@@ -185,6 +185,7 @@ def main():
         print(message)
 
         save_all_sheets_to_excel(all_dfs, excel_path)
+        save_to_firebase(username,excel_path)
 
 if __name__ == "__main__":
     main()
