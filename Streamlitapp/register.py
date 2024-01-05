@@ -10,6 +10,7 @@ from firebase_admin import db
 from firebase_admin import storage
 import base64
 import json
+from questions import investment_form
 
 # Load environment variables from .env file
 load_dotenv()
@@ -51,9 +52,28 @@ def register_page():
     # Initialize or retrieve session state
     session_state = get_session_state()
 
-    # Set the title for the Streamlit app
-    st.markdown("<h3 style='color: darkblue'>Register</h3>",
-                unsafe_allow_html=True)
+     # CSS to inject contained in a string
+    custom_style = """
+                <style>
+                /* Change color of specific elements */
+                h3, label {
+                    color: white !important;  /* Change hex code to desired color */
+                }
+                /* Change color of all text in the app */
+                html, body, [class*="css"]  {
+                    color: #FFFFFF !important;  /* White color for other texts */
+                }
+                /* Set background color */
+                body {
+                    background-color: #000000; /* Black background */
+                }
+                </style>
+                """
+    # Inject CSS with Markdown
+    st.markdown(custom_style, unsafe_allow_html=True)
+
+    # Set the title for the Streamlit app with specific style
+    st.markdown("<h3>Register</h3>", unsafe_allow_html=True)
 
     # Take inputs for client information
     name = st.text_input("Name:", key="name_input")
@@ -152,42 +172,45 @@ def register_page():
         broker_list_2.append(broker_2)
 
     st.subheader("Strategies Subscribed")
+    # Call the investment_form function and get the returned values
+    investment_values = investment_form()
 
-    # Add a button to allow addition of new strategy details
-    add_strategy = st.button("Add Strategy")
-    if add_strategy:
-        # Only add a new strategy field if the last one is filled
-        if len(session_state.strategies) == 0 or any(session_state.strategies[-1].values()):
-            session_state.strategies.append({})
 
-    # Create dynamic input fields for strategy information
-    strategy_list = []
-    all_strategies = ["AmiPy", "MPWizard", "ZRM",
-                      "OvernightFutures", "ExpiryTrader","Screenipy Stocks"]
-    for i, strategy in enumerate(session_state.strategies):
-        strategy["strategy_name"] = st.multiselect(
-            "Strategy Name", all_strategies, key=f"strategy_name_{i}")
-        strategy["broker"] = st.multiselect(
-            "Broker", ["Zerodha", "AliceBlue"], key=f"strategy_broker_name_{i}")
+    # # Add a button to allow addition of new strategy details
+    # add_strategy = st.button("Add Strategy")
+    # if add_strategy:
+    #     # Only add a new strategy field if the last one is filled
+    #     if len(session_state.strategies) == 0 or any(session_state.strategies[-1].values()):
+    #         session_state.strategies.append({})
 
-        selected_strategies = strategy["strategy_name"]
-        selected_broker = strategy["broker"]
+    # # Create dynamic input fields for strategy information
+    # strategy_list = []
+    # all_strategies = ["AmiPy", "MPWizard", "ZRM",
+    #                   "OvernightFutures", "ExpiryTrader","Screenipy Stocks"]
+    # for i, strategy in enumerate(session_state.strategies):
+    #     strategy["strategy_name"] = st.multiselect(
+    #         "Strategy Name", all_strategies, key=f"strategy_name_{i}")
+    #     strategy["broker"] = st.multiselect(
+    #         "Broker", ["Zerodha", "AliceBlue"], key=f"strategy_broker_name_{i}")
 
-        for selected_strategy in selected_strategies:
-            for selected_broker_name in selected_broker:
-                perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}"
-                strategy[perc_allocated_key] = st.selectbox(f"Percentage Allocated for {selected_strategy} and {selected_broker_name} (%):", options=[
-                                                            f"{i/10:.1f}%" for i in range(0, 101)], key=f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}")
+    #     selected_strategies = strategy["strategy_name"]
+    #     selected_broker = strategy["broker"]
 
-        strategy_list.append({
-            "strategy_name": selected_strategies,
-            "broker": selected_broker,
-            **strategy
-        })
+    #     for selected_strategy in selected_strategies:
+    #         for selected_broker_name in selected_broker:
+    #             perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}"
+    #             strategy[perc_allocated_key] = st.selectbox(f"Percentage Allocated for {selected_strategy} and {selected_broker_name} (%):", options=[
+    #                                                         f"{i/10:.1f}%" for i in range(0, 101)], key=f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}")
+
+    #     strategy_list.append({
+    #         "strategy_name": selected_strategies,
+    #         "broker": selected_broker,
+    #         **strategy
+    #     })
 
 
     # Take input for the week staring capital 
-    weekly_saturday_capital = st.number_input("Weekly Saturday Capital:", key="weekly_saturday_capital")
+    base_capital = st.number_input("Base Capital:", key="base_capital")
     
     # Take input for comments
     comments = st.text_area("Comments:", key="comments_input")
@@ -200,7 +223,7 @@ def register_page():
     # Check if the submit button is clicked
     if submit:
         # Check if all the fields are filled before submitting
-        if name and dob and phone and email and aadhar and pan and bank_account and broker_list_1 and strategy_list:
+        if name and dob and phone and email and aadhar and pan and bank_account and broker_list_1 and investment_form:
             # Validate PAN Card Number (should be in uppercase)
             pan = pan.upper()
 
@@ -215,7 +238,7 @@ def register_page():
                 return
                 # Create a list with all the client data
             client_data = [name, UserName, email, Password, phone, dob, aadhar, pan,
-                           bank_name, bank_account, broker_list_1, broker_list_2, strategy_list,weekly_saturday_capital, comments, smart_contract]
+                           bank_name, bank_account, broker_list_1, broker_list_2, investment_form,base_capital, comments, smart_contract]
 
             # Save the uploaded profile picture as binary data if it exists
             if profile_picture is not None:
@@ -249,8 +272,8 @@ def register_page():
                 "Bank Account No": client_data[9],
                 "Brokers list 1": client_data[10],
                 "Brokers list 2": client_data[11],
-                "Strategy list": client_data[12],
-                "Weekly Saturday Capital": client_data[13],
+                "Investment form": client_data[12],
+                "Base Capital": client_data[13],
                 "Comments": client_data[14],
                 "Smart Contract": client_data[15],
                 "Profile Picture": client_data[16]if profile_picture is not None else None,
@@ -291,7 +314,7 @@ def register_page():
                 unfilled_fields.append("Bank Account No")
             if not broker_list_1:
                 unfilled_fields.append("Brokers")
-            if not strategy_list:
+            if not investment_form:
                 unfilled_fields.append("Strategies Subscribed")
 
             error_message = "Please fill the following fields: " + \
@@ -342,15 +365,15 @@ def register_page():
             
             # Check if the broker name is one of the supported brokers
             if broker_name in ["zerodha", "aliceblue"]:
-                percentageRisk = {}
-                for strategy in strategy_list:
-                    for selected_strategy in strategy["strategy_name"]:
-                        for selected_broker_name in strategy["broker"]:
-                            if selected_broker_name.lower() == broker_name:
-                                perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}"
-                                if perc_allocated_key in strategy:
-                                    percentageRisk[selected_strategy] = percentage_string_to_float(
-                                        strategy[perc_allocated_key])
+                # percentageRisk = {}
+                # for strategy in strategy_list:
+                #     for selected_strategy in strategy["strategy_name"]:
+                #         for selected_broker_name in strategy["broker"]:
+                #             if selected_broker_name.lower() == broker_name:
+                #                 perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}"
+                #                 if perc_allocated_key in strategy:
+                #                     percentageRisk[selected_strategy] = percentage_string_to_float(
+                #                         strategy[perc_allocated_key])
 
                 formatted_data = {
                     "account_name": UserName, 

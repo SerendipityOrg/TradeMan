@@ -48,6 +48,8 @@ session_state = SessionState(logged_in=False, client_data=None)
 
 
 def login_page():
+
+    
     # If the user is not logged in, show the login form
     if not session_state.logged_in:
         # Take inputs for login information
