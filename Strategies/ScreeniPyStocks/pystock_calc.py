@@ -1,4 +1,4 @@
-import strategies.ScreenipyStocks.strategies as strategies
+import strategies
 import fetcher
 import pandas as pd
 import os
