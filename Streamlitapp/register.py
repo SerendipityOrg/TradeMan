@@ -10,7 +10,7 @@ from firebase_admin import db
 from firebase_admin import storage
 import base64
 import json
-from questions import investment_form
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -172,9 +172,6 @@ def register_page():
         broker_list_2.append(broker_2)
 
     st.subheader("Strategies Subscribed")
-    # Call the investment_form function and get the returned values
-    investment_values = investment_form()
-
 
     # # Add a button to allow addition of new strategy details
     # add_strategy = st.button("Add Strategy")
@@ -185,6 +182,40 @@ def register_page():
 
     # # Create dynamic input fields for strategy information
     # strategy_list = []
+    investment_form= []
+    # Call the investment_form function and get the returned values
+    with st.form("investment_form"):
+        st.subheader('Determination of Investment Horizon')
+        investment_horizon = st.radio(
+            "Please specify your anticipated investment duration:",
+            ('Short-Term (upto 1 year)', 'Long-Term(above 1 year)'))
+
+        st.subheader('Allocation of Investment Capital')
+        st.write('How would you prefer to apportion your investment among the following categories? Ensure the total allocation sums to 100%.')
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            debt = st.number_input('Debt (%)', min_value=0.0, max_value=100.0, value=0.0, step=0.1)
+        with col2:
+            equity = st.number_input('Equity (%)', min_value=0.0, max_value=100.0, value=0.0, step=0.1)
+        with col3:
+            fno = st.number_input('Futures and Options (FnO) (%)', min_value=0.0, max_value=100.0, value=0.0, step=0.1)
+
+        st.subheader('Acceptable Drawdown Threshold')
+        drawdown_threshold = st.slider(
+            'What is your tolerance for potential declines in your investment value? Indicate the maximum percentage of the drawdown you are comfortable with.',
+            0, 100, 50)
+
+        st.subheader('Frequency of Capital Withdrawal')
+        withdrawal_frequency = st.selectbox(
+            "Please indicate your preferred frequency for withdrawing funds from your investments.",
+            ('Weekly', 'As needed'))
+
+        st.subheader('Commission Preferences')
+        commission_preference = st.selectbox(
+            "Select the commission structure that aligns with your investment approach.",
+            ('50%-50% (Loss sharing model)', '75%-25% (Exclusive of loss sharing)'))
+
+ 
     # all_strategies = ["AmiPy", "MPWizard", "ZRM",
     #                   "OvernightFutures", "ExpiryTrader","Screenipy Stocks"]
     # for i, strategy in enumerate(session_state.strategies):

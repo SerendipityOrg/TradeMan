@@ -27,7 +27,7 @@ from MarketUtils.Main.morningmsg import get_invested_value
 from Brokers.Aliceblue.alice_utils import cash_margin_available  # Specific broker utility
 from Brokers.Zerodha.kite_utils import cash_balance  # Specific broker utility
 from MarketUtils.Excel.strategy_calc import custom_format  # Utility for formatting Excel data
-from MarketUtils.Firebase.firebase_utils import process_DTD, load_excel, get_current_week
+from MarketUtils.Firebase.firebase_utils import process_DTD, load_excel_from_firebase, get_current_week
 
 # Retrieve values from .env for Firebase and Telegram
 firebase_credentials_path = os.getenv('FIREBASE_CREDENTIALS_PATH')
@@ -62,11 +62,8 @@ def get_cashmargin_value(user_data):
                 cash_margin = cash_margin_available(user)
             elif user['broker'] == "zerodha":
                 cash_margin = cash_balance(user)
-            try:
-                return float(cash_margin)  # Ensure cash_margin is a float
-            except ValueError:
-                print(f"Invalid cash margin value for {user['account_name']}: {cash_margin}")
-                return 0.0  # Return a default value or handle as appropriate
+            # Ensure cash_margin is a float
+            return float(cash_margin) if cash_margin else 0.0
     return 0.0  # If user or broker not found
 
 # Function to send a message via Telegram
@@ -106,7 +103,7 @@ def generate_message(user, excel_file_name, net_pnl, cash_margin_value, trademan
 # Function to calculate net PnL
 def calculate_net_pnl(excel_file_name):
     # Load the Excel file within the function
-    df_dtd, _ = load_excel(excel_file_name)  # Only load the 'DTD' sheet
+    df_dtd, _ = load_excel_from_firebase(excel_file_name)  # Only load the 'DTD' sheet
 
     net_pnl = 0.0  # Initialize net PnL
 
@@ -125,7 +122,7 @@ def calculate_net_pnl(excel_file_name):
 # Function to calculate Trademan invested value (customize this function according to your logic)
 def calculate_trademan_invested(excel_file_name):
     # Load the 'Holdings' sheet
-    _, df_holdings = load_excel(excel_file_name)
+    _, df_holdings = load_excel_from_firebase(excel_file_name)
 
     total_margin_used = 0.0  # Initialize the net PnL for holdings without an exit time
 
@@ -235,7 +232,7 @@ def main():
                 message = generate_message(user, excel_file_name, net_pnl, free_cash, trademan_account_value, trademan_invested, drawdown, commission, actual_account_value, difference_value, start_date, end_date)
                 print(message)
 
-                update_json_data(broker_data, user, net_pnl, actual_account_value, broker_filepath)
+                update_json_data(broker_data, user, actual_account_value, broker_filepath)
         
                 # Uncomment the following line to enable sending the message via Telegram
                 send_telegram_message(user['mobile_number'], message)

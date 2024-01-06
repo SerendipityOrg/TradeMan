@@ -20,7 +20,7 @@ class SessionState:
 
 def inject_custom_css():
     # Specify the absolute path to your image file
-    image_file_path = os.path.join(os.path.dirname(__file__),'back_ground.jpg')
+    image_file_path = os.path.join(os.path.dirname(__file__),'background.png')
     
     # Check if the file exists before trying to open it
     if not os.path.isfile(image_file_path):
