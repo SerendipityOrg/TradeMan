@@ -10,6 +10,7 @@ DIR = os.getcwd()
 sys.path.append(DIR)
 
 import MarketUtils.general_calc as general_calc
+import Brokers.place_order_calc as place_order_calc
 from Strategies.StrategyBase import Strategy
 
 ENV_PATH = os.path.join(DIR, '.env')
@@ -58,10 +59,12 @@ def get_list_of_strategies():
     for user in active_users:
         strategies = user["qty"]
         strategies = list(strategies.keys())
+    strategies.append("AmiPy")
+    strategies.remove("PreviousOvernightFutures")
     return strategies
 
 def get_sltype(strategy):
-    _, strategy_path = general_calc.get_strategy_json(strategy)
+    _, strategy_path = place_order_calc.get_strategy_json(strategy)
     strategy_obj = Strategy.read_strategy_json(strategy_path)
     sl_type = strategy_obj.get_exit_params().get("SLType")
     return sl_type
@@ -210,9 +213,10 @@ def calculate_hedge_points(strategy):
 
 def main():
     strategies = get_list_of_strategies()
+    print(strategies)
     for strategy in strategies:
         sl_type = get_sltype(strategy)
-        _, strategy_path = general_calc.get_strategy_json(strategy)
+        _, strategy_path = place_order_calc.get_strategy_json(strategy)
         if sl_type == "StrategySL":
             handle_strategy_sl(strategy, strategy_path)
         else:

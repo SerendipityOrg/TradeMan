@@ -13,14 +13,11 @@ from firebase_admin import db
 from firebase_admin import credentials, storage
 import firebase_admin
 import hashlib
-import openpyxl
 import plotly.express as px
 import plotly.graph_objects as go
-from io import BytesIO
 import streamlit as st
-from formats import format_value, format_stat_value, indian_format
+from formats import custom_format
 from dotenv import load_dotenv
-from streamlit_option_menu import option_menu
 from script import display_performance_dashboard, table_style
 
 
@@ -45,7 +42,6 @@ if not firebase_admin._apps:
     })
     # Initialize variables
 data = []  # This will hold the Excel data
-
 
 def login_admin(username, password):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -85,14 +81,31 @@ def get_weeks_for_month(month_number, year):
     return weeks
 
 
+# Function to format the client name to match the existing Firebase keys
+def format_client_name(client_name):
+    """
+    Formats the client name by replacing spaces with underscores and converting to lowercase
+    to match the Firebase key format.
+    """
+    return client_name.replace(" ", "_").lower()
+
+
 def update_client_data(client_name, updated_data):
+    client_name = format_client_name(client_name)
     # Get a reference to the selected client's database
     selected_client_ref = db.reference(f"/clients/{client_name}")
     # Update the client data in the Firebase database
     selected_client_ref.update(updated_data)
 
+def update_week_saturday_capital(selected_client_name, new_week_saturday_capital):
+    # Get a reference to the selected client's database
+    selected_client_ref = db.reference(f"/clients/{selected_client_name}")
+
+    # Update the week_saturday_capital in the Firebase database
+    selected_client_ref.update({"Week Saturday Capital": new_week_saturday_capital})
 
 def update_brokers_data(client_name, brokers_list_1, brokers_list_2):
+    client_name = format_client_name(client_name)
     # Get a reference to the selected client's brokers list in the Firebase database
     selected_client_ref = db.reference(f"/clients/{client_name}")
     # Update the brokers list in the Firebase database
@@ -101,11 +114,11 @@ def update_brokers_data(client_name, brokers_list_1, brokers_list_2):
 
 
 def update_strategies_data(client_name, strategies_list):
+    client_name = format_client_name(client_name)
     # Get a reference to the selected client's strategies list in the Firebase database
     selected_client_ref = db.reference(f"/clients/{client_name}/Strategy list")
     # Update the strategies list in the Firebase database
     selected_client_ref.set(strategies_list)
-
 
 def update_profile_picture(selected_client_name, new_profile_picture):
     # Get a reference to the selected client's database
@@ -132,8 +145,8 @@ def update_profile_picture(selected_client_name, new_profile_picture):
     # Remove the temporary file
     temp_file_path.unlink()
 
-
 def select_client():
+
     # Get a reference to the clients in the Firebase database
     client_ref = db.reference('/clients')
 
@@ -189,9 +202,8 @@ def select_client():
         excel_file_name = f"{client_username}.xlsx"
         # Call the function to display the performance dashboard, passing in both the client data and Excel file name
         display_performance_dashboard(
-            selected_client, client_username, excel_file_name)
-
-
+            selected_client, client_username, excel_file_name)      
+    
 def show_profile(selected_client, selected_client_name):
     profile_picture = selected_client.get("Profile Picture")
     # Display the profile picture if available
@@ -255,6 +267,7 @@ def show_profile(selected_client, selected_client_name):
         Brokers_list_1 = selected_client.get("Brokers list 1", [])
         Brokers_list_2 = selected_client.get("Brokers list 2", [])
         Strategy_list = selected_client.get("Strategy list", [])
+        weekly_saturday_capital = selected_client.get("Weekly Saturday Capital", [])
         Comments = selected_client.get("Comments", "")
         Smart_Contract = selected_client.get("Smart Contract", "")
 
@@ -387,6 +400,31 @@ def show_profile(selected_client, selected_client_name):
         # Add some space between the table and the 'Edit' button
         st.markdown("<br>", unsafe_allow_html=True)
 
+        # Define the risk profile options at the start
+        risk_profile_options = ["Low", "Medium", "High"]
+  
+        st.subheader("Week Saturday Capital")
+        # Initialize week_saturday_capital_value with a default value
+        weekly_saturday_capital_value = 0.0
+
+        if weekly_saturday_capital:
+            # Ensure week_saturday_capital is a float, default to 0.0 if not
+            weekly_saturday_capital_value = float(weekly_saturday_capital) if isinstance(weekly_saturday_capital, (float, int)) else 0.0
+
+        # Calculate the upcoming Saturday date
+        today = datetime.date.today()
+        next_saturday = today + datetime.timedelta((5 - today.weekday()) % 7)  # 5 represents Saturday
+        formatted_saturday = next_saturday.strftime('%d-%m-%Y')  # Format the date as dd-mm-yyyy
+
+        if weekly_saturday_capital:
+            # Ensure weekly_saturday_capital is a float, default to 0.0 if not
+            weekly_saturday_capital_value = float(weekly_saturday_capital) if isinstance(weekly_saturday_capital, (float, int)) else 0.0
+
+        # Use the custom format function to format the capital value
+        formatted_capital_value = custom_format(weekly_saturday_capital_value)
+
+        st.write(f"Weekly Saturday Capital for {formatted_saturday}: {formatted_capital_value}")
+
         # Add 'Edit' button to switch to 'edit mode'
         if st.button('Edit'):
             st.session_state.edit_mode = True
@@ -433,6 +471,19 @@ def show_profile(selected_client, selected_client_name):
                 if new_profile_picture is not None:
                     update_profile_picture(
                         selected_client_name, new_profile_picture)
+                    
+            st.subheader("Weekly Saturday Capital")
+            # Input field for updating "Week Saturday Capital"
+            new_weekly_saturday_capital = st.number_input(
+                "Weekly Saturday Capital",
+                value=weekly_saturday_capital_value,
+                key="weekly_saturday_capital"  # Consistent key for the existing data
+            )
+
+             # Check if the value has been changed
+            if new_weekly_saturday_capital != weekly_saturday_capital_value:
+                updated_data["Weekly Saturday Capital"] = new_weekly_saturday_capital  # Same key as in the database
+                weekly_saturday_capital_value = new_weekly_saturday_capital  # Update the current value
 
             # Edit brokers list
             st.subheader("Brokers")
@@ -460,8 +511,12 @@ def show_profile(selected_client, selected_client_name):
                         "Active:", key=f"active_1_{i}", value=broker_1.get("active", False))
                     broker_1["capital"] = st.number_input(
                         "Capital:", key=f"capital_1_{i}", value=broker_1.get("capital", ""))
-                    broker_1["risk_profile"] = st.text_input("Risk profile:", key=f"risk_profile_1_{i}",
-                                                             value=broker_1.get("risk_profile", ""))
+                    broker_1["risk_profile"] = st.selectbox(
+                        "Risk Profile:",
+                        risk_profile_options,
+                        key=f"risk_profile_1_{i}",
+                        index=risk_profile_options.index(broker_1.get("risk_profile", "Low"))  # Set the default value if it exists
+                    )
                     updated_brokers_list_1.append(broker_1)
 
             st.write("Broker 2")
@@ -489,18 +544,36 @@ def show_profile(selected_client, selected_client_name):
                         "Active:", key=f"active_2_{i}", value=broker_2.get("active", False))
                     broker_2["capital"] = st.number_input(
                         "Capital:", key=f"capital_2_{i}", value=broker_2.get("capital", ""))
-                    broker_2["risk_profile"] = st.text_input("Risk profile:", key=f"risk_profile_2_{i}",
-                                                             value=broker_2.get("risk_profile", ""))
+                    broker_2["risk_profile"] = st.selectbox(
+                        "Risk Profile:",
+                        risk_profile_options,
+                        key=f"risk_profile_2_{i}",
+                        index=risk_profile_options.index(broker_2.get("risk_profile", "Low"))  # Set the default value if it exists
+                    )
                     updated_brokers_list_2.append(broker_2)
 
             # Edit strategies list
             st.subheader("Strategies")
             if isinstance(Strategy_list, list) and len(Strategy_list) > 0:
                 for i, strategy in enumerate(Strategy_list):
+                    # Define options lists
+                    strategy_options = ["AmiPy", "MPWizard", "ZRM", "OvernightFutures", "ExpiryTrader", "Screenipy Stocks"]
+                    broker_options = ["Zerodha", "AliceBlue"]
+
+                    # Retrieve and validate default values
+                    default_strategy_names = strategy.get("strategy_name", [])
+                    default_strategy_names = [name for name in default_strategy_names if name in strategy_options]
+                    default_brokers = [broker for broker in strategy.get("broker", []) if broker in broker_options]
+
+                    # Debugging: Print the filtered default_strategy_names
+                    print(f"Filtered default_strategy_names for Strategy {i+1}:", default_strategy_names)
+
+                    # Set multiselect widgets for strategy names and brokers
                     strategy["strategy_name"] = st.multiselect(
-                        f"Strategy Name {i+1}", ["AmiPy", "MPWizard", "ZRM", "OvernightFutures", "ExpiryTrader","Screenipy Stocks"], default=strategy.get("strategy_name", []), key=f"strategy_name_{i}")
+                        f"Strategy Name {i+1}", strategy_options, default=default_strategy_names, key=f"strategy_name_{i}")
                     strategy["broker"] = st.multiselect(
-                        f"Broker {i+1}", ["Zerodha", "AliceBlue"], default=strategy.get("broker", []), key=f"strategy_broker_{i}")
+                        f"Broker {i+1}", broker_options, default=default_brokers, key=f"strategy_broker_{i}")
+
                     selected_strategies = strategy["strategy_name"]
                     selected_brokers = strategy["broker"]
 
@@ -509,14 +582,21 @@ def show_profile(selected_client, selected_client_name):
                             # Modify the key format here
                             perc_allocated_key = f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_0"
                             # Retrieve the value using the updated key
-                            percentage_allocated = strategy.get(
-                                perc_allocated_key, "")
+                            percentage_allocated = strategy.get(perc_allocated_key, "")
                             options = [f"{i/10:.1f}%" for i in range(0, 101)]
-                            default_index = options.index(percentage_allocated)
+                            
+                            # Handle the case where percentage_allocated is not in options
+                            default_index = options.index(percentage_allocated) if percentage_allocated in options else 0
+
                             selected_percentage_allocated = st.selectbox(
-                                f"Percentage Allocated for {selected_strategy} and {selected_broker_name} (%):", options, index=default_index, key=f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}")
+                                f"Percentage Allocated for {selected_strategy} and {selected_broker_name} (%):", 
+                                options, 
+                                index=default_index, 
+                                key=f"strategy_perc_allocated_{selected_strategy}_{selected_broker_name}_{i}"
+                            )
                             # Set the selected value
                             strategy[perc_allocated_key] = selected_percentage_allocated
+
                     updated_strategies_list.append(strategy)
 
             # Update the changes in the database when Update button is clicked
@@ -534,7 +614,6 @@ def show_profile(selected_client, selected_client_name):
                     st.success('Client details updated successfully.')
                 st.session_state.edit_mode = False  # Switch out of edit mode
 
-
 def login():
 
     username = st.text_input('Admin Username')
@@ -547,15 +626,28 @@ def login():
         else:
             st.error('Invalid username or password.')
 
-
 def logout():
     st.session_state.login_successful = False
 
-
 def main():
+    # Custom CSS to change the background color of the main content area but not the sidebar
+    main_bg_color = "HoneyDew"  # Replace with your desired color code
+
+    # Injecting Custom CSS to override default Streamlit styles for the main content area
+    st.markdown(f'''
+        <style>
+            /* Changing the background color of the main content area */
+            .stApp {{
+                background-color: {main_bg_color};
+            }}
+            
+        </style>
+        ''', unsafe_allow_html=True)
+
     if st.session_state.get('login_successful', False):
         # If the admin is logged in, show the client selection page
         select_client()
+    
         if st.sidebar.button('Logout'):
             logout()
     else:

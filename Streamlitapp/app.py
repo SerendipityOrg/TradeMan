@@ -6,6 +6,10 @@ from admin import main as admin_main
 import os
 
 
+# The first and only call to st.set_page_config() in your entire app
+st.set_page_config(layout="wide")
+
+
 class SessionState:
     def __init__(self, active_user=None):
         self.active_user = active_user
@@ -16,11 +20,20 @@ def inject_custom_css():
     with open(css_file_path) as f:
         st.markdown('<style>{}</style>'.format(f.read()),
                     unsafe_allow_html=True)
-
-
+        
+    css_rule = """
+    h1 {
+        color: darkblue;
+    }
+      .st-emotion-cache-6qob1r.eczjsme3 { /* Targeting the specific classes */
+        background-color: #708090; /* Replace with your desired color */
+    }
+    """
+    st.markdown(f'<style>{css_rule}</style>', unsafe_allow_html=True)
+    
 def main():
     st.title("Serendipity Trading Firm")
-
+    
     inject_custom_css()
     # Create session state if it doesn't exist
     if 'session' not in st.session_state:
