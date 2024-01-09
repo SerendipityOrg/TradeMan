@@ -15,11 +15,11 @@ from Strategies.StrategyBase import Strategy
 ENV_PATH = os.path.join(DIR, '.env')
 load_dotenv(ENV_PATH)
 
-# excel_dir = os.getenv('onedrive_excel_folder')
-excel_dir = r"/Users/amolkittur/Desktop/Dev/UserProfile/Excel"
+excel_dir = os.getenv('onedrive_excel_folder')
+# excel_dir = r"/Users/amolkittur/Desktop/Dev/UserProfile/Excel"
 
 def append_data_to_excel(data, sheet_name):
-    excel_path = os.path.join(excel_dir, "omkar.xlsx")
+    excel_path = os.path.join(excel_dir, "Signals.xlsx")
     book = load_workbook(excel_path)
     sheet = book[sheet_name] if sheet_name in book.sheetnames else book.create_sheet(sheet_name)
 
@@ -71,6 +71,7 @@ def get_todays_trade_ids(strategy):
     omkar_file_path = os.path.join(excel_dir, "omkar.xlsx")
     df = pd.read_excel(omkar_file_path, sheet_name=strategy)
     # Filter the DataFrame for rows where the exit_time is today's date
+    df['exit_time'] = pd.to_datetime(df['exit_time'])
     today = pd.Timestamp.today().normalize()
     todays_trades = df[df['exit_time'].dt.normalize() == today]
     todays_trade_ids = todays_trades['trade_id'].tolist()
@@ -175,12 +176,15 @@ def handle_other_sl_types(strategy):
             hedge_points = hedge_exit_price - hedge_entry_price
             trade_points = (trade_entry_price - trade_exit_price) + hedge_points
 
+        entry_time_datetime = pd.to_datetime(trade_row['entry_time'].iloc[0])
+        exit_time_datetime = pd.to_datetime(trade_row['exit_time'].iloc[0])
+
         trade_data = {
                 "trade_id": trade_id,
                 "trading_symbol": determine_trading_symbol(trade_id,strategy),
                 "signal": trade_row['signal'].iloc[0],
-                "entry_time": trade_row['entry_time'].iloc[0].strftime('%Y-%m-%d %H:%M:%S'),
-                "exit_time": trade_row['exit_time'].iloc[0].strftime('%Y-%m-%d %H:%M:%S'),
+                "entry_time": entry_time_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                "exit_time": exit_time_datetime,
                 "entry_price": round(trade_entry_price, 2),
                 "exit_price": round(trade_exit_price, 2),
                 "hedge_points": round(hedge_points,2), 

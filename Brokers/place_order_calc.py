@@ -33,6 +33,7 @@ class StrategyPrefix(Enum):
     OvernightFutures = "OF"
     Extra = "EXTRA"
     Stock = "STOCK"
+    Coin = "COIN"
 
     @staticmethod
     def get_strategy_by_prefix(prefix):

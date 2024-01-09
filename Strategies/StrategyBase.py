@@ -154,7 +154,7 @@ class Strategy:
             return f"{base_symbol} not found"
         return token[0]
     
-    def determine_expiry_index(self,day):
+    def determine_expiry_index(self,day=dt.datetime.today().weekday()):
         if day == 0:  # Monday
             return "MIDCPNIFTY","288009"
         elif day == 1:  # Tuesday
@@ -187,7 +187,7 @@ class Strategy:
             adjustment = multiplier * (strike_prc_multiplier if prediction == 'Bearish' else -strike_prc_multiplier)
             return base_strike + adjustment
         else:
-            return base_strike
+            return int(base_strike)
         
     def get_hedge_strikeprc(self,base_symbol,token, prediction, hedge_multiplier): 
         ltp = self.get_single_ltp(token)

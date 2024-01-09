@@ -1,0 +1,1 @@
+This is a stock screener for NSE using python

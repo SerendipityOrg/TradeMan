@@ -178,3 +178,49 @@ class Instrument:
             return filtered_data.iloc[0]['instrument_token']
         else:
             return None
+     
+    def get_symbols_with_expiry_today(self, segment, symbols_list):
+        """
+        Filters symbols with expiry today for a given segment and symbols list.
+
+        Parameters:
+        segment (str): The market segment to filter.
+        symbols_list (list): List of symbols to filter.
+
+        Returns:
+        DataFrame: A dataframe of unique symbols with expiry today.
+        """
+
+        today = datetime.now().strftime("%Y-%m-%d")
+        
+        try:
+            # Filter the dataframe for the given segment, where expiry is today, and for the specified symbols
+            specific_symbols_today_expiry = self._dataframe[
+                (self._dataframe['segment'] == segment) & 
+                (self._dataframe['expiry'] == today) &
+                (self._dataframe['name'].isin(symbols_list))
+            ]['name']  # Get base symbols
+
+            # Drop duplicate base symbols and return
+            return specific_symbols_today_expiry.drop_duplicates().tolist()
+        except KeyError as e:
+            # Handle cases where columns might not exist in the dataframe
+            print(f"Column not found in the dataframe: {e}")
+            return None
+        except Exception as e:
+            # Handle any other exceptions
+            print(f"An error occurred: {e}")
+            return None
+        
+    def fetch_base_symbol_token(self, base_symbol):
+    # Mapping of base symbols to their tokens
+        symbol_to_token = {
+            "MIDCPNIFTY": "288009",
+            "FINNIFTY": "257801",
+            "BANKNIFTY": "260105",
+            "NIFTY": "256265",
+            "SENSEX": "265"
+        }
+
+        # Return the token for the given base symbol, or a default message if not found
+        return symbol_to_token.get(base_symbol, "No token found for given symbol")

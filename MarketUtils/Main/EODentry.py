@@ -177,6 +177,9 @@ def mpwizard_details(orders, broker,strategy=None):
     buy_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
     sell_orders.sort(key=lambda x: extract_numeric_part(x["trade_id"]))
 
+    buy_orders = [order for order in buy_orders if order["avg_price"] != 0.0]
+    sell_orders = [order for order in sell_orders if order["avg_price"] != 0.0]
+
     results = {
         "MPWizard": {
             "BUY": buy_orders,

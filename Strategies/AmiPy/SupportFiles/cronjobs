@@ -1,0 +1,18 @@
+30 8 * * 1-6 /Users/traderscafe/Desktop/Main/Scripts/0830_DailyLogin.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/DailyLogin.log 2>&1
+40 8 * * 2-6 /Users/traderscafe/Desktop/Main/Scripts/0840_DailyReport.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/DailyReport.log 2>&1
+50 8 * * 2-6 /Users/traderscafe/Desktop/Main/Scripts/0850_TestOrders.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/TestOrders.log 2>&1
+10 9 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/0910_Amipy_NF.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/Amipy_NF.log 2>&1
+12 9 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/0912_TelegramBot.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/TelegramBot.log 2>&1
+15 9 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/0915_ExpiryTrader.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/ExpiryTrader.log 2>&1
+18 9 * * 2-5 /Users/traderscafe/Desktop/Main/Scripts/0918_OvernightExit.sh>> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/OvernightExit.log 2>&1
+45 9 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/0945_MPWizard.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/MPWizard.log 2>&1
+13 15 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/1513_SweepOrders.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/SweepOrders.log 2>&1
+15 15 * * 1-4 /Users/traderscafe/Desktop/Main/Scripts/1515_OvernightEntry.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/OvernightEntry.log 2>&1
+20 15 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/1520_EODJsonEntry.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/EODJsonEntry.log 2>&1
+25 15 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/1525_JsontoExcelEntry.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/JsontoExcelEntry.log 2>&1
+30 15 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/1530_SignalEntry.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/SignalEntry.log 2>&1
+35 15 * * 1-5 /Users/traderscafe/Desktop/Main/Scripts/1535_EODReport.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/EODReport.log 2>&1
+50 8 * * 6 /Users/traderscafe/Desktop/Main/Scripts/0850_WeeklyReport.sh >> /Users/traderscafe/Library/CloudStorage/OneDrive-Personal/Logs/WeeklyReport.log 2>&1
+30 15 * * * pkill -f AmiPyLive.py
+31 15 * * * pkill -f main.py
+32 15 * * * pkill -f telebot.py
