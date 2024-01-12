@@ -3,6 +3,7 @@ import os,sys
 from babel.numbers import format_currency
 from openpyxl import load_workbook
 from dotenv import load_dotenv
+import sqlite3
 
 DIR = os.getcwd()
 sys.path.append(DIR)
@@ -270,61 +271,85 @@ def process_expiry_trades(broker, expiry_trades,username=None):
 
     return result
 
-def process_morning_trades(broker,morning_trades,username=None):
-    excel_path = os.path.join(excel_dir, f"{username}.xlsx")
-    all_dfs = load_existing_excel(excel_path)
-    trade_df = all_dfs.get("OvernightFutures", pd.DataFrame())
+def process_morning_trades(broker, morning_trades, username=None):
+    db_path = os.path.join(excel_dir, f"{username}.db")  # Path to the SQLite database
     trade_id = morning_trades[0]['trade_id'].split("_")[0]
-    trade_index = trade_df.index[trade_df['trade_id'] == trade_id].tolist()
 
-    if trade_index:
-        row_index = trade_index[0]
-        trade_data = trade_df.loc[row_index]
-        #delete the row_index from the excel
-        trade_df.drop(row_index,inplace=True)
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
 
-        for trade in morning_trades:
-            if trade['option_type'] != "FUT":
-                option_exit_price = trade['avg_price']
-            else:
-                future_exit_price = trade['avg_price']
-        
-        qty = trade['qty']
+        # Fetch the trade data from the database
+        query = "SELECT * FROM OvernightFutures WHERE trade_id = ?"
+        cursor.execute(query, (trade_id,))
+        trade_data = cursor.fetchone()
 
-        if broker == "zerodha":
-            future_tax = tc.zerodha_futures_taxes(qty, trade_data['entry_price'], future_exit_price, 1)
-            option_tax = tc.zerodha_taxes(qty, trade_data["hedge_entry_price"],option_exit_price, 1)
-        elif broker == "aliceblue":
-            future_tax = tc.aliceblue_futures_taxes(qty, trade_data["entry_price"], future_exit_price, 1)
-            option_tax = tc.aliceblue_taxes(qty, trade_data["hedge_entry_price"], option_exit_price, 1)
+        if trade_data:
+            # Convert the fetched data into a dictionary for easier access
+            columns = [desc[0] for desc in cursor.description]
+            trade_data_dict = dict(zip(columns, trade_data))
 
-        # Calculating trade points based on direction
-        if trade_data["signal"] == "Long":
-            trade_points = (future_exit_price - trade_data["entry_price"]) + (option_exit_price - trade_data["hedge_entry_price"])
-        elif trade_data["signal"] == "Short":
-            trade_points = (trade_data["entry_price"] - future_exit_price) + (option_exit_price - trade_data["hedge_entry_price"])
-        pnl = trade_points * qty
-        total_tax = future_tax + option_tax
-        net_pnl = pnl - total_tax
+            # Delete the row from the database
+            delete_query = "DELETE FROM OvernightFutures WHERE trade_id = ?"
+            cursor.execute(delete_query, (trade_id,))
+            conn.commit()
 
-        morning_trade_data = {
-                    "trade_id": trade_data["trade_id"],
-                    "trading_symbol": trade_data["trading_symbol"],
-                    "signal": trade_data["signal"],
-                    "entry_time": trade_data["entry_time"],
-                    "exit_time": pd.to_datetime(trade["time"], format='%d/%m/%Y %H:%M:%S').round('min'),
-                    "entry_price": trade_data["entry_price"],
-                    "exit_price": future_exit_price,
-                    "hedge_entry_price": trade_data["hedge_entry_price"],
-                    "hedge_exit_price": option_exit_price,
-                    "trade_points": trade_points,
-                    "qty": trade_data["qty"],
-                    "pnl": pnl,
-                    "tax": total_tax,
-                    "net_pnl": net_pnl
-                }
+            # Initialize variables
+            future_exit_price = None
+            option_exit_price = None
 
-    return morning_trade_data
+            for trade in morning_trades:
+                if trade['option_type'] != "FUT":
+                    option_exit_price = trade['avg_price']
+                else:
+                    future_exit_price = trade['avg_price']
+            
+            qty = trade_data_dict['qty']
+
+            if broker == "zerodha":
+                future_tax = tc.zerodha_futures_taxes(qty, trade_data_dict['entry_price'], future_exit_price, 1)
+                option_tax = tc.zerodha_taxes(qty, trade_data_dict["hedge_entry_price"], option_exit_price, 1)
+            elif broker == "aliceblue":
+                future_tax = tc.aliceblue_futures_taxes(qty, trade_data_dict["entry_price"], future_exit_price, 1)
+                option_tax = tc.aliceblue_taxes(qty, trade_data_dict["hedge_entry_price"], option_exit_price, 1)
+
+            # Calculating trade points based on direction
+            if trade_data_dict["signal"] == "Long":
+                trade_points = (future_exit_price - trade_data_dict["entry_price"]) + (option_exit_price - trade_data_dict["hedge_entry_price"])
+            elif trade_data_dict["signal"] == "Short":
+                trade_points = (trade_data_dict["entry_price"] - future_exit_price) + (option_exit_price - trade_data_dict["hedge_entry_price"])
+            pnl = trade_points * qty
+            total_tax = future_tax + option_tax
+            net_pnl = pnl - total_tax
+
+            morning_trade_data = {
+                        "trade_id": trade_data_dict["trade_id"],
+                        "trading_symbol": trade_data_dict["trading_symbol"],
+                        "signal": trade_data_dict["signal"],
+                        "entry_time": trade_data_dict["entry_time"],
+                        "exit_time": pd.to_datetime(trade["time"], format='%d/%m/%Y %H:%M:%S').round('min'),
+                        "entry_price": trade_data_dict["entry_price"],
+                        "exit_price": future_exit_price,
+                        "hedge_entry_price": trade_data_dict["hedge_entry_price"],
+                        "hedge_exit_price": option_exit_price,
+                        "trade_points": trade_points,
+                        "qty": trade_data_dict["qty"],
+                        "pnl": pnl,
+                        "tax": total_tax,
+                        "net_pnl": net_pnl
+                    }
+
+            conn.close()
+            return morning_trade_data
+        else:
+            print(f"Trade ID {trade_id} not found in database")
+            conn.close()
+            return None
+
+    except sqlite3.Error as e:
+        print(f"An error occurred while accessing the database: {e}")
+        return None
+
 
 def process_afternoon_trades(broker,afternoon_trades,username=None):
     signal = "Long" if afternoon_trades[0]['direction'] == "BULLISH" else "Short"

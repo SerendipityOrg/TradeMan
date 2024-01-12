@@ -318,7 +318,7 @@ def segregate_by_strategy(details, strategies, broker):
     combined_details = {}
     for strategy in strategies:
         # 3. Get today_orders from the strategy's JSON and add _entry and _exit suffixes
-        _, strategy_path = place_order_calc.get_strategy_json(strategy)
+        _, strategy_path = general_calc.get_strategy_json(strategy)
         strategy_obj = Strategy.read_strategy_json(strategy_path)
         trade_ids = strategy_obj.get_today_orders()
         entry_ids = [tid + "_entry" for tid in trade_ids]
@@ -363,6 +363,6 @@ for user in active_users:
         user_final_orders = {"today_orders" : combined_user_orders}
         pprint(user_final_orders)
 
-    order_json,order_json_path = place_order_calc.get_orders_json(user["account_name"])
+    order_json,order_json_path = general_calc.get_orders_json(user["account_name"])
     order_json["today_orders"] = combined_user_orders
     general_calc.write_json_file(order_json_path, order_json)

@@ -1,10 +1,8 @@
 from enum import Enum
-import datetime as dt
 import os,re
-import sys,math
-import pandas as pd
-import json
+import sys
 from dotenv import load_dotenv
+import sqlite3
 
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
@@ -18,6 +16,7 @@ from MarketUtils.InstrumentBase import Instrument
 import Strategies.StrategyBase as StrategyBase
 from MarketUtils.Excel.strategy_calc import load_existing_excel
 import Brokers.telegram_order_calc as telegram_order_calc
+import DBpy.DB_utils as db_utils
 
 active_users_json_path = os.path.join(DIR_PATH,"MarketUtils", "active_users.json")
 trade_state_path = os.path.join(DIR_PATH, 'trade_id_state.json')
@@ -123,17 +122,31 @@ def retrieve_order_id(user, strategy, trade_type, exchange_token):
             return order['order_id']
     return None
 
-def fetch_qty_from_excel(account_name, strategy, trade_id):
-    excel_path = os.path.join(excel_dir, f"{account_name}.xlsx") 
-    trade_df = load_existing_excel(excel_path).get(strategy, pd.DataFrame())
+
+def fetch_qty_from_db(account_name, strategy, trade_id):
+    db_path = os.path.join(excel_dir, f"{account_name}.db")  # Path to the SQLite database
     trade_id = trade_id.split("_")[0]
-    trade_index = trade_df.index[trade_df['trade_id'] == trade_id].tolist()
-    if trade_index:
-        row_index = trade_index[0]
-        trade_data = trade_df.loc[row_index]
-        return trade_data['qty']
-    else:
-        print(f"Trade ID {trade_id} not found in excel")
+
+    try:
+        conn = db_utils.get_db_connection(db_path)
+        cursor = conn.cursor()
+
+        # SQL query to fetch the 'qty' for the given 'trade_id' from the strategy table
+        query = f"SELECT qty FROM {strategy} WHERE trade_id = ?"
+        cursor.execute(query, (trade_id,))
+        result = cursor.fetchone()
+
+        conn.close()
+
+        if result:
+            return result[0]  # 'qty' is the first element of the result tuple
+        else:
+            print(f"Trade ID {trade_id} not found in database")
+            return None
+    except sqlite3.Error as e:
+        print(f"An error occurred while accessing the database: {e}")
+        return None
+
 
 def get_qty(order_details):
     userdetails = general_calc.assign_user_details(order_details["account_name"])
@@ -145,7 +158,7 @@ def get_qty(order_details):
             base_symbol = Instrument().get_base_symbol_by_exchange_token(order_details["exchange_token"])
             qty = userdetails["qty"].get(strategy, {}).get(base_symbol) 
         elif order_details.get('strategy_mode') == 'CarryForward' and "exit" in order_details["trade_id"]:
-            qty = fetch_qty_from_excel(order_details["account_name"], strategy, order_details["trade_id"])
+            qty = fetch_qty_from_db(order_details["account_name"], strategy, order_details["trade_id"])
         else:
             qty = userdetails.get("qty", {}).get(strategy)
 
