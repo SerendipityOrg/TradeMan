@@ -30,18 +30,18 @@ load_dotenv(ENV_PATH)
 import MarketUtils.Discord.discordchannels as discord_bot
 from Strategies.StrategyBase import Strategy
 import Brokers.BrokerUtils.Broker as Broker
+from MarketUtils.Firebase.firebase_utils import fetch_collection_data_firebase
 
-strategy_obj = Strategy.read_strategy_json(STRATEGY_PATH)
+strategy_obj = fetch_collection_data_firebase('Strategies')['AmiPy']
 
-nifty_token = strategy_obj.get_general_params().get('NiftyToken')
-base_symbol = strategy_obj.get_instruments()[0]
+nifty_token = strategy_obj['GeneralParams']['NiftyToken']
+base_symbol = strategy_obj['Instruments'][0]
 strike_prc = None
-interval = strategy_obj.get_extra_information().get('Interval')
+interval = strategy_obj['ExtraInformation']['Interval']
 
-
-entry = strategy_obj.get_entry_params().get('EntryTime')
-last = strategy_obj.get_exit_params().get('LastBuyTime')
-sqroff = strategy_obj.get_exit_params().get('SquareOffTime')
+entry = strategy_obj['EntryParams']['EntryTime']
+last = strategy_obj['ExitParams']['LastBuyTime']
+sqroff = strategy_obj['ExitParams']['SquareOffTime']
 
 entry_time = pd.Timestamp(entry).time()
 last_buy_time = pd.Timestamp(last).time()

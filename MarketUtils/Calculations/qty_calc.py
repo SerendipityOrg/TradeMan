@@ -9,22 +9,22 @@ import Brokers.place_order_calc as place_order_calc
 import Strategies.StrategyBase as StrategyBase
 from MarketUtils.FNOInfoBase import FNOInfo
 from MarketUtils.InstrumentBase import Instrument
+from MarketUtils.Firebase.firebase_utils import fetch_collection_data_firebase,update_fields_firebase
 
 active_users_json_path = os.path.join(DIR_PATH, 'MarketUtils', 'active_users.json')
-
-# Function to get price reference values from the strategy object
-def get_price_reference(strategy_name, instrument):
+strategy_data = fetch_collection_data_firebase('strategies')
+   
+def  get_price_reference_firebase(strategy_name, instrument):
     # Here we are using a mock strategy JSON for demonstration purposes
-    _,strategy_path = general_calc.get_strategy_json(strategy_name)
-    strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
-
+    strategy_data = fetch_collection_data_firebase('strategies')
     today_index = dt.datetime.today().weekday()
     key = f"{instrument}OptRef"
-    price_ref_values = strategy_obj.get_extra_information().get(key, [])
+    price_ref_values = strategy_data[strategy_name]['ExtraInformation'].get(key, [])
     if price_ref_values:
         return price_ref_values[today_index]
     else:
-        return 0 
+        return 0
+
 # Function to calculate quantity based on capital, risk, price reference, and lot size
 def calculate_qty_for_strategies(capital, risk, prc_ref_or_ltp, lot_size, strategy_name):
     if prc_ref_or_ltp is not None:
@@ -38,36 +38,30 @@ def calculate_qty_for_strategies(capital, risk, prc_ref_or_ltp, lot_size, strate
         quantity = math.ceil(lots) * lot_size
     return quantity
 
-
 def calculate_lots(user):
-    qty = {}
     current_capital = user['expected_morning_balance']
-    user_details, _ = general_calc.get_user_details(user['account_name'])
-    percentage_risk = user_details['percentage_risk']
-
-    for strategy_name, risk in percentage_risk.items():
-        if strategy_name not in qty:
-            qty[strategy_name] = {}
-
-        _, strategy_path = general_calc.get_strategy_json(strategy_name)
-        strategy_obj = StrategyBase.Strategy.read_strategy_json(strategy_path)
-        instruments = strategy_obj.get_instruments()
-
-        qty_calculation_type = strategy_obj.get_extra_information().get('QtyCalc')
-        if qty_calculation_type == "DuringEntry":
-            qty[strategy_name] = 0
+    for key,value in user['Strategies'].items():
+        strategy_name = key
+        risk = value['Risk']
+        instruments = strategy_data[strategy_name]['Instruments']
+        if 'QtyCalc' not in strategy_data[strategy_name]['ExtraInformation']:
             continue
-        
-        for instrument in instruments:  
-            prc_ref = get_price_reference(strategy_name, instrument) if qty_calculation_type == "PrcRef" else None
+        qty_calculation_type = strategy_data[strategy_name]['ExtraInformation']['QtyCalc']
+        if qty_calculation_type == "DuringEntry":
+            qty = 0
+            update_fields_firebase('new_clients',user['trademan_username'],{'Strategies':{strategy_name:{'Qty':qty}}})
+            continue
+        for instrument in instruments:
+            prc_ref = strategy_data[strategy_name]['ExtraInformation'][f'{instrument}OptRef'] if qty_calculation_type == "PrcRef" else None
+            prc_ref = get_price_reference_firebase(strategy_name, instrument) if qty_calculation_type == "PrcRef" else None
             lot_size = FNOInfo().get_lot_size_by_base_symbol(instrument)
-            quantity = calculate_qty_for_strategies(current_capital, risk, prc_ref, lot_size, strategy_name)
+            quantity = calculate_qty_for_strategies(current_capital, risk, prc_ref, lot_size)
             if len(instruments) == 1:
-                qty[strategy_name] = quantity
+                qty = quantity
+                update_fields_firebase('new_clients',user['trademan_username'],{'Strategies':{strategy_name:{'Qty':qty}}})
             else:
-                qty[strategy_name][instrument] = quantity
-
-    return qty
+                qty = quantity
+                update_fields_firebase('new_clients',user['trademan_username'],{'Strategies':{strategy_name:{'Qty':qty}}})
 
 def update_qty_during_entry(ltp, strategy_name, base_symbol):
     _, strategy_path = general_calc.get_strategy_json(strategy_name)

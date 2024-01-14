@@ -7,6 +7,8 @@ from pya3 import *
 DIR_PATH = os.getcwd()
 sys.path.append(DIR_PATH)
 
+from MarketUtils.Firebase.firebase_utils import fetch_collection_data_firebase
+
 active_users_json_path = os.path.join(DIR_PATH,"MarketUtils", "active_users.json")
 
 #Json Functions
@@ -39,6 +41,14 @@ def get_strategy_json(strategy_name):
 
 def get_active_users(broker_json_details: list) -> list:
     active_users = [user for user in broker_json_details if 'Active' in user.get('account_type', '')]
+    return active_users
+
+def get_active_users_from_firebase():
+    active_users = []
+    account_details = fetch_collection_data_firebase('new_clients')
+    for account in account_details:
+        if account_details[account]['active'] == True:
+            active_users.append(account_details[account])
     return active_users
 
 def assign_user_details(account_name):

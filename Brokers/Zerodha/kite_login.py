@@ -14,7 +14,7 @@ def login_in_zerodha(user_details):
     api_secret = user_details['api_secret']
     user_id = user_details['username']
     user_pwd = user_details['password']
-    totp_key = user_details['totp']
+    totp_key = user_details['totp_access']
 
     global request_token, kite_access_token
     driver = webdriver.Chrome(ChromeDriverManager().install())
